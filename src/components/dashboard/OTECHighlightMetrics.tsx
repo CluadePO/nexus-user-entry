@@ -1,6 +1,6 @@
 import React from 'react';
-import { Card, Table } from 'antd';
-import { BookOpen, CheckCircle, Archive, Users, Award, AlertCircle, Clock, Receipt, DollarSign, TrendingUp, TrendingDown, Star, Trophy, Medal } from 'lucide-react';
+import { Card } from 'antd';
+import { BookOpen, CheckCircle, Archive, Users, Award, AlertCircle, Clock, TrendingUp, TrendingDown, Star, Trophy, Medal } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 interface HighlightMetric {
@@ -11,15 +11,6 @@ interface HighlightMetric {
   bgColor: string;
   subtext?: string;
   trend?: 'up' | 'down';
-}
-
-interface FacturacionRow {
-  key: string;
-  indicador: string;
-  valor: string | number;
-  icon: React.ReactNode;
-  trend?: 'up' | 'down';
-  trendValue?: string;
 }
 
 interface RankingCourse {
@@ -97,39 +88,6 @@ export const OTECHighlightMetrics: React.FC = () => {
     },
   ];
 
-  const facturacionData: FacturacionRow[] = [
-    { 
-      key: '1', 
-      indicador: 'OC Emitidas', 
-      valor: 67, 
-      icon: <Receipt className="w-4 h-4" />,
-      trend: 'up',
-      trendValue: '+8'
-    },
-    { 
-      key: '2', 
-      indicador: 'OC Pendientes Facturación', 
-      valor: 15, 
-      icon: <Clock className="w-4 h-4" />,
-      trend: 'down',
-      trendValue: '-3'
-    },
-    { 
-      key: '3', 
-      indicador: 'Promedio Facturación', 
-      valor: '$2.4M', 
-      icon: <DollarSign className="w-4 h-4" />,
-      trend: 'up',
-      trendValue: '+12%'
-    },
-    { 
-      key: '4', 
-      indicador: 'Promedio Días Pago', 
-      valor: '18 días', 
-      icon: <Clock className="w-4 h-4" /> 
-    },
-  ];
-
   const topRatedCourses: RankingCourse[] = [
     { position: 1, name: 'Excel Avanzado', value: '4.9', subtext: '156 evaluaciones' },
     { position: 2, name: 'Liderazgo Efectivo', value: '4.8', subtext: '98 evaluaciones' },
@@ -144,41 +102,6 @@ export const OTECHighlightMetrics: React.FC = () => {
     { position: 3, name: 'Atención al Cliente', value: '256', subtext: 'inscritos' },
     { position: 4, name: 'Excel Avanzado', value: '198', subtext: 'inscritos' },
     { position: 5, name: 'Primeros Auxilios', value: '187', subtext: 'inscritos' },
-  ];
-
-  const facturacionColumns = [
-    {
-      title: 'Indicador',
-      dataIndex: 'indicador',
-      key: 'indicador',
-      render: (text: string, record: FacturacionRow) => (
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-            {record.icon}
-          </div>
-          <span className="font-medium text-foreground">{text}</span>
-        </div>
-      ),
-    },
-    {
-      title: 'Valor',
-      dataIndex: 'valor',
-      key: 'valor',
-      align: 'right' as const,
-      render: (value: string | number, record: FacturacionRow) => (
-        <div className="flex items-center justify-end gap-2">
-          <span className="text-xl font-bold text-primary">{value}</span>
-          {record.trend && (
-            <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
-              record.trend === 'up' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-            }`}>
-              {record.trend === 'up' ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-              {record.trendValue}
-            </div>
-          )}
-        </div>
-      ),
-    },
   ];
 
   const getPositionIcon = (position: number) => {
@@ -293,72 +216,47 @@ export const OTECHighlightMetrics: React.FC = () => {
         </Card>
       </div>
 
-      {/* Facturación y Rankings en paralelo */}
+      {/* Rankings en paralelo */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Facturación Table */}
+        {/* Top Rated Courses */}
+        <Card 
+          className="shadow-sm border-0 bg-card"
+          title={
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-yellow-500/10 flex items-center justify-center">
+                <Star className="w-4 h-4 text-yellow-500" />
+              </div>
+              <span className="text-foreground font-semibold">Cursos Mejor Valorados</span>
+            </div>
+          }
+          styles={{ body: { padding: '12px 16px' } }}
+        >
+          <div className="space-y-1">
+            {topRatedCourses.map((course) => (
+              <RankingItem key={course.position} course={course} showStars />
+            ))}
+          </div>
+        </Card>
+
+        {/* Most Enrolled Courses */}
         <Card 
           className="shadow-sm border-0 bg-card"
           title={
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                <Receipt className="w-4 h-4 text-primary" />
+                <Users className="w-4 h-4 text-primary" />
               </div>
-              <span className="text-foreground font-semibold">Facturación</span>
+              <span className="text-foreground font-semibold">Cursos Más Inscritos del Año</span>
             </div>
           }
+          styles={{ body: { padding: '12px 16px' } }}
         >
-          <Table 
-            dataSource={facturacionData}
-            columns={facturacionColumns}
-            pagination={false}
-            size="middle"
-            className="facturacion-table"
-            rowClassName="hover:bg-muted/30"
-          />
+          <div className="space-y-1">
+            {mostEnrolledCourses.map((course) => (
+              <RankingItem key={course.position} course={course} />
+            ))}
+          </div>
         </Card>
-
-        {/* Rankings Section */}
-        <div className="space-y-6">
-          {/* Top Rated Courses */}
-          <Card 
-            className="shadow-sm border-0 bg-card"
-            title={
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-yellow-500/10 flex items-center justify-center">
-                  <Star className="w-4 h-4 text-yellow-500" />
-                </div>
-                <span className="text-foreground font-semibold">Cursos Mejor Valorados</span>
-              </div>
-            }
-            styles={{ body: { padding: '12px 16px' } }}
-          >
-            <div className="space-y-1">
-              {topRatedCourses.map((course) => (
-                <RankingItem key={course.position} course={course} showStars />
-              ))}
-            </div>
-          </Card>
-
-          {/* Most Enrolled Courses */}
-          <Card 
-            className="shadow-sm border-0 bg-card"
-            title={
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <Users className="w-4 h-4 text-primary" />
-                </div>
-                <span className="text-foreground font-semibold">Cursos Más Inscritos del Año</span>
-              </div>
-            }
-            styles={{ body: { padding: '12px 16px' } }}
-          >
-            <div className="space-y-1">
-              {mostEnrolledCourses.map((course) => (
-                <RankingItem key={course.position} course={course} />
-              ))}
-            </div>
-          </Card>
-        </div>
       </div>
     </div>
   );
