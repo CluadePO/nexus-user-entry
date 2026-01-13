@@ -197,6 +197,14 @@
   .ant-menu-item-selected {
     background-color: hsl(var(--sidebar-accent)) !important;
   }
+  
+  /* Hide collapsed menu tooltips */
+  .ant-menu-inline-collapsed-tooltip,
+  .ant-tooltip.ant-menu-inline-collapsed-tooltip {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+  }
 }
 
 /* Custom scrollbar */
