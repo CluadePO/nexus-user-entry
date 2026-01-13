@@ -9,12 +9,13 @@ import {
   MoreOutlined
 } from '@ant-design/icons';
 import { useAuth } from '@/context/AuthContext';
+import { useSidebarContext } from '@/context/SidebarContext';
 import { menuByRole, getRoleDisplayName } from '@/config/menuConfig';
 import { DynamicIcon } from '@/components/icons/DynamicIcon';
 import type { MenuProps } from 'antd';
 
 export const AppSidebar: React.FC = () => {
-  const [collapsed, setCollapsed] = useState(true);
+  const { collapsed, toggleCollapsed } = useSidebarContext();
   const [searchTerm, setSearchTerm] = useState('');
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -62,7 +63,7 @@ export const AppSidebar: React.FC = () => {
   return (
     <aside 
       className={`
-        sidebar-gradient flex flex-col min-h-screen h-full transition-all duration-300 sticky top-0
+        sidebar-gradient flex flex-col h-screen transition-all duration-300 fixed top-0 left-0 z-50
         ${collapsed ? 'w-20' : 'w-72'}
       `}
     >
@@ -82,7 +83,7 @@ export const AppSidebar: React.FC = () => {
             )}
           </div>
           <button
-            onClick={() => setCollapsed(!collapsed)}
+            onClick={toggleCollapsed}
             className="text-white/70 hover:text-white transition-colors p-1"
           >
             {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
@@ -114,7 +115,7 @@ export const AppSidebar: React.FC = () => {
       </div>
 
       {/* Menu */}
-      <div className="flex-1 px-2 overflow-y-auto scrollbar-thin">
+      <div className="flex-1 px-2 overflow-y-auto min-h-0">
         <Menu
           mode="inline"
           selectedKeys={[location.pathname]}
