@@ -5,12 +5,13 @@ import { QuickAccessButtons } from '@/components/dashboard/QuickAccessButtons';
 import { DashboardMetrics } from '@/components/dashboard/DashboardMetrics';
 import { DashboardCharts } from '@/components/dashboard/DashboardCharts';
 import { DJOManagementCard } from '@/components/dashboard/DJOManagementCard';
+import { OTECHighlightMetrics } from '@/components/dashboard/OTECHighlightMetrics';
 import { Calendar, Clock } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
   
-  const showDJOCard = user?.role === 'OTEC' || user?.role === 'OTEC_REPRESENTANTE';
+  const isOTECRole = user?.role === 'OTEC' || user?.role === 'OTEC_REPRESENTANTE';
 
   if (!user) return null;
 
@@ -56,7 +57,10 @@ const Dashboard: React.FC = () => {
       <QuickAccessButtons />
 
       {/* DJO Management Card - Only for OTEC roles */}
-      {showDJOCard && <DJOManagementCard />}
+      {isOTECRole && <DJOManagementCard />}
+
+      {/* OTEC Highlight Metrics - Cursos y Participantes side by side */}
+      {isOTECRole && <OTECHighlightMetrics />}
 
       {/* Charts Section */}
       <DashboardCharts />

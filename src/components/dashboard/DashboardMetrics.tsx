@@ -14,15 +14,11 @@ const getMetricGroupsForRole = (role: string): MetricGroup[] => {
   switch (role) {
     case 'OTEC':
       return [
-        { title: 'Cursos', metricIds: ['1', '2', '3'] },
-        { title: 'Participantes', metricIds: ['4', '5', '6'] },
-        { title: 'Declaraciones Juradas', metricIds: ['7', '8', '9', '10', '11', '12'] },
+        { title: 'Cursos y Participantes', metricIds: ['1', '2', '3', '4', '5', '6', '7'] },
         { title: 'Facturación', metricIds: ['13', '14', '15', '16'] },
       ];
     case 'OTEC_REPRESENTANTE':
-      return [
-        { title: 'Estado de Declaraciones', metricIds: ['1', '2', '3', '4'] },
-      ];
+      return [];
     case 'EMPRESA':
       return [
         { title: 'Cursos', metricIds: ['1', '2', '3', '4'] },
