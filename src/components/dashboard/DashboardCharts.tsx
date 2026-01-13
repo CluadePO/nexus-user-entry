@@ -17,41 +17,8 @@ interface ChartConfig {
 const getChartsForRole = (role: string): ChartConfig[] => {
   switch (role) {
     case 'OTEC':
-      return [
-        {
-          title: 'Estado de Cursos',
-          data: [
-            { name: 'Ene', activos: 18, ejecutados: 12, cerrados: 8 },
-            { name: 'Feb', activos: 22, ejecutados: 15, cerrados: 10 },
-            { name: 'Mar', activos: 24, ejecutados: 18, cerrados: 12 },
-            { name: 'Abr', activos: 20, ejecutados: 22, cerrados: 15 },
-            { name: 'May', activos: 26, ejecutados: 20, cerrados: 14 },
-            { name: 'Jun', activos: 24, ejecutados: 25, cerrados: 18 },
-          ],
-          bars: [
-            { dataKey: 'activos', name: 'Activos', color: '#65BFB1' },
-            { dataKey: 'ejecutados', name: 'Ejecutados', color: '#4A90A4' },
-            { dataKey: 'cerrados', name: 'Cerrados', color: '#8B9DC3' },
-          ],
-        },
-      ];
     case 'OTEC_REPRESENTANTE':
-      return [
-        {
-          title: 'Histórico de Firmas DJ',
-          data: [
-            { name: 'Ene', firmas: 28 },
-            { name: 'Feb', firmas: 35 },
-            { name: 'Mar', firmas: 42 },
-            { name: 'Abr', firmas: 38 },
-            { name: 'May', firmas: 45 },
-            { name: 'Jun', firmas: 46 },
-          ],
-          bars: [
-            { dataKey: 'firmas', name: 'Firmas', color: '#65BFB1' },
-          ],
-        },
-      ];
+      return [];
     case 'EMPRESA':
     case 'EMPRESA_REPRESENTANTE':
       return [
