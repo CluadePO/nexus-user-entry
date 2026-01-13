@@ -62,7 +62,7 @@ export const AppSidebar: React.FC = () => {
   return (
     <aside 
       className={`
-        sidebar-gradient flex flex-col h-screen transition-all duration-300
+        sidebar-gradient flex flex-col min-h-screen h-full transition-all duration-300 sticky top-0
         ${collapsed ? 'w-20' : 'w-72'}
       `}
     >
@@ -114,7 +114,7 @@ export const AppSidebar: React.FC = () => {
       </div>
 
       {/* Menu */}
-      <div className="flex-1 px-2 overflow-visible">
+      <div className="flex-1 px-2 overflow-y-auto scrollbar-thin">
         <Menu
           mode="inline"
           selectedKeys={[location.pathname]}
