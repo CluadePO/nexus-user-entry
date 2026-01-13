@@ -14,7 +14,7 @@ import { DynamicIcon } from '@/components/icons/DynamicIcon';
 import type { MenuProps } from 'antd';
 
 export const AppSidebar: React.FC = () => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -114,7 +114,7 @@ export const AppSidebar: React.FC = () => {
       </div>
 
       {/* Menu */}
-      <div className="flex-1 overflow-y-auto px-2">
+      <div className="flex-1 px-2">
         <Menu
           mode="inline"
           selectedKeys={[location.pathname]}

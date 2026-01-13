@@ -1,8 +1,9 @@
 import React from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { getRoleDisplayName } from '@/config/menuConfig';
-import { QuickAccessGrid } from '@/components/dashboard/QuickAccessGrid';
+import { QuickAccessButtons } from '@/components/dashboard/QuickAccessButtons';
 import { DashboardMetrics } from '@/components/dashboard/DashboardMetrics';
+import { DashboardCharts } from '@/components/dashboard/DashboardCharts';
 import { Calendar, Clock } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
@@ -48,10 +49,13 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Quick Access */}
-      <QuickAccessGrid />
+      {/* Quick Access Buttons - Centered at top */}
+      <QuickAccessButtons />
 
-      {/* Metrics Dashboard */}
+      {/* Charts Section */}
+      <DashboardCharts />
+
+      {/* Metrics Dashboard - Grouped by category */}
       <DashboardMetrics />
     </div>
   );
