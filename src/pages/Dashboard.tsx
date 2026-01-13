@@ -4,10 +4,13 @@ import { getRoleDisplayName } from '@/config/menuConfig';
 import { QuickAccessButtons } from '@/components/dashboard/QuickAccessButtons';
 import { DashboardMetrics } from '@/components/dashboard/DashboardMetrics';
 import { DashboardCharts } from '@/components/dashboard/DashboardCharts';
+import { DJOManagementCard } from '@/components/dashboard/DJOManagementCard';
 import { Calendar, Clock } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
+  
+  const showDJOCard = user?.role === 'OTEC' || user?.role === 'OTEC_REPRESENTANTE';
 
   if (!user) return null;
 
@@ -51,6 +54,9 @@ const Dashboard: React.FC = () => {
 
       {/* Quick Access Buttons - Centered at top */}
       <QuickAccessButtons />
+
+      {/* DJO Management Card - Only for OTEC roles */}
+      {showDJOCard && <DJOManagementCard />}
 
       {/* Charts Section */}
       <DashboardCharts />
