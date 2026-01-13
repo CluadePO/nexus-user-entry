@@ -2,26 +2,72 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { ConfigProvider } from 'antd';
+import esES from 'antd/locale/es_ES';
+import { AuthProvider } from "@/context/AuthContext";
+import { AppLayout } from "@/components/layout/AppLayout";
+import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+// Ant Design theme configuration
+const antTheme = {
+  token: {
+    colorPrimary: '#65BFB1',
+    colorLink: '#65BFB1',
+    borderRadius: 8,
+    fontFamily: 'Inter, sans-serif',
+  },
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+    <ConfigProvider theme={antTheme} locale={esES}>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              <Route element={<AppLayout />}>
+                <Route path="/dashboard" element={<Dashboard />} />
+                {/* Placeholder routes */}
+                <Route path="/cursos/*" element={<PlaceholderPage title="Cursos y Servicios" />} />
+                <Route path="/reportes" element={<PlaceholderPage title="Reportes" />} />
+                <Route path="/data360" element={<PlaceholderPage title="Data 360" />} />
+                <Route path="/buscador/*" element={<PlaceholderPage title="Mi Buscador" />} />
+                <Route path="/inscripcion" element={<PlaceholderPage title="Inscripción de Cursos" />} />
+                <Route path="/asesor" element={<PlaceholderPage title="Rol Asesor" />} />
+                <Route path="/documentos/*" element={<PlaceholderPage title="Gestión Documental" />} />
+                <Route path="/facturacion/*" element={<PlaceholderPage title="Facturación" />} />
+                <Route path="/formacion/*" element={<PlaceholderPage title="Formación" />} />
+                <Route path="/encuestas" element={<PlaceholderPage title="Encuestas" />} />
+                <Route path="/admin/*" element={<PlaceholderPage title="Administración" />} />
+                <Route path="/ayuda/*" element={<PlaceholderPage title="Ayuda y Soporte" />} />
+              </Route>
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
+    </ConfigProvider>
   </QueryClientProvider>
+);
+
+// Placeholder component for unimplemented pages
+const PlaceholderPage: React.FC<{ title: string }> = ({ title }) => (
+  <div className="flex flex-col items-center justify-center min-h-[400px] text-center">
+    <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+      <span className="text-3xl">🚧</span>
+    </div>
+    <h2 className="text-2xl font-bold text-foreground mb-2">{title}</h2>
+    <p className="text-muted-foreground">Esta sección está en desarrollo</p>
+  </div>
 );
 
 export default App;
