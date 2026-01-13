@@ -13,10 +13,8 @@ interface MetricGroup {
 const getMetricGroupsForRole = (role: string): MetricGroup[] => {
   switch (role) {
     case 'OTEC':
-      return [
-        { title: 'Cursos y Participantes', metricIds: ['1', '2', '3', '4', '5', '6', '7'] },
-        { title: 'Facturación', metricIds: ['13', '14', '15', '16'] },
-      ];
+    case 'OTEC_REPRESENTANTE':
+      return [];
     case 'OTEC_REPRESENTANTE':
       return [];
     case 'EMPRESA':
