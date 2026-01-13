@@ -114,11 +114,11 @@ export const AppSidebar: React.FC = () => {
       </div>
 
       {/* Menu */}
-      <div className="flex-1 px-2">
+      <div className="flex-1 px-2 overflow-visible">
         <Menu
           mode="inline"
           selectedKeys={[location.pathname]}
-          defaultOpenKeys={menuItems.filter(i => i.children).map(i => i.key)}
+          defaultOpenKeys={[]}
           items={convertToAntdItems(menuItems)}
           inlineCollapsed={collapsed}
           className="bg-transparent border-none sidebar-menu"
@@ -195,6 +195,14 @@ export const AppSidebar: React.FC = () => {
         }
         .sidebar-menu .ant-menu-item-selected .ant-menu-item-icon {
           color: white !important;
+        }
+        /* Hide tooltips when sidebar is collapsed */
+        .sidebar-menu.ant-menu-inline-collapsed .ant-tooltip,
+        .ant-menu-inline-collapsed-tooltip {
+          display: none !important;
+          visibility: hidden !important;
+          opacity: 0 !important;
+          pointer-events: none !important;
         }
       `}</style>
     </aside>
