@@ -22,8 +22,8 @@ export const QuickAccessButtons: React.FC = () => {
           href={item.url}
           target={item.external ? '_blank' : undefined}
           rel={item.external ? 'noopener noreferrer' : undefined}
-          className="flex items-center gap-2 h-14 px-6 rounded-lg border-2 border-primary/20 hover:border-primary hover:bg-primary/5 transition-all duration-200"
-          icon={<DynamicIcon name={item.icon} className="w-5 h-5 text-primary" />}
+          className="flex items-center gap-3 h-14 px-6 rounded-lg border-2 border-primary/20 hover:border-primary hover:bg-primary/5 transition-all duration-200"
+          icon={<DynamicIcon name={item.icon} className="w-6 h-6 text-primary" />}
         >
           <span className="font-medium text-foreground">{item.title}</span>
           {item.external && <ExternalLink className="w-3 h-3 text-muted-foreground" />}
