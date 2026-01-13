@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, Table } from 'antd';
-import { BookOpen, CheckCircle, Archive, Users, Award, AlertCircle, Clock, Receipt, ReceiptText, DollarSign, Calendar, TrendingUp, TrendingDown } from 'lucide-react';
+import { BookOpen, CheckCircle, Archive, Users, Award, AlertCircle, Clock, Receipt, DollarSign, TrendingUp, TrendingDown, Star, Trophy, Medal } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 interface HighlightMetric {
@@ -17,7 +17,16 @@ interface FacturacionRow {
   key: string;
   indicador: string;
   valor: string | number;
-  tipo: 'promedio' | 'porcentaje' | 'cantidad';
+  icon: React.ReactNode;
+  trend?: 'up' | 'down';
+  trendValue?: string;
+}
+
+interface RankingCourse {
+  position: number;
+  name: string;
+  value: string | number;
+  subtext?: string;
 }
 
 export const OTECHighlightMetrics: React.FC = () => {
@@ -89,10 +98,52 @@ export const OTECHighlightMetrics: React.FC = () => {
   ];
 
   const facturacionData: FacturacionRow[] = [
-    { key: '1', indicador: 'OC Emitidas', valor: 67, tipo: 'cantidad' },
-    { key: '2', indicador: 'OC Pendientes Facturación', valor: 15, tipo: 'cantidad' },
-    { key: '3', indicador: 'Promedio Facturación', valor: '$2.4M', tipo: 'promedio' },
-    { key: '4', indicador: 'Promedio Días Pago', valor: '18 días', tipo: 'promedio' },
+    { 
+      key: '1', 
+      indicador: 'OC Emitidas', 
+      valor: 67, 
+      icon: <Receipt className="w-4 h-4" />,
+      trend: 'up',
+      trendValue: '+8'
+    },
+    { 
+      key: '2', 
+      indicador: 'OC Pendientes Facturación', 
+      valor: 15, 
+      icon: <Clock className="w-4 h-4" />,
+      trend: 'down',
+      trendValue: '-3'
+    },
+    { 
+      key: '3', 
+      indicador: 'Promedio Facturación', 
+      valor: '$2.4M', 
+      icon: <DollarSign className="w-4 h-4" />,
+      trend: 'up',
+      trendValue: '+12%'
+    },
+    { 
+      key: '4', 
+      indicador: 'Promedio Días Pago', 
+      valor: '18 días', 
+      icon: <Clock className="w-4 h-4" /> 
+    },
+  ];
+
+  const topRatedCourses: RankingCourse[] = [
+    { position: 1, name: 'Excel Avanzado', value: '4.9', subtext: '156 evaluaciones' },
+    { position: 2, name: 'Liderazgo Efectivo', value: '4.8', subtext: '98 evaluaciones' },
+    { position: 3, name: 'Gestión de Proyectos', value: '4.7', subtext: '124 evaluaciones' },
+    { position: 4, name: 'Comunicación Asertiva', value: '4.6', subtext: '87 evaluaciones' },
+    { position: 5, name: 'Trabajo en Equipo', value: '4.5', subtext: '112 evaluaciones' },
+  ];
+
+  const mostEnrolledCourses: RankingCourse[] = [
+    { position: 1, name: 'Excel Básico e Intermedio', value: '342', subtext: 'inscritos' },
+    { position: 2, name: 'Prevención de Riesgos', value: '289', subtext: 'inscritos' },
+    { position: 3, name: 'Atención al Cliente', value: '256', subtext: 'inscritos' },
+    { position: 4, name: 'Excel Avanzado', value: '198', subtext: 'inscritos' },
+    { position: 5, name: 'Primeros Auxilios', value: '187', subtext: 'inscritos' },
   ];
 
   const facturacionColumns = [
@@ -102,14 +153,8 @@ export const OTECHighlightMetrics: React.FC = () => {
       key: 'indicador',
       render: (text: string, record: FacturacionRow) => (
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-            {record.tipo === 'promedio' ? (
-              <DollarSign className="w-4 h-4 text-primary" />
-            ) : record.tipo === 'porcentaje' ? (
-              <TrendingUp className="w-4 h-4 text-primary" />
-            ) : (
-              <Receipt className="w-4 h-4 text-primary" />
-            )}
+          <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+            {record.icon}
           </div>
           <span className="font-medium text-foreground">{text}</span>
         </div>
@@ -120,28 +165,52 @@ export const OTECHighlightMetrics: React.FC = () => {
       dataIndex: 'valor',
       key: 'valor',
       align: 'right' as const,
-      render: (value: string | number) => (
-        <span className="text-lg font-bold text-primary">{value}</span>
-      ),
-    },
-    {
-      title: 'Tipo',
-      dataIndex: 'tipo',
-      key: 'tipo',
-      align: 'center' as const,
-      render: (tipo: string) => (
-        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-          tipo === 'promedio' 
-            ? 'bg-blue-100 text-blue-700' 
-            : tipo === 'porcentaje'
-            ? 'bg-green-100 text-green-700'
-            : 'bg-gray-100 text-gray-700'
-        }`}>
-          {tipo === 'promedio' ? 'Promedio' : tipo === 'porcentaje' ? 'Porcentaje' : 'Cantidad'}
-        </span>
+      render: (value: string | number, record: FacturacionRow) => (
+        <div className="flex items-center justify-end gap-2">
+          <span className="text-xl font-bold text-primary">{value}</span>
+          {record.trend && (
+            <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
+              record.trend === 'up' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+            }`}>
+              {record.trend === 'up' ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+              {record.trendValue}
+            </div>
+          )}
+        </div>
       ),
     },
   ];
+
+  const getPositionIcon = (position: number) => {
+    switch (position) {
+      case 1:
+        return <Trophy className="w-5 h-5 text-yellow-500" />;
+      case 2:
+        return <Medal className="w-5 h-5 text-gray-400" />;
+      case 3:
+        return <Medal className="w-5 h-5 text-amber-600" />;
+      default:
+        return <span className="w-5 h-5 flex items-center justify-center text-sm font-bold text-muted-foreground">{position}</span>;
+    }
+  };
+
+  const RankingItem = ({ course, showStars = false }: { course: RankingCourse; showStars?: boolean }) => (
+    <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors">
+      <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+        {getPositionIcon(course.position)}
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="font-medium text-foreground truncate">{course.name}</p>
+        <p className="text-xs text-muted-foreground">{course.subtext}</p>
+      </div>
+      <div className="flex items-center gap-1">
+        {showStars && <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />}
+        <span className={`font-bold ${showStars ? 'text-yellow-600' : 'text-primary'}`}>
+          {course.value}
+        </span>
+      </div>
+    </div>
+  );
 
   const MetricCard = ({ metric }: { metric: HighlightMetric }) => (
     <div 
@@ -224,26 +293,73 @@ export const OTECHighlightMetrics: React.FC = () => {
         </Card>
       </div>
 
-      {/* Facturación Table */}
-      <Card 
-        className="shadow-sm border-0 bg-card"
-        title={
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-              <Receipt className="w-4 h-4 text-primary" />
+      {/* Facturación y Rankings en paralelo */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Facturación Table */}
+        <Card 
+          className="shadow-sm border-0 bg-card"
+          title={
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Receipt className="w-4 h-4 text-primary" />
+              </div>
+              <span className="text-foreground font-semibold">Facturación</span>
             </div>
-            <span className="text-foreground font-semibold">Facturación</span>
-          </div>
-        }
-      >
-        <Table 
-          dataSource={facturacionData}
-          columns={facturacionColumns}
-          pagination={false}
-          size="middle"
-          className="facturacion-table"
-        />
-      </Card>
+          }
+        >
+          <Table 
+            dataSource={facturacionData}
+            columns={facturacionColumns}
+            pagination={false}
+            size="middle"
+            className="facturacion-table"
+            rowClassName="hover:bg-muted/30"
+          />
+        </Card>
+
+        {/* Rankings Section */}
+        <div className="space-y-6">
+          {/* Top Rated Courses */}
+          <Card 
+            className="shadow-sm border-0 bg-card"
+            title={
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-yellow-500/10 flex items-center justify-center">
+                  <Star className="w-4 h-4 text-yellow-500" />
+                </div>
+                <span className="text-foreground font-semibold">Cursos Mejor Valorados</span>
+              </div>
+            }
+            styles={{ body: { padding: '12px 16px' } }}
+          >
+            <div className="space-y-1">
+              {topRatedCourses.map((course) => (
+                <RankingItem key={course.position} course={course} showStars />
+              ))}
+            </div>
+          </Card>
+
+          {/* Most Enrolled Courses */}
+          <Card 
+            className="shadow-sm border-0 bg-card"
+            title={
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Users className="w-4 h-4 text-primary" />
+                </div>
+                <span className="text-foreground font-semibold">Cursos Más Inscritos del Año</span>
+              </div>
+            }
+            styles={{ body: { padding: '12px 16px' } }}
+          >
+            <div className="space-y-1">
+              {mostEnrolledCourses.map((course) => (
+                <RankingItem key={course.position} course={course} />
+              ))}
+            </div>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 };
