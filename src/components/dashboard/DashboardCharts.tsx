@@ -34,22 +34,6 @@ const getChartsForRole = (role: string): ChartConfig[] => {
             { dataKey: 'cerrados', name: 'Cerrados', color: '#8B9DC3' },
           ],
         },
-        {
-          title: 'Gestión DJO',
-          data: [
-            { name: 'Ene', presentadas: 35, pendientes: 8, rechazadas: 2 },
-            { name: 'Feb', presentadas: 42, pendientes: 10, rechazadas: 3 },
-            { name: 'Mar', presentadas: 38, pendientes: 12, rechazadas: 1 },
-            { name: 'Abr', presentadas: 45, pendientes: 15, rechazadas: 4 },
-            { name: 'May', presentadas: 50, pendientes: 11, rechazadas: 2 },
-            { name: 'Jun', presentadas: 45, pendientes: 12, rechazadas: 3 },
-          ],
-          bars: [
-            { dataKey: 'presentadas', name: 'Presentadas', color: '#65BFB1' },
-            { dataKey: 'pendientes', name: 'Pendientes', color: '#F5A623' },
-            { dataKey: 'rechazadas', name: 'Rechazadas', color: '#E74C3C' },
-          ],
-        },
       ];
     case 'OTEC_REPRESENTANTE':
       return [
