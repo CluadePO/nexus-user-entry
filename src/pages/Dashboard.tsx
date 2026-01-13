@@ -6,12 +6,15 @@ import { DashboardMetrics } from '@/components/dashboard/DashboardMetrics';
 import { DashboardCharts } from '@/components/dashboard/DashboardCharts';
 import { DJOManagementCard } from '@/components/dashboard/DJOManagementCard';
 import { OTECHighlightMetrics } from '@/components/dashboard/OTECHighlightMetrics';
+import { EmpresaManagementCard } from '@/components/dashboard/EmpresaManagementCard';
+import { EmpresaHighlightMetrics } from '@/components/dashboard/EmpresaHighlightMetrics';
 import { Calendar, Clock } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
   
   const isOTECRole = user?.role === 'OTEC' || user?.role === 'OTEC_REPRESENTANTE';
+  const isEmpresaRole = user?.role === 'EMPRESA' || user?.role === 'EMPRESA_REPRESENTANTE';
 
   if (!user) return null;
 
@@ -62,11 +65,17 @@ const Dashboard: React.FC = () => {
       {/* OTEC Highlight Metrics - Cursos y Participantes side by side */}
       {isOTECRole && <OTECHighlightMetrics />}
 
-      {/* Charts Section */}
-      <DashboardCharts />
+      {/* Empresa Management Card - Only for Empresa roles */}
+      {isEmpresaRole && <EmpresaManagementCard />}
 
-      {/* Metrics Dashboard - Grouped by category */}
-      <DashboardMetrics />
+      {/* Empresa Highlight Metrics - Cursos y Trabajadores side by side */}
+      {isEmpresaRole && <EmpresaHighlightMetrics />}
+
+      {/* Charts Section - Only for non-Empresa roles */}
+      {!isEmpresaRole && <DashboardCharts />}
+
+      {/* Metrics Dashboard - Grouped by category (only for OTIC) */}
+      {!isOTECRole && !isEmpresaRole && <DashboardMetrics />}
     </div>
   );
 };
