@@ -33,10 +33,14 @@ export const AppSidebar: React.FC = () => {
         label: item.label,
       };
 
-      if (item.children && item.children.length > 0) {
+      if (item.children) {
         return {
           ...baseItem,
-          children: convertToAntdItems(item.children),
+          children: item.children.map(child => ({
+            key: child.key,
+            label: child.label,
+            onClick: () => child.url && navigate(child.url),
+          })),
         };
       }
 
