@@ -22,7 +22,8 @@ import {
   Pie, 
   Cell, 
   ResponsiveContainer,
-  Tooltip
+  Tooltip,
+  Legend
 } from 'recharts';
 
 interface EmpresaStatus {
@@ -41,17 +42,15 @@ interface UpcomingCourse {
 }
 
 interface FinancieroItem {
-  key: string;
-  indicador: string;
-  valor: string | number;
-  numericValue: number;
-  icon: React.ReactNode;
+  name: string;
+  value: number;
+  displayValue: string;
+  color: string;
   trend?: 'up' | 'down';
   trendValue?: string;
-  color: string;
 }
 
-// Resumen Financiero Component - with Pie Charts
+// Resumen Financiero Component - Single Combined Chart
 export const EmpresaResumenFinanciero: React.FC = () => {
   const { user } = useAuth();
   
@@ -61,52 +60,91 @@ export const EmpresaResumenFinanciero: React.FC = () => {
 
   const financieroData: FinancieroItem[] = [
     { 
-      key: '1', 
-      indicador: 'Inversión Mensual', 
-      valor: '$12.5M', 
-      numericValue: 12.5,
-      icon: <TrendingUp className="w-5 h-5" />,
+      name: 'Inversión Mensual', 
+      value: 12.5,
+      displayValue: '$12.5M',
+      color: '#65BFB1',
       trend: 'up',
-      trendValue: '+15%',
-      color: '#65BFB1'
+      trendValue: '+15%'
     },
     { 
-      key: '2', 
-      indicador: 'Franquicia Disponible', 
-      valor: '$45M', 
-      numericValue: 45,
-      icon: <Wallet className="w-5 h-5" />,
+      name: 'Franquicia Disponible', 
+      value: 45,
+      displayValue: '$45M',
       color: '#4A90A4'
     },
     { 
-      key: '3', 
-      indicador: 'Monto Comprometido', 
-      valor: '$28M', 
-      numericValue: 28,
-      icon: <Lock className="w-5 h-5" />,
+      name: 'Monto Comprometido', 
+      value: 28,
+      displayValue: '$28M',
+      color: '#F5A623',
       trend: 'up',
-      trendValue: '+$5M',
-      color: '#F5A623'
+      trendValue: '+$5M'
     },
     { 
-      key: '4', 
-      indicador: 'Monto Utilizado', 
-      valor: '$18M', 
-      numericValue: 18,
-      icon: <CreditCard className="w-5 h-5" />,
+      name: 'Monto Utilizado', 
+      value: 18,
+      displayValue: '$18M',
       color: '#8B9DC3'
     },
     { 
-      key: '5', 
-      indicador: 'Saldo Disponible', 
-      valor: '$17M', 
-      numericValue: 17,
-      icon: <PiggyBank className="w-5 h-5" />,
+      name: 'Saldo Disponible', 
+      value: 17,
+      displayValue: '$17M',
+      color: '#9B59B6',
       trend: 'up',
-      trendValue: '+$2M',
-      color: '#65BFB1'
+      trendValue: '+$2M'
     },
   ];
+
+  const total = financieroData.reduce((sum, item) => sum + item.value, 0);
+
+  const CustomTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload;
+      return (
+        <div className="bg-card border border-border rounded-lg p-3 shadow-lg">
+          <p className="font-semibold text-foreground">{data.name}</p>
+          <p className="text-lg font-bold" style={{ color: data.color }}>{data.displayValue}</p>
+          <p className="text-xs text-muted-foreground">
+            {((data.value / total) * 100).toFixed(1)}% del total
+          </p>
+          {data.trend && (
+            <p className={`text-xs mt-1 ${data.trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
+              {data.trendValue}
+            </p>
+          )}
+        </div>
+      );
+    }
+    return null;
+  };
+
+  const renderLegend = () => (
+    <div className="grid grid-cols-5 gap-3 mt-4">
+      {financieroData.map((item) => (
+        <div 
+          key={item.name}
+          className="flex flex-col items-center p-3 rounded-xl bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer"
+        >
+          <div 
+            className="w-3 h-3 rounded-full mb-2"
+            style={{ backgroundColor: item.color }}
+          />
+          <p className="text-lg font-bold text-foreground">{item.displayValue}</p>
+          <p className="text-xs text-muted-foreground text-center leading-tight">{item.name}</p>
+          {item.trend && (
+            <div className={`flex items-center gap-0.5 mt-1 px-2 py-0.5 rounded-full text-xs font-medium ${
+              item.trend === 'up' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+            }`}>
+              {item.trend === 'up' ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+              {item.trendValue}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
 
   return (
     <Card 
@@ -120,65 +158,30 @@ export const EmpresaResumenFinanciero: React.FC = () => {
         </div>
       }
     >
-      <div className="grid grid-cols-5 gap-4">
-        {financieroData.map((item) => {
-          const pieData = [
-            { name: item.indicador, value: item.numericValue },
-            { name: 'Resto', value: 50 - item.numericValue }
-          ];
-          const percentage = Math.round((item.numericValue / 50) * 100);
-
-          return (
-            <div 
-              key={item.key}
-              className="flex flex-col items-center p-4 rounded-xl bg-muted/30 hover:bg-muted/50 transition-colors"
-            >
-              <div className="relative w-24 h-24">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={pieData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={28}
-                      outerRadius={40}
-                      startAngle={90}
-                      endAngle={-270}
-                      dataKey="value"
-                    >
-                      <Cell fill={item.color} />
-                      <Cell fill="hsl(var(--muted))" />
-                    </Pie>
-                    <Tooltip 
-                      formatter={(value: number) => [`$${value}M`, '']}
-                      contentStyle={{ 
-                        backgroundColor: 'hsl(var(--card))',
-                        border: '1px solid hsl(var(--border))',
-                        borderRadius: '8px'
-                      }}
-                    />
-                  </PieChart>
-                </ResponsiveContainer>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-sm font-bold" style={{ color: item.color }}>{percentage}%</span>
-                </div>
-              </div>
-              
-              <div className="text-center mt-2">
-                <p className="text-lg font-bold text-foreground">{item.valor}</p>
-                <p className="text-xs text-muted-foreground mt-1 leading-tight">{item.indicador}</p>
-                {item.trend && (
-                  <div className={`flex items-center justify-center gap-0.5 mt-1 px-2 py-0.5 rounded-full text-xs font-medium ${
-                    item.trend === 'up' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                  }`}>
-                    {item.trend === 'up' ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-                    {item.trendValue}
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-        })}
+      <div className="flex flex-col items-center">
+        <div className="w-full h-64">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={financieroData}
+                cx="50%"
+                cy="50%"
+                innerRadius={60}
+                outerRadius={100}
+                paddingAngle={3}
+                dataKey="value"
+                label={({ name, displayValue }) => displayValue}
+                labelLine={{ stroke: 'hsl(var(--muted-foreground))', strokeWidth: 1 }}
+              >
+                {financieroData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip content={<CustomTooltip />} />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+        {renderLegend()}
       </div>
     </Card>
   );
