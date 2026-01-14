@@ -10,6 +10,8 @@ import { EmpresaResumenFinanciero } from '@/components/dashboard/EmpresaManageme
 import { EmpresaHighlightMetrics } from '@/components/dashboard/EmpresaHighlightMetrics';
 import { EmpresaPlanCapacitacion } from '@/components/dashboard/EmpresaPlanCapacitacion';
 import { OTICDashboardSections } from '@/components/dashboard/OTICDashboardSections';
+import { OTICFilterBar } from '@/components/dashboard/OTICFilterBar';
+import { OTICFilterProvider } from '@/context/OTICFilterContext';
 import { Calendar, Clock } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
@@ -17,6 +19,7 @@ const Dashboard: React.FC = () => {
   
   const isOTECRole = user?.role === 'OTEC' || user?.role === 'OTEC_REPRESENTANTE';
   const isEmpresaRole = user?.role === 'EMPRESA' || user?.role === 'EMPRESA_REPRESENTANTE';
+  const isOTICRole = !isOTECRole && !isEmpresaRole;
 
   if (!user) return null;
 
@@ -82,7 +85,15 @@ const Dashboard: React.FC = () => {
       )}
 
       {/* OTIC Operational Dashboard */}
-      {!isOTECRole && !isEmpresaRole && <OTICDashboardSections />}
+      {isOTICRole && (
+        <OTICFilterProvider>
+          {/* Filter Bar */}
+          <OTICFilterBar />
+          
+          {/* Dashboard Sections */}
+          <OTICDashboardSections />
+        </OTICFilterProvider>
+      )}
     </div>
   );
 };
