@@ -12,6 +12,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import DiagnosticModal from '@/components/asesor/DiagnosticModal';
 
 interface Tool {
   id: string;
@@ -147,6 +148,7 @@ const AsesorDashboard: React.FC = () => {
   const navigate = useNavigate();
   const [selectedTool, setSelectedTool] = useState<Tool | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDiagnosticOpen, setIsDiagnosticOpen] = useState(false);
 
   const handleToolClick = (tool: Tool) => {
     setSelectedTool(tool);
@@ -165,6 +167,14 @@ const AsesorDashboard: React.FC = () => {
     }
   };
 
+  const handleOpenDiagnostic = () => {
+    setIsDiagnosticOpen(true);
+  };
+
+  const handleCloseDiagnostic = () => {
+    setIsDiagnosticOpen(false);
+  };
+
   return (
     <div className="space-y-6">
       {/* Header Section */}
@@ -181,7 +191,7 @@ const AsesorDashboard: React.FC = () => {
           <Button
             type="primary"
             size="large"
-            onClick={() => navigate('/asesor/diagnostico')}
+            onClick={handleOpenDiagnostic}
             style={{ backgroundColor: '#65BFB1', borderColor: '#65BFB1' }}
             icon={<Target className="w-4 h-4" />}
             className="shrink-0"
@@ -349,6 +359,9 @@ const AsesorDashboard: React.FC = () => {
           </div>
         )}
       </Modal>
+
+      {/* Diagnostic Modal */}
+      <DiagnosticModal isOpen={isDiagnosticOpen} onClose={handleCloseDiagnostic} />
     </div>
   );
 };
