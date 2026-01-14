@@ -73,11 +73,7 @@ export const menuByRole: Record<UserRole, MenuItem[]> = {
       label: 'Formación', 
       icon: 'GraduationCap',
       children: [
-        { key: 'buscador-inicio', label: 'Mi Buscador', url: '/buscador' },
-        { key: 'buscador-favoritos', label: 'Mis Favoritos', url: '/buscador/favoritos' },
-        { key: 'buscador-carga', label: 'Carga de Cursos', url: '/buscador/carga' },
         { key: 'buscador-dashboard', label: 'Dashboard', url: '/buscador/dashboard' },
-        { key: 'buscador-faq', label: 'Preguntas Frecuentes', url: '/buscador/faq' },
       ]
     },
     { 
@@ -122,11 +118,7 @@ export const menuByRole: Record<UserRole, MenuItem[]> = {
       label: 'Formación', 
       icon: 'GraduationCap',
       children: [
-        { key: 'buscador-inicio', label: 'Mi Buscador', url: '/buscador' },
-        { key: 'buscador-favoritos', label: 'Mis Favoritos', url: '/buscador/favoritos' },
-        { key: 'buscador-carga', label: 'Carga de Cursos', url: '/buscador/carga' },
         { key: 'buscador-dashboard', label: 'Dashboard', url: '/buscador/dashboard' },
-        { key: 'buscador-faq', label: 'Preguntas Frecuentes', url: '/buscador/faq' },
       ]
     },
     { 
