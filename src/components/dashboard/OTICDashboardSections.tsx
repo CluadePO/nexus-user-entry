@@ -81,21 +81,13 @@ const recentCourses: RecentCourse[] = [
   { id: '5', name: 'Python para Negocios', client: 'Tech Solutions', date: '2026-01-10', stage: 'Borrador', status: 'normal' },
 ];
 
-const accountStatuses: AccountStatus[] = [
-  {
-    holding: 'Holding Empresarial S.A.',
-    companies: [
-      { name: 'Empresa Filial 1', balance: 15000000, trend: 5.2, invoiced: 8500000, pending: 2300000 },
-      { name: 'Empresa Filial 2', balance: 8900000, trend: -2.1, invoiced: 4200000, pending: 1800000 },
-    ]
-  },
-  {
-    holding: 'Grupo Industrial del Sur',
-    companies: [
-      { name: 'Industria Sur Ltda.', balance: 22000000, trend: 8.5, invoiced: 12000000, pending: 3500000 },
-      { name: 'Logística Sur S.A.', balance: 5600000, trend: 1.2, invoiced: 3100000, pending: 800000 },
-    ]
-  }
+const companyAccounts = [
+  { id: '1', name: 'Empresa ABC Ltda.', rut: '76.123.456-7', balance: 15000000, trend: 5.2, invoiced: 8500000, pending: 2300000, coursesActive: 12 },
+  { id: '2', name: 'Holding XYZ S.A.', rut: '76.234.567-8', balance: 22000000, trend: 8.5, invoiced: 12000000, pending: 3500000, coursesActive: 18 },
+  { id: '3', name: 'Minera del Norte', rut: '76.345.678-9', balance: 8900000, trend: -2.1, invoiced: 4200000, pending: 1800000, coursesActive: 7 },
+  { id: '4', name: 'Retail Plus', rut: '76.456.789-0', balance: 5600000, trend: 1.2, invoiced: 3100000, pending: 800000, coursesActive: 5 },
+  { id: '5', name: 'Tech Solutions', rut: '76.567.890-1', balance: 12500000, trend: 12.3, invoiced: 7800000, pending: 1200000, coursesActive: 9 },
+  { id: '6', name: 'Constructora Sur', rut: '76.678.901-2', balance: 18700000, trend: -0.8, invoiced: 9500000, pending: 4100000, coursesActive: 14 },
 ];
 
 const pendingOCCourses: PendingCourse[] = [
@@ -501,51 +493,95 @@ const RecentCoursesSection: React.FC = () => {
 };
 
 const AccountStatusSection: React.FC = () => {
+  const [searchText, setSearchText] = useState('');
+  
   const formatCurrency = (value: number) => 
     new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 }).format(value);
 
+  const filteredCompanies = companyAccounts.filter(company =>
+    company.name.toLowerCase().includes(searchText.toLowerCase()) ||
+    company.rut.includes(searchText)
+  );
+
+  const columns = [
+    { 
+      title: 'Empresa', 
+      dataIndex: 'name', 
+      key: 'name', 
+      render: (text: string, record: any) => (
+        <div>
+          <span className="font-medium flex items-center gap-1">
+            <Building2 className="w-4 h-4 text-muted-foreground" />
+            {text}
+          </span>
+          <span className="text-xs text-muted-foreground">{record.rut}</span>
+        </div>
+      )
+    },
+    { 
+      title: 'Saldo', 
+      dataIndex: 'balance', 
+      key: 'balance',
+      render: (value: number) => <span className="font-semibold">{formatCurrency(value)}</span>
+    },
+    { 
+      title: 'Facturado', 
+      dataIndex: 'invoiced', 
+      key: 'invoiced',
+      render: (value: number) => <span className="font-semibold text-green-600">{formatCurrency(value)}</span>
+    },
+    { 
+      title: 'Pendiente', 
+      dataIndex: 'pending', 
+      key: 'pending',
+      render: (value: number) => <span className="font-semibold text-amber-600">{formatCurrency(value)}</span>
+    },
+    { 
+      title: 'Cursos Activos', 
+      dataIndex: 'coursesActive', 
+      key: 'coursesActive',
+      render: (value: number) => <Tag color="blue">{value} cursos</Tag>
+    },
+    { 
+      title: 'Tendencia', 
+      dataIndex: 'trend', 
+      key: 'trend',
+      render: (trend: number) => (
+        <span className={`flex items-center gap-1 ${trend >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+          {trend >= 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+          {trend > 0 ? '+' : ''}{trend}%
+        </span>
+      )
+    },
+    { 
+      title: '', 
+      key: 'action', 
+      render: () => (
+        <Button type="primary" size="small" icon={<Eye className="w-4 h-4" />}>
+          Detalle
+        </Button>
+      )
+    },
+  ];
+
   return (
-    <Card title="Estado Cuenta Corriente por Holding y Empresa" className="shadow-sm">
-      <div className="space-y-6">
-        {accountStatuses.map((holding, idx) => (
-          <div key={idx} className="border rounded-lg p-4">
-            <div className="flex items-center gap-2 mb-4">
-              <Briefcase className="w-5 h-5 text-primary" />
-              <h4 className="font-semibold text-lg">{holding.holding}</h4>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {holding.companies.map((company, cIdx) => (
-                <div key={cIdx} className="bg-muted/30 rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="font-medium flex items-center gap-1">
-                      <Building2 className="w-4 h-4 text-muted-foreground" />
-                      {company.name}
-                    </span>
-                    <span className={`flex items-center gap-1 text-sm ${company.trend >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                      {company.trend >= 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
-                      {company.trend > 0 ? '+' : ''}{company.trend}%
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-3 gap-2 text-sm">
-                    <div>
-                      <span className="text-muted-foreground block">Saldo</span>
-                      <span className="font-semibold">{formatCurrency(company.balance)}</span>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground block">Facturado</span>
-                      <span className="font-semibold text-green-600">{formatCurrency(company.invoiced)}</span>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground block">Pendiente</span>
-                      <span className="font-semibold text-amber-600">{formatCurrency(company.pending)}</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
+    <Card title="Estado Cuenta Corriente por Empresa" className="shadow-sm">
+      <div className="mb-4">
+        <Input
+          placeholder="Buscar por empresa o RUT..."
+          prefix={<Search className="w-4 h-4 text-muted-foreground" />}
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          className="w-72"
+        />
       </div>
+      <Table 
+        dataSource={filteredCompanies}
+        columns={columns}
+        pagination={{ pageSize: 5 }}
+        size="small"
+        rowKey="id"
+      />
     </Card>
   );
 };
