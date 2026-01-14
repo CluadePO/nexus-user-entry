@@ -169,12 +169,26 @@ const AsesorDashboard: React.FC = () => {
     <div className="space-y-6">
       {/* Header Section */}
       <div className="bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl p-6">
-        <h1 className="text-2xl font-bold text-foreground mb-2">Rol Asesor</h1>
-        <p className="text-muted-foreground max-w-3xl">
-          El Rol Asesor te acompaña en el proceso de identificar, planificar y ejecutar capacitaciones 
-          estratégicas para tu organización. Accede a herramientas especializadas que van desde la 
-          búsqueda de cursos hasta la consultoría integral de formación.
-        </p>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-foreground mb-2">Rol Asesor</h1>
+            <p className="text-muted-foreground max-w-3xl">
+              El Rol Asesor te acompaña en el proceso de identificar, planificar y ejecutar capacitaciones 
+              estratégicas para tu organización. Accede a herramientas especializadas que van desde la 
+              búsqueda de cursos hasta la consultoría integral de formación.
+            </p>
+          </div>
+          <Button
+            type="primary"
+            size="large"
+            onClick={() => navigate('/asesor/diagnostico')}
+            style={{ backgroundColor: '#65BFB1', borderColor: '#65BFB1' }}
+            icon={<Target className="w-4 h-4" />}
+            className="shrink-0"
+          >
+            Iniciar Nuevo Diagnóstico
+          </Button>
+        </div>
       </div>
 
       {/* Metrics Summary */}
