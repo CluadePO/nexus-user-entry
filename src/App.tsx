@@ -9,6 +9,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import { AppLayout } from "@/components/layout/AppLayout";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import Inscripcion from "./pages/Inscripcion";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,12 +37,13 @@ const App = () => (
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
               <Route element={<AppLayout />}>
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/inscripcion" element={<Inscripcion />} />
+                <Route path="/cursos/inscripcion" element={<Inscripcion />} />
                 {/* Placeholder routes */}
                 <Route path="/cursos/*" element={<PlaceholderPage title="Cursos y Servicios" />} />
                 <Route path="/reportes" element={<PlaceholderPage title="Reportes" />} />
                 <Route path="/data360" element={<PlaceholderPage title="Data 360" />} />
                 <Route path="/buscador/*" element={<PlaceholderPage title="Mi Buscador" />} />
-                <Route path="/inscripcion" element={<PlaceholderPage title="Inscripción de Cursos" />} />
                 <Route path="/asesor" element={<PlaceholderPage title="Rol Asesor" />} />
                 <Route path="/documentos/*" element={<PlaceholderPage title="Gestión Documental" />} />
                 <Route path="/facturacion/*" element={<PlaceholderPage title="Facturación" />} />
