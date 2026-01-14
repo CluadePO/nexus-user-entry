@@ -169,12 +169,138 @@ const StageBadge: React.FC<{ stage: string }> = ({ stage }) => {
   return <Tag color={colorMap[stage] || 'default'}>{stage}</Tag>;
 };
 
+// Mock data for filtered courses by stage and status
+const stageCoursesData: Record<string, { normal: any[]; medio: any[]; critico: any[] }> = {
+  'Borradores': {
+    normal: [
+      { id: 'b1', name: 'Python Básico', client: 'Tech Solutions', otec: 'CodeAcademy', date: '2026-01-11', amount: 750000 },
+      { id: 'b2', name: 'Excel Intermedio', client: 'Finanzas Corp', otec: 'OfficePro', date: '2026-01-10', amount: 520000 },
+    ],
+    medio: [
+      { id: 'b3', name: 'SAP Fundamentos', client: 'Industria Tech', otec: 'SAPTraining', date: '2026-01-09', amount: 1200000 },
+    ],
+    critico: [
+      { id: 'b4', name: 'Seguridad TI', client: 'Banco Central', otec: 'CyberSec', date: '2026-01-08', amount: 980000 },
+    ],
+  },
+  'Por comunicar': {
+    normal: [
+      { id: 'c1', name: 'Atención al Cliente', client: 'Retail Plus', otec: 'ServicePro', date: '2026-01-10', amount: 680000 },
+      { id: 'c2', name: 'Ventas B2B', client: 'Comercial Norte', otec: 'SalesMaster', date: '2026-01-09', amount: 720000 },
+    ],
+    medio: [
+      { id: 'c3', name: 'Negociación', client: 'Import Export SA', otec: 'NegoPro', date: '2026-01-08', amount: 850000 },
+    ],
+    critico: [
+      { id: 'c4', name: 'Comunicación Efectiva', client: 'Medios Chile', otec: 'ComSkills', date: '2026-01-07', amount: 620000 },
+    ],
+  },
+  'Inscrito': {
+    normal: [
+      { id: 'i1', name: 'Excel Avanzado', client: 'Empresa ABC', otec: 'Capacita Chile', date: '2026-01-14', amount: 850000 },
+      { id: 'i2', name: 'Seguridad Industrial', client: 'Minera Norte', otec: 'SafetyFirst', date: '2026-01-12', amount: 950000 },
+      { id: 'i3', name: 'Contabilidad', client: 'Finanzas Corp', otec: 'ContaFácil', date: '2026-01-06', amount: 720000 },
+    ],
+    medio: [
+      { id: 'i4', name: 'Liderazgo Básico', client: 'Grupo Sur', otec: 'LeaderPro', date: '2026-01-05', amount: 680000 },
+    ],
+    critico: [
+      { id: 'i5', name: 'Primeros Auxilios', client: 'Hospital Central', otec: 'MediTrain', date: '2026-01-04', amount: 450000 },
+    ],
+  },
+  'En ejecución': {
+    normal: [
+      { id: 'e1', name: 'Marketing Digital', client: 'Agencia Creativa', otec: 'DigitalPro', date: '2026-01-07', amount: 890000 },
+      { id: 'e2', name: 'Gestión RRHH', client: 'Consultora HR', otec: 'HRMaster', date: '2026-01-06', amount: 780000 },
+    ],
+    medio: [
+      { id: 'e3', name: 'Liderazgo', client: 'Holding XYZ', otec: 'FormaPro', date: '2026-01-13', amount: 1200000 },
+      { id: 'e4', name: 'Inglés Negocios', client: 'Export Chile', otec: 'EnglishPro', date: '2026-01-05', amount: 980000 },
+    ],
+    critico: [
+      { id: 'e5', name: 'Normativa Ambiental', client: 'Minera Sur', otec: 'EcoTrain', date: '2026-01-03', amount: 1100000 },
+    ],
+  },
+  'Por emisión OC': {
+    normal: [
+      { id: 'o1', name: 'Control Calidad', client: 'Manufactura SA', otec: 'QualityPro', date: '2026-01-08', amount: 670000 },
+    ],
+    medio: [
+      { id: 'o2', name: 'Gestión Proyectos', client: 'Constructora Sur', otec: 'PMI Chile', date: '2026-01-09', amount: 1500000 },
+      { id: 'o3', name: 'Logística', client: 'Transportes Express', otec: 'LogisTrain', date: '2026-01-07', amount: 820000 },
+    ],
+    critico: [
+      { id: 'o4', name: 'Auditoría Interna', client: 'Banco Pacífico', otec: 'AuditPro', date: '2026-01-06', amount: 1350000 },
+    ],
+  },
+  'Por liquidar': {
+    normal: [
+      { id: 'l1', name: 'Normativa Laboral', client: 'RRHH Corp', otec: 'LegalTrain', date: '2026-01-08', amount: 620000 },
+      { id: 'l2', name: 'Prevención Riesgos', client: 'Industria Norte', otec: 'SafetyPro', date: '2026-01-07', amount: 780000 },
+    ],
+    medio: [
+      { id: 'l3', name: 'Soldadura Avanzada', client: 'Metalúrgica Central', otec: 'WeldMaster', date: '2026-01-06', amount: 950000 },
+    ],
+    critico: [
+      { id: 'l4', name: 'Operación Grúa', client: 'Puerto Central', otec: 'HeavyLift', date: '2026-01-05', amount: 1800000 },
+      { id: 'l5', name: 'Manejo Sustancias', client: 'Química Sur', otec: 'ChemSafe', date: '2026-01-04', amount: 1100000 },
+    ],
+  },
+};
+
 // Section Components
 const CourseStagesSection: React.FC = () => {
+  const [selectedFilter, setSelectedFilter] = useState<{ stage: string; status: 'normal' | 'medio' | 'critico' } | null>(null);
+  
   const totalCourses = courseStages.reduce((acc, stage) => acc + stage.total, 0);
   const totalNormal = courseStages.reduce((acc, stage) => acc + stage.normal, 0);
   const totalMedio = courseStages.reduce((acc, stage) => acc + stage.medio, 0);
   const totalCritico = courseStages.reduce((acc, stage) => acc + stage.critico, 0);
+
+  const handleBarClick = (stageName: string, status: 'normal' | 'medio' | 'critico') => {
+    if (selectedFilter?.stage === stageName && selectedFilter?.status === status) {
+      setSelectedFilter(null);
+    } else {
+      setSelectedFilter({ stage: stageName, status });
+    }
+  };
+
+  const getFilteredCourses = () => {
+    if (!selectedFilter) return [];
+    const stageData = stageCoursesData[selectedFilter.stage];
+    if (!stageData) return [];
+    return stageData[selectedFilter.status] || [];
+  };
+
+  const filteredCourses = getFilteredCourses();
+
+  const detailColumns = [
+    { title: 'Curso', dataIndex: 'name', key: 'name', render: (text: string) => <span className="font-medium">{text}</span> },
+    { title: 'Cliente', dataIndex: 'client', key: 'client' },
+    { title: 'OTEC', dataIndex: 'otec', key: 'otec' },
+    { title: 'Fecha', dataIndex: 'date', key: 'date' },
+    { 
+      title: 'Monto', 
+      dataIndex: 'amount', 
+      key: 'amount',
+      render: (amount: number) => new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 }).format(amount)
+    },
+    { 
+      title: '', 
+      key: 'action', 
+      render: () => (
+        <Button type="primary" size="small" icon={<Eye className="w-4 h-4" />}>
+          Detalle
+        </Button>
+      )
+    },
+  ];
+
+  const statusLabels = {
+    normal: { label: 'Normal', color: 'text-green-600', bg: 'bg-green-500' },
+    medio: { label: 'Medio', color: 'text-amber-600', bg: 'bg-amber-500' },
+    critico: { label: 'Crítico', color: 'text-red-600', bg: 'bg-red-500' },
+  };
 
   return (
     <Card 
@@ -204,10 +330,14 @@ const CourseStagesSection: React.FC = () => {
         {courseStages.map((stage, index) => (
           <div 
             key={stage.name}
-            className="flex-1 relative group cursor-pointer"
+            className="flex-1 relative group"
           >
             {/* Stage card */}
-            <div className="bg-gradient-to-b from-muted/50 to-muted/30 rounded-lg p-4 border border-muted hover:border-primary/30 hover:shadow-md transition-all h-full">
+            <div className={`bg-gradient-to-b from-muted/50 to-muted/30 rounded-lg p-4 border transition-all h-full ${
+              selectedFilter?.stage === stage.name 
+                ? 'border-primary shadow-md ring-2 ring-primary/20' 
+                : 'border-muted hover:border-primary/30 hover:shadow-md'
+            }`}>
               {/* Header */}
               <div className="flex items-center justify-center gap-2 mb-4">
                 <div className="p-2.5 bg-primary/10 rounded-lg text-primary">
@@ -222,24 +352,39 @@ const CourseStagesSection: React.FC = () => {
                 <span className="text-xs text-muted-foreground block mt-1">cursos</span>
               </div>
 
-              {/* Status breakdown - stacked bars with tooltips */}
+              {/* Status breakdown - stacked bars with tooltips and click */}
               <div className="h-3 bg-muted rounded-full overflow-hidden flex">
-                <Tooltip title={`Normal: ${stage.normal} cursos`} placement="top">
+                <Tooltip title={`Normal: ${stage.normal} cursos - Clic para ver detalle`} placement="top">
                   <div 
-                    className="bg-green-500 h-full transition-all hover:opacity-80 cursor-pointer" 
+                    className={`bg-green-500 h-full transition-all cursor-pointer ${
+                      selectedFilter?.stage === stage.name && selectedFilter?.status === 'normal'
+                        ? 'ring-2 ring-green-700 ring-offset-1'
+                        : 'hover:opacity-80'
+                    }`}
                     style={{ width: `${(stage.normal / stage.total) * 100}%` }}
+                    onClick={() => handleBarClick(stage.name, 'normal')}
                   />
                 </Tooltip>
-                <Tooltip title={`Medio: ${stage.medio} cursos`} placement="top">
+                <Tooltip title={`Medio: ${stage.medio} cursos - Clic para ver detalle`} placement="top">
                   <div 
-                    className="bg-amber-500 h-full transition-all hover:opacity-80 cursor-pointer" 
+                    className={`bg-amber-500 h-full transition-all cursor-pointer ${
+                      selectedFilter?.stage === stage.name && selectedFilter?.status === 'medio'
+                        ? 'ring-2 ring-amber-700 ring-offset-1'
+                        : 'hover:opacity-80'
+                    }`}
                     style={{ width: `${(stage.medio / stage.total) * 100}%` }}
+                    onClick={() => handleBarClick(stage.name, 'medio')}
                   />
                 </Tooltip>
-                <Tooltip title={`Crítico: ${stage.critico} cursos`} placement="top">
+                <Tooltip title={`Crítico: ${stage.critico} cursos - Clic para ver detalle`} placement="top">
                   <div 
-                    className="bg-red-500 h-full transition-all hover:opacity-80 cursor-pointer" 
+                    className={`bg-red-500 h-full transition-all cursor-pointer ${
+                      selectedFilter?.stage === stage.name && selectedFilter?.status === 'critico'
+                        ? 'ring-2 ring-red-700 ring-offset-1'
+                        : 'hover:opacity-80'
+                    }`}
                     style={{ width: `${(stage.critico / stage.total) * 100}%` }}
+                    onClick={() => handleBarClick(stage.name, 'critico')}
                   />
                 </Tooltip>
               </div>
@@ -256,6 +401,41 @@ const CourseStagesSection: React.FC = () => {
           </div>
         ))}
       </div>
+
+      {/* Dynamic detail grid */}
+      {selectedFilter && (
+        <div className="mb-6 animate-in slide-in-from-top-2 duration-300">
+          <div className="bg-muted/30 rounded-lg p-4 border border-muted">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <span className={`w-3 h-3 rounded-full ${statusLabels[selectedFilter.status].bg}`}></span>
+                <h4 className="font-semibold">
+                  {selectedFilter.stage} - <span className={statusLabels[selectedFilter.status].color}>{statusLabels[selectedFilter.status].label}</span>
+                </h4>
+                <Tag color={selectedFilter.status === 'normal' ? 'success' : selectedFilter.status === 'medio' ? 'warning' : 'error'}>
+                  {filteredCourses.length} cursos
+                </Tag>
+              </div>
+              <Button 
+                type="text" 
+                size="small" 
+                onClick={() => setSelectedFilter(null)}
+                icon={<AlertCircle className="w-4 h-4 rotate-45" />}
+              >
+                Cerrar
+              </Button>
+            </div>
+            <Table 
+              dataSource={filteredCourses}
+              columns={detailColumns}
+              pagination={false}
+              size="small"
+              rowKey="id"
+              locale={{ emptyText: 'No hay cursos en esta categoría' }}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Summary row */}
       <div className="bg-muted/20 rounded-lg p-4 flex items-center justify-between">
