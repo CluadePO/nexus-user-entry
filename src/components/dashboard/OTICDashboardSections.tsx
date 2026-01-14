@@ -803,9 +803,6 @@ export const OTICDashboardSections: React.FC = () => {
       {/* Course Stages with Status */}
       <CourseStagesSection />
 
-      {/* Recent Courses */}
-      <RecentCoursesSection />
-
       {/* Account Status by Holding */}
       <AccountStatusSection />
 
