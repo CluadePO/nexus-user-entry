@@ -9,7 +9,7 @@ import { OTECHighlightMetrics } from '@/components/dashboard/OTECHighlightMetric
 import { EmpresaResumenFinanciero } from '@/components/dashboard/EmpresaManagementCard';
 import { EmpresaHighlightMetrics } from '@/components/dashboard/EmpresaHighlightMetrics';
 import { EmpresaPlanCapacitacion } from '@/components/dashboard/EmpresaPlanCapacitacion';
-import { OTICDashboardSections } from '@/components/dashboard/OTICDashboardSections';
+import { OTICDashboardSections, CourseSearchGrid } from '@/components/dashboard/OTICDashboardSections';
 import { Calendar, Clock } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
@@ -17,6 +17,7 @@ const Dashboard: React.FC = () => {
   
   const isOTECRole = user?.role === 'OTEC' || user?.role === 'OTEC_REPRESENTANTE';
   const isEmpresaRole = user?.role === 'EMPRESA' || user?.role === 'EMPRESA_REPRESENTANTE';
+  const isOTICRole = !isOTECRole && !isEmpresaRole;
 
   if (!user) return null;
 
@@ -61,6 +62,9 @@ const Dashboard: React.FC = () => {
       {/* Quick Access Buttons - Centered at top */}
       <QuickAccessButtons />
 
+      {/* Course Search - Only for OTIC role, shown below quick access */}
+      {isOTICRole && <CourseSearchGrid />}
+
       {/* DJO Management Card - Only for OTEC roles */}
       {isOTECRole && <DJOManagementCard />}
 
@@ -82,7 +86,7 @@ const Dashboard: React.FC = () => {
       )}
 
       {/* OTIC Operational Dashboard */}
-      {!isOTECRole && !isEmpresaRole && <OTICDashboardSections />}
+      {isOTICRole && <OTICDashboardSections />}
     </div>
   );
 };
