@@ -126,16 +126,16 @@ const mdaRectificationCourses: PendingCourse[] = [
 ];
 
 const allCourses = [
-  { id: '1', name: 'Excel Avanzado', client: 'Empresa ABC', otec: 'Capacita Chile', stage: 'Inscrito', status: 'normal', date: '2026-01-14', amount: 850000, idSence: '1237890001', idInscripcion: 'INS-2026-0001', codigoSence: '1237890001-001' },
-  { id: '2', name: 'Liderazgo', client: 'Holding XYZ', otec: 'FormaPro', stage: 'En ejecución', status: 'medio', date: '2026-01-13', amount: 1200000, idSence: '1237890002', idInscripcion: 'INS-2026-0002', codigoSence: '1237890002-001' },
-  { id: '3', name: 'Seguridad Industrial', client: 'Minera Norte', otec: 'SafetyFirst', stage: 'Inscrito', status: 'normal', date: '2026-01-12', amount: 950000, idSence: '1237890003', idInscripcion: 'INS-2026-0003', codigoSence: '1237890003-001' },
-  { id: '4', name: 'Python Básico', client: 'Tech Solutions', otec: 'CodeAcademy', stage: 'Borrador', status: 'normal', date: '2026-01-11', amount: 750000, idSence: '1237890004', idInscripcion: 'INS-2026-0004', codigoSence: '1237890004-001' },
-  { id: '5', name: 'Atención Cliente', client: 'Retail Plus', otec: 'ServicePro', stage: 'Por comunicar', status: 'critico', date: '2026-01-10', amount: 680000, idSence: '1237890005', idInscripcion: 'INS-2026-0005', codigoSence: '1237890005-001' },
-  { id: '6', name: 'Gestión Proyectos', client: 'Constructora Sur', otec: 'PMI Chile', stage: 'Por emisión OC', status: 'medio', date: '2026-01-09', amount: 1500000, idSence: '1237890006', idInscripcion: 'INS-2026-0006', codigoSence: '1237890006-001' },
-  { id: '7', name: 'Normativa Laboral', client: 'RRHH Corp', otec: 'LegalTrain', stage: 'Por liquidar', status: 'normal', date: '2026-01-08', amount: 620000, idSence: '1237890007', idInscripcion: 'INS-2026-0007', codigoSence: '1237890007-001' },
-  { id: '8', name: 'Marketing Digital', client: 'Agencia Creativa', otec: 'DigitalPro', stage: 'En ejecución', status: 'normal', date: '2026-01-07', amount: 890000, idSence: '1237890008', idInscripcion: 'INS-2026-0008', codigoSence: '1237890008-001' },
-  { id: '9', name: 'Contabilidad', client: 'Finanzas Corp', otec: 'ContaFácil', stage: 'Inscrito', status: 'normal', date: '2026-01-06', amount: 720000, idSence: '1237890009', idInscripcion: 'INS-2026-0009', codigoSence: '1237890009-001' },
-  { id: '10', name: 'Inglés Negocios', client: 'Export Chile', otec: 'EnglishPro', stage: 'En ejecución', status: 'medio', date: '2026-01-05', amount: 980000, idSence: '1237890010', idInscripcion: 'INS-2026-0010', codigoSence: '1237890010-001' },
+  { id: '1', name: 'Excel Avanzado', client: 'Empresa ABC', otec: 'Capacita Chile', stage: 'Inscrito', status: 'normal', date: '2026-01-14', amount: 850000 },
+  { id: '2', name: 'Liderazgo', client: 'Holding XYZ', otec: 'FormaPro', stage: 'En ejecución', status: 'medio', date: '2026-01-13', amount: 1200000 },
+  { id: '3', name: 'Seguridad Industrial', client: 'Minera Norte', otec: 'SafetyFirst', stage: 'Inscrito', status: 'normal', date: '2026-01-12', amount: 950000 },
+  { id: '4', name: 'Python Básico', client: 'Tech Solutions', otec: 'CodeAcademy', stage: 'Borrador', status: 'normal', date: '2026-01-11', amount: 750000 },
+  { id: '5', name: 'Atención Cliente', client: 'Retail Plus', otec: 'ServicePro', stage: 'Por comunicar', status: 'critico', date: '2026-01-10', amount: 680000 },
+  { id: '6', name: 'Gestión Proyectos', client: 'Constructora Sur', otec: 'PMI Chile', stage: 'Por emisión OC', status: 'medio', date: '2026-01-09', amount: 1500000 },
+  { id: '7', name: 'Normativa Laboral', client: 'RRHH Corp', otec: 'LegalTrain', stage: 'Por liquidar', status: 'normal', date: '2026-01-08', amount: 620000 },
+  { id: '8', name: 'Marketing Digital', client: 'Agencia Creativa', otec: 'DigitalPro', stage: 'En ejecución', status: 'normal', date: '2026-01-07', amount: 890000 },
+  { id: '9', name: 'Contabilidad', client: 'Finanzas Corp', otec: 'ContaFácil', stage: 'Inscrito', status: 'normal', date: '2026-01-06', amount: 720000 },
+  { id: '10', name: 'Inglés Negocios', client: 'Export Chile', otec: 'EnglishPro', stage: 'En ejecución', status: 'medio', date: '2026-01-05', amount: 980000 },
 ];
 
 // Helper Components
@@ -301,105 +301,97 @@ const CourseStagesSection: React.FC = () => {
   return (
     <Card 
       title={
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between w-full">
           <span>Estado de Cursos por Etapa</span>
+          <div className="flex items-center gap-4 text-sm font-normal">
+            <span className="flex items-center gap-1.5">
+              <span className="w-3 h-3 rounded-full bg-green-500"></span>
+              Normal: {totalNormal}
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-3 h-3 rounded-full bg-amber-500"></span>
+              Medio: {totalMedio}
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-3 h-3 rounded-full bg-red-500"></span>
+              Crítico: {totalCritico}
+            </span>
+          </div>
         </div>
       } 
-      className="shadow-sm h-full"
+      className="shadow-sm"
     >
-      {/* Legend */}
-      <div className="flex items-center gap-4 text-sm mb-4">
-        <span className="flex items-center gap-1.5">
-          <span className="w-3 h-3 rounded-full bg-green-500"></span>
-          Normal: {totalNormal}
-        </span>
-        <span className="flex items-center gap-1.5">
-          <span className="w-3 h-3 rounded-full bg-amber-500"></span>
-          Medio: {totalMedio}
-        </span>
-        <span className="flex items-center gap-1.5">
-          <span className="w-3 h-3 rounded-full bg-red-500"></span>
-          Crítico: {totalCritico}
-        </span>
-      </div>
-
-      {/* Vertical Pipeline */}
-      <div className="flex flex-col gap-2 mb-4">
+      {/* Pipeline visual */}
+      <div className="flex items-stretch gap-1 mb-6">
         {courseStages.map((stage, index) => (
           <div 
             key={stage.name}
-            className="relative"
+            className="flex-1 relative group"
           >
-            {/* Stage card - horizontal layout */}
-            <div className={`bg-gradient-to-r from-muted/50 to-muted/30 rounded-lg p-3 border transition-all ${
+            {/* Stage card */}
+            <div className={`bg-gradient-to-b from-muted/50 to-muted/30 rounded-lg p-4 border transition-all h-full ${
               selectedFilter?.stage === stage.name 
                 ? 'border-primary shadow-md ring-2 ring-primary/20' 
                 : 'border-muted hover:border-primary/30 hover:shadow-md'
             }`}>
-              <div className="flex items-center gap-3">
-                {/* Icon */}
-                <div className="p-2 bg-primary/10 rounded-lg text-primary flex-shrink-0">
+              {/* Header */}
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <div className="p-2.5 bg-primary/10 rounded-lg text-primary">
                   {stage.icon}
                 </div>
-                
-                {/* Name and total */}
-                <div className="flex-shrink-0 w-28">
-                  <h4 className="font-medium text-sm text-foreground">{stage.name}</h4>
-                  <span className="text-lg font-bold text-primary">{stage.total}</span>
-                </div>
+              </div>
+              <h4 className="text-center font-medium text-sm mb-2 text-foreground">{stage.name}</h4>
+              
+              {/* Total */}
+              <div className="text-center mb-4">
+                <span className="text-3xl font-bold text-primary">{stage.total}</span>
+                <span className="text-xs text-muted-foreground block mt-1">cursos</span>
+              </div>
 
-                {/* Status breakdown - horizontal stacked bar */}
-                <div className="flex-1 h-4 bg-muted rounded-full overflow-hidden flex">
-                  <Tooltip title={`Normal: ${stage.normal} cursos - Clic para ver detalle`} placement="top">
-                    <div 
-                      className={`bg-green-500 h-full transition-all cursor-pointer ${
-                        selectedFilter?.stage === stage.name && selectedFilter?.status === 'normal'
-                          ? 'ring-2 ring-green-700 ring-offset-1'
-                          : 'hover:opacity-80'
-                      }`}
-                      style={{ width: `${(stage.normal / stage.total) * 100}%` }}
-                      onClick={() => handleBarClick(stage.name, 'normal')}
-                    />
-                  </Tooltip>
-                  <Tooltip title={`Medio: ${stage.medio} cursos - Clic para ver detalle`} placement="top">
-                    <div 
-                      className={`bg-amber-500 h-full transition-all cursor-pointer ${
-                        selectedFilter?.stage === stage.name && selectedFilter?.status === 'medio'
-                          ? 'ring-2 ring-amber-700 ring-offset-1'
-                          : 'hover:opacity-80'
-                      }`}
-                      style={{ width: `${(stage.medio / stage.total) * 100}%` }}
-                      onClick={() => handleBarClick(stage.name, 'medio')}
-                    />
-                  </Tooltip>
-                  <Tooltip title={`Crítico: ${stage.critico} cursos - Clic para ver detalle`} placement="top">
-                    <div 
-                      className={`bg-red-500 h-full transition-all cursor-pointer ${
-                        selectedFilter?.stage === stage.name && selectedFilter?.status === 'critico'
-                          ? 'ring-2 ring-red-700 ring-offset-1'
-                          : 'hover:opacity-80'
-                      }`}
-                      style={{ width: `${(stage.critico / stage.total) * 100}%` }}
-                      onClick={() => handleBarClick(stage.name, 'critico')}
-                    />
-                  </Tooltip>
-                </div>
-
-                {/* Numbers */}
-                <div className="flex items-center gap-2 text-xs flex-shrink-0">
-                  <span className="text-green-600 font-medium">{stage.normal}</span>
-                  <span className="text-muted-foreground">/</span>
-                  <span className="text-amber-600 font-medium">{stage.medio}</span>
-                  <span className="text-muted-foreground">/</span>
-                  <span className="text-red-600 font-medium">{stage.critico}</span>
-                </div>
+              {/* Status breakdown - stacked bars with tooltips and click */}
+              <div className="h-3 bg-muted rounded-full overflow-hidden flex">
+                <Tooltip title={`Normal: ${stage.normal} cursos - Clic para ver detalle`} placement="top">
+                  <div 
+                    className={`bg-green-500 h-full transition-all cursor-pointer ${
+                      selectedFilter?.stage === stage.name && selectedFilter?.status === 'normal'
+                        ? 'ring-2 ring-green-700 ring-offset-1'
+                        : 'hover:opacity-80'
+                    }`}
+                    style={{ width: `${(stage.normal / stage.total) * 100}%` }}
+                    onClick={() => handleBarClick(stage.name, 'normal')}
+                  />
+                </Tooltip>
+                <Tooltip title={`Medio: ${stage.medio} cursos - Clic para ver detalle`} placement="top">
+                  <div 
+                    className={`bg-amber-500 h-full transition-all cursor-pointer ${
+                      selectedFilter?.stage === stage.name && selectedFilter?.status === 'medio'
+                        ? 'ring-2 ring-amber-700 ring-offset-1'
+                        : 'hover:opacity-80'
+                    }`}
+                    style={{ width: `${(stage.medio / stage.total) * 100}%` }}
+                    onClick={() => handleBarClick(stage.name, 'medio')}
+                  />
+                </Tooltip>
+                <Tooltip title={`Crítico: ${stage.critico} cursos - Clic para ver detalle`} placement="top">
+                  <div 
+                    className={`bg-red-500 h-full transition-all cursor-pointer ${
+                      selectedFilter?.stage === stage.name && selectedFilter?.status === 'critico'
+                        ? 'ring-2 ring-red-700 ring-offset-1'
+                        : 'hover:opacity-80'
+                    }`}
+                    style={{ width: `${(stage.critico / stage.total) * 100}%` }}
+                    onClick={() => handleBarClick(stage.name, 'critico')}
+                  />
+                </Tooltip>
               </div>
             </div>
 
             {/* Arrow connector */}
             {index < courseStages.length - 1 && (
-              <div className="flex justify-center py-1">
-                <ArrowDown className="w-4 h-4 text-muted-foreground/40" />
+              <div className="absolute top-1/2 -right-2 transform -translate-y-1/2 z-10 text-muted-foreground/40">
+                <svg width="12" height="24" viewBox="0 0 12 24" fill="currentColor">
+                  <path d="M0 0 L12 12 L0 24 Z" />
+                </svg>
               </div>
             )}
           </div>
@@ -408,7 +400,7 @@ const CourseStagesSection: React.FC = () => {
 
       {/* Dynamic detail grid */}
       {selectedFilter && (
-        <div className="mb-4 animate-in slide-in-from-top-2 duration-300">
+        <div className="mb-6 animate-in slide-in-from-top-2 duration-300">
           <div className="bg-muted/30 rounded-lg p-4 border border-muted">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
@@ -442,28 +434,28 @@ const CourseStagesSection: React.FC = () => {
       )}
 
       {/* Summary row */}
-      <div className="bg-muted/20 rounded-lg p-3 flex items-center justify-between">
-        <div className="flex items-center gap-2">
+      <div className="bg-muted/20 rounded-lg p-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
           <div className="p-2 bg-primary/10 rounded-lg">
-            <Users className="w-4 h-4 text-primary" />
+            <Users className="w-5 h-5 text-primary" />
           </div>
           <div>
-            <span className="text-xl font-bold">{totalCourses}</span>
-            <span className="text-muted-foreground text-sm ml-2">cursos</span>
+            <span className="text-2xl font-bold">{totalCourses}</span>
+            <span className="text-muted-foreground ml-2">cursos en total</span>
           </div>
         </div>
-        <div className="flex items-center gap-4 text-sm">
+        <div className="flex items-center gap-6">
           <div className="text-center">
-            <div className="font-semibold text-green-600">{Math.round((totalNormal / totalCourses) * 100)}%</div>
+            <div className="text-xl font-semibold text-green-600">{Math.round((totalNormal / totalCourses) * 100)}%</div>
             <div className="text-xs text-muted-foreground">Sin alertas</div>
           </div>
           <div className="text-center">
-            <div className="font-semibold text-amber-600">{Math.round((totalMedio / totalCourses) * 100)}%</div>
-            <div className="text-xs text-muted-foreground">Atención</div>
+            <div className="text-xl font-semibold text-amber-600">{Math.round((totalMedio / totalCourses) * 100)}%</div>
+            <div className="text-xs text-muted-foreground">Atención media</div>
           </div>
           <div className="text-center">
-            <div className="font-semibold text-red-600">{Math.round((totalCritico / totalCourses) * 100)}%</div>
-            <div className="text-xs text-muted-foreground">Crítico</div>
+            <div className="text-xl font-semibold text-red-600">{Math.round((totalCritico / totalCourses) * 100)}%</div>
+            <div className="text-xs text-muted-foreground">Requieren acción</div>
           </div>
         </div>
       </div>
@@ -515,94 +507,306 @@ const financialSummary = {
 };
 
 const AccountStatusSection: React.FC = () => {
+  const [searchText, setSearchText] = useState('');
+  
+  const formatCurrency = (value: number) => 
+    new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 }).format(value);
+
   const formatCurrencyShort = (value: number) => {
     if (value >= 1000000) {
       return `$${(value / 1000000).toFixed(1)}M`;
     }
-    return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 }).format(value);
+    return formatCurrency(value);
   };
 
+  const filteredCompanies = companyAccounts.filter(company =>
+    company.name.toLowerCase().includes(searchText.toLowerCase()) ||
+    company.rut.includes(searchText)
+  );
+
+  // Calculate percentages for the waterfall chart
+  const totalFranquicia = financialSummary.aporteAno + financialSummary.excedentesAnoAnterior;
+  const usadoPct = (financialSummary.usado / totalFranquicia) * 100;
+  const comprometidoPct = (financialSummary.comprometido / totalFranquicia) * 100;
+  const disponiblePct = (financialSummary.saldoDisponible / totalFranquicia) * 100;
+  const excedentesRestantesPct = (financialSummary.saldoActualExcedentes / totalFranquicia) * 100;
+
+  const columns = [
+    { 
+      title: 'Empresa', 
+      dataIndex: 'name', 
+      key: 'name', 
+      render: (text: string, record: any) => (
+        <div>
+          <span className="font-medium flex items-center gap-1">
+            <Building2 className="w-4 h-4 text-muted-foreground" />
+            {text}
+          </span>
+          <span className="text-xs text-muted-foreground">{record.rut}</span>
+        </div>
+      )
+    },
+    { 
+      title: 'Saldo', 
+      dataIndex: 'balance', 
+      key: 'balance',
+      render: (value: number) => <span className="font-semibold">{formatCurrency(value)}</span>
+    },
+    { 
+      title: 'Facturado', 
+      dataIndex: 'invoiced', 
+      key: 'invoiced',
+      render: (value: number) => <span className="font-semibold text-green-600">{formatCurrency(value)}</span>
+    },
+    { 
+      title: 'Pendiente', 
+      dataIndex: 'pending', 
+      key: 'pending',
+      render: (value: number) => <span className="font-semibold text-amber-600">{formatCurrency(value)}</span>
+    },
+    { 
+      title: 'Cursos Activos', 
+      dataIndex: 'coursesActive', 
+      key: 'coursesActive',
+      render: (value: number) => <Tag color="blue">{value} cursos</Tag>
+    },
+    { 
+      title: 'Tendencia', 
+      dataIndex: 'trend', 
+      key: 'trend',
+      render: (trend: number) => (
+        <span className={`flex items-center gap-1 ${trend >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+          {trend >= 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+          {trend > 0 ? '+' : ''}{trend}%
+        </span>
+      )
+    },
+    { 
+      title: '', 
+      key: 'action', 
+      render: () => (
+        <Button type="primary" size="small" icon={<Eye className="w-4 h-4" />}>
+          Detalle
+        </Button>
+      )
+    },
+  ];
+
   return (
-    <Card title="Estado Cuenta Corriente" className="shadow-sm h-full">
-      {/* Key Metrics Cards */}
-      <div className="grid grid-cols-2 gap-3">
-        <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="p-2 bg-blue-500/20 rounded-lg">
-              <DollarSign className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+    <Card title="Estado Cuenta Corriente por Empresa" className="shadow-sm">
+      {/* Financial Indicators Section */}
+      <div className="mb-6">
+        {/* Key Metrics Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="p-2 bg-blue-500/20 rounded-lg">
+                <DollarSign className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              </div>
+              <span className="text-sm text-blue-700 dark:text-blue-300 font-medium">Aporte del Año</span>
             </div>
-            <span className="text-sm text-blue-700 dark:text-blue-300 font-medium">Aporte del Año</span>
+            <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">{formatCurrencyShort(financialSummary.aporteAno)}</p>
+            <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">Franquicia tributaria 2026</p>
           </div>
-          <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">{formatCurrencyShort(financialSummary.aporteAno)}</p>
-          <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">Franquicia tributaria 2026</p>
+
+          <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-xl p-4 border border-green-200 dark:border-green-800">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="p-2 bg-green-500/20 rounded-lg">
+                <TrendingUp className="w-5 h-5 text-green-600 dark:text-green-400" />
+              </div>
+              <span className="text-sm text-green-700 dark:text-green-300 font-medium">Saldo Disponible</span>
+            </div>
+            <p className="text-2xl font-bold text-green-900 dark:text-green-100">{formatCurrencyShort(financialSummary.saldoDisponible)}</p>
+            <p className="text-xs text-green-600 dark:text-green-400 mt-1">{((financialSummary.saldoDisponible / financialSummary.aporteAno) * 100).toFixed(1)}% del aporte</p>
+          </div>
+
+          <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-xl p-4 border border-purple-200 dark:border-purple-800">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="p-2 bg-purple-500/20 rounded-lg">
+                <Clock className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+              </div>
+              <span className="text-sm text-purple-700 dark:text-purple-300 font-medium">Excedentes Año Anterior</span>
+            </div>
+            <p className="text-2xl font-bold text-purple-900 dark:text-purple-100">{formatCurrencyShort(financialSummary.excedentesAnoAnterior)}</p>
+            <p className="text-xs text-purple-600 dark:text-purple-400 mt-1">Acumulado 2025</p>
+          </div>
+
+          <div className="bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-800/20 rounded-xl p-4 border border-amber-200 dark:border-amber-800">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="p-2 bg-amber-500/20 rounded-lg">
+                <Briefcase className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+              </div>
+              <span className="text-sm text-amber-700 dark:text-amber-300 font-medium">Saldo Actual Excedentes</span>
+            </div>
+            <p className="text-2xl font-bold text-amber-900 dark:text-amber-100">{formatCurrencyShort(financialSummary.saldoActualExcedentes)}</p>
+            <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">{((financialSummary.saldoActualExcedentes / financialSummary.excedentesAnoAnterior) * 100).toFixed(1)}% restante</p>
+          </div>
         </div>
 
-        <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-xl p-4 border border-green-200 dark:border-green-800">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="p-2 bg-green-500/20 rounded-lg">
-              <TrendingUp className="w-5 h-5 text-green-600 dark:text-green-400" />
+        {/* Financial Flow - Stacked Vertical Cards */}
+        <div className="bg-muted/30 rounded-xl p-5 border">
+          <h4 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
+            <Calculator className="w-4 h-4 text-primary" />
+            Estado Financiero - Flujo de Franquicia
+          </h4>
+          
+          <div className="flex flex-col items-center space-y-2">
+            {/* Total Franquicia */}
+            <div className="w-full max-w-md bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl p-4 text-white shadow-lg">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-blue-100">Total Franquicia Disponible</p>
+                  <p className="text-2xl font-bold">{formatCurrency(totalFranquicia)}</p>
+                </div>
+                <div className="p-3 bg-white/20 rounded-full">
+                  <DollarSign className="w-6 h-6" />
+                </div>
+              </div>
             </div>
-            <span className="text-sm text-green-700 dark:text-green-300 font-medium">Saldo Disponible</span>
-          </div>
-          <p className="text-2xl font-bold text-green-900 dark:text-green-100">{formatCurrencyShort(financialSummary.saldoDisponible)}</p>
-          <p className="text-xs text-green-600 dark:text-green-400 mt-1">{((financialSummary.saldoDisponible / financialSummary.aporteAno) * 100).toFixed(1)}% del aporte</p>
-        </div>
 
-        <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-xl p-4 border border-purple-200 dark:border-purple-800">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="p-2 bg-purple-500/20 rounded-lg">
-              <Clock className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+            {/* Arrow Down */}
+            <div className="flex items-center justify-center py-1">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <ArrowDown className="w-5 h-5" />
+              </div>
             </div>
-            <span className="text-sm text-purple-700 dark:text-purple-300 font-medium">Excedentes Año Anterior</span>
-          </div>
-          <p className="text-2xl font-bold text-purple-900 dark:text-purple-100">{formatCurrencyShort(financialSummary.excedentesAnoAnterior)}</p>
-          <p className="text-xs text-purple-600 dark:text-purple-400 mt-1">Acumulado 2025</p>
-        </div>
 
-        <div className="bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-800/20 rounded-xl p-4 border border-amber-200 dark:border-amber-800">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="p-2 bg-amber-500/20 rounded-lg">
-              <Briefcase className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+            {/* Split into two flows */}
+            <div className="w-full max-w-2xl grid grid-cols-2 gap-4">
+              {/* Aporte del Año Flow */}
+              <div className="flex flex-col items-center space-y-2">
+                <div className="w-full bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-xl p-4 text-white shadow-md">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs font-medium text-indigo-100">Aporte del Año</p>
+                      <p className="text-xl font-bold">{formatCurrencyShort(financialSummary.aporteAno)}</p>
+                    </div>
+                    <Plus className="w-5 h-5 text-indigo-200" />
+                  </div>
+                </div>
+
+                <ArrowDown className="w-4 h-4 text-muted-foreground" />
+
+                <div className="w-full bg-gradient-to-r from-red-400 to-red-500 rounded-xl p-3 text-white shadow-md">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs font-medium text-red-100">Usado</p>
+                      <p className="text-lg font-bold">{formatCurrencyShort(financialSummary.usado)}</p>
+                    </div>
+                    <Minus className="w-5 h-5 text-red-200" />
+                  </div>
+                </div>
+
+                <ArrowDown className="w-4 h-4 text-muted-foreground" />
+
+                <div className="w-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-xl p-3 text-white shadow-md">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs font-medium text-amber-100">Comprometido</p>
+                      <p className="text-lg font-bold">{formatCurrencyShort(financialSummary.comprometido)}</p>
+                    </div>
+                    <Minus className="w-5 h-5 text-amber-200" />
+                  </div>
+                </div>
+
+                <ArrowDown className="w-4 h-4 text-muted-foreground" />
+
+                <div className="w-full bg-gradient-to-r from-green-500 to-green-600 rounded-xl p-4 text-white shadow-lg border-2 border-green-300">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs font-medium text-green-100">Saldo Disponible</p>
+                      <p className="text-xl font-bold">{formatCurrencyShort(financialSummary.saldoDisponible)}</p>
+                      <p className="text-xs text-green-200 mt-1">{((financialSummary.saldoDisponible / financialSummary.aporteAno) * 100).toFixed(1)}% disponible</p>
+                    </div>
+                    <CheckCircle2 className="w-5 h-5 text-green-200" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Excedentes Flow */}
+              <div className="flex flex-col items-center space-y-2">
+                <div className="w-full bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl p-4 text-white shadow-md">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs font-medium text-purple-100">Excedentes Año Anterior</p>
+                      <p className="text-xl font-bold">{formatCurrencyShort(financialSummary.excedentesAnoAnterior)}</p>
+                    </div>
+                    <Clock className="w-5 h-5 text-purple-200" />
+                  </div>
+                </div>
+
+                <ArrowDown className="w-4 h-4 text-muted-foreground" />
+
+                <div className="w-full bg-gradient-to-r from-red-400 to-red-500 rounded-xl p-3 text-white shadow-md">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs font-medium text-red-100">Utilizado</p>
+                      <p className="text-lg font-bold">{formatCurrencyShort(financialSummary.excedentesAnoAnterior - financialSummary.saldoActualExcedentes)}</p>
+                    </div>
+                    <Minus className="w-5 h-5 text-red-200" />
+                  </div>
+                </div>
+
+                <ArrowDown className="w-4 h-4 text-muted-foreground" />
+
+                <div className="w-full bg-gradient-to-r from-violet-500 to-violet-600 rounded-xl p-4 text-white shadow-lg border-2 border-violet-300">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs font-medium text-violet-100">Saldo Actual Excedentes</p>
+                      <p className="text-xl font-bold">{formatCurrencyShort(financialSummary.saldoActualExcedentes)}</p>
+                      <p className="text-xs text-violet-200 mt-1">{((financialSummary.saldoActualExcedentes / financialSummary.excedentesAnoAnterior) * 100).toFixed(1)}% restante</p>
+                    </div>
+                    <Briefcase className="w-5 h-5 text-violet-200" />
+                  </div>
+                </div>
+
+                {/* Spacer to align with left column */}
+                <div className="h-[52px]"></div>
+              </div>
             </div>
-            <span className="text-sm text-amber-700 dark:text-amber-300 font-medium">Saldo Excedentes</span>
           </div>
-          <p className="text-2xl font-bold text-amber-900 dark:text-amber-100">{formatCurrencyShort(financialSummary.saldoActualExcedentes)}</p>
-          <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">{((financialSummary.saldoActualExcedentes / financialSummary.excedentesAnoAnterior) * 100).toFixed(1)}% restante</p>
         </div>
+      </div>
+
+      {/* Company Table */}
+      <div className="border-t pt-6">
+        <h4 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
+          <Building2 className="w-4 h-4 text-primary" />
+          Detalle por Empresa
+        </h4>
+        <div className="mb-4">
+          <Input
+            placeholder="Buscar por empresa o RUT..."
+            prefix={<Search className="w-4 h-4 text-muted-foreground" />}
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            className="w-72"
+          />
+        </div>
+        <Table 
+          dataSource={filteredCompanies}
+          columns={columns}
+          pagination={{ pageSize: 5 }}
+          size="small"
+          rowKey="id"
+        />
       </div>
     </Card>
   );
 };
 
 const CourseSearchGrid: React.FC = () => {
-  const [searchType, setSearchType] = useState<'idSence' | 'idInscripcion' | 'codigoSence'>('idSence');
-  const [searchValue, setSearchValue] = useState('');
-  const [hasSearched, setHasSearched] = useState(false);
+  const [searchText, setSearchText] = useState('');
+  const [stageFilter, setStageFilter] = useState<string>('');
+  const [statusFilter, setStatusFilter] = useState<string>('');
 
   const columns = [
-    { 
-      title: 'ID SENCE', 
-      dataIndex: 'idSence', 
-      key: 'idSence',
-      render: (text: string) => <span className="font-mono text-xs">{text}</span>
-    },
-    { 
-      title: 'ID Inscripción', 
-      dataIndex: 'idInscripcion', 
-      key: 'idInscripcion',
-      render: (text: string) => <span className="font-mono text-xs">{text}</span>
-    },
-    { 
-      title: 'Código SENCE', 
-      dataIndex: 'codigoSence', 
-      key: 'codigoSence',
-      render: (text: string) => <span className="font-mono text-xs">{text}</span>
-    },
     { title: 'Curso', dataIndex: 'name', key: 'name', render: (text: string) => <span className="font-medium">{text}</span> },
     { title: 'Cliente', dataIndex: 'client', key: 'client' },
     { title: 'OTEC', dataIndex: 'otec', key: 'otec' },
     { title: 'Etapa', dataIndex: 'stage', key: 'stage', render: (stage: string) => <StageBadge stage={stage} /> },
     { title: 'Estado', dataIndex: 'status', key: 'status', render: (status: 'normal' | 'medio' | 'critico') => <StatusBadge status={status} /> },
+    { title: 'Fecha', dataIndex: 'date', key: 'date' },
     { 
       title: 'Monto', 
       dataIndex: 'amount', 
@@ -620,111 +824,60 @@ const CourseSearchGrid: React.FC = () => {
     },
   ];
 
-  const filteredCourses = hasSearched && searchValue.trim() 
-    ? allCourses.filter(course => {
-        const valueToSearch = course[searchType]?.toLowerCase() || '';
-        return valueToSearch.includes(searchValue.toLowerCase());
-      })
-    : [];
-
-  const handleSearch = () => {
-    setHasSearched(true);
-  };
-
-  const handleClear = () => {
-    setSearchValue('');
-    setHasSearched(false);
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleSearch();
-    }
-  };
-
-  const searchTypeLabels = {
-    idSence: { label: 'ID SENCE', placeholder: 'Ej: 1237890001' },
-    idInscripcion: { label: 'ID Inscripción', placeholder: 'Ej: INS-2026-0001' },
-    codigoSence: { label: 'Código SENCE', placeholder: 'Ej: 1237890001-001' },
-  };
+  const filteredCourses = allCourses.filter(course => {
+    const matchesSearch = course.name.toLowerCase().includes(searchText.toLowerCase()) ||
+                          course.client.toLowerCase().includes(searchText.toLowerCase()) ||
+                          course.otec.toLowerCase().includes(searchText.toLowerCase());
+    const matchesStage = !stageFilter || course.stage === stageFilter;
+    const matchesStatus = !statusFilter || course.status === statusFilter;
+    return matchesSearch && matchesStage && matchesStatus;
+  });
 
   return (
-    <Card 
-      title={
-        <div className="flex items-center gap-2">
-          <Search className="w-5 h-5 text-primary" />
-          <span>Búsqueda Rápida de Cursos</span>
-        </div>
-      } 
-      className="shadow-sm"
-      size="small"
-    >
-      {/* Compact Search Controls */}
-      <div className="flex flex-wrap items-center gap-3">
+    <Card title="Búsqueda de Cursos" className="shadow-sm">
+      <div className="flex flex-wrap gap-4 mb-4">
+        <Input
+          placeholder="Buscar por curso, cliente u OTEC..."
+          prefix={<Search className="w-4 h-4 text-muted-foreground" />}
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          className="w-64"
+        />
         <Select
-          value={searchType}
-          onChange={(value) => {
-            setSearchType(value);
-            setSearchValue('');
-            setHasSearched(false);
-          }}
-          className="w-40"
-          size="middle"
+          placeholder="Filtrar por etapa"
+          allowClear
+          value={stageFilter || undefined}
+          onChange={(value) => setStageFilter(value || '')}
+          className="w-48"
           options={[
-            { value: 'idSence', label: 'ID SENCE' },
-            { value: 'idInscripcion', label: 'ID Inscripción' },
-            { value: 'codigoSence', label: 'Código SENCE' },
+            { value: 'Borrador', label: 'Borrador' },
+            { value: 'Por comunicar', label: 'Por comunicar' },
+            { value: 'Inscrito', label: 'Inscrito' },
+            { value: 'En ejecución', label: 'En ejecución' },
+            { value: 'Por emisión OC', label: 'Por emisión OC' },
+            { value: 'Por liquidar', label: 'Por liquidar' },
           ]}
         />
-        <Input
-          placeholder={searchTypeLabels[searchType].placeholder}
-          prefix={<Search className="w-4 h-4 text-muted-foreground" />}
-          value={searchValue}
-          onChange={(e) => setSearchValue(e.target.value)}
-          onKeyPress={handleKeyPress}
-          className="flex-1 min-w-[200px]"
-          size="middle"
+        <Select
+          placeholder="Filtrar por estado"
+          allowClear
+          value={statusFilter || undefined}
+          onChange={(value) => setStatusFilter(value || '')}
+          className="w-40"
+          options={[
+            { value: 'normal', label: 'Normal' },
+            { value: 'medio', label: 'Medio' },
+            { value: 'critico', label: 'Crítico' },
+          ]}
         />
-        <Button 
-          type="primary" 
-          icon={<Search className="w-4 h-4" />}
-          onClick={handleSearch}
-          disabled={!searchValue.trim()}
-        >
-          Buscar
-        </Button>
-        {hasSearched && (
-          <Button onClick={handleClear} size="middle">
-            Limpiar
-          </Button>
-        )}
       </div>
-
-      {/* Results - only show when searched */}
-      {hasSearched && (
-        <div className="mt-4">
-          {filteredCourses.length === 0 ? (
-            <div className="text-center py-6 text-muted-foreground">
-              <AlertCircle className="w-8 h-8 mx-auto mb-2 opacity-30" />
-              <p className="text-sm">No se encontraron resultados</p>
-            </div>
-          ) : (
-            <>
-              <div className="mb-2 text-sm text-muted-foreground">
-                Se encontraron <span className="font-semibold text-foreground">{filteredCourses.length}</span> resultado(s)
-              </div>
-              <Table 
-                dataSource={filteredCourses} 
-                columns={columns} 
-                pagination={{ pageSize: 5 }}
-                size="small"
-                rowKey="id"
-                scroll={{ x: 1200 }}
-              />
-            </>
-          )}
-        </div>
-      )}
+      <Table 
+        dataSource={filteredCourses} 
+        columns={columns} 
+        pagination={{ pageSize: 10 }}
+        size="small"
+        rowKey="id"
+      />
     </Card>
   );
 };
@@ -735,8 +888,6 @@ const PendingCoursesSection: React.FC<{
   courses: PendingCourse[];
   iconColor: string;
 }> = ({ title, icon, courses, iconColor }) => {
-  const [pageSize, setPageSize] = useState(5);
-
   const columns = [
     { title: 'Curso', dataIndex: 'name', key: 'name', render: (text: string) => <span className="font-medium">{text}</span> },
     { title: 'Cliente', dataIndex: 'client', key: 'client' },
@@ -763,43 +914,25 @@ const PendingCoursesSection: React.FC<{
   ];
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-3">
+    <Card 
+      title={
         <div className="flex items-center gap-2">
           <span className={iconColor}>{icon}</span>
-          <span className="font-medium">{title}</span>
+          <span>{title}</span>
           <Tag color="error">{courses.length}</Tag>
         </div>
-        <div className="flex items-center gap-2 text-sm">
-          <span className="text-muted-foreground">Mostrar:</span>
-          <Select
-            value={pageSize}
-            onChange={(value) => setPageSize(value)}
-            size="small"
-            className="w-20"
-            options={[
-              { value: 5, label: '5' },
-              { value: 10, label: '10' },
-              { value: 20, label: '20' },
-              { value: 50, label: '50' },
-            ]}
-          />
-          <span className="text-muted-foreground">por página</span>
-        </div>
-      </div>
+      } 
+      className="shadow-sm"
+      size="small"
+    >
       <Table 
         dataSource={courses} 
         columns={columns} 
-        pagination={{ 
-          pageSize: pageSize,
-          size: 'small',
-          showSizeChanger: false,
-          showTotal: (total, range) => `${range[0]}-${range[1]} de ${total}`
-        }}
+        pagination={false}
         size="small"
         rowKey="id"
       />
-    </div>
+    </Card>
   );
 };
 
@@ -912,8 +1045,14 @@ export const OTICDashboardSections: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Course Stages - Full width */}
+      {/* Course Stages with Status */}
       <CourseStagesSection />
+
+      {/* Account Status by Holding */}
+      <AccountStatusSection />
+
+      {/* Course Search Grid */}
+      <CourseSearchGrid />
 
       {/* Pending Issues Tabs */}
       <Card title="Gestión de Pendientes" className="shadow-sm">
@@ -922,6 +1061,3 @@ export const OTICDashboardSections: React.FC = () => {
     </div>
   );
 };
-
-// Export the CourseSearchGrid and AccountStatusSection separately for use in Dashboard
-export { CourseSearchGrid, AccountStatusSection };
