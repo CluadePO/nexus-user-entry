@@ -301,97 +301,105 @@ const CourseStagesSection: React.FC = () => {
   return (
     <Card 
       title={
-        <div className="flex items-center justify-between w-full">
+        <div className="flex items-center gap-2">
           <span>Estado de Cursos por Etapa</span>
-          <div className="flex items-center gap-4 text-sm font-normal">
-            <span className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-full bg-green-500"></span>
-              Normal: {totalNormal}
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-full bg-amber-500"></span>
-              Medio: {totalMedio}
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-full bg-red-500"></span>
-              Crítico: {totalCritico}
-            </span>
-          </div>
         </div>
       } 
-      className="shadow-sm"
+      className="shadow-sm h-full"
     >
-      {/* Pipeline visual */}
-      <div className="flex items-stretch gap-1 mb-6">
+      {/* Legend */}
+      <div className="flex items-center gap-4 text-sm mb-4">
+        <span className="flex items-center gap-1.5">
+          <span className="w-3 h-3 rounded-full bg-green-500"></span>
+          Normal: {totalNormal}
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="w-3 h-3 rounded-full bg-amber-500"></span>
+          Medio: {totalMedio}
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="w-3 h-3 rounded-full bg-red-500"></span>
+          Crítico: {totalCritico}
+        </span>
+      </div>
+
+      {/* Vertical Pipeline */}
+      <div className="flex flex-col gap-2 mb-4">
         {courseStages.map((stage, index) => (
           <div 
             key={stage.name}
-            className="flex-1 relative group"
+            className="relative"
           >
-            {/* Stage card */}
-            <div className={`bg-gradient-to-b from-muted/50 to-muted/30 rounded-lg p-4 border transition-all h-full ${
+            {/* Stage card - horizontal layout */}
+            <div className={`bg-gradient-to-r from-muted/50 to-muted/30 rounded-lg p-3 border transition-all ${
               selectedFilter?.stage === stage.name 
                 ? 'border-primary shadow-md ring-2 ring-primary/20' 
                 : 'border-muted hover:border-primary/30 hover:shadow-md'
             }`}>
-              {/* Header */}
-              <div className="flex items-center justify-center gap-2 mb-4">
-                <div className="p-2.5 bg-primary/10 rounded-lg text-primary">
+              <div className="flex items-center gap-3">
+                {/* Icon */}
+                <div className="p-2 bg-primary/10 rounded-lg text-primary flex-shrink-0">
                   {stage.icon}
                 </div>
-              </div>
-              <h4 className="text-center font-medium text-sm mb-2 text-foreground">{stage.name}</h4>
-              
-              {/* Total */}
-              <div className="text-center mb-4">
-                <span className="text-3xl font-bold text-primary">{stage.total}</span>
-                <span className="text-xs text-muted-foreground block mt-1">cursos</span>
-              </div>
+                
+                {/* Name and total */}
+                <div className="flex-shrink-0 w-28">
+                  <h4 className="font-medium text-sm text-foreground">{stage.name}</h4>
+                  <span className="text-lg font-bold text-primary">{stage.total}</span>
+                </div>
 
-              {/* Status breakdown - stacked bars with tooltips and click */}
-              <div className="h-3 bg-muted rounded-full overflow-hidden flex">
-                <Tooltip title={`Normal: ${stage.normal} cursos - Clic para ver detalle`} placement="top">
-                  <div 
-                    className={`bg-green-500 h-full transition-all cursor-pointer ${
-                      selectedFilter?.stage === stage.name && selectedFilter?.status === 'normal'
-                        ? 'ring-2 ring-green-700 ring-offset-1'
-                        : 'hover:opacity-80'
-                    }`}
-                    style={{ width: `${(stage.normal / stage.total) * 100}%` }}
-                    onClick={() => handleBarClick(stage.name, 'normal')}
-                  />
-                </Tooltip>
-                <Tooltip title={`Medio: ${stage.medio} cursos - Clic para ver detalle`} placement="top">
-                  <div 
-                    className={`bg-amber-500 h-full transition-all cursor-pointer ${
-                      selectedFilter?.stage === stage.name && selectedFilter?.status === 'medio'
-                        ? 'ring-2 ring-amber-700 ring-offset-1'
-                        : 'hover:opacity-80'
-                    }`}
-                    style={{ width: `${(stage.medio / stage.total) * 100}%` }}
-                    onClick={() => handleBarClick(stage.name, 'medio')}
-                  />
-                </Tooltip>
-                <Tooltip title={`Crítico: ${stage.critico} cursos - Clic para ver detalle`} placement="top">
-                  <div 
-                    className={`bg-red-500 h-full transition-all cursor-pointer ${
-                      selectedFilter?.stage === stage.name && selectedFilter?.status === 'critico'
-                        ? 'ring-2 ring-red-700 ring-offset-1'
-                        : 'hover:opacity-80'
-                    }`}
-                    style={{ width: `${(stage.critico / stage.total) * 100}%` }}
-                    onClick={() => handleBarClick(stage.name, 'critico')}
-                  />
-                </Tooltip>
+                {/* Status breakdown - horizontal stacked bar */}
+                <div className="flex-1 h-4 bg-muted rounded-full overflow-hidden flex">
+                  <Tooltip title={`Normal: ${stage.normal} cursos - Clic para ver detalle`} placement="top">
+                    <div 
+                      className={`bg-green-500 h-full transition-all cursor-pointer ${
+                        selectedFilter?.stage === stage.name && selectedFilter?.status === 'normal'
+                          ? 'ring-2 ring-green-700 ring-offset-1'
+                          : 'hover:opacity-80'
+                      }`}
+                      style={{ width: `${(stage.normal / stage.total) * 100}%` }}
+                      onClick={() => handleBarClick(stage.name, 'normal')}
+                    />
+                  </Tooltip>
+                  <Tooltip title={`Medio: ${stage.medio} cursos - Clic para ver detalle`} placement="top">
+                    <div 
+                      className={`bg-amber-500 h-full transition-all cursor-pointer ${
+                        selectedFilter?.stage === stage.name && selectedFilter?.status === 'medio'
+                          ? 'ring-2 ring-amber-700 ring-offset-1'
+                          : 'hover:opacity-80'
+                      }`}
+                      style={{ width: `${(stage.medio / stage.total) * 100}%` }}
+                      onClick={() => handleBarClick(stage.name, 'medio')}
+                    />
+                  </Tooltip>
+                  <Tooltip title={`Crítico: ${stage.critico} cursos - Clic para ver detalle`} placement="top">
+                    <div 
+                      className={`bg-red-500 h-full transition-all cursor-pointer ${
+                        selectedFilter?.stage === stage.name && selectedFilter?.status === 'critico'
+                          ? 'ring-2 ring-red-700 ring-offset-1'
+                          : 'hover:opacity-80'
+                      }`}
+                      style={{ width: `${(stage.critico / stage.total) * 100}%` }}
+                      onClick={() => handleBarClick(stage.name, 'critico')}
+                    />
+                  </Tooltip>
+                </div>
+
+                {/* Numbers */}
+                <div className="flex items-center gap-2 text-xs flex-shrink-0">
+                  <span className="text-green-600 font-medium">{stage.normal}</span>
+                  <span className="text-muted-foreground">/</span>
+                  <span className="text-amber-600 font-medium">{stage.medio}</span>
+                  <span className="text-muted-foreground">/</span>
+                  <span className="text-red-600 font-medium">{stage.critico}</span>
+                </div>
               </div>
             </div>
 
             {/* Arrow connector */}
             {index < courseStages.length - 1 && (
-              <div className="absolute top-1/2 -right-2 transform -translate-y-1/2 z-10 text-muted-foreground/40">
-                <svg width="12" height="24" viewBox="0 0 12 24" fill="currentColor">
-                  <path d="M0 0 L12 12 L0 24 Z" />
-                </svg>
+              <div className="flex justify-center py-1">
+                <ArrowDown className="w-4 h-4 text-muted-foreground/40" />
               </div>
             )}
           </div>
@@ -400,7 +408,7 @@ const CourseStagesSection: React.FC = () => {
 
       {/* Dynamic detail grid */}
       {selectedFilter && (
-        <div className="mb-6 animate-in slide-in-from-top-2 duration-300">
+        <div className="mb-4 animate-in slide-in-from-top-2 duration-300">
           <div className="bg-muted/30 rounded-lg p-4 border border-muted">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
@@ -434,28 +442,28 @@ const CourseStagesSection: React.FC = () => {
       )}
 
       {/* Summary row */}
-      <div className="bg-muted/20 rounded-lg p-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
+      <div className="bg-muted/20 rounded-lg p-3 flex items-center justify-between">
+        <div className="flex items-center gap-2">
           <div className="p-2 bg-primary/10 rounded-lg">
-            <Users className="w-5 h-5 text-primary" />
+            <Users className="w-4 h-4 text-primary" />
           </div>
           <div>
-            <span className="text-2xl font-bold">{totalCourses}</span>
-            <span className="text-muted-foreground ml-2">cursos en total</span>
+            <span className="text-xl font-bold">{totalCourses}</span>
+            <span className="text-muted-foreground text-sm ml-2">cursos</span>
           </div>
         </div>
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-4 text-sm">
           <div className="text-center">
-            <div className="text-xl font-semibold text-green-600">{Math.round((totalNormal / totalCourses) * 100)}%</div>
+            <div className="font-semibold text-green-600">{Math.round((totalNormal / totalCourses) * 100)}%</div>
             <div className="text-xs text-muted-foreground">Sin alertas</div>
           </div>
           <div className="text-center">
-            <div className="text-xl font-semibold text-amber-600">{Math.round((totalMedio / totalCourses) * 100)}%</div>
-            <div className="text-xs text-muted-foreground">Atención media</div>
+            <div className="font-semibold text-amber-600">{Math.round((totalMedio / totalCourses) * 100)}%</div>
+            <div className="text-xs text-muted-foreground">Atención</div>
           </div>
           <div className="text-center">
-            <div className="text-xl font-semibold text-red-600">{Math.round((totalCritico / totalCourses) * 100)}%</div>
-            <div className="text-xs text-muted-foreground">Requieren acción</div>
+            <div className="font-semibold text-red-600">{Math.round((totalCritico / totalCourses) * 100)}%</div>
+            <div className="text-xs text-muted-foreground">Crítico</div>
           </div>
         </div>
       </div>
@@ -593,56 +601,72 @@ const AccountStatusSection: React.FC = () => {
   ];
 
   return (
-    <Card title="Estado Cuenta Corriente por Empresa" className="shadow-sm">
+    <Card title="Estado Cuenta Corriente por Empresa" className="shadow-sm h-full">
       {/* Financial Indicators Section */}
-      <div className="mb-6">
+      <div className="mb-4">
         {/* Key Metrics Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="p-2 bg-blue-500/20 rounded-lg">
-                <DollarSign className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+        <div className="grid grid-cols-2 gap-3 mb-4">
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-3 border border-blue-200 dark:border-blue-800">
+            <div className="flex items-center gap-2 mb-1">
+              <div className="p-1.5 bg-blue-500/20 rounded-lg">
+                <DollarSign className="w-4 h-4 text-blue-600 dark:text-blue-400" />
               </div>
-              <span className="text-sm text-blue-700 dark:text-blue-300 font-medium">Aporte del Año</span>
+              <span className="text-xs text-blue-700 dark:text-blue-300 font-medium">Aporte del Año</span>
             </div>
-            <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">{formatCurrencyShort(financialSummary.aporteAno)}</p>
-            <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">Franquicia tributaria 2026</p>
+            <p className="text-lg font-bold text-blue-900 dark:text-blue-100">{formatCurrencyShort(financialSummary.aporteAno)}</p>
           </div>
 
-          <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-xl p-4 border border-green-200 dark:border-green-800">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="p-2 bg-green-500/20 rounded-lg">
-                <TrendingUp className="w-5 h-5 text-green-600 dark:text-green-400" />
+          <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-xl p-3 border border-green-200 dark:border-green-800">
+            <div className="flex items-center gap-2 mb-1">
+              <div className="p-1.5 bg-green-500/20 rounded-lg">
+                <TrendingUp className="w-4 h-4 text-green-600 dark:text-green-400" />
               </div>
-              <span className="text-sm text-green-700 dark:text-green-300 font-medium">Saldo Disponible</span>
+              <span className="text-xs text-green-700 dark:text-green-300 font-medium">Saldo Disponible</span>
             </div>
-            <p className="text-2xl font-bold text-green-900 dark:text-green-100">{formatCurrencyShort(financialSummary.saldoDisponible)}</p>
-            <p className="text-xs text-green-600 dark:text-green-400 mt-1">{((financialSummary.saldoDisponible / financialSummary.aporteAno) * 100).toFixed(1)}% del aporte</p>
+            <p className="text-lg font-bold text-green-900 dark:text-green-100">{formatCurrencyShort(financialSummary.saldoDisponible)}</p>
           </div>
 
-          <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-xl p-4 border border-purple-200 dark:border-purple-800">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="p-2 bg-purple-500/20 rounded-lg">
-                <Clock className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+          <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-xl p-3 border border-purple-200 dark:border-purple-800">
+            <div className="flex items-center gap-2 mb-1">
+              <div className="p-1.5 bg-purple-500/20 rounded-lg">
+                <Clock className="w-4 h-4 text-purple-600 dark:text-purple-400" />
               </div>
-              <span className="text-sm text-purple-700 dark:text-purple-300 font-medium">Excedentes Año Anterior</span>
+              <span className="text-xs text-purple-700 dark:text-purple-300 font-medium">Excedentes Año Anterior</span>
             </div>
-            <p className="text-2xl font-bold text-purple-900 dark:text-purple-100">{formatCurrencyShort(financialSummary.excedentesAnoAnterior)}</p>
-            <p className="text-xs text-purple-600 dark:text-purple-400 mt-1">Acumulado 2025</p>
+            <p className="text-lg font-bold text-purple-900 dark:text-purple-100">{formatCurrencyShort(financialSummary.excedentesAnoAnterior)}</p>
           </div>
 
-          <div className="bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-800/20 rounded-xl p-4 border border-amber-200 dark:border-amber-800">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="p-2 bg-amber-500/20 rounded-lg">
-                <Briefcase className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+          <div className="bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-800/20 rounded-xl p-3 border border-amber-200 dark:border-amber-800">
+            <div className="flex items-center gap-2 mb-1">
+              <div className="p-1.5 bg-amber-500/20 rounded-lg">
+                <Briefcase className="w-4 h-4 text-amber-600 dark:text-amber-400" />
               </div>
-              <span className="text-sm text-amber-700 dark:text-amber-300 font-medium">Saldo Actual Excedentes</span>
+              <span className="text-xs text-amber-700 dark:text-amber-300 font-medium">Saldo Excedentes</span>
             </div>
-            <p className="text-2xl font-bold text-amber-900 dark:text-amber-100">{formatCurrencyShort(financialSummary.saldoActualExcedentes)}</p>
-            <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">{((financialSummary.saldoActualExcedentes / financialSummary.excedentesAnoAnterior) * 100).toFixed(1)}% restante</p>
+            <p className="text-lg font-bold text-amber-900 dark:text-amber-100">{formatCurrencyShort(financialSummary.saldoActualExcedentes)}</p>
           </div>
         </div>
       </div>
+
+      {/* Company search and table */}
+      <div className="mb-4">
+        <Input
+          placeholder="Buscar empresa por nombre o RUT..."
+          prefix={<Search className="w-4 h-4 text-muted-foreground" />}
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          className="w-full"
+        />
+      </div>
+
+      <Table 
+        dataSource={filteredCompanies} 
+        columns={columns} 
+        pagination={{ pageSize: 5, size: 'small' }}
+        size="small"
+        rowKey="id"
+        scroll={{ x: 800 }}
+      />
     </Card>
   );
 };
@@ -726,89 +750,77 @@ const CourseSearchGrid: React.FC = () => {
       title={
         <div className="flex items-center gap-2">
           <Search className="w-5 h-5 text-primary" />
-          <span>Buscador de Cursos</span>
+          <span>Búsqueda Rápida de Cursos</span>
         </div>
       } 
       className="shadow-sm"
+      size="small"
     >
-      {/* Search Controls */}
-      <div className="bg-muted/30 rounded-xl p-4 border mb-4">
-        <div className="flex flex-wrap items-end gap-4">
-          <div className="flex-shrink-0">
-            <label className="block text-sm font-medium text-foreground mb-2">Buscar por</label>
-            <Select
-              value={searchType}
-              onChange={(value) => {
-                setSearchType(value);
-                setSearchValue('');
-                setHasSearched(false);
-              }}
-              className="w-44"
-              options={[
-                { value: 'idSence', label: 'ID SENCE' },
-                { value: 'idInscripcion', label: 'ID Inscripción' },
-                { value: 'codigoSence', label: 'Código SENCE' },
-              ]}
-            />
-          </div>
-          <div className="flex-1 min-w-[250px]">
-            <label className="block text-sm font-medium text-foreground mb-2">
-              {searchTypeLabels[searchType].label}
-            </label>
-            <Input
-              placeholder={searchTypeLabels[searchType].placeholder}
-              prefix={<Search className="w-4 h-4 text-muted-foreground" />}
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
-              onKeyPress={handleKeyPress}
-              className="w-full"
-            />
-          </div>
-          <div className="flex gap-2">
-            <Button 
-              type="primary" 
-              icon={<Search className="w-4 h-4" />}
-              onClick={handleSearch}
-              disabled={!searchValue.trim()}
-            >
-              Buscar
-            </Button>
-            {hasSearched && (
-              <Button onClick={handleClear}>
-                Limpiar
-              </Button>
-            )}
-          </div>
-        </div>
+      {/* Compact Search Controls */}
+      <div className="flex flex-wrap items-center gap-3">
+        <Select
+          value={searchType}
+          onChange={(value) => {
+            setSearchType(value);
+            setSearchValue('');
+            setHasSearched(false);
+          }}
+          className="w-40"
+          size="middle"
+          options={[
+            { value: 'idSence', label: 'ID SENCE' },
+            { value: 'idInscripcion', label: 'ID Inscripción' },
+            { value: 'codigoSence', label: 'Código SENCE' },
+          ]}
+        />
+        <Input
+          placeholder={searchTypeLabels[searchType].placeholder}
+          prefix={<Search className="w-4 h-4 text-muted-foreground" />}
+          value={searchValue}
+          onChange={(e) => setSearchValue(e.target.value)}
+          onKeyPress={handleKeyPress}
+          className="flex-1 min-w-[200px]"
+          size="middle"
+        />
+        <Button 
+          type="primary" 
+          icon={<Search className="w-4 h-4" />}
+          onClick={handleSearch}
+          disabled={!searchValue.trim()}
+        >
+          Buscar
+        </Button>
+        {hasSearched && (
+          <Button onClick={handleClear} size="middle">
+            Limpiar
+          </Button>
+        )}
       </div>
 
-      {/* Results */}
-      {!hasSearched ? (
-        <div className="text-center py-12 text-muted-foreground">
-          <Search className="w-12 h-12 mx-auto mb-4 opacity-30" />
-          <p className="text-lg font-medium">Ingrese un criterio de búsqueda</p>
-          <p className="text-sm mt-1">Busque cursos por ID SENCE, ID Inscripción o Código SENCE</p>
+      {/* Results - only show when searched */}
+      {hasSearched && (
+        <div className="mt-4">
+          {filteredCourses.length === 0 ? (
+            <div className="text-center py-6 text-muted-foreground">
+              <AlertCircle className="w-8 h-8 mx-auto mb-2 opacity-30" />
+              <p className="text-sm">No se encontraron resultados</p>
+            </div>
+          ) : (
+            <>
+              <div className="mb-2 text-sm text-muted-foreground">
+                Se encontraron <span className="font-semibold text-foreground">{filteredCourses.length}</span> resultado(s)
+              </div>
+              <Table 
+                dataSource={filteredCourses} 
+                columns={columns} 
+                pagination={{ pageSize: 5 }}
+                size="small"
+                rowKey="id"
+                scroll={{ x: 1200 }}
+              />
+            </>
+          )}
         </div>
-      ) : filteredCourses.length === 0 ? (
-        <div className="text-center py-12 text-muted-foreground">
-          <AlertCircle className="w-12 h-12 mx-auto mb-4 opacity-30" />
-          <p className="text-lg font-medium">No se encontraron resultados</p>
-          <p className="text-sm mt-1">Intente con otro criterio de búsqueda</p>
-        </div>
-      ) : (
-        <>
-          <div className="mb-3 text-sm text-muted-foreground">
-            Se encontraron <span className="font-semibold text-foreground">{filteredCourses.length}</span> resultado(s)
-          </div>
-          <Table 
-            dataSource={filteredCourses} 
-            columns={columns} 
-            pagination={{ pageSize: 10 }}
-            size="small"
-            rowKey="id"
-            scroll={{ x: 1200 }}
-          />
-        </>
       )}
     </Card>
   );
@@ -820,6 +832,8 @@ const PendingCoursesSection: React.FC<{
   courses: PendingCourse[];
   iconColor: string;
 }> = ({ title, icon, courses, iconColor }) => {
+  const [pageSize, setPageSize] = useState(5);
+
   const columns = [
     { title: 'Curso', dataIndex: 'name', key: 'name', render: (text: string) => <span className="font-medium">{text}</span> },
     { title: 'Cliente', dataIndex: 'client', key: 'client' },
@@ -846,25 +860,43 @@ const PendingCoursesSection: React.FC<{
   ];
 
   return (
-    <Card 
-      title={
+    <div>
+      <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <span className={iconColor}>{icon}</span>
-          <span>{title}</span>
+          <span className="font-medium">{title}</span>
           <Tag color="error">{courses.length}</Tag>
         </div>
-      } 
-      className="shadow-sm"
-      size="small"
-    >
+        <div className="flex items-center gap-2 text-sm">
+          <span className="text-muted-foreground">Mostrar:</span>
+          <Select
+            value={pageSize}
+            onChange={(value) => setPageSize(value)}
+            size="small"
+            className="w-20"
+            options={[
+              { value: 5, label: '5' },
+              { value: 10, label: '10' },
+              { value: 20, label: '20' },
+              { value: 50, label: '50' },
+            ]}
+          />
+          <span className="text-muted-foreground">por página</span>
+        </div>
+      </div>
       <Table 
         dataSource={courses} 
         columns={columns} 
-        pagination={false}
+        pagination={{ 
+          pageSize: pageSize,
+          size: 'small',
+          showSizeChanger: false,
+          showTotal: (total, range) => `${range[0]}-${range[1]} de ${total}`
+        }}
         size="small"
         rowKey="id"
       />
-    </Card>
+    </div>
   );
 };
 
@@ -977,14 +1009,14 @@ export const OTICDashboardSections: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Course Stages with Status */}
-      <CourseStagesSection />
+      {/* Course Stages (left) + Account Status (right) - side by side */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Course Stages - Vertical layout on left */}
+        <CourseStagesSection />
 
-      {/* Account Status by Holding */}
-      <AccountStatusSection />
-
-      {/* Course Search Grid */}
-      <CourseSearchGrid />
+        {/* Account Status - on the right */}
+        <AccountStatusSection />
+      </div>
 
       {/* Pending Issues Tabs */}
       <Card title="Gestión de Pendientes" className="shadow-sm">
@@ -993,3 +1025,6 @@ export const OTICDashboardSections: React.FC = () => {
     </div>
   );
 };
+
+// Export the CourseSearchGrid separately for use after quick access buttons
+export { CourseSearchGrid };
