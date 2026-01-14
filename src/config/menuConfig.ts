@@ -73,7 +73,8 @@ export const menuByRole: Record<UserRole, MenuItem[]> = {
       label: 'Formación', 
       icon: 'GraduationCap',
       children: [
-        { key: 'buscador-dashboard', label: 'Dashboard', url: '/buscador/dashboard' },
+        { key: 'rol-asesor', label: 'Rol Asesor', url: '/asesor' },
+        { key: 'mallas', label: 'Mallas de Formación', url: '/formacion/mallas' },
       ]
     },
     { 
@@ -118,7 +119,8 @@ export const menuByRole: Record<UserRole, MenuItem[]> = {
       label: 'Formación', 
       icon: 'GraduationCap',
       children: [
-        { key: 'buscador-dashboard', label: 'Dashboard', url: '/buscador/dashboard' },
+        { key: 'rol-asesor', label: 'Rol Asesor', url: '/asesor' },
+        { key: 'mallas', label: 'Mallas de Formación', url: '/formacion/mallas' },
       ]
     },
     { 
