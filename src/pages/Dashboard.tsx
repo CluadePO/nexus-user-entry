@@ -8,6 +8,7 @@ import { DJOManagementCard } from '@/components/dashboard/DJOManagementCard';
 import { OTECHighlightMetrics } from '@/components/dashboard/OTECHighlightMetrics';
 import { EmpresaResumenFinanciero, EmpresaEtapaCursos, EmpresaProximosCursos } from '@/components/dashboard/EmpresaManagementCard';
 import { EmpresaHighlightMetrics } from '@/components/dashboard/EmpresaHighlightMetrics';
+import { EmpresaPlanCapacitacion } from '@/components/dashboard/EmpresaPlanCapacitacion';
 import { Calendar, Clock } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
@@ -68,10 +69,13 @@ const Dashboard: React.FC = () => {
       {/* Empresa Dashboard Layout */}
       {isEmpresaRole && (
         <>
-          {/* Resumen Financiero - Below Quick Access */}
-          <EmpresaResumenFinanciero />
+          {/* Plan de Capacitación (left) + Resumen Financiero (right) */}
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+            <EmpresaPlanCapacitacion />
+            <EmpresaResumenFinanciero />
+          </div>
 
-          {/* Etapa de Cursos - Below Resumen Financiero */}
+          {/* Etapa de Cursos - Below */}
           <EmpresaEtapaCursos />
 
           {/* Estado de Cursos and Participantes side by side + Próximos Cursos on the right */}
