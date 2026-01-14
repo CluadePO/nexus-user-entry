@@ -492,16 +492,40 @@ const RecentCoursesSection: React.FC = () => {
   );
 };
 
+// Financial summary data
+const financialSummary = {
+  aporteAno: 85000000,
+  saldoDisponible: 42500000,
+  excedentesAnoAnterior: 12300000,
+  saldoActualExcedentes: 8700000,
+  usado: 42500000,
+  comprometido: 15800000,
+};
+
 const AccountStatusSection: React.FC = () => {
   const [searchText, setSearchText] = useState('');
   
   const formatCurrency = (value: number) => 
     new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 }).format(value);
 
+  const formatCurrencyShort = (value: number) => {
+    if (value >= 1000000) {
+      return `$${(value / 1000000).toFixed(1)}M`;
+    }
+    return formatCurrency(value);
+  };
+
   const filteredCompanies = companyAccounts.filter(company =>
     company.name.toLowerCase().includes(searchText.toLowerCase()) ||
     company.rut.includes(searchText)
   );
+
+  // Calculate percentages for the waterfall chart
+  const totalFranquicia = financialSummary.aporteAno + financialSummary.excedentesAnoAnterior;
+  const usadoPct = (financialSummary.usado / totalFranquicia) * 100;
+  const comprometidoPct = (financialSummary.comprometido / totalFranquicia) * 100;
+  const disponiblePct = (financialSummary.saldoDisponible / totalFranquicia) * 100;
+  const excedentesRestantesPct = (financialSummary.saldoActualExcedentes / totalFranquicia) * 100;
 
   const columns = [
     { 
@@ -566,22 +590,161 @@ const AccountStatusSection: React.FC = () => {
 
   return (
     <Card title="Estado Cuenta Corriente por Empresa" className="shadow-sm">
-      <div className="mb-4">
-        <Input
-          placeholder="Buscar por empresa o RUT..."
-          prefix={<Search className="w-4 h-4 text-muted-foreground" />}
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-          className="w-72"
+      {/* Financial Indicators Section */}
+      <div className="mb-6">
+        {/* Key Metrics Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="p-2 bg-blue-500/20 rounded-lg">
+                <DollarSign className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              </div>
+              <span className="text-sm text-blue-700 dark:text-blue-300 font-medium">Aporte del Año</span>
+            </div>
+            <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">{formatCurrencyShort(financialSummary.aporteAno)}</p>
+            <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">Franquicia tributaria 2026</p>
+          </div>
+
+          <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-xl p-4 border border-green-200 dark:border-green-800">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="p-2 bg-green-500/20 rounded-lg">
+                <TrendingUp className="w-5 h-5 text-green-600 dark:text-green-400" />
+              </div>
+              <span className="text-sm text-green-700 dark:text-green-300 font-medium">Saldo Disponible</span>
+            </div>
+            <p className="text-2xl font-bold text-green-900 dark:text-green-100">{formatCurrencyShort(financialSummary.saldoDisponible)}</p>
+            <p className="text-xs text-green-600 dark:text-green-400 mt-1">{((financialSummary.saldoDisponible / financialSummary.aporteAno) * 100).toFixed(1)}% del aporte</p>
+          </div>
+
+          <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-xl p-4 border border-purple-200 dark:border-purple-800">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="p-2 bg-purple-500/20 rounded-lg">
+                <Clock className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+              </div>
+              <span className="text-sm text-purple-700 dark:text-purple-300 font-medium">Excedentes Año Anterior</span>
+            </div>
+            <p className="text-2xl font-bold text-purple-900 dark:text-purple-100">{formatCurrencyShort(financialSummary.excedentesAnoAnterior)}</p>
+            <p className="text-xs text-purple-600 dark:text-purple-400 mt-1">Acumulado 2025</p>
+          </div>
+
+          <div className="bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-800/20 rounded-xl p-4 border border-amber-200 dark:border-amber-800">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="p-2 bg-amber-500/20 rounded-lg">
+                <Briefcase className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+              </div>
+              <span className="text-sm text-amber-700 dark:text-amber-300 font-medium">Saldo Actual Excedentes</span>
+            </div>
+            <p className="text-2xl font-bold text-amber-900 dark:text-amber-100">{formatCurrencyShort(financialSummary.saldoActualExcedentes)}</p>
+            <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">{((financialSummary.saldoActualExcedentes / financialSummary.excedentesAnoAnterior) * 100).toFixed(1)}% restante</p>
+          </div>
+        </div>
+
+        {/* Financial Statement Chart - Waterfall Style */}
+        <div className="bg-muted/30 rounded-xl p-5 border">
+          <h4 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
+            <Calculator className="w-4 h-4 text-primary" />
+            Estado Financiero - Uso de Franquicia
+          </h4>
+          
+          <div className="space-y-4">
+            {/* Total Franquicia Bar */}
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm font-medium text-foreground">Total Franquicia Disponible</span>
+                <span className="text-sm font-bold text-foreground">{formatCurrency(totalFranquicia)}</span>
+              </div>
+              <div className="h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                <span className="text-white text-sm font-semibold">100%</span>
+              </div>
+            </div>
+
+            {/* Breakdown Bar */}
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-sm font-medium text-foreground">Distribución de Uso</span>
+              </div>
+              <div className="h-12 bg-muted rounded-lg overflow-hidden flex">
+                <Tooltip title={`Usado: ${formatCurrency(financialSummary.usado)} (${usadoPct.toFixed(1)}%)`}>
+                  <div 
+                    className="bg-gradient-to-b from-red-400 to-red-500 h-full flex items-center justify-center transition-all hover:brightness-110 cursor-pointer"
+                    style={{ width: `${usadoPct}%` }}
+                  >
+                    <span className="text-white text-xs font-semibold px-1 truncate">Usado</span>
+                  </div>
+                </Tooltip>
+                <Tooltip title={`Comprometido: ${formatCurrency(financialSummary.comprometido)} (${comprometidoPct.toFixed(1)}%)`}>
+                  <div 
+                    className="bg-gradient-to-b from-amber-400 to-amber-500 h-full flex items-center justify-center transition-all hover:brightness-110 cursor-pointer"
+                    style={{ width: `${comprometidoPct}%` }}
+                  >
+                    <span className="text-white text-xs font-semibold px-1 truncate">Comprometido</span>
+                  </div>
+                </Tooltip>
+                <Tooltip title={`Disponible: ${formatCurrency(financialSummary.saldoDisponible)} (${disponiblePct.toFixed(1)}%)`}>
+                  <div 
+                    className="bg-gradient-to-b from-green-400 to-green-500 h-full flex items-center justify-center transition-all hover:brightness-110 cursor-pointer"
+                    style={{ width: `${disponiblePct}%` }}
+                  >
+                    <span className="text-white text-xs font-semibold px-1 truncate">Disponible</span>
+                  </div>
+                </Tooltip>
+                <Tooltip title={`Excedentes Restantes: ${formatCurrency(financialSummary.saldoActualExcedentes)} (${excedentesRestantesPct.toFixed(1)}%)`}>
+                  <div 
+                    className="bg-gradient-to-b from-purple-400 to-purple-500 h-full flex items-center justify-center transition-all hover:brightness-110 cursor-pointer"
+                    style={{ width: `${excedentesRestantesPct}%` }}
+                  >
+                    <span className="text-white text-xs font-semibold px-1 truncate">Excedentes</span>
+                  </div>
+                </Tooltip>
+              </div>
+            </div>
+
+            {/* Legend */}
+            <div className="flex flex-wrap gap-4 mt-4 pt-4 border-t border-muted">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                <span className="text-sm text-muted-foreground">Usado: {formatCurrency(financialSummary.usado)}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-amber-500"></div>
+                <span className="text-sm text-muted-foreground">Comprometido: {formatCurrency(financialSummary.comprometido)}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                <span className="text-sm text-muted-foreground">Disponible: {formatCurrency(financialSummary.saldoDisponible)}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-purple-500"></div>
+                <span className="text-sm text-muted-foreground">Excedentes: {formatCurrency(financialSummary.saldoActualExcedentes)}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Company Table */}
+      <div className="border-t pt-6">
+        <h4 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
+          <Building2 className="w-4 h-4 text-primary" />
+          Detalle por Empresa
+        </h4>
+        <div className="mb-4">
+          <Input
+            placeholder="Buscar por empresa o RUT..."
+            prefix={<Search className="w-4 h-4 text-muted-foreground" />}
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            className="w-72"
+          />
+        </div>
+        <Table 
+          dataSource={filteredCompanies}
+          columns={columns}
+          pagination={{ pageSize: 5 }}
+          size="small"
+          rowKey="id"
         />
       </div>
-      <Table 
-        dataSource={filteredCompanies}
-        columns={columns}
-        pagination={{ pageSize: 5 }}
-        size="small"
-        rowKey="id"
-      />
     </Card>
   );
 };
