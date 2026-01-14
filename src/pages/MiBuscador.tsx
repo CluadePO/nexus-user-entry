@@ -1,0 +1,555 @@
+import React, { useState } from 'react';
+import { 
+  Search, 
+  Star, 
+  GitCompare, 
+  Eye, 
+  BookOpen, 
+  Clock, 
+  MapPin, 
+  Building2, 
+  DollarSign,
+  TrendingUp,
+  Award,
+  Filter,
+  SlidersHorizontal
+} from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
+interface Course {
+  id: string;
+  name: string;
+  type: 'Sence' | 'No Sence';
+  modality: 'Presencial' | 'Distancia' | 'E-learning';
+  provider: string;
+  price: number;
+  hours: number;
+  rating: number;
+  participants: number;
+  category: string;
+  isFavorite: boolean;
+}
+
+const mockCourses: Course[] = [
+  {
+    id: '1',
+    name: 'Excel Avanzado para Análisis de Datos',
+    type: 'Sence',
+    modality: 'E-learning',
+    provider: 'Instituto de Capacitación Profesional',
+    price: 180000,
+    hours: 40,
+    rating: 4.8,
+    participants: 1250,
+    category: 'Tecnología',
+    isFavorite: false,
+  },
+  {
+    id: '2',
+    name: 'Liderazgo y Gestión de Equipos',
+    type: 'Sence',
+    modality: 'Presencial',
+    provider: 'Escuela de Negocios Sur',
+    price: 350000,
+    hours: 24,
+    rating: 4.9,
+    participants: 890,
+    category: 'Habilidades Blandas',
+    isFavorite: true,
+  },
+  {
+    id: '3',
+    name: 'Seguridad Industrial y Prevención de Riesgos',
+    type: 'Sence',
+    modality: 'Presencial',
+    provider: 'Centro de Formación Técnica',
+    price: 280000,
+    hours: 32,
+    rating: 4.7,
+    participants: 2100,
+    category: 'Seguridad',
+    isFavorite: false,
+  },
+  {
+    id: '4',
+    name: 'Marketing Digital y Redes Sociales',
+    type: 'No Sence',
+    modality: 'E-learning',
+    provider: 'Digital Academy Chile',
+    price: 150000,
+    hours: 20,
+    rating: 4.6,
+    participants: 3200,
+    category: 'Marketing',
+    isFavorite: false,
+  },
+  {
+    id: '5',
+    name: 'Gestión de Proyectos con Metodologías Ágiles',
+    type: 'Sence',
+    modality: 'Distancia',
+    provider: 'Universidad Corporativa',
+    price: 420000,
+    hours: 48,
+    rating: 4.8,
+    participants: 756,
+    category: 'Gestión',
+    isFavorite: true,
+  },
+  {
+    id: '6',
+    name: 'Inglés Técnico para Profesionales',
+    type: 'Sence',
+    modality: 'E-learning',
+    provider: 'Language Training Center',
+    price: 220000,
+    hours: 60,
+    rating: 4.5,
+    participants: 1890,
+    category: 'Idiomas',
+    isFavorite: false,
+  },
+  {
+    id: '7',
+    name: 'Contabilidad y Finanzas Básicas',
+    type: 'Sence',
+    modality: 'Presencial',
+    provider: 'Instituto Financiero Nacional',
+    price: 290000,
+    hours: 36,
+    rating: 4.7,
+    participants: 1120,
+    category: 'Finanzas',
+    isFavorite: false,
+  },
+  {
+    id: '8',
+    name: 'Atención al Cliente y Servicio de Excelencia',
+    type: 'No Sence',
+    modality: 'Distancia',
+    provider: 'Service Excellence Academy',
+    price: 120000,
+    hours: 16,
+    rating: 4.4,
+    participants: 4500,
+    category: 'Servicio',
+    isFavorite: false,
+  },
+];
+
+const MiBuscador: React.FC = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [courses, setCourses] = useState<Course[]>(mockCourses);
+  const [selectedCourses, setSelectedCourses] = useState<string[]>([]);
+  const [modalityFilter, setModalityFilter] = useState<string>('all');
+  const [typeFilter, setTypeFilter] = useState<string>('all');
+
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('es-CL', {
+      style: 'currency',
+      currency: 'CLP',
+      minimumFractionDigits: 0,
+    }).format(price);
+  };
+
+  const toggleFavorite = (courseId: string) => {
+    setCourses(courses.map(course => 
+      course.id === courseId 
+        ? { ...course, isFavorite: !course.isFavorite }
+        : course
+    ));
+  };
+
+  const toggleCompare = (courseId: string) => {
+    setSelectedCourses(prev => 
+      prev.includes(courseId)
+        ? prev.filter(id => id !== courseId)
+        : prev.length < 3 
+          ? [...prev, courseId]
+          : prev
+    );
+  };
+
+  const filteredCourses = courses.filter(course => {
+    const matchesSearch = course.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          course.provider.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          course.category.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesModality = modalityFilter === 'all' || course.modality === modalityFilter;
+    const matchesType = typeFilter === 'all' || course.type === typeFilter;
+    return matchesSearch && matchesModality && matchesType;
+  });
+
+  const getModalityColor = (modality: string) => {
+    switch (modality) {
+      case 'Presencial': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300';
+      case 'Distancia': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300';
+      case 'E-learning': return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getTypeColor = (type: string) => {
+    return type === 'Sence' 
+      ? 'bg-primary/10 text-primary border-primary/30' 
+      : 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300';
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Mi Buscador</h1>
+          <p className="text-muted-foreground">Encuentra el curso perfecto para tu equipo</p>
+        </div>
+      </div>
+
+      <Tabs defaultValue="buscador" className="w-full">
+        <TabsList className="grid w-full max-w-md grid-cols-2">
+          <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+          <TabsTrigger value="buscador">Buscador de Cursos</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="dashboard" className="mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-3">
+                  <div className="p-3 bg-primary/10 rounded-lg">
+                    <Search className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold">156</p>
+                    <p className="text-sm text-muted-foreground">Búsquedas realizadas</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-3">
+                  <div className="p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
+                    <Star className="h-6 w-6 text-yellow-600" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold">{courses.filter(c => c.isFavorite).length}</p>
+                    <p className="text-sm text-muted-foreground">Cursos favoritos</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-3">
+                  <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                    <GitCompare className="h-6 w-6 text-blue-600" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold">12</p>
+                    <p className="text-sm text-muted-foreground">Comparaciones</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-3">
+                  <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                    <Award className="h-6 w-6 text-green-600" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold">8</p>
+                    <p className="text-sm text-muted-foreground">Cursos contratados</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-primary" />
+                Actividad Reciente
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex items-center gap-4 p-3 bg-muted/50 rounded-lg">
+                  <div className="p-2 bg-primary/10 rounded-full">
+                    <Search className="h-4 w-4 text-primary" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium">Búsqueda: "Excel avanzado"</p>
+                    <p className="text-sm text-muted-foreground">Hace 2 horas • 15 resultados</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4 p-3 bg-muted/50 rounded-lg">
+                  <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-full">
+                    <Star className="h-4 w-4 text-yellow-600" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium">Agregado a favoritos: "Liderazgo y Gestión"</p>
+                    <p className="text-sm text-muted-foreground">Hace 1 día</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4 p-3 bg-muted/50 rounded-lg">
+                  <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-full">
+                    <GitCompare className="h-4 w-4 text-blue-600" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium">Comparación: 3 cursos de seguridad</p>
+                    <p className="text-sm text-muted-foreground">Hace 3 días</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="buscador" className="mt-6 space-y-6">
+          {/* Hero Section - Selling Courses */}
+          <Card className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border-primary/20">
+            <CardContent className="py-8">
+              <div className="flex flex-col md:flex-row items-center gap-6">
+                <div className="flex-1 space-y-4">
+                  <h2 className="text-3xl font-bold text-foreground">
+                    🎓 Descubre el Curso Perfecto para tu Equipo
+                  </h2>
+                  <p className="text-lg text-muted-foreground">
+                    Accede a más de <span className="font-bold text-primary">5,000 cursos certificados</span> de 
+                    los mejores proveedores del país. Encuentra capacitaciones con financiamiento SENCE, 
+                    compara opciones y toma decisiones informadas para potenciar el talento de tu organización.
+                  </p>
+                  <div className="flex flex-wrap gap-4 text-sm">
+                    <div className="flex items-center gap-2">
+                      <Award className="h-5 w-5 text-primary" />
+                      <span>Cursos Certificados</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Building2 className="h-5 w-5 text-primary" />
+                      <span>+200 Proveedores</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <DollarSign className="h-5 w-5 text-primary" />
+                      <span>Financiamiento SENCE</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="hidden md:block">
+                  <div className="p-6 bg-background rounded-xl shadow-lg">
+                    <BookOpen className="h-24 w-24 text-primary" />
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Search Bar */}
+          <Card>
+            <CardContent className="py-4">
+              <div className="flex flex-col md:flex-row gap-4">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                  <Input
+                    placeholder="Buscar por nombre, proveedor o categoría..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10 h-12 text-base"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <Select value={typeFilter} onValueChange={setTypeFilter}>
+                    <SelectTrigger className="w-[140px] h-12">
+                      <SelectValue placeholder="Tipo" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todos</SelectItem>
+                      <SelectItem value="Sence">Sence</SelectItem>
+                      <SelectItem value="No Sence">No Sence</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Select value={modalityFilter} onValueChange={setModalityFilter}>
+                    <SelectTrigger className="w-[160px] h-12">
+                      <SelectValue placeholder="Modalidad" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todas</SelectItem>
+                      <SelectItem value="Presencial">Presencial</SelectItem>
+                      <SelectItem value="Distancia">Distancia</SelectItem>
+                      <SelectItem value="E-learning">E-learning</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button variant="outline" className="h-12">
+                    <SlidersHorizontal className="h-4 w-4 mr-2" />
+                    Más filtros
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Compare Banner */}
+          {selectedCourses.length > 0 && (
+            <Card className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
+              <CardContent className="py-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <GitCompare className="h-5 w-5 text-blue-600" />
+                    <span className="font-medium">
+                      {selectedCourses.length} curso{selectedCourses.length > 1 ? 's' : ''} seleccionado{selectedCourses.length > 1 ? 's' : ''} para comparar
+                    </span>
+                    <span className="text-sm text-muted-foreground">(máximo 3)</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button variant="outline" size="sm" onClick={() => setSelectedCourses([])}>
+                      Limpiar
+                    </Button>
+                    <Button size="sm" disabled={selectedCourses.length < 2}>
+                      <GitCompare className="h-4 w-4 mr-2" />
+                      Comparar cursos
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Results Count */}
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-muted-foreground">
+              Mostrando <span className="font-medium text-foreground">{filteredCourses.length}</span> cursos
+            </p>
+            <Select defaultValue="relevance">
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Ordenar por" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="relevance">Relevancia</SelectItem>
+                <SelectItem value="price-asc">Precio: menor a mayor</SelectItem>
+                <SelectItem value="price-desc">Precio: mayor a menor</SelectItem>
+                <SelectItem value="rating">Mejor valorados</SelectItem>
+                <SelectItem value="hours">Duración</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Course Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {filteredCourses.map((course) => (
+              <Card key={course.id} className="group hover:shadow-lg transition-all duration-300 hover:border-primary/50">
+                <CardContent className="p-4 space-y-4">
+                  {/* Header with badges */}
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex flex-wrap gap-1">
+                      <Badge className={getTypeColor(course.type)} variant="outline">
+                        {course.type}
+                      </Badge>
+                      <Badge className={getModalityColor(course.modality)} variant="secondary">
+                        {course.modality}
+                      </Badge>
+                    </div>
+                    <button
+                      onClick={() => toggleFavorite(course.id)}
+                      className={`p-1.5 rounded-full transition-colors ${
+                        course.isFavorite 
+                          ? 'bg-yellow-100 text-yellow-600' 
+                          : 'bg-muted hover:bg-yellow-50 text-muted-foreground hover:text-yellow-600'
+                      }`}
+                    >
+                      <Star className={`h-4 w-4 ${course.isFavorite ? 'fill-current' : ''}`} />
+                    </button>
+                  </div>
+
+                  {/* Course Name */}
+                  <h3 className="font-semibold text-foreground line-clamp-2 min-h-[48px] group-hover:text-primary transition-colors">
+                    {course.name}
+                  </h3>
+
+                  {/* Provider */}
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Building2 className="h-4 w-4" />
+                    <span className="truncate">{course.provider}</span>
+                  </div>
+
+                  {/* Details */}
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div className="flex items-center gap-1.5">
+                      <Clock className="h-4 w-4 text-muted-foreground" />
+                      <span>{course.hours} horas</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
+                      <span>{course.rating}</span>
+                    </div>
+                  </div>
+
+                  {/* Price */}
+                  <div className="pt-2 border-t">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-xs text-muted-foreground">Valor</p>
+                        <p className="text-lg font-bold text-primary">{formatPrice(course.price)}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex gap-2 pt-2">
+                    <Button className="flex-1" size="sm">
+                      <Eye className="h-4 w-4 mr-1" />
+                      Ver curso
+                    </Button>
+                    <Button 
+                      variant={selectedCourses.includes(course.id) ? "secondary" : "outline"} 
+                      size="sm"
+                      onClick={() => toggleCompare(course.id)}
+                      className={selectedCourses.includes(course.id) ? "bg-blue-100 text-blue-700 hover:bg-blue-200" : ""}
+                    >
+                      <GitCompare className="h-4 w-4" />
+                    </Button>
+                  </div>
+
+                  {/* Compare checkbox */}
+                  <div className="flex items-center gap-2 pt-1">
+                    <Checkbox
+                      id={`compare-${course.id}`}
+                      checked={selectedCourses.includes(course.id)}
+                      onCheckedChange={() => toggleCompare(course.id)}
+                    />
+                    <label 
+                      htmlFor={`compare-${course.id}`}
+                      className="text-xs text-muted-foreground cursor-pointer"
+                    >
+                      Agregar a comparación
+                    </label>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Empty State */}
+          {filteredCourses.length === 0 && (
+            <Card className="py-12">
+              <CardContent className="text-center">
+                <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-semibold mb-2">No se encontraron cursos</h3>
+                <p className="text-muted-foreground">
+                  Intenta ajustar los filtros o buscar con otros términos
+                </p>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+};
+
+export default MiBuscador;

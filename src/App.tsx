@@ -11,6 +11,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Inscripcion from "./pages/Inscripcion";
 import AsesorDashboard from "./pages/AsesorDashboard";
+import MiBuscador from "./pages/MiBuscador";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -44,7 +45,8 @@ const App = () => (
                 <Route path="/cursos/*" element={<PlaceholderPage title="Cursos y Servicios" />} />
                 <Route path="/reportes" element={<PlaceholderPage title="Reportes" />} />
                 <Route path="/data360" element={<PlaceholderPage title="Data 360" />} />
-                <Route path="/buscador/*" element={<PlaceholderPage title="Mi Buscador" />} />
+                <Route path="/buscador/*" element={<MiBuscador />} />
+                <Route path="/formacion/buscador" element={<MiBuscador />} />
                 <Route path="/asesor" element={<AsesorDashboard />} />
                 <Route path="/asesor/diagnostico" element={<PlaceholderPage title="Diagnóstico" />} />
                 <Route path="/asesor/herramientas" element={<PlaceholderPage title="Herramientas" />} />
