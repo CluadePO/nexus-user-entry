@@ -132,7 +132,6 @@ const getComplexityBadge = (complexity: Tool['complexity']) => {
 // Mock data for dashboard metrics
 const mockMetrics = {
   diagnosticsCompleted: 12,
-  toolsRecommended: 28,
   maturityLevel: 68,
   improvementAreas: 5,
   improvementDetails: [
@@ -179,7 +178,7 @@ const AsesorDashboard: React.FC = () => {
       </div>
 
       {/* Metrics Summary */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Diagnósticos Realizados */}
         <Card className="border-0 shadow-sm">
           <div className="flex items-center gap-4">
@@ -193,18 +192,6 @@ const AsesorDashboard: React.FC = () => {
           </div>
         </Card>
 
-        {/* Herramientas Recomendadas */}
-        <Card className="border-0 shadow-sm">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-purple-50 rounded-lg">
-              <Sparkles className="w-6 h-6 text-purple-600" />
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Herramientas Recomendadas</p>
-              <p className="text-2xl font-bold text-foreground">{mockMetrics.toolsRecommended}</p>
-            </div>
-          </div>
-        </Card>
 
         {/* Nivel de Madurez */}
         <Card className="border-0 shadow-sm">
