@@ -515,158 +515,61 @@ const financialSummary = {
 };
 
 const AccountStatusSection: React.FC = () => {
-  const [searchText, setSearchText] = useState('');
-  
-  const formatCurrency = (value: number) => 
-    new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 }).format(value);
-
   const formatCurrencyShort = (value: number) => {
     if (value >= 1000000) {
       return `$${(value / 1000000).toFixed(1)}M`;
     }
-    return formatCurrency(value);
+    return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 }).format(value);
   };
 
-  const filteredCompanies = companyAccounts.filter(company =>
-    company.name.toLowerCase().includes(searchText.toLowerCase()) ||
-    company.rut.includes(searchText)
-  );
-
-  // Calculate percentages for the waterfall chart
-  const totalFranquicia = financialSummary.aporteAno + financialSummary.excedentesAnoAnterior;
-  const usadoPct = (financialSummary.usado / totalFranquicia) * 100;
-  const comprometidoPct = (financialSummary.comprometido / totalFranquicia) * 100;
-  const disponiblePct = (financialSummary.saldoDisponible / totalFranquicia) * 100;
-  const excedentesRestantesPct = (financialSummary.saldoActualExcedentes / totalFranquicia) * 100;
-
-  const columns = [
-    { 
-      title: 'Empresa', 
-      dataIndex: 'name', 
-      key: 'name', 
-      render: (text: string, record: any) => (
-        <div>
-          <span className="font-medium flex items-center gap-1">
-            <Building2 className="w-4 h-4 text-muted-foreground" />
-            {text}
-          </span>
-          <span className="text-xs text-muted-foreground">{record.rut}</span>
-        </div>
-      )
-    },
-    { 
-      title: 'Saldo', 
-      dataIndex: 'balance', 
-      key: 'balance',
-      render: (value: number) => <span className="font-semibold">{formatCurrency(value)}</span>
-    },
-    { 
-      title: 'Facturado', 
-      dataIndex: 'invoiced', 
-      key: 'invoiced',
-      render: (value: number) => <span className="font-semibold text-green-600">{formatCurrency(value)}</span>
-    },
-    { 
-      title: 'Pendiente', 
-      dataIndex: 'pending', 
-      key: 'pending',
-      render: (value: number) => <span className="font-semibold text-amber-600">{formatCurrency(value)}</span>
-    },
-    { 
-      title: 'Cursos Activos', 
-      dataIndex: 'coursesActive', 
-      key: 'coursesActive',
-      render: (value: number) => <Tag color="blue">{value} cursos</Tag>
-    },
-    { 
-      title: 'Tendencia', 
-      dataIndex: 'trend', 
-      key: 'trend',
-      render: (trend: number) => (
-        <span className={`flex items-center gap-1 ${trend >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-          {trend >= 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
-          {trend > 0 ? '+' : ''}{trend}%
-        </span>
-      )
-    },
-    { 
-      title: '', 
-      key: 'action', 
-      render: () => (
-        <Button type="primary" size="small" icon={<Eye className="w-4 h-4" />}>
-          Detalle
-        </Button>
-      )
-    },
-  ];
-
   return (
-    <Card title="Estado Cuenta Corriente por Empresa" className="shadow-sm h-full">
-      {/* Financial Indicators Section */}
-      <div className="mb-4">
-        {/* Key Metrics Cards */}
-        <div className="grid grid-cols-2 gap-3 mb-4">
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-3 border border-blue-200 dark:border-blue-800">
-            <div className="flex items-center gap-2 mb-1">
-              <div className="p-1.5 bg-blue-500/20 rounded-lg">
-                <DollarSign className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-              </div>
-              <span className="text-xs text-blue-700 dark:text-blue-300 font-medium">Aporte del Año</span>
+    <Card title="Estado Cuenta Corriente" className="shadow-sm h-full">
+      {/* Key Metrics Cards */}
+      <div className="grid grid-cols-2 gap-3">
+        <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="p-2 bg-blue-500/20 rounded-lg">
+              <DollarSign className="w-5 h-5 text-blue-600 dark:text-blue-400" />
             </div>
-            <p className="text-lg font-bold text-blue-900 dark:text-blue-100">{formatCurrencyShort(financialSummary.aporteAno)}</p>
+            <span className="text-sm text-blue-700 dark:text-blue-300 font-medium">Aporte del Año</span>
           </div>
+          <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">{formatCurrencyShort(financialSummary.aporteAno)}</p>
+          <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">Franquicia tributaria 2026</p>
+        </div>
 
-          <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-xl p-3 border border-green-200 dark:border-green-800">
-            <div className="flex items-center gap-2 mb-1">
-              <div className="p-1.5 bg-green-500/20 rounded-lg">
-                <TrendingUp className="w-4 h-4 text-green-600 dark:text-green-400" />
-              </div>
-              <span className="text-xs text-green-700 dark:text-green-300 font-medium">Saldo Disponible</span>
+        <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-xl p-4 border border-green-200 dark:border-green-800">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="p-2 bg-green-500/20 rounded-lg">
+              <TrendingUp className="w-5 h-5 text-green-600 dark:text-green-400" />
             </div>
-            <p className="text-lg font-bold text-green-900 dark:text-green-100">{formatCurrencyShort(financialSummary.saldoDisponible)}</p>
+            <span className="text-sm text-green-700 dark:text-green-300 font-medium">Saldo Disponible</span>
           </div>
+          <p className="text-2xl font-bold text-green-900 dark:text-green-100">{formatCurrencyShort(financialSummary.saldoDisponible)}</p>
+          <p className="text-xs text-green-600 dark:text-green-400 mt-1">{((financialSummary.saldoDisponible / financialSummary.aporteAno) * 100).toFixed(1)}% del aporte</p>
+        </div>
 
-          <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-xl p-3 border border-purple-200 dark:border-purple-800">
-            <div className="flex items-center gap-2 mb-1">
-              <div className="p-1.5 bg-purple-500/20 rounded-lg">
-                <Clock className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-              </div>
-              <span className="text-xs text-purple-700 dark:text-purple-300 font-medium">Excedentes Año Anterior</span>
+        <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-xl p-4 border border-purple-200 dark:border-purple-800">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="p-2 bg-purple-500/20 rounded-lg">
+              <Clock className="w-5 h-5 text-purple-600 dark:text-purple-400" />
             </div>
-            <p className="text-lg font-bold text-purple-900 dark:text-purple-100">{formatCurrencyShort(financialSummary.excedentesAnoAnterior)}</p>
+            <span className="text-sm text-purple-700 dark:text-purple-300 font-medium">Excedentes Año Anterior</span>
           </div>
+          <p className="text-2xl font-bold text-purple-900 dark:text-purple-100">{formatCurrencyShort(financialSummary.excedentesAnoAnterior)}</p>
+          <p className="text-xs text-purple-600 dark:text-purple-400 mt-1">Acumulado 2025</p>
+        </div>
 
-          <div className="bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-800/20 rounded-xl p-3 border border-amber-200 dark:border-amber-800">
-            <div className="flex items-center gap-2 mb-1">
-              <div className="p-1.5 bg-amber-500/20 rounded-lg">
-                <Briefcase className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-              </div>
-              <span className="text-xs text-amber-700 dark:text-amber-300 font-medium">Saldo Excedentes</span>
+        <div className="bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-800/20 rounded-xl p-4 border border-amber-200 dark:border-amber-800">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="p-2 bg-amber-500/20 rounded-lg">
+              <Briefcase className="w-5 h-5 text-amber-600 dark:text-amber-400" />
             </div>
-            <p className="text-lg font-bold text-amber-900 dark:text-amber-100">{formatCurrencyShort(financialSummary.saldoActualExcedentes)}</p>
+            <span className="text-sm text-amber-700 dark:text-amber-300 font-medium">Saldo Excedentes</span>
           </div>
+          <p className="text-2xl font-bold text-amber-900 dark:text-amber-100">{formatCurrencyShort(financialSummary.saldoActualExcedentes)}</p>
+          <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">{((financialSummary.saldoActualExcedentes / financialSummary.excedentesAnoAnterior) * 100).toFixed(1)}% restante</p>
         </div>
       </div>
-
-      {/* Company search and table */}
-      <div className="mb-4">
-        <Input
-          placeholder="Buscar empresa por nombre o RUT..."
-          prefix={<Search className="w-4 h-4 text-muted-foreground" />}
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-          className="w-full"
-        />
-      </div>
-
-      <Table 
-        dataSource={filteredCompanies} 
-        columns={columns} 
-        pagination={{ pageSize: 5, size: 'small' }}
-        size="small"
-        rowKey="id"
-        scroll={{ x: 800 }}
-      />
     </Card>
   );
 };
