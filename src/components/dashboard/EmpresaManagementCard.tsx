@@ -46,8 +46,8 @@ interface FinancieroItem {
   value: number;
   displayValue: string;
   color: string;
-  trend?: 'up' | 'down';
-  trendValue?: string;
+  yearOverYear: number; // Percentage vs previous year
+  icon: React.ReactNode;
 }
 
 // Resumen Financiero Component - Single Combined Chart
@@ -60,40 +60,44 @@ export const EmpresaResumenFinanciero: React.FC = () => {
 
   const financieroData: FinancieroItem[] = [
     { 
-      name: 'Inversión Mensual', 
-      value: 12.5,
-      displayValue: '$12.5M',
-      color: '#65BFB1',
-      trend: 'up',
-      trendValue: '+15%'
-    },
-    { 
-      name: 'Franquicia Disponible', 
+      name: 'Aporte', 
       value: 45,
       displayValue: '$45M',
-      color: '#4A90A4'
+      color: '#65BFB1',
+      yearOverYear: 12,
+      icon: <Wallet className="w-5 h-5" />
     },
     { 
-      name: 'Monto Comprometido', 
-      value: 28,
-      displayValue: '$28M',
+      name: '% Uso Franquicia', 
+      value: 62,
+      displayValue: '62%',
+      color: '#4A90A4',
+      yearOverYear: 8,
+      icon: <CreditCard className="w-5 h-5" />
+    },
+    { 
+      name: '% Disponible Franquicia', 
+      value: 38,
+      displayValue: '38%',
       color: '#F5A623',
-      trend: 'up',
-      trendValue: '+$5M'
+      yearOverYear: -5,
+      icon: <Lock className="w-5 h-5" />
     },
     { 
-      name: 'Monto Utilizado', 
-      value: 18,
-      displayValue: '$18M',
-      color: '#8B9DC3'
-    },
-    { 
-      name: 'Saldo Disponible', 
+      name: 'Saldo Capacitación', 
       value: 17,
       displayValue: '$17M',
       color: '#9B59B6',
-      trend: 'up',
-      trendValue: '+$2M'
+      yearOverYear: 15,
+      icon: <PiggyBank className="w-5 h-5" />
+    },
+    { 
+      name: 'Saldo Excedente', 
+      value: 8,
+      displayValue: '$8M',
+      color: '#E74C3C',
+      yearOverYear: -10,
+      icon: <TrendingUp className="w-5 h-5" />
     },
   ];
 
@@ -109,11 +113,10 @@ export const EmpresaResumenFinanciero: React.FC = () => {
           <p className="text-xs text-muted-foreground">
             {((data.value / total) * 100).toFixed(1)}% del total
           </p>
-          {data.trend && (
-            <p className={`text-xs mt-1 ${data.trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
-              {data.trendValue}
-            </p>
-          )}
+          <div className={`flex items-center gap-1 text-xs mt-1 ${data.yearOverYear >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+            {data.yearOverYear >= 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+            {data.yearOverYear >= 0 ? '+' : ''}{data.yearOverYear}% vs año anterior
+          </div>
         </div>
       );
     }
@@ -125,22 +128,22 @@ export const EmpresaResumenFinanciero: React.FC = () => {
       {financieroData.map((item) => (
         <div 
           key={item.name}
-          className="flex flex-col items-center p-3 rounded-xl bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer"
+          className="flex flex-col items-center p-3 rounded-xl bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer group"
         >
           <div 
-            className="w-3 h-3 rounded-full mb-2"
-            style={{ backgroundColor: item.color }}
-          />
+            className="w-10 h-10 rounded-full flex items-center justify-center mb-2 transition-transform group-hover:scale-110"
+            style={{ backgroundColor: item.color, color: 'white' }}
+          >
+            {item.icon}
+          </div>
           <p className="text-lg font-bold text-foreground">{item.displayValue}</p>
           <p className="text-xs text-muted-foreground text-center leading-tight">{item.name}</p>
-          {item.trend && (
-            <div className={`flex items-center gap-0.5 mt-1 px-2 py-0.5 rounded-full text-xs font-medium ${
-              item.trend === 'up' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-            }`}>
-              {item.trend === 'up' ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-              {item.trendValue}
-            </div>
-          )}
+          <div className={`flex items-center gap-0.5 mt-1 px-2 py-0.5 rounded-full text-xs font-medium ${
+            item.yearOverYear >= 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+          }`}>
+            {item.yearOverYear >= 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+            {item.yearOverYear >= 0 ? '+' : ''}{item.yearOverYear}%
+          </div>
         </div>
       ))}
     </div>

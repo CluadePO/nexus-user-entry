@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card } from 'antd';
+import { Card, Progress } from 'antd';
 import { 
   Users, 
   BookOpen, 
@@ -8,7 +8,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Target,
-  TrendingUp
+  TrendingUp,
+  CheckCircle2
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
@@ -95,17 +96,41 @@ export const EmpresaPlanCapacitacion: React.FC = () => {
     return '#8B9DC3';
   };
 
+  // Calculate progress percentage
+  const totalPlannedCourses = 36;
+  const completedCourses = 8; // Courses already completed
+  const progressPercent = Math.round((completedCourses / totalPlannedCourses) * 100);
+
   return (
     <Card 
       className="shadow-sm border-0 bg-card h-full"
       title={
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center">
-            <CalendarIcon className="w-4 h-4 text-white" />
+        <div className="flex items-center justify-between w-full">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center">
+              <CalendarIcon className="w-4 h-4 text-white" />
+            </div>
+            <div>
+              <span className="text-foreground font-semibold">Plan de Capacitación 2026</span>
+              <p className="text-xs text-muted-foreground font-normal">Planificación anual de cursos</p>
+            </div>
           </div>
-          <div>
-            <span className="text-foreground font-semibold">Plan de Capacitación 2026</span>
-            <p className="text-xs text-muted-foreground font-normal">Planificación anual de cursos</p>
+          {/* Progress Indicator */}
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-primary" />
+              <span className="text-sm font-medium text-muted-foreground">Avance del Plan</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Progress 
+                percent={progressPercent} 
+                size="small" 
+                strokeColor="#65BFB1"
+                className="w-24 mb-0"
+                format={(percent) => <span className="text-xs font-bold text-primary">{percent}%</span>}
+              />
+              <span className="text-xs text-muted-foreground">({completedCourses}/{totalPlannedCourses} cursos)</span>
+            </div>
           </div>
         </div>
       }
