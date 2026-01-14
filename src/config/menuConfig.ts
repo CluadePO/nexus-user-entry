@@ -73,6 +73,7 @@ export const menuByRole: Record<UserRole, MenuItem[]> = {
       label: 'Formación', 
       icon: 'GraduationCap',
       children: [
+        { key: 'mi-buscador', label: 'Mi Buscador', url: '/formacion/buscador' },
         { key: 'rol-asesor', label: 'Rol Asesor', url: '/asesor' },
         { key: 'mallas', label: 'Mallas de Formación', url: '/formacion/mallas' },
       ]
@@ -119,6 +120,7 @@ export const menuByRole: Record<UserRole, MenuItem[]> = {
       label: 'Formación', 
       icon: 'GraduationCap',
       children: [
+        { key: 'mi-buscador', label: 'Mi Buscador', url: '/formacion/buscador' },
         { key: 'rol-asesor', label: 'Rol Asesor', url: '/asesor' },
         { key: 'mallas', label: 'Mallas de Formación', url: '/formacion/mallas' },
       ]
@@ -166,6 +168,7 @@ export const menuByRole: Record<UserRole, MenuItem[]> = {
       label: 'Formación', 
       icon: 'GraduationCap',
       children: [
+        { key: 'mi-buscador', label: 'Mi Buscador', url: '/formacion/buscador' },
         { key: 'rol-asesor', label: 'Rol Asesor', url: '/asesor' },
         { key: 'mallas', label: 'Mallas de Formación', url: '/formacion/mallas' },
       ]
@@ -206,6 +209,7 @@ export const menuByRole: Record<UserRole, MenuItem[]> = {
       label: 'Formación', 
       icon: 'GraduationCap',
       children: [
+        { key: 'mi-buscador', label: 'Mi Buscador', url: '/formacion/buscador' },
         { key: 'rol-asesor', label: 'Rol Asesor', url: '/asesor' },
         { key: 'mallas', label: 'Mallas de Formación', url: '/formacion/mallas' },
       ]
@@ -247,6 +251,7 @@ export const menuByRole: Record<UserRole, MenuItem[]> = {
       label: 'Formación', 
       icon: 'GraduationCap',
       children: [
+        { key: 'mi-buscador', label: 'Mi Buscador', url: '/formacion/buscador' },
         { key: 'rol-asesor', label: 'Rol Asesor', url: '/asesor' },
         { key: 'mallas', label: 'Mallas de Formación', url: '/formacion/mallas' },
       ]
