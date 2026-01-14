@@ -178,9 +178,7 @@ export const menuByRole: Record<UserRole, MenuItem[]> = {
           children: [
             { key: 'asesor-dashboard', label: 'Dashboard', url: '/asesor' },
             { key: 'asesor-diagnostico', label: 'Diagnóstico', url: '/asesor/diagnostico' },
-            { key: 'asesor-herramientas', label: 'Herramientas', url: '/asesor/herramientas' },
             { key: 'asesor-resultados', label: 'Resultados', url: '/asesor/resultados' },
-            { key: 'asesor-plan', label: 'Plan de Capacitación', url: '/asesor/plan' },
           ]
         },
         { key: 'mallas', label: 'Mallas de Formación', url: '/formacion/mallas' },
@@ -228,9 +226,7 @@ export const menuByRole: Record<UserRole, MenuItem[]> = {
           children: [
             { key: 'asesor-dashboard', label: 'Dashboard', url: '/asesor' },
             { key: 'asesor-diagnostico', label: 'Diagnóstico', url: '/asesor/diagnostico' },
-            { key: 'asesor-herramientas', label: 'Herramientas', url: '/asesor/herramientas' },
             { key: 'asesor-resultados', label: 'Resultados', url: '/asesor/resultados' },
-            { key: 'asesor-plan', label: 'Plan de Capacitación', url: '/asesor/plan' },
           ]
         },
         { key: 'mallas', label: 'Mallas de Formación', url: '/formacion/mallas' },
@@ -279,9 +275,7 @@ export const menuByRole: Record<UserRole, MenuItem[]> = {
           children: [
             { key: 'asesor-dashboard', label: 'Dashboard', url: '/asesor' },
             { key: 'asesor-diagnostico', label: 'Diagnóstico', url: '/asesor/diagnostico' },
-            { key: 'asesor-herramientas', label: 'Herramientas', url: '/asesor/herramientas' },
             { key: 'asesor-resultados', label: 'Resultados', url: '/asesor/resultados' },
-            { key: 'asesor-plan', label: 'Plan de Capacitación', url: '/asesor/plan' },
           ]
         },
         { key: 'mallas', label: 'Mallas de Formación', url: '/formacion/mallas' },
@@ -337,9 +331,7 @@ export const menuByRole: Record<UserRole, MenuItem[]> = {
       children: [
         { key: 'asesor-dashboard', label: 'Dashboard', url: '/asesor' },
         { key: 'asesor-diagnostico', label: 'Diagnóstico', url: '/asesor/diagnostico' },
-        { key: 'asesor-herramientas', label: 'Herramientas', url: '/asesor/herramientas' },
         { key: 'asesor-resultados', label: 'Resultados', url: '/asesor/resultados' },
-        { key: 'asesor-plan', label: 'Plan de Capacitación', url: '/asesor/plan' },
       ]
     },
   ],
