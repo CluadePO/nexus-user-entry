@@ -649,23 +649,18 @@ const AccountStatusSection: React.FC = () => {
 };
 
 const CourseSearchGrid: React.FC = () => {
-  const [searchText, setSearchText] = useState('');
-  const [stageFilter, setStageFilter] = useState<string>('');
-  const [statusFilter, setStatusFilter] = useState<string>('');
+  const [searchValue, setSearchValue] = useState('');
+  const [searchType, setSearchType] = useState<'idSence' | 'idInscripcion' | 'codigoSence'>('idSence');
+  const [hasSearched, setHasSearched] = useState(false);
+  const [searchResults, setSearchResults] = useState<typeof allCourses>([]);
 
   const columns = [
+    { title: 'ID Sence', dataIndex: 'idSence', key: 'idSence', render: (text: string) => <span className="font-mono text-xs">{text}</span> },
     { title: 'Curso', dataIndex: 'name', key: 'name', render: (text: string) => <span className="font-medium">{text}</span> },
     { title: 'Cliente', dataIndex: 'client', key: 'client' },
     { title: 'OTEC', dataIndex: 'otec', key: 'otec' },
     { title: 'Etapa', dataIndex: 'stage', key: 'stage', render: (stage: string) => <StageBadge stage={stage} /> },
     { title: 'Estado', dataIndex: 'status', key: 'status', render: (status: 'normal' | 'medio' | 'critico') => <StatusBadge status={status} /> },
-    { title: 'Fecha', dataIndex: 'date', key: 'date' },
-    { 
-      title: 'Monto', 
-      dataIndex: 'amount', 
-      key: 'amount',
-      render: (amount: number) => new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 }).format(amount)
-    },
     { 
       title: '', 
       key: 'action', 
@@ -677,60 +672,125 @@ const CourseSearchGrid: React.FC = () => {
     },
   ];
 
-  const filteredCourses = allCourses.filter(course => {
-    const matchesSearch = course.name.toLowerCase().includes(searchText.toLowerCase()) ||
-                          course.client.toLowerCase().includes(searchText.toLowerCase()) ||
-                          course.otec.toLowerCase().includes(searchText.toLowerCase());
-    const matchesStage = !stageFilter || course.stage === stageFilter;
-    const matchesStatus = !statusFilter || course.status === statusFilter;
-    return matchesSearch && matchesStage && matchesStatus;
-  });
+  // Extended mock data with IDs
+  const coursesWithIds = allCourses.map((course, index) => ({
+    ...course,
+    idSence: `SENCE-${2024}${String(index + 1).padStart(5, '0')}`,
+    idInscripcion: `INS-${String(index + 1).padStart(6, '0')}`,
+    codigoSence: `CS-${1000 + index}`,
+  }));
+
+  const handleSearch = () => {
+    if (!searchValue.trim()) {
+      setSearchResults([]);
+      setHasSearched(false);
+      return;
+    }
+
+    const filtered = coursesWithIds.filter(course => {
+      const value = searchValue.toLowerCase();
+      switch (searchType) {
+        case 'idSence':
+          return course.idSence.toLowerCase().includes(value);
+        case 'idInscripcion':
+          return course.idInscripcion.toLowerCase().includes(value);
+        case 'codigoSence':
+          return course.codigoSence.toLowerCase().includes(value);
+        default:
+          return false;
+      }
+    });
+
+    setSearchResults(filtered);
+    setHasSearched(true);
+  };
+
+  const handleClear = () => {
+    setSearchValue('');
+    setSearchResults([]);
+    setHasSearched(false);
+  };
+
+  const searchTypeLabels = {
+    idSence: 'ID Sence',
+    idInscripcion: 'ID de Inscripción',
+    codigoSence: 'Código Sence',
+  };
 
   return (
     <Card title="Búsqueda de Cursos" className="shadow-sm">
-      <div className="flex flex-wrap gap-4 mb-4">
-        <Input
-          placeholder="Buscar por curso, cliente u OTEC..."
-          prefix={<Search className="w-4 h-4 text-muted-foreground" />}
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-          className="w-64"
-        />
-        <Select
-          placeholder="Filtrar por etapa"
-          allowClear
-          value={stageFilter || undefined}
-          onChange={(value) => setStageFilter(value || '')}
-          className="w-48"
-          options={[
-            { value: 'Borrador', label: 'Borrador' },
-            { value: 'Por comunicar', label: 'Por comunicar' },
-            { value: 'Inscrito', label: 'Inscrito' },
-            { value: 'En ejecución', label: 'En ejecución' },
-            { value: 'Por emisión OC', label: 'Por emisión OC' },
-            { value: 'Por liquidar', label: 'Por liquidar' },
-          ]}
-        />
-        <Select
-          placeholder="Filtrar por estado"
-          allowClear
-          value={statusFilter || undefined}
-          onChange={(value) => setStatusFilter(value || '')}
-          className="w-40"
-          options={[
-            { value: 'normal', label: 'Normal' },
-            { value: 'medio', label: 'Medio' },
-            { value: 'critico', label: 'Crítico' },
-          ]}
-        />
+      <div className="flex flex-wrap gap-3 mb-4 items-end">
+        <div className="flex flex-col gap-1">
+          <span className="text-xs text-muted-foreground">Buscar por</span>
+          <Select
+            value={searchType}
+            onChange={(value) => {
+              setSearchType(value);
+              setHasSearched(false);
+              setSearchResults([]);
+            }}
+            className="w-48"
+            options={[
+              { value: 'idSence', label: 'ID Sence' },
+              { value: 'idInscripcion', label: 'ID de Inscripción' },
+              { value: 'codigoSence', label: 'Código Sence' },
+            ]}
+          />
+        </div>
+        <div className="flex flex-col gap-1 flex-1 max-w-md">
+          <span className="text-xs text-muted-foreground">Valor a buscar</span>
+          <Input
+            placeholder={`Ingrese ${searchTypeLabels[searchType]}...`}
+            prefix={<Search className="w-4 h-4 text-muted-foreground" />}
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            onPressEnter={handleSearch}
+            className="w-full"
+          />
+        </div>
+        <Button type="primary" icon={<Search className="w-4 h-4" />} onClick={handleSearch}>
+          Buscar
+        </Button>
+        {hasSearched && (
+          <Button onClick={handleClear}>
+            Limpiar
+          </Button>
+        )}
       </div>
-      <Table 
-        dataSource={filteredCourses} 
-        columns={columns} 
-        pagination={{ pageSize: 10 }}
-        size="small"
-        rowKey="id"
-      />
+
+      {hasSearched && (
+        <div className="border-t pt-4">
+          {searchResults.length > 0 ? (
+            <>
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-sm text-muted-foreground">
+                  Se encontraron <span className="font-semibold text-foreground">{searchResults.length}</span> resultado(s)
+                </span>
+              </div>
+              <Table 
+                dataSource={searchResults} 
+                columns={columns} 
+                pagination={{ pageSize: 5, showSizeChanger: true, showTotal: (total) => `Total: ${total} cursos` }}
+                size="small"
+                rowKey="id"
+              />
+            </>
+          ) : (
+            <div className="text-center py-8 text-muted-foreground">
+              <Search className="w-12 h-12 mx-auto mb-3 opacity-30" />
+              <p>No se encontraron resultados para "{searchValue}"</p>
+              <p className="text-sm">Intente con otro {searchTypeLabels[searchType]}</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {!hasSearched && (
+        <div className="text-center py-8 text-muted-foreground border-t">
+          <Search className="w-12 h-12 mx-auto mb-3 opacity-30" />
+          <p>Ingrese un valor y presione "Buscar" para ver resultados</p>
+        </div>
+      )}
     </Card>
   );
 };
@@ -772,7 +832,7 @@ const PendingCoursesSection: React.FC<{
         <div className="flex items-center gap-2">
           <span className={iconColor}>{icon}</span>
           <span>{title}</span>
-          <Tag color="error">{courses.length}</Tag>
+          <Tag color="error">{courses.length} cursos</Tag>
         </div>
       } 
       className="shadow-sm"
@@ -781,7 +841,12 @@ const PendingCoursesSection: React.FC<{
       <Table 
         dataSource={courses} 
         columns={columns} 
-        pagination={false}
+        pagination={{ 
+          pageSize: 5, 
+          showSizeChanger: true, 
+          showTotal: (total) => `Total: ${total} cursos`,
+          size: 'small'
+        }}
         size="small"
         rowKey="id"
       />
