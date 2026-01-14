@@ -12,6 +12,7 @@ import Dashboard from "./pages/Dashboard";
 import Inscripcion from "./pages/Inscripcion";
 import AsesorDashboard from "./pages/AsesorDashboard";
 import AsesorDiagnostico from "./pages/AsesorDiagnostico";
+import AsesorHerramientas from "./pages/AsesorHerramientas";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -48,7 +49,8 @@ const App = () => (
                 <Route path="/buscador/*" element={<PlaceholderPage title="Mi Buscador" />} />
                 <Route path="/asesor" element={<AsesorDashboard />} />
                 <Route path="/asesor/diagnostico" element={<AsesorDiagnostico />} />
-                <Route path="/asesor/herramientas" element={<PlaceholderPage title="Herramientas" />} />
+                <Route path="/asesor/herramientas" element={<AsesorHerramientas />} />
+                <Route path="/asesor/herramientas/*" element={<AsesorHerramientas />} />
                 <Route path="/asesor/resultados" element={<PlaceholderPage title="Resultados" />} />
                 <Route path="/asesor/plan" element={<PlaceholderPage title="Plan de Capacitación" />} />
                 <Route path="/asesor/buscador" element={<PlaceholderPage title="Mi Buscador" />} />
