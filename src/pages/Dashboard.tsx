@@ -6,7 +6,7 @@ import { DashboardMetrics } from '@/components/dashboard/DashboardMetrics';
 import { DashboardCharts } from '@/components/dashboard/DashboardCharts';
 import { DJOManagementCard } from '@/components/dashboard/DJOManagementCard';
 import { OTECHighlightMetrics } from '@/components/dashboard/OTECHighlightMetrics';
-import { EmpresaManagementCard } from '@/components/dashboard/EmpresaManagementCard';
+import { EmpresaResumenFinanciero, EmpresaEtapaCursos, EmpresaProximosCursos } from '@/components/dashboard/EmpresaManagementCard';
 import { EmpresaHighlightMetrics } from '@/components/dashboard/EmpresaHighlightMetrics';
 import { Calendar, Clock } from 'lucide-react';
 
@@ -65,11 +65,26 @@ const Dashboard: React.FC = () => {
       {/* OTEC Highlight Metrics - Cursos y Participantes side by side */}
       {isOTECRole && <OTECHighlightMetrics />}
 
-      {/* Empresa Management Card - Only for Empresa roles */}
-      {isEmpresaRole && <EmpresaManagementCard />}
+      {/* Empresa Dashboard Layout */}
+      {isEmpresaRole && (
+        <>
+          {/* Resumen Financiero - Below Quick Access */}
+          <EmpresaResumenFinanciero />
 
-      {/* Empresa Highlight Metrics - Cursos y Trabajadores side by side */}
-      {isEmpresaRole && <EmpresaHighlightMetrics />}
+          {/* Etapa de Cursos - Below Resumen Financiero */}
+          <EmpresaEtapaCursos />
+
+          {/* Estado de Cursos and Participantes side by side + Próximos Cursos on the right */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <EmpresaHighlightMetrics />
+            </div>
+            <div className="lg:col-span-1">
+              <EmpresaProximosCursos />
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Charts Section - Only for non-Empresa roles */}
       {!isEmpresaRole && <DashboardCharts />}

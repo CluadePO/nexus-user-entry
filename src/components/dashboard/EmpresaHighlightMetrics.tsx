@@ -50,29 +50,29 @@ export const EmpresaHighlightMetrics: React.FC = () => {
 
   const participantesMetrics: HighlightMetric[] = [
     { 
-      label: 'Participantes Capacitados', 
+      label: 'Normal', 
       value: 156, 
-      icon: <Users className="w-5 h-5" />, 
+      icon: <CheckCircle className="w-5 h-5" />, 
       color: '#65BFB1',
-      bgColor: 'rgba(101, 191, 177, 0.1)'
+      bgColor: 'rgba(101, 191, 177, 0.1)',
+      subtext: 'Participantes activos'
     },
     { 
-      label: 'Participantes Planificados', 
-      value: 200, 
-      icon: <UserPlus className="w-5 h-5" />, 
+      label: 'Críticos', 
+      value: 8, 
+      icon: <AlertCircle className="w-5 h-5" />, 
+      color: '#E74C3C',
+      bgColor: 'rgba(231, 76, 60, 0.1)',
+      subtext: 'Requiere atención',
+      trend: 'down'
+    },
+    { 
+      label: 'Medio', 
+      value: 12, 
+      icon: <AlertTriangle className="w-5 h-5" />, 
       color: '#F5A623',
       bgColor: 'rgba(245, 166, 35, 0.1)',
-      subtext: '78% de avance',
-      trend: 'up'
-    },
-    { 
-      label: 'Tasa de Aprobación', 
-      value: '94%', 
-      icon: <TrendingUp className="w-5 h-5" />, 
-      color: '#4A90A4',
-      bgColor: 'rgba(74, 144, 164, 0.1)',
-      subtext: '+3% vs mes anterior',
-      trend: 'up'
+      subtext: 'En seguimiento'
     },
   ];
 
@@ -112,7 +112,7 @@ export const EmpresaHighlightMetrics: React.FC = () => {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      {/* Cursos Section */}
+      {/* Estado actual de los Cursos Section */}
       <Card 
         className="shadow-sm border-0 bg-card"
         title={
@@ -120,7 +120,7 @@ export const EmpresaHighlightMetrics: React.FC = () => {
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
               <BookOpen className="w-4 h-4 text-primary" />
             </div>
-            <span className="text-foreground font-semibold">Cursos</span>
+            <span className="text-foreground font-semibold">Estado actual de los Cursos</span>
           </div>
         }
       >
@@ -145,7 +145,7 @@ export const EmpresaHighlightMetrics: React.FC = () => {
           </div>
         }
       >
-        <div className="space-y-3">
+        <div className="grid grid-cols-3 gap-3">
           {participantesMetrics.map((metric, index) => (
             <div key={metric.label} style={{ animationDelay: `${index * 100}ms` }}>
               <MetricCard metric={metric} />
