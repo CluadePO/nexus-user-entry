@@ -171,43 +171,129 @@ const StageBadge: React.FC<{ stage: string }> = ({ stage }) => {
 
 // Section Components
 const CourseStagesSection: React.FC = () => {
+  const totalCourses = courseStages.reduce((acc, stage) => acc + stage.total, 0);
+  const totalNormal = courseStages.reduce((acc, stage) => acc + stage.normal, 0);
+  const totalMedio = courseStages.reduce((acc, stage) => acc + stage.medio, 0);
+  const totalCritico = courseStages.reduce((acc, stage) => acc + stage.critico, 0);
+
   return (
-    <Card title="Estado de Cursos por Etapa" className="shadow-sm">
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-        {courseStages.map((stage) => (
+    <Card 
+      title={
+        <div className="flex items-center justify-between w-full">
+          <span>Estado de Cursos por Etapa</span>
+          <div className="flex items-center gap-4 text-sm font-normal">
+            <span className="flex items-center gap-1.5">
+              <span className="w-3 h-3 rounded-full bg-green-500"></span>
+              Normal: {totalNormal}
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-3 h-3 rounded-full bg-amber-500"></span>
+              Medio: {totalMedio}
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-3 h-3 rounded-full bg-red-500"></span>
+              Crítico: {totalCritico}
+            </span>
+          </div>
+        </div>
+      } 
+      className="shadow-sm"
+    >
+      {/* Pipeline visual */}
+      <div className="flex items-stretch gap-1 mb-6">
+        {courseStages.map((stage, index) => (
           <div 
-            key={stage.name} 
-            className="bg-muted/30 rounded-xl p-4 hover:bg-muted/50 transition-colors cursor-pointer"
+            key={stage.name}
+            className="flex-1 relative group cursor-pointer"
           >
-            <div className="flex items-center gap-2 mb-3">
-              <div className="p-2 bg-primary/10 rounded-lg text-primary">
-                {stage.icon}
+            {/* Stage card */}
+            <div className="bg-gradient-to-b from-muted/50 to-muted/30 rounded-lg p-4 border border-muted hover:border-primary/30 hover:shadow-md transition-all h-full">
+              {/* Header */}
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <div className="p-2.5 bg-primary/10 rounded-lg text-primary">
+                  {stage.icon}
+                </div>
               </div>
-              <span className="font-medium text-sm">{stage.name}</span>
+              <h4 className="text-center font-medium text-sm mb-2 text-foreground">{stage.name}</h4>
+              
+              {/* Total */}
+              <div className="text-center mb-4">
+                <span className="text-3xl font-bold text-primary">{stage.total}</span>
+                <span className="text-xs text-muted-foreground block mt-1">cursos</span>
+              </div>
+
+              {/* Status breakdown - stacked bars */}
+              <div className="space-y-2">
+                <div className="h-2 bg-muted rounded-full overflow-hidden flex">
+                  <div 
+                    className="bg-green-500 h-full transition-all" 
+                    style={{ width: `${(stage.normal / stage.total) * 100}%` }}
+                  />
+                  <div 
+                    className="bg-amber-500 h-full transition-all" 
+                    style={{ width: `${(stage.medio / stage.total) * 100}%` }}
+                  />
+                  <div 
+                    className="bg-red-500 h-full transition-all" 
+                    style={{ width: `${(stage.critico / stage.total) * 100}%` }}
+                  />
+                </div>
+                
+                {/* Numbers below bar */}
+                <div className="flex justify-between text-xs">
+                  <span className="flex items-center gap-1 text-green-600 font-medium">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    {stage.normal}
+                  </span>
+                  <span className="flex items-center gap-1 text-amber-600 font-medium">
+                    <AlertTriangle className="w-3.5 h-3.5" />
+                    {stage.medio}
+                  </span>
+                  <span className="flex items-center gap-1 text-red-600 font-medium">
+                    <AlertCircle className="w-3.5 h-3.5" />
+                    {stage.critico}
+                  </span>
+                </div>
+              </div>
             </div>
-            <div className="text-2xl font-bold mb-3">{stage.total}</div>
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between text-xs">
-                <span className="flex items-center gap-1 text-green-600">
-                  <CheckCircle2 className="w-3 h-3" /> Normal
-                </span>
-                <span className="font-medium">{stage.normal}</span>
+
+            {/* Arrow connector */}
+            {index < courseStages.length - 1 && (
+              <div className="absolute top-1/2 -right-2 transform -translate-y-1/2 z-10 text-muted-foreground/40">
+                <svg width="12" height="24" viewBox="0 0 12 24" fill="currentColor">
+                  <path d="M0 0 L12 12 L0 24 Z" />
+                </svg>
               </div>
-              <div className="flex items-center justify-between text-xs">
-                <span className="flex items-center gap-1 text-amber-600">
-                  <AlertTriangle className="w-3 h-3" /> Medio
-                </span>
-                <span className="font-medium">{stage.medio}</span>
-              </div>
-              <div className="flex items-center justify-between text-xs">
-                <span className="flex items-center gap-1 text-red-600">
-                  <AlertCircle className="w-3 h-3" /> Crítico
-                </span>
-                <span className="font-medium">{stage.critico}</span>
-              </div>
-            </div>
+            )}
           </div>
         ))}
+      </div>
+
+      {/* Summary row */}
+      <div className="bg-muted/20 rounded-lg p-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-primary/10 rounded-lg">
+            <Users className="w-5 h-5 text-primary" />
+          </div>
+          <div>
+            <span className="text-2xl font-bold">{totalCourses}</span>
+            <span className="text-muted-foreground ml-2">cursos en total</span>
+          </div>
+        </div>
+        <div className="flex items-center gap-6">
+          <div className="text-center">
+            <div className="text-xl font-semibold text-green-600">{Math.round((totalNormal / totalCourses) * 100)}%</div>
+            <div className="text-xs text-muted-foreground">Sin alertas</div>
+          </div>
+          <div className="text-center">
+            <div className="text-xl font-semibold text-amber-600">{Math.round((totalMedio / totalCourses) * 100)}%</div>
+            <div className="text-xs text-muted-foreground">Atención media</div>
+          </div>
+          <div className="text-center">
+            <div className="text-xl font-semibold text-red-600">{Math.round((totalCritico / totalCourses) * 100)}%</div>
+            <div className="text-xs text-muted-foreground">Requieren acción</div>
+          </div>
+        </div>
       </div>
     </Card>
   );
