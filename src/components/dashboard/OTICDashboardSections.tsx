@@ -638,18 +638,28 @@ const RecentCoursesSection: React.FC = () => {
   );
 };
 
-// Financial summary data
-const financialSummary = {
+// Financial summary data per company
+const financialSummaryByCompany: Record<string, typeof financialSummaryBase> = {
+  'c1': { aporteAno: 15000000, saldoDisponible: 7500000, excedentesAnoAnterior: 2000000, saldoActualExcedentes: 1400000 },
+  'c2': { aporteAno: 22000000, saldoDisponible: 11000000, excedentesAnoAnterior: 3500000, saldoActualExcedentes: 2450000 },
+  'c3': { aporteAno: 8900000, saldoDisponible: 4450000, excedentesAnoAnterior: 1200000, saldoActualExcedentes: 840000 },
+  'c4': { aporteAno: 5600000, saldoDisponible: 2800000, excedentesAnoAnterior: 800000, saldoActualExcedentes: 560000 },
+  'c5': { aporteAno: 12500000, saldoDisponible: 6250000, excedentesAnoAnterior: 1800000, saldoActualExcedentes: 1260000 },
+  'c6': { aporteAno: 18700000, saldoDisponible: 9350000, excedentesAnoAnterior: 2700000, saldoActualExcedentes: 1890000 },
+  'c7': { aporteAno: 25000000, saldoDisponible: 12500000, excedentesAnoAnterior: 4000000, saldoActualExcedentes: 2800000 },
+  'c8': { aporteAno: 30000000, saldoDisponible: 15000000, excedentesAnoAnterior: 5000000, saldoActualExcedentes: 3500000 },
+  'c9': { aporteAno: 12000000, saldoDisponible: 6000000, excedentesAnoAnterior: 1600000, saldoActualExcedentes: 1120000 },
+};
+
+const financialSummaryBase = {
   aporteAno: 85000000,
   saldoDisponible: 42500000,
   excedentesAnoAnterior: 12300000,
   saldoActualExcedentes: 8700000,
-  usado: 42500000,
-  comprometido: 15800000,
 };
 
 const AccountStatusSection: React.FC = () => {
-  const [searchText, setSearchText] = useState('');
+  const { selectedHoldingId, selectedCompanyId } = useOTICFilter();
   
   const formatCurrency = (value: number) => 
     new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 }).format(value);
@@ -661,85 +671,39 @@ const AccountStatusSection: React.FC = () => {
     return formatCurrency(value);
   };
 
-  const filteredCompanies = companyAccounts.filter(company =>
-    company.name.toLowerCase().includes(searchText.toLowerCase()) ||
-    company.rut.includes(searchText)
-  );
+  // Calculate financial summary based on filter
+  const financialSummary = useMemo(() => {
+    let companyIds: string[] = [];
+    
+    if (selectedCompanyId) {
+      companyIds = [selectedCompanyId];
+    } else if (selectedHoldingId) {
+      companyIds = holdingToCompanies[selectedHoldingId] || [];
+    } else {
+      companyIds = Object.keys(financialSummaryByCompany);
+    }
 
-  // Calculate percentages for the waterfall chart
-  const totalFranquicia = financialSummary.aporteAno + financialSummary.excedentesAnoAnterior;
-  const usadoPct = (financialSummary.usado / totalFranquicia) * 100;
-  const comprometidoPct = (financialSummary.comprometido / totalFranquicia) * 100;
-  const disponiblePct = (financialSummary.saldoDisponible / totalFranquicia) * 100;
-  const excedentesRestantesPct = (financialSummary.saldoActualExcedentes / totalFranquicia) * 100;
-
-  const columns = [
-    { 
-      title: 'Empresa', 
-      dataIndex: 'name', 
-      key: 'name', 
-      render: (text: string, record: any) => (
-        <div>
-          <span className="font-medium flex items-center gap-1">
-            <Building2 className="w-4 h-4 text-muted-foreground" />
-            {text}
-          </span>
-          <span className="text-xs text-muted-foreground">{record.rut}</span>
-        </div>
-      )
-    },
-    { 
-      title: 'Saldo', 
-      dataIndex: 'balance', 
-      key: 'balance',
-      render: (value: number) => <span className="font-semibold">{formatCurrency(value)}</span>
-    },
-    { 
-      title: 'Facturado', 
-      dataIndex: 'invoiced', 
-      key: 'invoiced',
-      render: (value: number) => <span className="font-semibold text-green-600">{formatCurrency(value)}</span>
-    },
-    { 
-      title: 'Pendiente', 
-      dataIndex: 'pending', 
-      key: 'pending',
-      render: (value: number) => <span className="font-semibold text-amber-600">{formatCurrency(value)}</span>
-    },
-    { 
-      title: 'Cursos Activos', 
-      dataIndex: 'coursesActive', 
-      key: 'coursesActive',
-      render: (value: number) => <Tag color="blue">{value} cursos</Tag>
-    },
-    { 
-      title: 'Tendencia', 
-      dataIndex: 'trend', 
-      key: 'trend',
-      render: (trend: number) => (
-        <span className={`flex items-center gap-1 ${trend >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-          {trend >= 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
-          {trend > 0 ? '+' : ''}{trend}%
-        </span>
-      )
-    },
-    { 
-      title: '', 
-      key: 'action', 
-      render: () => (
-        <Button type="primary" size="small" icon={<Eye className="w-4 h-4" />}>
-          Detalle
-        </Button>
-      )
-    },
-  ];
+    return companyIds.reduce(
+      (acc, companyId) => {
+        const data = financialSummaryByCompany[companyId];
+        if (data) {
+          acc.aporteAno += data.aporteAno;
+          acc.saldoDisponible += data.saldoDisponible;
+          acc.excedentesAnoAnterior += data.excedentesAnoAnterior;
+          acc.saldoActualExcedentes += data.saldoActualExcedentes;
+        }
+        return acc;
+      },
+      { aporteAno: 0, saldoDisponible: 0, excedentesAnoAnterior: 0, saldoActualExcedentes: 0 }
+    );
+  }, [selectedHoldingId, selectedCompanyId]);
 
   return (
-    <Card title="Estado Cuenta Corriente por Empresa" className="shadow-sm">
+    <Card title="Estado Cuenta Corriente" className="shadow-sm">
       {/* Financial Indicators Section */}
       <div className="mb-6">
         {/* Key Metrics Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
             <div className="flex items-center gap-2 mb-2">
               <div className="p-2 bg-blue-500/20 rounded-lg">
@@ -759,7 +723,7 @@ const AccountStatusSection: React.FC = () => {
               <span className="text-sm text-green-700 dark:text-green-300 font-medium">Saldo Disponible</span>
             </div>
             <p className="text-2xl font-bold text-green-900 dark:text-green-100">{formatCurrencyShort(financialSummary.saldoDisponible)}</p>
-            <p className="text-xs text-green-600 dark:text-green-400 mt-1">{((financialSummary.saldoDisponible / financialSummary.aporteAno) * 100).toFixed(1)}% del aporte</p>
+            <p className="text-xs text-green-600 dark:text-green-400 mt-1">{financialSummary.aporteAno > 0 ? ((financialSummary.saldoDisponible / financialSummary.aporteAno) * 100).toFixed(1) : 0}% del aporte</p>
           </div>
 
           <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-xl p-4 border border-purple-200 dark:border-purple-800">
@@ -781,7 +745,7 @@ const AccountStatusSection: React.FC = () => {
               <span className="text-sm text-amber-700 dark:text-amber-300 font-medium">Saldo Actual Excedentes</span>
             </div>
             <p className="text-2xl font-bold text-amber-900 dark:text-amber-100">{formatCurrencyShort(financialSummary.saldoActualExcedentes)}</p>
-            <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">{((financialSummary.saldoActualExcedentes / financialSummary.excedentesAnoAnterior) * 100).toFixed(1)}% restante</p>
+            <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">{financialSummary.excedentesAnoAnterior > 0 ? ((financialSummary.saldoActualExcedentes / financialSummary.excedentesAnoAnterior) * 100).toFixed(1) : 0}% restante</p>
           </div>
         </div>
 
@@ -794,7 +758,8 @@ const CourseSearchGrid: React.FC = () => {
   const [searchValue, setSearchValue] = useState('');
   const [searchType, setSearchType] = useState<'idSence' | 'idInscripcion' | 'codigoSence'>('idSence');
   const [hasSearched, setHasSearched] = useState(false);
-  const [searchResults, setSearchResults] = useState<typeof allCourses>([]);
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const { selectedHoldingId, selectedCompanyId } = useOTICFilter();
 
   const columns = [
     { title: 'ID Sence', dataIndex: 'idSence', key: 'idSence', render: (text: string) => <span className="font-mono text-xs">{text}</span> },
@@ -814,8 +779,12 @@ const CourseSearchGrid: React.FC = () => {
     },
   ];
 
-  // Extended mock data with IDs
-  const coursesWithIds = allCourses.map((course, index) => ({
+  // Filter courses by holding/company first, then add IDs
+  const filteredBaseCourses = useMemo(() => {
+    return filterByHoldingCompany(allCourses, selectedHoldingId, selectedCompanyId);
+  }, [selectedHoldingId, selectedCompanyId]);
+
+  const coursesWithIds = filteredBaseCourses.map((course, index) => ({
     ...course,
     idSence: `SENCE-${2024}${String(index + 1).padStart(5, '0')}`,
     idInscripcion: `INS-${String(index + 1).padStart(6, '0')}`,
@@ -998,20 +967,48 @@ const PendingCoursesSection: React.FC<{
 
 // Main Component
 export const OTICDashboardSections: React.FC = () => {
+  const { selectedHoldingId, selectedCompanyId } = useOTICFilter();
+
+  // Filter all pending courses based on selection
+  const filteredPendingOC = useMemo(() => 
+    filterByHoldingCompany(pendingOCCourses, selectedHoldingId, selectedCompanyId), 
+    [selectedHoldingId, selectedCompanyId]
+  );
+  const filteredMissingReq = useMemo(() => 
+    filterByHoldingCompany(missingRequirementsCourses, selectedHoldingId, selectedCompanyId), 
+    [selectedHoldingId, selectedCompanyId]
+  );
+  const filteredPrecontract = useMemo(() => 
+    filterByHoldingCompany(precontractPendingDocs, selectedHoldingId, selectedCompanyId), 
+    [selectedHoldingId, selectedCompanyId]
+  );
+  const filteredSenceDiff = useMemo(() => 
+    filterByHoldingCompany(senceDifferenceCourses, selectedHoldingId, selectedCompanyId), 
+    [selectedHoldingId, selectedCompanyId]
+  );
+  const filteredCriticalLiq = useMemo(() => 
+    filterByHoldingCompany(criticalLiquidationCourses, selectedHoldingId, selectedCompanyId), 
+    [selectedHoldingId, selectedCompanyId]
+  );
+  const filteredMdaRect = useMemo(() => 
+    filterByHoldingCompany(mdaRectificationCourses, selectedHoldingId, selectedCompanyId), 
+    [selectedHoldingId, selectedCompanyId]
+  );
+
   const tabItems = [
     {
       key: '1',
       label: (
         <span className="flex items-center gap-2">
           <Receipt className="w-4 h-4" /> Pendiente OC
-          <Tag color="error">{pendingOCCourses.length}</Tag>
+          <Tag color="error">{filteredPendingOC.length}</Tag>
         </span>
       ),
       children: (
         <PendingCoursesSection
           title="Cursos Pendientes por Emitir OC"
           icon={<Receipt className="w-5 h-5" />}
-          courses={pendingOCCourses}
+          courses={filteredPendingOC}
           iconColor="text-orange-500"
         />
       ),
@@ -1021,14 +1018,14 @@ export const OTICDashboardSections: React.FC = () => {
       label: (
         <span className="flex items-center gap-2">
           <FileWarning className="w-4 h-4" /> Requisitos
-          <Tag color="warning">{missingRequirementsCourses.length}</Tag>
+          <Tag color="warning">{filteredMissingReq.length}</Tag>
         </span>
       ),
       children: (
         <PendingCoursesSection
           title="Cursos con Requisitos Faltantes"
           icon={<FileWarning className="w-5 h-5" />}
-          courses={missingRequirementsCourses}
+          courses={filteredMissingReq}
           iconColor="text-amber-500"
         />
       ),
@@ -1038,14 +1035,14 @@ export const OTICDashboardSections: React.FC = () => {
       label: (
         <span className="flex items-center gap-2">
           <FileX className="w-4 h-4" /> Precontratos
-          <Tag color="warning">{precontractPendingDocs.length}</Tag>
+          <Tag color="warning">{filteredPrecontract.length}</Tag>
         </span>
       ),
       children: (
         <PendingCoursesSection
           title="Precontratos con Documentos Pendientes"
           icon={<FileX className="w-5 h-5" />}
-          courses={precontractPendingDocs}
+          courses={filteredPrecontract}
           iconColor="text-yellow-500"
         />
       ),
@@ -1055,14 +1052,14 @@ export const OTICDashboardSections: React.FC = () => {
       label: (
         <span className="flex items-center gap-2">
           <DollarSign className="w-4 h-4" /> Diferencia SENCE
-          <Tag color="error">{senceDifferenceCourses.length}</Tag>
+          <Tag color="error">{filteredSenceDiff.length}</Tag>
         </span>
       ),
       children: (
         <PendingCoursesSection
           title="Cursos con Diferencia en Montos SENCE"
           icon={<DollarSign className="w-5 h-5" />}
-          courses={senceDifferenceCourses}
+          courses={filteredSenceDiff}
           iconColor="text-red-500"
         />
       ),
@@ -1072,14 +1069,14 @@ export const OTICDashboardSections: React.FC = () => {
       label: (
         <span className="flex items-center gap-2">
           <AlertCircle className="w-4 h-4" /> Críticos Liquidar
-          <Tag color="error">{criticalLiquidationCourses.length}</Tag>
+          <Tag color="error">{filteredCriticalLiq.length}</Tag>
         </span>
       ),
       children: (
         <PendingCoursesSection
           title="Cursos Críticos por Liquidar"
           icon={<AlertCircle className="w-5 h-5" />}
-          courses={criticalLiquidationCourses}
+          courses={filteredCriticalLiq}
           iconColor="text-red-600"
         />
       ),
@@ -1089,14 +1086,14 @@ export const OTICDashboardSections: React.FC = () => {
       label: (
         <span className="flex items-center gap-2">
           <RotateCcw className="w-4 h-4" /> MDA Pendiente
-          <Tag color="warning">{mdaRectificationCourses.length}</Tag>
+          <Tag color="warning">{filteredMdaRect.length}</Tag>
         </span>
       ),
       children: (
         <PendingCoursesSection
           title="Cursos con MDA Rectificación Pendiente"
           icon={<RotateCcw className="w-5 h-5" />}
-          courses={mdaRectificationCourses}
+          courses={filteredMdaRect}
           iconColor="text-purple-500"
         />
       ),
