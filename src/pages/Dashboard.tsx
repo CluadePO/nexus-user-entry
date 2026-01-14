@@ -75,11 +75,11 @@ const Dashboard: React.FC = () => {
           <EmpresaEtapaCursos />
 
           {/* Estado de Cursos and Participantes side by side + Próximos Cursos on the right */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2">
+          <div className="grid grid-cols-1 xl:grid-cols-12 gap-4">
+            <div className="xl:col-span-8">
               <EmpresaHighlightMetrics />
             </div>
-            <div className="lg:col-span-1">
+            <div className="xl:col-span-4">
               <EmpresaProximosCursos />
             </div>
           </div>

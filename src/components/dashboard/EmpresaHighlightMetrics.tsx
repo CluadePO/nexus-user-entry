@@ -78,53 +78,50 @@ export const EmpresaHighlightMetrics: React.FC = () => {
 
   const MetricCard = ({ metric }: { metric: HighlightMetric }) => (
     <div 
-      className="rounded-xl p-4 transition-all hover:scale-105 hover:shadow-md cursor-pointer animate-fade-in"
+      className="rounded-xl p-3 transition-all hover:scale-[1.02] hover:shadow-md cursor-pointer animate-fade-in"
       style={{ backgroundColor: metric.bgColor }}
     >
-      <div className="flex items-start gap-3">
+      <div className="flex items-center gap-2">
         <div 
-          className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
+          className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
           style={{ backgroundColor: metric.color, color: 'white' }}
         >
           {metric.icon}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm text-muted-foreground font-medium truncate">{metric.label}</p>
-          <div className="flex items-center gap-2 mt-0.5">
-            <p className="text-2xl font-bold" style={{ color: metric.color }}>
+          <p className="text-xs text-muted-foreground font-medium truncate">{metric.label}</p>
+          <div className="flex items-center gap-1">
+            <p className="text-lg font-bold" style={{ color: metric.color }}>
               {metric.value}
             </p>
             {metric.trend && (
               metric.trend === 'up' ? (
-                <TrendingUp className="w-4 h-4 text-green-500" />
+                <TrendingUp className="w-3 h-3 text-green-500" />
               ) : (
-                <TrendingDown className="w-4 h-4 text-red-500" />
+                <TrendingDown className="w-3 h-3 text-red-500" />
               )
             )}
           </div>
-          {metric.subtext && (
-            <p className="text-xs text-muted-foreground mt-1">{metric.subtext}</p>
-          )}
         </div>
       </div>
     </div>
   );
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {/* Estado actual de los Cursos Section */}
       <Card 
         className="shadow-sm border-0 bg-card"
         title={
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-              <BookOpen className="w-4 h-4 text-primary" />
+            <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
+              <BookOpen className="w-3.5 h-3.5 text-primary" />
             </div>
-            <span className="text-foreground font-semibold">Estado actual de los Cursos</span>
+            <span className="text-foreground font-semibold text-sm">Estado actual de los Cursos</span>
           </div>
         }
       >
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 gap-2">
           {cursosMetrics.map((metric, index) => (
             <div key={metric.label} style={{ animationDelay: `${index * 100}ms` }}>
               <MetricCard metric={metric} />
@@ -138,14 +135,14 @@ export const EmpresaHighlightMetrics: React.FC = () => {
         className="shadow-sm border-0 bg-card"
         title={
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-              <Users className="w-4 h-4 text-primary" />
+            <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
+              <Users className="w-3.5 h-3.5 text-primary" />
             </div>
-            <span className="text-foreground font-semibold">Participantes</span>
+            <span className="text-foreground font-semibold text-sm">Participantes</span>
           </div>
         }
       >
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 gap-2">
           {participantesMetrics.map((metric, index) => (
             <div key={metric.label} style={{ animationDelay: `${index * 100}ms` }}>
               <MetricCard metric={metric} />
