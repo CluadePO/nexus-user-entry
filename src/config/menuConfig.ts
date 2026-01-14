@@ -78,6 +78,15 @@ export const menuByRole: Record<UserRole, MenuItem[]> = {
         { key: 'buscador-carga', label: 'Carga de Cursos', url: '/buscador/carga' },
         { key: 'buscador-dashboard', label: 'Dashboard', url: '/buscador/dashboard' },
         { key: 'buscador-faq', label: 'Preguntas Frecuentes', url: '/buscador/faq' },
+        { 
+          key: 'rol-asesor', 
+          label: 'Rol Asesor',
+          children: [
+            { key: 'asesor-dashboard', label: 'Dashboard', url: '/asesor' },
+            { key: 'asesor-diagnostico', label: 'Diagnóstico', url: '/asesor/diagnostico' },
+            { key: 'asesor-resultados', label: 'Resultados', url: '/asesor/resultados' },
+          ]
+        },
       ]
     },
     { 
@@ -127,6 +136,15 @@ export const menuByRole: Record<UserRole, MenuItem[]> = {
         { key: 'buscador-carga', label: 'Carga de Cursos', url: '/buscador/carga' },
         { key: 'buscador-dashboard', label: 'Dashboard', url: '/buscador/dashboard' },
         { key: 'buscador-faq', label: 'Preguntas Frecuentes', url: '/buscador/faq' },
+        { 
+          key: 'rol-asesor', 
+          label: 'Rol Asesor',
+          children: [
+            { key: 'asesor-dashboard', label: 'Dashboard', url: '/asesor' },
+            { key: 'asesor-diagnostico', label: 'Diagnóstico', url: '/asesor/diagnostico' },
+            { key: 'asesor-resultados', label: 'Resultados', url: '/asesor/resultados' },
+          ]
+        },
       ]
     },
     { 
