@@ -3,7 +3,8 @@ export type UserRole =
   | 'OTEC' 
   | 'OTEC_REPRESENTANTE' 
   | 'EMPRESA' 
-  | 'EMPRESA_REPRESENTANTE';
+  | 'EMPRESA_REPRESENTANTE'
+  | 'ASESOR';
 
 export interface User {
   id: string;

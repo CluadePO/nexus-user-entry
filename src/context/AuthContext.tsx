@@ -47,6 +47,13 @@ const mockUsers: Record<UserRole, User> = {
     role: 'EMPRESA_REPRESENTANTE',
     company: 'Empresa S.A.',
   },
+  ASESOR: {
+    id: '6',
+    name: 'Laura Sánchez',
+    email: 'laura@asesor.cl',
+    role: 'ASESOR',
+    company: 'Consultoría Asesor',
+  },
 };
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {

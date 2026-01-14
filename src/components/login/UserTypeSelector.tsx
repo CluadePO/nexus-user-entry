@@ -1,7 +1,7 @@
 import React from 'react';
 import { UserRole } from '@/types/user';
 import { getRoleDisplayName, getRoleDescription } from '@/config/menuConfig';
-import { Building2, GraduationCap, Users, CheckCircle2 } from 'lucide-react';
+import { Building2, GraduationCap, Users, CheckCircle2, UserCheck } from 'lucide-react';
 
 interface UserTypeSelectorProps {
   selectedType: UserRole;
@@ -12,6 +12,7 @@ const userTypeConfig: { role: UserRole; icon: React.ReactNode; color: string }[]
   { role: 'OTIC', icon: <Building2 className="w-8 h-8" />, color: 'text-primary' },
   { role: 'OTEC', icon: <GraduationCap className="w-8 h-8" />, color: 'text-blue-500' },
   { role: 'EMPRESA', icon: <Users className="w-8 h-8" />, color: 'text-orange-500' },
+  { role: 'ASESOR', icon: <UserCheck className="w-8 h-8" />, color: 'text-emerald-500' },
 ];
 
 export const UserTypeSelector: React.FC<UserTypeSelectorProps> = ({ selectedType, onSelect }) => {
@@ -23,7 +24,7 @@ export const UserTypeSelector: React.FC<UserTypeSelectorProps> = ({ selectedType
       <label className="block text-sm font-medium text-foreground">
         Tipo de Usuario
       </label>
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {userTypeConfig.map(({ role, icon, color }) => {
           const isSelected = baseRole === role || selectedType === role;
           return (
