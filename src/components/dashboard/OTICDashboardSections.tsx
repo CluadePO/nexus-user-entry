@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Card, Progress, Table, Tag, Input, Select, Button, Tabs, Tooltip } from 'antd';
 import { 
   FileText, 
@@ -27,6 +27,7 @@ import {
   Minus,
   Plus
 } from 'lucide-react';
+import { useOTICFilter } from '@/context/OTICFilterContext';
 
 // Types
 interface CourseStage {
@@ -45,6 +46,8 @@ interface RecentCourse {
   date: string;
   stage: string;
   status: 'normal' | 'medio' | 'critico';
+  holdingId: string;
+  companyId: string;
 }
 
 interface AccountStatus {
@@ -65,78 +68,180 @@ interface PendingCourse {
   issue: string;
   daysDelayed: number;
   amount?: number;
+  holdingId: string;
+  companyId: string;
 }
 
-// Mock Data
-const courseStages: CourseStage[] = [
-  { name: 'Borradores', icon: <FileText className="w-5 h-5" />, total: 45, normal: 32, medio: 8, critico: 5 },
-  { name: 'Por comunicar', icon: <Send className="w-5 h-5" />, total: 28, normal: 20, medio: 5, critico: 3 },
-  { name: 'Inscrito', icon: <CheckCircle className="w-5 h-5" />, total: 156, normal: 140, medio: 12, critico: 4 },
-  { name: 'En ejecución', icon: <Play className="w-5 h-5" />, total: 89, normal: 75, medio: 10, critico: 4 },
-  { name: 'Por emisión OC', icon: <Receipt className="w-5 h-5" />, total: 34, normal: 20, medio: 9, critico: 5 },
-  { name: 'Por liquidar', icon: <Calculator className="w-5 h-5" />, total: 67, normal: 45, medio: 15, critico: 7 },
+// Mock Data with holdingId and companyId
+const courseStagesBase = [
+  { name: 'Borradores', icon: <FileText className="w-5 h-5" /> },
+  { name: 'Por comunicar', icon: <Send className="w-5 h-5" /> },
+  { name: 'Inscrito', icon: <CheckCircle className="w-5 h-5" /> },
+  { name: 'En ejecución', icon: <Play className="w-5 h-5" /> },
+  { name: 'Por emisión OC', icon: <Receipt className="w-5 h-5" /> },
+  { name: 'Por liquidar', icon: <Calculator className="w-5 h-5" /> },
 ];
 
+// Data per company for course stages
+const courseStagesByCompany: Record<string, { total: number; normal: number; medio: number; critico: number }[]> = {
+  'c1': [
+    { total: 15, normal: 12, medio: 2, critico: 1 },
+    { total: 8, normal: 6, medio: 1, critico: 1 },
+    { total: 45, normal: 40, medio: 4, critico: 1 },
+    { total: 25, normal: 20, medio: 3, critico: 2 },
+    { total: 10, normal: 6, medio: 3, critico: 1 },
+    { total: 18, normal: 12, medio: 4, critico: 2 },
+  ],
+  'c2': [
+    { total: 8, normal: 6, medio: 1, critico: 1 },
+    { total: 5, normal: 4, medio: 1, critico: 0 },
+    { total: 30, normal: 27, medio: 2, critico: 1 },
+    { total: 15, normal: 12, medio: 2, critico: 1 },
+    { total: 6, normal: 4, medio: 1, critico: 1 },
+    { total: 12, normal: 8, medio: 3, critico: 1 },
+  ],
+  'c3': [
+    { total: 10, normal: 7, medio: 2, critico: 1 },
+    { total: 6, normal: 4, medio: 1, critico: 1 },
+    { total: 35, normal: 30, medio: 3, critico: 2 },
+    { total: 20, normal: 17, medio: 2, critico: 1 },
+    { total: 8, normal: 5, medio: 2, critico: 1 },
+    { total: 15, normal: 10, medio: 4, critico: 1 },
+  ],
+  'c4': [
+    { total: 12, normal: 9, medio: 2, critico: 1 },
+    { total: 7, normal: 5, medio: 1, critico: 1 },
+    { total: 40, normal: 36, medio: 3, critico: 1 },
+    { total: 22, normal: 18, medio: 3, critico: 1 },
+    { total: 9, normal: 5, medio: 3, critico: 1 },
+    { total: 16, normal: 11, medio: 3, critico: 2 },
+  ],
+  'c5': [
+    { total: 5, normal: 4, medio: 1, critico: 0 },
+    { total: 3, normal: 2, medio: 1, critico: 0 },
+    { total: 20, normal: 18, medio: 1, critico: 1 },
+    { total: 10, normal: 8, medio: 1, critico: 1 },
+    { total: 4, normal: 2, medio: 1, critico: 1 },
+    { total: 8, normal: 5, medio: 2, critico: 1 },
+  ],
+  'c6': [
+    { total: 7, normal: 5, medio: 1, critico: 1 },
+    { total: 4, normal: 3, medio: 1, critico: 0 },
+    { total: 25, normal: 22, medio: 2, critico: 1 },
+    { total: 12, normal: 10, medio: 1, critico: 1 },
+    { total: 5, normal: 3, medio: 1, critico: 1 },
+    { total: 10, normal: 7, medio: 2, critico: 1 },
+  ],
+  'c7': [
+    { total: 18, normal: 14, medio: 3, critico: 1 },
+    { total: 10, normal: 7, medio: 2, critico: 1 },
+    { total: 50, normal: 45, medio: 3, critico: 2 },
+    { total: 28, normal: 23, medio: 4, critico: 1 },
+    { total: 12, normal: 7, medio: 3, critico: 2 },
+    { total: 22, normal: 15, medio: 5, critico: 2 },
+  ],
+  'c8': [
+    { total: 14, normal: 10, medio: 3, critico: 1 },
+    { total: 8, normal: 6, medio: 1, critico: 1 },
+    { total: 42, normal: 38, medio: 3, critico: 1 },
+    { total: 24, normal: 20, medio: 3, critico: 1 },
+    { total: 10, normal: 6, medio: 3, critico: 1 },
+    { total: 18, normal: 12, medio: 4, critico: 2 },
+  ],
+  'c9': [
+    { total: 6, normal: 4, medio: 1, critico: 1 },
+    { total: 4, normal: 3, medio: 1, critico: 0 },
+    { total: 22, normal: 20, medio: 1, critico: 1 },
+    { total: 11, normal: 9, medio: 1, critico: 1 },
+    { total: 5, normal: 3, medio: 1, critico: 1 },
+    { total: 9, normal: 6, medio: 2, critico: 1 },
+  ],
+};
+
+const holdingToCompanies: Record<string, string[]> = {
+  'h1': ['c1', 'c2', 'c3'],
+  'h2': ['c4', 'c5', 'c6'],
+  'h3': ['c7', 'c8', 'c9'],
+};
+
 const recentCourses: RecentCourse[] = [
-  { id: '1', name: 'Excel Avanzado', client: 'Empresa ABC Ltda.', date: '2026-01-14', stage: 'Inscrito', status: 'normal' },
-  { id: '2', name: 'Liderazgo y Gestión', client: 'Holding XYZ S.A.', date: '2026-01-13', stage: 'En ejecución', status: 'medio' },
-  { id: '3', name: 'Seguridad Industrial', client: 'Minera del Norte', date: '2026-01-12', stage: 'Inscrito', status: 'normal' },
-  { id: '4', name: 'Atención al Cliente', client: 'Retail Plus', date: '2026-01-11', stage: 'Por comunicar', status: 'critico' },
-  { id: '5', name: 'Python para Negocios', client: 'Tech Solutions', date: '2026-01-10', stage: 'Borrador', status: 'normal' },
+  { id: '1', name: 'Excel Avanzado', client: 'Empresa ABC Ltda.', date: '2026-01-14', stage: 'Inscrito', status: 'normal', holdingId: 'h1', companyId: 'c1' },
+  { id: '2', name: 'Liderazgo y Gestión', client: 'Industria Tech S.A.', date: '2026-01-13', stage: 'En ejecución', status: 'medio', holdingId: 'h1', companyId: 'c2' },
+  { id: '3', name: 'Seguridad Industrial', client: 'Minera del Norte', date: '2026-01-12', stage: 'Inscrito', status: 'normal', holdingId: 'h3', companyId: 'c7' },
+  { id: '4', name: 'Atención al Cliente', client: 'Retail Plus', date: '2026-01-11', stage: 'Por comunicar', status: 'critico', holdingId: 'h2', companyId: 'c4' },
+  { id: '5', name: 'Python para Negocios', client: 'Comercial Express', date: '2026-01-10', stage: 'Borrador', status: 'normal', holdingId: 'h2', companyId: 'c5' },
 ];
 
 const companyAccounts = [
-  { id: '1', name: 'Empresa ABC Ltda.', rut: '76.123.456-7', balance: 15000000, trend: 5.2, invoiced: 8500000, pending: 2300000, coursesActive: 12 },
-  { id: '2', name: 'Holding XYZ S.A.', rut: '76.234.567-8', balance: 22000000, trend: 8.5, invoiced: 12000000, pending: 3500000, coursesActive: 18 },
-  { id: '3', name: 'Minera del Norte', rut: '76.345.678-9', balance: 8900000, trend: -2.1, invoiced: 4200000, pending: 1800000, coursesActive: 7 },
-  { id: '4', name: 'Retail Plus', rut: '76.456.789-0', balance: 5600000, trend: 1.2, invoiced: 3100000, pending: 800000, coursesActive: 5 },
-  { id: '5', name: 'Tech Solutions', rut: '76.567.890-1', balance: 12500000, trend: 12.3, invoiced: 7800000, pending: 1200000, coursesActive: 9 },
-  { id: '6', name: 'Constructora Sur', rut: '76.678.901-2', balance: 18700000, trend: -0.8, invoiced: 9500000, pending: 4100000, coursesActive: 14 },
+  { id: 'c1', name: 'Empresa ABC Ltda.', rut: '76.123.456-7', balance: 15000000, trend: 5.2, invoiced: 8500000, pending: 2300000, coursesActive: 12, holdingId: 'h1' },
+  { id: 'c2', name: 'Industria Tech S.A.', rut: '76.123.457-5', balance: 22000000, trend: 8.5, invoiced: 12000000, pending: 3500000, coursesActive: 18, holdingId: 'h1' },
+  { id: 'c3', name: 'Manufactura Norte', rut: '76.123.458-3', balance: 8900000, trend: -2.1, invoiced: 4200000, pending: 1800000, coursesActive: 7, holdingId: 'h1' },
+  { id: 'c4', name: 'Retail Plus', rut: '76.456.789-0', balance: 5600000, trend: 1.2, invoiced: 3100000, pending: 800000, coursesActive: 5, holdingId: 'h2' },
+  { id: 'c5', name: 'Comercial Express', rut: '76.456.790-4', balance: 12500000, trend: 12.3, invoiced: 7800000, pending: 1200000, coursesActive: 9, holdingId: 'h2' },
+  { id: 'c6', name: 'Distribuidora Sur', rut: '76.456.791-2', balance: 18700000, trend: -0.8, invoiced: 9500000, pending: 4100000, coursesActive: 14, holdingId: 'h2' },
+  { id: 'c7', name: 'Minera del Norte', rut: '76.345.678-9', balance: 25000000, trend: 6.5, invoiced: 15000000, pending: 5000000, coursesActive: 20, holdingId: 'h3' },
+  { id: 'c8', name: 'Minera del Centro', rut: '76.345.679-7', balance: 30000000, trend: 4.2, invoiced: 18000000, pending: 6000000, coursesActive: 25, holdingId: 'h3' },
+  { id: 'c9', name: 'Exploraciones Mineras', rut: '76.345.680-0', balance: 12000000, trend: 3.1, invoiced: 7000000, pending: 2500000, coursesActive: 10, holdingId: 'h3' },
 ];
 
 const pendingOCCourses: PendingCourse[] = [
-  { id: '1', name: 'Gestión de Proyectos', client: 'Constructora Norte', issue: 'Documentos incompletos', daysDelayed: 5, amount: 1200000 },
-  { id: '2', name: 'Normativa Laboral', client: 'RRHH Solutions', issue: 'Pendiente aprobación', daysDelayed: 3, amount: 850000 },
-  { id: '3', name: 'Excel Intermedio', client: 'Banco del Pacífico', issue: 'Revisión de costos', daysDelayed: 7, amount: 650000 },
+  { id: '1', name: 'Gestión de Proyectos', client: 'Empresa ABC Ltda.', issue: 'Documentos incompletos', daysDelayed: 5, amount: 1200000, holdingId: 'h1', companyId: 'c1' },
+  { id: '2', name: 'Normativa Laboral', client: 'Retail Plus', issue: 'Pendiente aprobación', daysDelayed: 3, amount: 850000, holdingId: 'h2', companyId: 'c4' },
+  { id: '3', name: 'Excel Intermedio', client: 'Minera del Norte', issue: 'Revisión de costos', daysDelayed: 7, amount: 650000, holdingId: 'h3', companyId: 'c7' },
 ];
 
 const missingRequirementsCourses: PendingCourse[] = [
-  { id: '1', name: 'Soldadura Industrial', client: 'Metalúrgica Central', issue: 'Certificado instructor', daysDelayed: 4 },
-  { id: '2', name: 'Manejo Defensivo', client: 'Transportes Express', issue: 'Licencia conducir', daysDelayed: 2 },
+  { id: '1', name: 'Soldadura Industrial', client: 'Manufactura Norte', issue: 'Certificado instructor', daysDelayed: 4, holdingId: 'h1', companyId: 'c3' },
+  { id: '2', name: 'Manejo Defensivo', client: 'Comercial Express', issue: 'Licencia conducir', daysDelayed: 2, holdingId: 'h2', companyId: 'c5' },
 ];
 
 const precontractPendingDocs: PendingCourse[] = [
-  { id: '1', name: 'Contabilidad Básica', client: 'Pyme Asociados', issue: 'Contrato firmado', daysDelayed: 6 },
-  { id: '2', name: 'Marketing Digital', client: 'Agencia Creativa', issue: 'Anexo técnico', daysDelayed: 3 },
+  { id: '1', name: 'Contabilidad Básica', client: 'Distribuidora Sur', issue: 'Contrato firmado', daysDelayed: 6, holdingId: 'h2', companyId: 'c6' },
+  { id: '2', name: 'Marketing Digital', client: 'Industria Tech S.A.', issue: 'Anexo técnico', daysDelayed: 3, holdingId: 'h1', companyId: 'c2' },
 ];
 
 const senceDifferenceCourses: PendingCourse[] = [
-  { id: '1', name: 'Inglés Empresarial', client: 'Exportadora del Valle', issue: 'Diferencia $45.000', daysDelayed: 8, amount: 45000 },
-  { id: '2', name: 'SAP Básico', client: 'Industria Tech', issue: 'Diferencia $120.000', daysDelayed: 5, amount: 120000 },
+  { id: '1', name: 'Inglés Empresarial', client: 'Minera del Centro', issue: 'Diferencia $45.000', daysDelayed: 8, amount: 45000, holdingId: 'h3', companyId: 'c8' },
+  { id: '2', name: 'SAP Básico', client: 'Industria Tech S.A.', issue: 'Diferencia $120.000', daysDelayed: 5, amount: 120000, holdingId: 'h1', companyId: 'c2' },
 ];
 
 const criticalLiquidationCourses: PendingCourse[] = [
-  { id: '1', name: 'Prevención de Riesgos', client: 'Minera del Centro', issue: 'Vence en 3 días', daysDelayed: 12, amount: 2500000 },
-  { id: '2', name: 'Operación Grúa', client: 'Puerto Central', issue: 'Vence en 5 días', daysDelayed: 10, amount: 1800000 },
+  { id: '1', name: 'Prevención de Riesgos', client: 'Minera del Centro', issue: 'Vence en 3 días', daysDelayed: 12, amount: 2500000, holdingId: 'h3', companyId: 'c8' },
+  { id: '2', name: 'Operación Grúa', client: 'Exploraciones Mineras', issue: 'Vence en 5 días', daysDelayed: 10, amount: 1800000, holdingId: 'h3', companyId: 'c9' },
 ];
 
 const mdaRectificationCourses: PendingCourse[] = [
-  { id: '1', name: 'Electricidad Industrial', client: 'Energía Verde', issue: 'MDA rechazado', daysDelayed: 4 },
-  { id: '2', name: 'Mecánica Automotriz', client: 'Automotora Sur', issue: 'MDA observado', daysDelayed: 2 },
+  { id: '1', name: 'Electricidad Industrial', client: 'Empresa ABC Ltda.', issue: 'MDA rechazado', daysDelayed: 4, holdingId: 'h1', companyId: 'c1' },
+  { id: '2', name: 'Mecánica Automotriz', client: 'Retail Plus', issue: 'MDA observado', daysDelayed: 2, holdingId: 'h2', companyId: 'c4' },
 ];
 
 const allCourses = [
-  { id: '1', name: 'Excel Avanzado', client: 'Empresa ABC', otec: 'Capacita Chile', stage: 'Inscrito', status: 'normal', date: '2026-01-14', amount: 850000 },
-  { id: '2', name: 'Liderazgo', client: 'Holding XYZ', otec: 'FormaPro', stage: 'En ejecución', status: 'medio', date: '2026-01-13', amount: 1200000 },
-  { id: '3', name: 'Seguridad Industrial', client: 'Minera Norte', otec: 'SafetyFirst', stage: 'Inscrito', status: 'normal', date: '2026-01-12', amount: 950000 },
-  { id: '4', name: 'Python Básico', client: 'Tech Solutions', otec: 'CodeAcademy', stage: 'Borrador', status: 'normal', date: '2026-01-11', amount: 750000 },
-  { id: '5', name: 'Atención Cliente', client: 'Retail Plus', otec: 'ServicePro', stage: 'Por comunicar', status: 'critico', date: '2026-01-10', amount: 680000 },
-  { id: '6', name: 'Gestión Proyectos', client: 'Constructora Sur', otec: 'PMI Chile', stage: 'Por emisión OC', status: 'medio', date: '2026-01-09', amount: 1500000 },
-  { id: '7', name: 'Normativa Laboral', client: 'RRHH Corp', otec: 'LegalTrain', stage: 'Por liquidar', status: 'normal', date: '2026-01-08', amount: 620000 },
-  { id: '8', name: 'Marketing Digital', client: 'Agencia Creativa', otec: 'DigitalPro', stage: 'En ejecución', status: 'normal', date: '2026-01-07', amount: 890000 },
-  { id: '9', name: 'Contabilidad', client: 'Finanzas Corp', otec: 'ContaFácil', stage: 'Inscrito', status: 'normal', date: '2026-01-06', amount: 720000 },
-  { id: '10', name: 'Inglés Negocios', client: 'Export Chile', otec: 'EnglishPro', stage: 'En ejecución', status: 'medio', date: '2026-01-05', amount: 980000 },
+  { id: '1', name: 'Excel Avanzado', client: 'Empresa ABC', otec: 'Capacita Chile', stage: 'Inscrito', status: 'normal', date: '2026-01-14', amount: 850000, holdingId: 'h1', companyId: 'c1' },
+  { id: '2', name: 'Liderazgo', client: 'Industria Tech', otec: 'FormaPro', stage: 'En ejecución', status: 'medio', date: '2026-01-13', amount: 1200000, holdingId: 'h1', companyId: 'c2' },
+  { id: '3', name: 'Seguridad Industrial', client: 'Minera Norte', otec: 'SafetyFirst', stage: 'Inscrito', status: 'normal', date: '2026-01-12', amount: 950000, holdingId: 'h3', companyId: 'c7' },
+  { id: '4', name: 'Python Básico', client: 'Comercial Express', otec: 'CodeAcademy', stage: 'Borrador', status: 'normal', date: '2026-01-11', amount: 750000, holdingId: 'h2', companyId: 'c5' },
+  { id: '5', name: 'Atención Cliente', client: 'Retail Plus', otec: 'ServicePro', stage: 'Por comunicar', status: 'critico', date: '2026-01-10', amount: 680000, holdingId: 'h2', companyId: 'c4' },
+  { id: '6', name: 'Gestión Proyectos', client: 'Distribuidora Sur', otec: 'PMI Chile', stage: 'Por emisión OC', status: 'medio', date: '2026-01-09', amount: 1500000, holdingId: 'h2', companyId: 'c6' },
+  { id: '7', name: 'Normativa Laboral', client: 'Manufactura Norte', otec: 'LegalTrain', stage: 'Por liquidar', status: 'normal', date: '2026-01-08', amount: 620000, holdingId: 'h1', companyId: 'c3' },
+  { id: '8', name: 'Marketing Digital', client: 'Industria Tech', otec: 'DigitalPro', stage: 'En ejecución', status: 'normal', date: '2026-01-07', amount: 890000, holdingId: 'h1', companyId: 'c2' },
+  { id: '9', name: 'Contabilidad', client: 'Minera Centro', otec: 'ContaFácil', stage: 'Inscrito', status: 'normal', date: '2026-01-06', amount: 720000, holdingId: 'h3', companyId: 'c8' },
+  { id: '10', name: 'Inglés Negocios', client: 'Exploraciones Mineras', otec: 'EnglishPro', stage: 'En ejecución', status: 'medio', date: '2026-01-05', amount: 980000, holdingId: 'h3', companyId: 'c9' },
 ];
+
+// Helper function to filter data by holding/company
+const filterByHoldingCompany = <T extends { holdingId: string; companyId: string }>(
+  data: T[],
+  selectedHoldingId: string | null,
+  selectedCompanyId: string | null
+): T[] => {
+  if (selectedCompanyId) {
+    return data.filter(item => item.companyId === selectedCompanyId);
+  }
+  if (selectedHoldingId) {
+    return data.filter(item => item.holdingId === selectedHoldingId);
+  }
+  return data;
+};
 
 // Helper Components
 const StatusBadge: React.FC<{ status: 'normal' | 'medio' | 'critico' }> = ({ status }) => {
@@ -247,7 +352,42 @@ const stageCoursesData: Record<string, { normal: any[]; medio: any[]; critico: a
 // Section Components
 const CourseStagesSection: React.FC = () => {
   const [selectedFilter, setSelectedFilter] = useState<{ stage: string; status: 'normal' | 'medio' | 'critico' } | null>(null);
+  const { selectedHoldingId, selectedCompanyId } = useOTICFilter();
   
+  // Calculate course stages based on filter
+  const courseStages = useMemo(() => {
+    let companyIds: string[] = [];
+    
+    if (selectedCompanyId) {
+      companyIds = [selectedCompanyId];
+    } else if (selectedHoldingId) {
+      companyIds = holdingToCompanies[selectedHoldingId] || [];
+    } else {
+      companyIds = Object.values(holdingToCompanies).flat();
+    }
+
+    return courseStagesBase.map((stage, stageIndex) => {
+      const totals = companyIds.reduce(
+        (acc, companyId) => {
+          const companyData = courseStagesByCompany[companyId]?.[stageIndex];
+          if (companyData) {
+            acc.total += companyData.total;
+            acc.normal += companyData.normal;
+            acc.medio += companyData.medio;
+            acc.critico += companyData.critico;
+          }
+          return acc;
+        },
+        { total: 0, normal: 0, medio: 0, critico: 0 }
+      );
+      
+      return {
+        ...stage,
+        ...totals,
+      };
+    });
+  }, [selectedHoldingId, selectedCompanyId]);
+
   const totalCourses = courseStages.reduce((acc, stage) => acc + stage.total, 0);
   const totalNormal = courseStages.reduce((acc, stage) => acc + stage.normal, 0);
   const totalMedio = courseStages.reduce((acc, stage) => acc + stage.medio, 0);
@@ -349,41 +489,43 @@ const CourseStagesSection: React.FC = () => {
               </div>
 
               {/* Status breakdown - stacked bars with tooltips and click */}
-              <div className="h-3 bg-muted rounded-full overflow-hidden flex">
-                <Tooltip title={`Normal: ${stage.normal} cursos - Clic para ver detalle`} placement="top">
-                  <div 
-                    className={`bg-green-500 h-full transition-all cursor-pointer ${
-                      selectedFilter?.stage === stage.name && selectedFilter?.status === 'normal'
-                        ? 'ring-2 ring-green-700 ring-offset-1'
-                        : 'hover:opacity-80'
-                    }`}
-                    style={{ width: `${(stage.normal / stage.total) * 100}%` }}
-                    onClick={() => handleBarClick(stage.name, 'normal')}
-                  />
-                </Tooltip>
-                <Tooltip title={`Medio: ${stage.medio} cursos - Clic para ver detalle`} placement="top">
-                  <div 
-                    className={`bg-amber-500 h-full transition-all cursor-pointer ${
-                      selectedFilter?.stage === stage.name && selectedFilter?.status === 'medio'
-                        ? 'ring-2 ring-amber-700 ring-offset-1'
-                        : 'hover:opacity-80'
-                    }`}
-                    style={{ width: `${(stage.medio / stage.total) * 100}%` }}
-                    onClick={() => handleBarClick(stage.name, 'medio')}
-                  />
-                </Tooltip>
-                <Tooltip title={`Crítico: ${stage.critico} cursos - Clic para ver detalle`} placement="top">
-                  <div 
-                    className={`bg-red-500 h-full transition-all cursor-pointer ${
-                      selectedFilter?.stage === stage.name && selectedFilter?.status === 'critico'
-                        ? 'ring-2 ring-red-700 ring-offset-1'
-                        : 'hover:opacity-80'
-                    }`}
-                    style={{ width: `${(stage.critico / stage.total) * 100}%` }}
-                    onClick={() => handleBarClick(stage.name, 'critico')}
-                  />
-                </Tooltip>
-              </div>
+              {stage.total > 0 && (
+                <div className="h-3 bg-muted rounded-full overflow-hidden flex">
+                  <Tooltip title={`Normal: ${stage.normal} cursos - Clic para ver detalle`} placement="top">
+                    <div 
+                      className={`bg-green-500 h-full transition-all cursor-pointer ${
+                        selectedFilter?.stage === stage.name && selectedFilter?.status === 'normal'
+                          ? 'ring-2 ring-green-700 ring-offset-1'
+                          : 'hover:opacity-80'
+                      }`}
+                      style={{ width: `${(stage.normal / stage.total) * 100}%` }}
+                      onClick={() => handleBarClick(stage.name, 'normal')}
+                    />
+                  </Tooltip>
+                  <Tooltip title={`Medio: ${stage.medio} cursos - Clic para ver detalle`} placement="top">
+                    <div 
+                      className={`bg-amber-500 h-full transition-all cursor-pointer ${
+                        selectedFilter?.stage === stage.name && selectedFilter?.status === 'medio'
+                          ? 'ring-2 ring-amber-700 ring-offset-1'
+                          : 'hover:opacity-80'
+                      }`}
+                      style={{ width: `${(stage.medio / stage.total) * 100}%` }}
+                      onClick={() => handleBarClick(stage.name, 'medio')}
+                    />
+                  </Tooltip>
+                  <Tooltip title={`Crítico: ${stage.critico} cursos - Clic para ver detalle`} placement="top">
+                    <div 
+                      className={`bg-red-500 h-full transition-all cursor-pointer ${
+                        selectedFilter?.stage === stage.name && selectedFilter?.status === 'critico'
+                          ? 'ring-2 ring-red-700 ring-offset-1'
+                          : 'hover:opacity-80'
+                      }`}
+                      style={{ width: `${(stage.critico / stage.total) * 100}%` }}
+                      onClick={() => handleBarClick(stage.name, 'critico')}
+                    />
+                  </Tooltip>
+                </div>
+              )}
             </div>
 
             {/* Arrow connector */}
@@ -446,15 +588,15 @@ const CourseStagesSection: React.FC = () => {
         </div>
         <div className="flex items-center gap-6">
           <div className="text-center">
-            <div className="text-xl font-semibold text-green-600">{Math.round((totalNormal / totalCourses) * 100)}%</div>
+            <div className="text-xl font-semibold text-green-600">{totalCourses > 0 ? Math.round((totalNormal / totalCourses) * 100) : 0}%</div>
             <div className="text-xs text-muted-foreground">Sin alertas</div>
           </div>
           <div className="text-center">
-            <div className="text-xl font-semibold text-amber-600">{Math.round((totalMedio / totalCourses) * 100)}%</div>
+            <div className="text-xl font-semibold text-amber-600">{totalCourses > 0 ? Math.round((totalMedio / totalCourses) * 100) : 0}%</div>
             <div className="text-xs text-muted-foreground">Atención media</div>
           </div>
           <div className="text-center">
-            <div className="text-xl font-semibold text-red-600">{Math.round((totalCritico / totalCourses) * 100)}%</div>
+            <div className="text-xl font-semibold text-red-600">{totalCourses > 0 ? Math.round((totalCritico / totalCourses) * 100) : 0}%</div>
             <div className="text-xs text-muted-foreground">Requieren acción</div>
           </div>
         </div>
