@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Card, Progress, Modal, Button } from 'antd';
+import { Card, Progress, Modal, Button, Table, Tag } from 'antd';
+import type { ColumnsType } from 'antd/es/table';
 import { 
   Search, 
   Sparkles, 
@@ -9,10 +10,12 @@ import {
   AlertTriangle,
   CheckCircle,
   X,
-  ArrowRight
+  ArrowRight,
+  History,
+  Eye
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import DiagnosticModal from '@/components/asesor/DiagnosticModal';
+import DiagnosticModal, { DiagnosticResult } from '@/components/asesor/DiagnosticModal';
 
 interface Tool {
   id: string;
@@ -130,6 +133,48 @@ const getComplexityBadge = (complexity: Tool['complexity']) => {
   );
 };
 
+// Tool name mapping
+const toolNameMap: Record<string, { name: string; color: string }> = {
+  buscador: { name: 'Mi Buscador', color: 'blue' },
+  recomendador: { name: 'Mi Recomendador', color: 'purple' },
+  dnc: { name: 'Mi DNC', color: 'orange' },
+  ruta: { name: 'Mi Ruta', color: 'green' }
+};
+
+// Mock historical diagnostics
+const mockHistoricalDiagnostics: DiagnosticResult[] = [
+  {
+    id: 'DIAG-M5K2X1-AB3C',
+    name: 'Diagnóstico Dic 2025',
+    date: '2025-12-15T10:30:00.000Z',
+    recommendation: 'recomendador',
+    maturityScore: 68,
+    strengths: ['Claridad en objetivos', 'Experiencia previa'],
+    opportunities: ['Recursos internos', 'Alineación estratégica'],
+    dimensions: []
+  },
+  {
+    id: 'DIAG-L3J9W2-XY1Z',
+    name: 'Diagnóstico Nov 2025',
+    date: '2025-11-20T14:15:00.000Z',
+    recommendation: 'dnc',
+    maturityScore: 52,
+    strengths: ['Urgencia clara'],
+    opportunities: ['Conocimiento de brechas', 'Recursos internos', 'Alineación'],
+    dimensions: []
+  },
+  {
+    id: 'DIAG-K8N4P7-QR5T',
+    name: 'Diagnóstico Oct 2025',
+    date: '2025-10-05T09:00:00.000Z',
+    recommendation: 'ruta',
+    maturityScore: 35,
+    strengths: [],
+    opportunities: ['Claridad', 'Recursos', 'Experiencia', 'Alineación'],
+    dimensions: []
+  }
+];
+
 // Mock data for dashboard metrics
 const mockMetrics = {
   diagnosticsCompleted: 12,
@@ -149,6 +194,7 @@ const AsesorDashboard: React.FC = () => {
   const [selectedTool, setSelectedTool] = useState<Tool | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDiagnosticOpen, setIsDiagnosticOpen] = useState(false);
+  const [diagnosticHistory, setDiagnosticHistory] = useState<DiagnosticResult[]>(mockHistoricalDiagnostics);
 
   const handleToolClick = (tool: Tool) => {
     setSelectedTool(tool);
@@ -174,6 +220,96 @@ const AsesorDashboard: React.FC = () => {
   const handleCloseDiagnostic = () => {
     setIsDiagnosticOpen(false);
   };
+
+  const handleDiagnosticComplete = (result: DiagnosticResult) => {
+    setDiagnosticHistory(prev => [result, ...prev]);
+  };
+
+  // Table columns for diagnostic history
+  const historyColumns: ColumnsType<DiagnosticResult> = [
+    {
+      title: 'ID',
+      dataIndex: 'id',
+      key: 'id',
+      render: (id: string) => (
+        <span className="font-mono text-xs text-muted-foreground">{id}</span>
+      ),
+      width: 160
+    },
+    {
+      title: 'Nombre',
+      dataIndex: 'name',
+      key: 'name',
+      render: (name: string) => (
+        <span className="font-medium text-foreground">{name}</span>
+      )
+    },
+    {
+      title: 'Fecha',
+      dataIndex: 'date',
+      key: 'date',
+      render: (date: string) => (
+        <span className="text-muted-foreground">
+          {new Date(date).toLocaleDateString('es-CL', { 
+            day: 'numeric', 
+            month: 'short', 
+            year: 'numeric' 
+          })}
+        </span>
+      ),
+      width: 120
+    },
+    {
+      title: 'Madurez',
+      dataIndex: 'maturityScore',
+      key: 'maturityScore',
+      render: (score: number) => (
+        <div className="flex items-center gap-2">
+          <Progress 
+            percent={score} 
+            size="small" 
+            showInfo={false}
+            strokeColor={score >= 60 ? '#65BFB1' : score >= 40 ? '#F59E0B' : '#EF4444'}
+            className="w-16"
+          />
+          <span className="text-sm font-medium">{score}%</span>
+        </div>
+      ),
+      width: 140
+    },
+    {
+      title: 'Herramienta Recomendada',
+      dataIndex: 'recommendation',
+      key: 'recommendation',
+      render: (rec: string) => {
+        const tool = toolNameMap[rec];
+        return tool ? (
+          <Tag color={tool.color}>{tool.name}</Tag>
+        ) : (
+          <span className="text-muted-foreground">-</span>
+        );
+      },
+      width: 180
+    },
+    {
+      title: 'Acciones',
+      key: 'actions',
+      render: (_: unknown, record: DiagnosticResult) => (
+        <Button
+          type="text"
+          size="small"
+          icon={<Eye className="w-4 h-4" />}
+          onClick={() => {
+            // Future: open detail view
+            console.log('View diagnostic:', record.id);
+          }}
+        >
+          Ver
+        </Button>
+      ),
+      width: 100
+    }
+  ];
 
   return (
     <div className="space-y-6">
@@ -289,6 +425,24 @@ const AsesorDashboard: React.FC = () => {
         </div>
       </div>
 
+      {/* Diagnostic History Section */}
+      <div>
+        <div className="flex items-center gap-2 mb-4">
+          <History className="w-5 h-5 text-primary" />
+          <h2 className="text-lg font-semibold text-foreground">Historial de Diagnósticos</h2>
+        </div>
+        <Card className="border-0 shadow-sm">
+          <Table
+            columns={historyColumns}
+            dataSource={diagnosticHistory}
+            rowKey="id"
+            pagination={{ pageSize: 5, showSizeChanger: false }}
+            locale={{ emptyText: 'No hay diagnósticos realizados aún' }}
+            size="middle"
+          />
+        </Card>
+      </div>
+
       {/* Tool Detail Modal */}
       <Modal
         open={isModalOpen}
@@ -361,7 +515,11 @@ const AsesorDashboard: React.FC = () => {
       </Modal>
 
       {/* Diagnostic Modal */}
-      <DiagnosticModal isOpen={isDiagnosticOpen} onClose={handleCloseDiagnostic} />
+      <DiagnosticModal 
+        isOpen={isDiagnosticOpen} 
+        onClose={handleCloseDiagnostic}
+        onDiagnosticComplete={handleDiagnosticComplete}
+      />
     </div>
   );
 };

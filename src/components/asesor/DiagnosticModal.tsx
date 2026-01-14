@@ -29,9 +29,21 @@ import {
 } from 'recharts';
 import { useNavigate } from 'react-router-dom';
 
+export interface DiagnosticResult {
+  id: string;
+  name: string;
+  date: string;
+  recommendation: string;
+  maturityScore: number;
+  strengths: string[];
+  opportunities: string[];
+  dimensions: { name: string; value: number; fullMark: number }[];
+}
+
 interface DiagnosticModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onDiagnosticComplete?: (result: DiagnosticResult) => void;
 }
 
 interface Question {
@@ -146,18 +158,24 @@ const toolsData: Record<string, ToolRecommendation> = {
   }
 };
 
-const DiagnosticModal: React.FC<DiagnosticModalProps> = ({ isOpen, onClose }) => {
+const generateDiagnosticId = () => {
+  const timestamp = Date.now().toString(36).toUpperCase();
+  const random = Math.random().toString(36).substring(2, 6).toUpperCase();
+  return `DIAG-${timestamp}-${random}`;
+};
+
+const generateDiagnosticName = (recommendation: string) => {
+  const date = new Date();
+  const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+  return `Diagnóstico ${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+};
+
+const DiagnosticModal: React.FC<DiagnosticModalProps> = ({ isOpen, onClose, onDiagnosticComplete }) => {
   const navigate = useNavigate();
   const [step, setStep] = useState<DiagnosticStep>('intro');
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<number, number>>({});
-  const [results, setResults] = useState<{
-    recommendation: string;
-    maturityScore: number;
-    strengths: string[];
-    opportunities: string[];
-    dimensions: { name: string; value: number; fullMark: number }[];
-  } | null>(null);
+  const [results, setResults] = useState<DiagnosticResult | null>(null);
 
   const handleClose = () => {
     setStep('intro');
@@ -259,13 +277,23 @@ const DiagnosticModal: React.FC<DiagnosticModalProps> = ({ isOpen, onClose }) =>
       { name: 'Alineación', value: alignment, fullMark: 4 }
     ];
 
-    setResults({
+    const diagnosticResult: DiagnosticResult = {
+      id: generateDiagnosticId(),
+      name: generateDiagnosticName(recommendation),
+      date: new Date().toISOString(),
       recommendation,
       maturityScore,
       strengths: strengths.slice(0, 4),
       opportunities: opportunities.slice(0, 4),
       dimensions
-    });
+    };
+
+    setResults(diagnosticResult);
+    
+    // Notify parent component about the completed diagnostic
+    if (onDiagnosticComplete) {
+      onDiagnosticComplete(diagnosticResult);
+    }
 
     setStep('results');
   };
@@ -401,6 +429,27 @@ const DiagnosticModal: React.FC<DiagnosticModalProps> = ({ isOpen, onClose }) =>
 
     return (
       <div className="space-y-6">
+        {/* Diagnostic Header with ID and Name */}
+        <div className="bg-muted/50 rounded-lg p-4 border border-border">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <div>
+              <h3 className="font-semibold text-foreground">{results.name}</h3>
+              <p className="text-sm text-muted-foreground">
+                {new Date(results.date).toLocaleDateString('es-CL', { 
+                  day: 'numeric', 
+                  month: 'long', 
+                  year: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}
+              </p>
+            </div>
+            <div className="bg-primary/10 px-3 py-1 rounded-full">
+              <span className="text-xs font-mono font-medium text-primary">{results.id}</span>
+            </div>
+          </div>
+        </div>
+
         {/* Maturity Score */}
         <div className="text-center bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl p-6">
           <h3 className="text-lg font-semibold text-foreground mb-2">Tu Nivel de Madurez</h3>
