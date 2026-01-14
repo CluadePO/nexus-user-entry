@@ -9,7 +9,7 @@ import { OTECHighlightMetrics } from '@/components/dashboard/OTECHighlightMetric
 import { EmpresaResumenFinanciero } from '@/components/dashboard/EmpresaManagementCard';
 import { EmpresaHighlightMetrics } from '@/components/dashboard/EmpresaHighlightMetrics';
 import { EmpresaPlanCapacitacion } from '@/components/dashboard/EmpresaPlanCapacitacion';
-import { OTICDashboardSections, CourseSearchGrid } from '@/components/dashboard/OTICDashboardSections';
+import { OTICDashboardSections, CourseSearchGrid, AccountStatusSection } from '@/components/dashboard/OTICDashboardSections';
 import { Calendar, Clock } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
@@ -62,7 +62,10 @@ const Dashboard: React.FC = () => {
       {/* Quick Access Buttons - Centered at top */}
       <QuickAccessButtons />
 
-      {/* Course Search - Only for OTIC role, shown below quick access */}
+      {/* Account Status - Only for OTIC role, shown below quick access */}
+      {isOTICRole && <AccountStatusSection />}
+
+      {/* Course Search - Only for OTIC role, shown below account status */}
       {isOTICRole && <CourseSearchGrid />}
 
       {/* DJO Management Card - Only for OTEC roles */}

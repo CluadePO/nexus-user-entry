@@ -912,14 +912,8 @@ export const OTICDashboardSections: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Course Stages (left) + Account Status (right) - side by side */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Course Stages - Vertical layout on left */}
-        <CourseStagesSection />
-
-        {/* Account Status - on the right */}
-        <AccountStatusSection />
-      </div>
+      {/* Course Stages - Full width */}
+      <CourseStagesSection />
 
       {/* Pending Issues Tabs */}
       <Card title="Gestión de Pendientes" className="shadow-sm">
@@ -929,5 +923,5 @@ export const OTICDashboardSections: React.FC = () => {
   );
 };
 
-// Export the CourseSearchGrid separately for use after quick access buttons
-export { CourseSearchGrid };
+// Export the CourseSearchGrid and AccountStatusSection separately for use in Dashboard
+export { CourseSearchGrid, AccountStatusSection };
