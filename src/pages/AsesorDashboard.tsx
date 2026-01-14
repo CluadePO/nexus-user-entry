@@ -9,7 +9,8 @@ import {
   AlertTriangle,
   CheckCircle,
   X,
-  ArrowRight
+  ArrowRight,
+  ClipboardCheck
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -176,6 +177,16 @@ const AsesorDashboard: React.FC = () => {
           estratégicas para tu organización. Accede a herramientas especializadas que van desde la 
           búsqueda de cursos hasta la consultoría integral de formación.
         </p>
+        <Button
+          type="primary"
+          onClick={() => navigate('/asesor/diagnostico')}
+          className="mt-4"
+          size="large"
+          style={{ backgroundColor: '#65BFB1', borderColor: '#65BFB1' }}
+          icon={<ClipboardCheck className="w-4 h-4" />}
+        >
+          Iniciar Nuevo Diagnóstico
+        </Button>
       </div>
 
       {/* Metrics Summary */}
