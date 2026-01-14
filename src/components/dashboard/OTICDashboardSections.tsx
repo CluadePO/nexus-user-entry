@@ -126,16 +126,16 @@ const mdaRectificationCourses: PendingCourse[] = [
 ];
 
 const allCourses = [
-  { id: '1', name: 'Excel Avanzado', client: 'Empresa ABC', otec: 'Capacita Chile', stage: 'Inscrito', status: 'normal', date: '2026-01-14', amount: 850000 },
-  { id: '2', name: 'Liderazgo', client: 'Holding XYZ', otec: 'FormaPro', stage: 'En ejecución', status: 'medio', date: '2026-01-13', amount: 1200000 },
-  { id: '3', name: 'Seguridad Industrial', client: 'Minera Norte', otec: 'SafetyFirst', stage: 'Inscrito', status: 'normal', date: '2026-01-12', amount: 950000 },
-  { id: '4', name: 'Python Básico', client: 'Tech Solutions', otec: 'CodeAcademy', stage: 'Borrador', status: 'normal', date: '2026-01-11', amount: 750000 },
-  { id: '5', name: 'Atención Cliente', client: 'Retail Plus', otec: 'ServicePro', stage: 'Por comunicar', status: 'critico', date: '2026-01-10', amount: 680000 },
-  { id: '6', name: 'Gestión Proyectos', client: 'Constructora Sur', otec: 'PMI Chile', stage: 'Por emisión OC', status: 'medio', date: '2026-01-09', amount: 1500000 },
-  { id: '7', name: 'Normativa Laboral', client: 'RRHH Corp', otec: 'LegalTrain', stage: 'Por liquidar', status: 'normal', date: '2026-01-08', amount: 620000 },
-  { id: '8', name: 'Marketing Digital', client: 'Agencia Creativa', otec: 'DigitalPro', stage: 'En ejecución', status: 'normal', date: '2026-01-07', amount: 890000 },
-  { id: '9', name: 'Contabilidad', client: 'Finanzas Corp', otec: 'ContaFácil', stage: 'Inscrito', status: 'normal', date: '2026-01-06', amount: 720000 },
-  { id: '10', name: 'Inglés Negocios', client: 'Export Chile', otec: 'EnglishPro', stage: 'En ejecución', status: 'medio', date: '2026-01-05', amount: 980000 },
+  { id: '1', name: 'Excel Avanzado', client: 'Empresa ABC', otec: 'Capacita Chile', stage: 'Inscrito', status: 'normal', date: '2026-01-14', amount: 850000, idSence: '1237890001', idInscripcion: 'INS-2026-0001', codigoSence: '1237890001-001' },
+  { id: '2', name: 'Liderazgo', client: 'Holding XYZ', otec: 'FormaPro', stage: 'En ejecución', status: 'medio', date: '2026-01-13', amount: 1200000, idSence: '1237890002', idInscripcion: 'INS-2026-0002', codigoSence: '1237890002-001' },
+  { id: '3', name: 'Seguridad Industrial', client: 'Minera Norte', otec: 'SafetyFirst', stage: 'Inscrito', status: 'normal', date: '2026-01-12', amount: 950000, idSence: '1237890003', idInscripcion: 'INS-2026-0003', codigoSence: '1237890003-001' },
+  { id: '4', name: 'Python Básico', client: 'Tech Solutions', otec: 'CodeAcademy', stage: 'Borrador', status: 'normal', date: '2026-01-11', amount: 750000, idSence: '1237890004', idInscripcion: 'INS-2026-0004', codigoSence: '1237890004-001' },
+  { id: '5', name: 'Atención Cliente', client: 'Retail Plus', otec: 'ServicePro', stage: 'Por comunicar', status: 'critico', date: '2026-01-10', amount: 680000, idSence: '1237890005', idInscripcion: 'INS-2026-0005', codigoSence: '1237890005-001' },
+  { id: '6', name: 'Gestión Proyectos', client: 'Constructora Sur', otec: 'PMI Chile', stage: 'Por emisión OC', status: 'medio', date: '2026-01-09', amount: 1500000, idSence: '1237890006', idInscripcion: 'INS-2026-0006', codigoSence: '1237890006-001' },
+  { id: '7', name: 'Normativa Laboral', client: 'RRHH Corp', otec: 'LegalTrain', stage: 'Por liquidar', status: 'normal', date: '2026-01-08', amount: 620000, idSence: '1237890007', idInscripcion: 'INS-2026-0007', codigoSence: '1237890007-001' },
+  { id: '8', name: 'Marketing Digital', client: 'Agencia Creativa', otec: 'DigitalPro', stage: 'En ejecución', status: 'normal', date: '2026-01-07', amount: 890000, idSence: '1237890008', idInscripcion: 'INS-2026-0008', codigoSence: '1237890008-001' },
+  { id: '9', name: 'Contabilidad', client: 'Finanzas Corp', otec: 'ContaFácil', stage: 'Inscrito', status: 'normal', date: '2026-01-06', amount: 720000, idSence: '1237890009', idInscripcion: 'INS-2026-0009', codigoSence: '1237890009-001' },
+  { id: '10', name: 'Inglés Negocios', client: 'Export Chile', otec: 'EnglishPro', stage: 'En ejecución', status: 'medio', date: '2026-01-05', amount: 980000, idSence: '1237890010', idInscripcion: 'INS-2026-0010', codigoSence: '1237890010-001' },
 ];
 
 // Helper Components
@@ -643,45 +643,39 @@ const AccountStatusSection: React.FC = () => {
           </div>
         </div>
       </div>
-      {/* Company Table */}
-      <div className="border-t pt-6">
-        <h4 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
-          <Building2 className="w-4 h-4 text-primary" />
-          Detalle por Empresa
-        </h4>
-        <div className="mb-4">
-          <Input
-            placeholder="Buscar por empresa o RUT..."
-            prefix={<Search className="w-4 h-4 text-muted-foreground" />}
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            className="w-72"
-          />
-        </div>
-        <Table 
-          dataSource={filteredCompanies}
-          columns={columns}
-          pagination={{ pageSize: 5 }}
-          size="small"
-          rowKey="id"
-        />
-      </div>
     </Card>
   );
 };
 
 const CourseSearchGrid: React.FC = () => {
-  const [searchText, setSearchText] = useState('');
-  const [stageFilter, setStageFilter] = useState<string>('');
-  const [statusFilter, setStatusFilter] = useState<string>('');
+  const [searchType, setSearchType] = useState<'idSence' | 'idInscripcion' | 'codigoSence'>('idSence');
+  const [searchValue, setSearchValue] = useState('');
+  const [hasSearched, setHasSearched] = useState(false);
 
   const columns = [
+    { 
+      title: 'ID SENCE', 
+      dataIndex: 'idSence', 
+      key: 'idSence',
+      render: (text: string) => <span className="font-mono text-xs">{text}</span>
+    },
+    { 
+      title: 'ID Inscripción', 
+      dataIndex: 'idInscripcion', 
+      key: 'idInscripcion',
+      render: (text: string) => <span className="font-mono text-xs">{text}</span>
+    },
+    { 
+      title: 'Código SENCE', 
+      dataIndex: 'codigoSence', 
+      key: 'codigoSence',
+      render: (text: string) => <span className="font-mono text-xs">{text}</span>
+    },
     { title: 'Curso', dataIndex: 'name', key: 'name', render: (text: string) => <span className="font-medium">{text}</span> },
     { title: 'Cliente', dataIndex: 'client', key: 'client' },
     { title: 'OTEC', dataIndex: 'otec', key: 'otec' },
     { title: 'Etapa', dataIndex: 'stage', key: 'stage', render: (stage: string) => <StageBadge stage={stage} /> },
     { title: 'Estado', dataIndex: 'status', key: 'status', render: (status: 'normal' | 'medio' | 'critico') => <StatusBadge status={status} /> },
-    { title: 'Fecha', dataIndex: 'date', key: 'date' },
     { 
       title: 'Monto', 
       dataIndex: 'amount', 
@@ -699,60 +693,123 @@ const CourseSearchGrid: React.FC = () => {
     },
   ];
 
-  const filteredCourses = allCourses.filter(course => {
-    const matchesSearch = course.name.toLowerCase().includes(searchText.toLowerCase()) ||
-                          course.client.toLowerCase().includes(searchText.toLowerCase()) ||
-                          course.otec.toLowerCase().includes(searchText.toLowerCase());
-    const matchesStage = !stageFilter || course.stage === stageFilter;
-    const matchesStatus = !statusFilter || course.status === statusFilter;
-    return matchesSearch && matchesStage && matchesStatus;
-  });
+  const filteredCourses = hasSearched && searchValue.trim() 
+    ? allCourses.filter(course => {
+        const valueToSearch = course[searchType]?.toLowerCase() || '';
+        return valueToSearch.includes(searchValue.toLowerCase());
+      })
+    : [];
+
+  const handleSearch = () => {
+    setHasSearched(true);
+  };
+
+  const handleClear = () => {
+    setSearchValue('');
+    setHasSearched(false);
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
+  const searchTypeLabels = {
+    idSence: { label: 'ID SENCE', placeholder: 'Ej: 1237890001' },
+    idInscripcion: { label: 'ID Inscripción', placeholder: 'Ej: INS-2026-0001' },
+    codigoSence: { label: 'Código SENCE', placeholder: 'Ej: 1237890001-001' },
+  };
 
   return (
-    <Card title="Búsqueda de Cursos" className="shadow-sm">
-      <div className="flex flex-wrap gap-4 mb-4">
-        <Input
-          placeholder="Buscar por curso, cliente u OTEC..."
-          prefix={<Search className="w-4 h-4 text-muted-foreground" />}
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-          className="w-64"
-        />
-        <Select
-          placeholder="Filtrar por etapa"
-          allowClear
-          value={stageFilter || undefined}
-          onChange={(value) => setStageFilter(value || '')}
-          className="w-48"
-          options={[
-            { value: 'Borrador', label: 'Borrador' },
-            { value: 'Por comunicar', label: 'Por comunicar' },
-            { value: 'Inscrito', label: 'Inscrito' },
-            { value: 'En ejecución', label: 'En ejecución' },
-            { value: 'Por emisión OC', label: 'Por emisión OC' },
-            { value: 'Por liquidar', label: 'Por liquidar' },
-          ]}
-        />
-        <Select
-          placeholder="Filtrar por estado"
-          allowClear
-          value={statusFilter || undefined}
-          onChange={(value) => setStatusFilter(value || '')}
-          className="w-40"
-          options={[
-            { value: 'normal', label: 'Normal' },
-            { value: 'medio', label: 'Medio' },
-            { value: 'critico', label: 'Crítico' },
-          ]}
-        />
+    <Card 
+      title={
+        <div className="flex items-center gap-2">
+          <Search className="w-5 h-5 text-primary" />
+          <span>Buscador de Cursos</span>
+        </div>
+      } 
+      className="shadow-sm"
+    >
+      {/* Search Controls */}
+      <div className="bg-muted/30 rounded-xl p-4 border mb-4">
+        <div className="flex flex-wrap items-end gap-4">
+          <div className="flex-shrink-0">
+            <label className="block text-sm font-medium text-foreground mb-2">Buscar por</label>
+            <Select
+              value={searchType}
+              onChange={(value) => {
+                setSearchType(value);
+                setSearchValue('');
+                setHasSearched(false);
+              }}
+              className="w-44"
+              options={[
+                { value: 'idSence', label: 'ID SENCE' },
+                { value: 'idInscripcion', label: 'ID Inscripción' },
+                { value: 'codigoSence', label: 'Código SENCE' },
+              ]}
+            />
+          </div>
+          <div className="flex-1 min-w-[250px]">
+            <label className="block text-sm font-medium text-foreground mb-2">
+              {searchTypeLabels[searchType].label}
+            </label>
+            <Input
+              placeholder={searchTypeLabels[searchType].placeholder}
+              prefix={<Search className="w-4 h-4 text-muted-foreground" />}
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              onKeyPress={handleKeyPress}
+              className="w-full"
+            />
+          </div>
+          <div className="flex gap-2">
+            <Button 
+              type="primary" 
+              icon={<Search className="w-4 h-4" />}
+              onClick={handleSearch}
+              disabled={!searchValue.trim()}
+            >
+              Buscar
+            </Button>
+            {hasSearched && (
+              <Button onClick={handleClear}>
+                Limpiar
+              </Button>
+            )}
+          </div>
+        </div>
       </div>
-      <Table 
-        dataSource={filteredCourses} 
-        columns={columns} 
-        pagination={{ pageSize: 10 }}
-        size="small"
-        rowKey="id"
-      />
+
+      {/* Results */}
+      {!hasSearched ? (
+        <div className="text-center py-12 text-muted-foreground">
+          <Search className="w-12 h-12 mx-auto mb-4 opacity-30" />
+          <p className="text-lg font-medium">Ingrese un criterio de búsqueda</p>
+          <p className="text-sm mt-1">Busque cursos por ID SENCE, ID Inscripción o Código SENCE</p>
+        </div>
+      ) : filteredCourses.length === 0 ? (
+        <div className="text-center py-12 text-muted-foreground">
+          <AlertCircle className="w-12 h-12 mx-auto mb-4 opacity-30" />
+          <p className="text-lg font-medium">No se encontraron resultados</p>
+          <p className="text-sm mt-1">Intente con otro criterio de búsqueda</p>
+        </div>
+      ) : (
+        <>
+          <div className="mb-3 text-sm text-muted-foreground">
+            Se encontraron <span className="font-semibold text-foreground">{filteredCourses.length}</span> resultado(s)
+          </div>
+          <Table 
+            dataSource={filteredCourses} 
+            columns={columns} 
+            pagination={{ pageSize: 10 }}
+            size="small"
+            rowKey="id"
+            scroll={{ x: 1200 }}
+          />
+        </>
+      )}
     </Card>
   );
 };
