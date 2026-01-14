@@ -21,7 +21,11 @@ import {
   TrendingUp,
   TrendingDown,
   Users,
-  Briefcase
+  Briefcase,
+  ArrowDown,
+  ArrowRight,
+  Minus,
+  Plus
 } from 'lucide-react';
 
 // Types
@@ -639,83 +643,125 @@ const AccountStatusSection: React.FC = () => {
           </div>
         </div>
 
-        {/* Financial Statement Chart - Waterfall Style */}
+        {/* Financial Flow - Stacked Vertical Cards */}
         <div className="bg-muted/30 rounded-xl p-5 border">
           <h4 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
             <Calculator className="w-4 h-4 text-primary" />
-            Estado Financiero - Uso de Franquicia
+            Estado Financiero - Flujo de Franquicia
           </h4>
           
-          <div className="space-y-4">
-            {/* Total Franquicia Bar */}
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-sm font-medium text-foreground">Total Franquicia Disponible</span>
-                <span className="text-sm font-bold text-foreground">{formatCurrency(totalFranquicia)}</span>
-              </div>
-              <div className="h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white text-sm font-semibold">100%</span>
-              </div>
-            </div>
-
-            {/* Breakdown Bar */}
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-sm font-medium text-foreground">Distribución de Uso</span>
-              </div>
-              <div className="h-12 bg-muted rounded-lg overflow-hidden flex">
-                <Tooltip title={`Usado: ${formatCurrency(financialSummary.usado)} (${usadoPct.toFixed(1)}%)`}>
-                  <div 
-                    className="bg-gradient-to-b from-red-400 to-red-500 h-full flex items-center justify-center transition-all hover:brightness-110 cursor-pointer"
-                    style={{ width: `${usadoPct}%` }}
-                  >
-                    <span className="text-white text-xs font-semibold px-1 truncate">Usado</span>
-                  </div>
-                </Tooltip>
-                <Tooltip title={`Comprometido: ${formatCurrency(financialSummary.comprometido)} (${comprometidoPct.toFixed(1)}%)`}>
-                  <div 
-                    className="bg-gradient-to-b from-amber-400 to-amber-500 h-full flex items-center justify-center transition-all hover:brightness-110 cursor-pointer"
-                    style={{ width: `${comprometidoPct}%` }}
-                  >
-                    <span className="text-white text-xs font-semibold px-1 truncate">Comprometido</span>
-                  </div>
-                </Tooltip>
-                <Tooltip title={`Disponible: ${formatCurrency(financialSummary.saldoDisponible)} (${disponiblePct.toFixed(1)}%)`}>
-                  <div 
-                    className="bg-gradient-to-b from-green-400 to-green-500 h-full flex items-center justify-center transition-all hover:brightness-110 cursor-pointer"
-                    style={{ width: `${disponiblePct}%` }}
-                  >
-                    <span className="text-white text-xs font-semibold px-1 truncate">Disponible</span>
-                  </div>
-                </Tooltip>
-                <Tooltip title={`Excedentes Restantes: ${formatCurrency(financialSummary.saldoActualExcedentes)} (${excedentesRestantesPct.toFixed(1)}%)`}>
-                  <div 
-                    className="bg-gradient-to-b from-purple-400 to-purple-500 h-full flex items-center justify-center transition-all hover:brightness-110 cursor-pointer"
-                    style={{ width: `${excedentesRestantesPct}%` }}
-                  >
-                    <span className="text-white text-xs font-semibold px-1 truncate">Excedentes</span>
-                  </div>
-                </Tooltip>
+          <div className="flex flex-col items-center space-y-2">
+            {/* Total Franquicia */}
+            <div className="w-full max-w-md bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl p-4 text-white shadow-lg">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-blue-100">Total Franquicia Disponible</p>
+                  <p className="text-2xl font-bold">{formatCurrency(totalFranquicia)}</p>
+                </div>
+                <div className="p-3 bg-white/20 rounded-full">
+                  <DollarSign className="w-6 h-6" />
+                </div>
               </div>
             </div>
 
-            {/* Legend */}
-            <div className="flex flex-wrap gap-4 mt-4 pt-4 border-t border-muted">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                <span className="text-sm text-muted-foreground">Usado: {formatCurrency(financialSummary.usado)}</span>
+            {/* Arrow Down */}
+            <div className="flex items-center justify-center py-1">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <ArrowDown className="w-5 h-5" />
               </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-amber-500"></div>
-                <span className="text-sm text-muted-foreground">Comprometido: {formatCurrency(financialSummary.comprometido)}</span>
+            </div>
+
+            {/* Split into two flows */}
+            <div className="w-full max-w-2xl grid grid-cols-2 gap-4">
+              {/* Aporte del Año Flow */}
+              <div className="flex flex-col items-center space-y-2">
+                <div className="w-full bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-xl p-4 text-white shadow-md">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs font-medium text-indigo-100">Aporte del Año</p>
+                      <p className="text-xl font-bold">{formatCurrencyShort(financialSummary.aporteAno)}</p>
+                    </div>
+                    <Plus className="w-5 h-5 text-indigo-200" />
+                  </div>
+                </div>
+
+                <ArrowDown className="w-4 h-4 text-muted-foreground" />
+
+                <div className="w-full bg-gradient-to-r from-red-400 to-red-500 rounded-xl p-3 text-white shadow-md">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs font-medium text-red-100">Usado</p>
+                      <p className="text-lg font-bold">{formatCurrencyShort(financialSummary.usado)}</p>
+                    </div>
+                    <Minus className="w-5 h-5 text-red-200" />
+                  </div>
+                </div>
+
+                <ArrowDown className="w-4 h-4 text-muted-foreground" />
+
+                <div className="w-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-xl p-3 text-white shadow-md">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs font-medium text-amber-100">Comprometido</p>
+                      <p className="text-lg font-bold">{formatCurrencyShort(financialSummary.comprometido)}</p>
+                    </div>
+                    <Minus className="w-5 h-5 text-amber-200" />
+                  </div>
+                </div>
+
+                <ArrowDown className="w-4 h-4 text-muted-foreground" />
+
+                <div className="w-full bg-gradient-to-r from-green-500 to-green-600 rounded-xl p-4 text-white shadow-lg border-2 border-green-300">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs font-medium text-green-100">Saldo Disponible</p>
+                      <p className="text-xl font-bold">{formatCurrencyShort(financialSummary.saldoDisponible)}</p>
+                      <p className="text-xs text-green-200 mt-1">{((financialSummary.saldoDisponible / financialSummary.aporteAno) * 100).toFixed(1)}% disponible</p>
+                    </div>
+                    <CheckCircle2 className="w-5 h-5 text-green-200" />
+                  </div>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                <span className="text-sm text-muted-foreground">Disponible: {formatCurrency(financialSummary.saldoDisponible)}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-purple-500"></div>
-                <span className="text-sm text-muted-foreground">Excedentes: {formatCurrency(financialSummary.saldoActualExcedentes)}</span>
+
+              {/* Excedentes Flow */}
+              <div className="flex flex-col items-center space-y-2">
+                <div className="w-full bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl p-4 text-white shadow-md">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs font-medium text-purple-100">Excedentes Año Anterior</p>
+                      <p className="text-xl font-bold">{formatCurrencyShort(financialSummary.excedentesAnoAnterior)}</p>
+                    </div>
+                    <Clock className="w-5 h-5 text-purple-200" />
+                  </div>
+                </div>
+
+                <ArrowDown className="w-4 h-4 text-muted-foreground" />
+
+                <div className="w-full bg-gradient-to-r from-red-400 to-red-500 rounded-xl p-3 text-white shadow-md">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs font-medium text-red-100">Utilizado</p>
+                      <p className="text-lg font-bold">{formatCurrencyShort(financialSummary.excedentesAnoAnterior - financialSummary.saldoActualExcedentes)}</p>
+                    </div>
+                    <Minus className="w-5 h-5 text-red-200" />
+                  </div>
+                </div>
+
+                <ArrowDown className="w-4 h-4 text-muted-foreground" />
+
+                <div className="w-full bg-gradient-to-r from-violet-500 to-violet-600 rounded-xl p-4 text-white shadow-lg border-2 border-violet-300">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs font-medium text-violet-100">Saldo Actual Excedentes</p>
+                      <p className="text-xl font-bold">{formatCurrencyShort(financialSummary.saldoActualExcedentes)}</p>
+                      <p className="text-xs text-violet-200 mt-1">{((financialSummary.saldoActualExcedentes / financialSummary.excedentesAnoAnterior) * 100).toFixed(1)}% restante</p>
+                    </div>
+                    <Briefcase className="w-5 h-5 text-violet-200" />
+                  </div>
+                </div>
+
+                {/* Spacer to align with left column */}
+                <div className="h-[52px]"></div>
               </div>
             </div>
           </div>
