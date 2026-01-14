@@ -9,6 +9,7 @@ import { OTECHighlightMetrics } from '@/components/dashboard/OTECHighlightMetric
 import { EmpresaResumenFinanciero } from '@/components/dashboard/EmpresaManagementCard';
 import { EmpresaHighlightMetrics } from '@/components/dashboard/EmpresaHighlightMetrics';
 import { EmpresaPlanCapacitacion } from '@/components/dashboard/EmpresaPlanCapacitacion';
+import { OTICDashboardSections } from '@/components/dashboard/OTICDashboardSections';
 import { Calendar, Clock } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
@@ -80,11 +81,8 @@ const Dashboard: React.FC = () => {
         </>
       )}
 
-      {/* Charts Section - Only for non-Empresa roles */}
-      {!isEmpresaRole && <DashboardCharts />}
-
-      {/* Metrics Dashboard - Grouped by category (only for OTIC) */}
-      {!isOTECRole && !isEmpresaRole && <DashboardMetrics />}
+      {/* OTIC Operational Dashboard */}
+      {!isOTECRole && !isEmpresaRole && <OTICDashboardSections />}
     </div>
   );
 };
