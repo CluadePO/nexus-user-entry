@@ -37,6 +37,13 @@ export const quickAccessByRole: Record<UserRole, QuickAccess[]> = {
     { id: '4', title: 'Reportes', description: 'Capacinet 2.0', icon: 'BarChart3', url: '/reportes' },
     { id: '5', title: 'Rol Asesor', icon: 'UserCheck', url: '/asesor' },
   ],
+  ASESOR: [
+    { id: '1', title: 'Dashboard', icon: 'LayoutDashboard', url: '/asesor' },
+    { id: '2', title: 'Mi Buscador', icon: 'Search', url: '/asesor/buscador' },
+    { id: '3', title: 'Mi Recomendador', icon: 'Sparkles', url: '/asesor/recomendador' },
+    { id: '4', title: 'Mi DNC', icon: 'Target', url: '/asesor/dnc' },
+    { id: '5', title: 'Mi Ruta', icon: 'Route', url: '/asesor/ruta' },
+  ],
 };
 
 // Menu configurations per role
@@ -291,6 +298,21 @@ export const menuByRole: Record<UserRole, MenuItem[]> = {
       ]
     },
   ],
+  ASESOR: [
+    { key: 'inicio', label: 'Inicio', icon: 'Home', url: '/dashboard' },
+    { 
+      key: 'rol-asesor', 
+      label: 'Rol Asesor', 
+      icon: 'UserCheck',
+      children: [
+        { key: 'asesor-dashboard', label: 'Dashboard', url: '/asesor' },
+        { key: 'asesor-diagnostico', label: 'Diagnóstico', url: '/asesor/diagnostico' },
+        { key: 'asesor-herramientas', label: 'Herramientas', url: '/asesor/herramientas' },
+        { key: 'asesor-resultados', label: 'Resultados', url: '/asesor/resultados' },
+        { key: 'asesor-plan', label: 'Plan de Capacitación', url: '/asesor/plan' },
+      ]
+    },
+  ],
 };
 
 // Dashboard metrics per role
@@ -347,6 +369,12 @@ export const dashboardMetricsByRole: Record<UserRole, DashboardMetric[]> = {
     { id: '5', label: 'Monto Liquidado', value: '$567M', icon: 'CheckCircle' },
     { id: '6', label: 'Pendiente Liquidación', value: '$123M', icon: 'Clock' },
   ],
+  ASESOR: [
+    { id: '1', label: 'Diagnósticos Realizados', value: 12, icon: 'CheckCircle', change: 3, changeType: 'positive' },
+    { id: '2', label: 'Herramientas Utilizadas', value: 28, icon: 'Sparkles' },
+    { id: '3', label: 'Nivel de Madurez', value: '68%', icon: 'TrendingUp', changeType: 'positive' },
+    { id: '4', label: 'Áreas de Mejora', value: 5, icon: 'AlertTriangle', changeType: 'neutral' },
+  ],
 };
 
 export const getRoleDisplayName = (role: UserRole): string => {
@@ -356,6 +384,7 @@ export const getRoleDisplayName = (role: UserRole): string => {
     OTEC_REPRESENTANTE: 'OTEC Representante',
     EMPRESA: 'Empresa',
     EMPRESA_REPRESENTANTE: 'Empresa Representante',
+    ASESOR: 'Asesor',
   };
   return names[role];
 };
@@ -367,6 +396,7 @@ export const getRoleDescription = (role: UserRole): string => {
     OTEC_REPRESENTANTE: 'Representante Legal OTEC',
     EMPRESA: 'Empresa o Institución',
     EMPRESA_REPRESENTANTE: 'Representante de Empresa',
+    ASESOR: 'Asesor de Capacitación',
   };
   return descriptions[role];
 };

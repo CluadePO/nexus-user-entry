@@ -10,6 +10,7 @@ import { AppLayout } from "@/components/layout/AppLayout";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Inscripcion from "./pages/Inscripcion";
+import AsesorDashboard from "./pages/AsesorDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -44,7 +45,15 @@ const App = () => (
                 <Route path="/reportes" element={<PlaceholderPage title="Reportes" />} />
                 <Route path="/data360" element={<PlaceholderPage title="Data 360" />} />
                 <Route path="/buscador/*" element={<PlaceholderPage title="Mi Buscador" />} />
-                <Route path="/asesor" element={<PlaceholderPage title="Rol Asesor" />} />
+                <Route path="/asesor" element={<AsesorDashboard />} />
+                <Route path="/asesor/diagnostico" element={<PlaceholderPage title="Diagnóstico" />} />
+                <Route path="/asesor/herramientas" element={<PlaceholderPage title="Herramientas" />} />
+                <Route path="/asesor/resultados" element={<PlaceholderPage title="Resultados" />} />
+                <Route path="/asesor/plan" element={<PlaceholderPage title="Plan de Capacitación" />} />
+                <Route path="/asesor/buscador" element={<PlaceholderPage title="Mi Buscador" />} />
+                <Route path="/asesor/recomendador" element={<PlaceholderPage title="Mi Recomendador" />} />
+                <Route path="/asesor/dnc" element={<PlaceholderPage title="Mi DNC" />} />
+                <Route path="/asesor/ruta" element={<PlaceholderPage title="Mi Ruta" />} />
                 <Route path="/documentos/*" element={<PlaceholderPage title="Gestión Documental" />} />
                 <Route path="/facturacion/*" element={<PlaceholderPage title="Facturación" />} />
                 <Route path="/formacion/*" element={<PlaceholderPage title="Formación" />} />
