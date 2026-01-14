@@ -644,30 +644,6 @@ const AccountStatusSection: React.FC = () => {
         </div>
 
       </div>
-
-      {/* Company Table */}
-      <div className="border-t pt-6">
-        <h4 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
-          <Building2 className="w-4 h-4 text-primary" />
-          Detalle por Empresa
-        </h4>
-        <div className="mb-4">
-          <Input
-            placeholder="Buscar por empresa o RUT..."
-            prefix={<Search className="w-4 h-4 text-muted-foreground" />}
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            className="w-72"
-          />
-        </div>
-        <Table 
-          dataSource={filteredCompanies}
-          columns={columns}
-          pagination={{ pageSize: 5 }}
-          size="small"
-          rowKey="id"
-        />
-      </div>
     </Card>
   );
 };
