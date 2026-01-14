@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, Progress, Table, Tag, Input, Select, Button, Tabs } from 'antd';
+import { Card, Progress, Table, Tag, Input, Select, Button, Tabs, Tooltip } from 'antd';
 import { 
   FileText, 
   Send, 
@@ -222,38 +222,26 @@ const CourseStagesSection: React.FC = () => {
                 <span className="text-xs text-muted-foreground block mt-1">cursos</span>
               </div>
 
-              {/* Status breakdown - stacked bars */}
-              <div className="space-y-2">
-                <div className="h-2 bg-muted rounded-full overflow-hidden flex">
+              {/* Status breakdown - stacked bars with tooltips */}
+              <div className="h-3 bg-muted rounded-full overflow-hidden flex">
+                <Tooltip title={`Normal: ${stage.normal} cursos`} placement="top">
                   <div 
-                    className="bg-green-500 h-full transition-all" 
+                    className="bg-green-500 h-full transition-all hover:opacity-80 cursor-pointer" 
                     style={{ width: `${(stage.normal / stage.total) * 100}%` }}
                   />
+                </Tooltip>
+                <Tooltip title={`Medio: ${stage.medio} cursos`} placement="top">
                   <div 
-                    className="bg-amber-500 h-full transition-all" 
+                    className="bg-amber-500 h-full transition-all hover:opacity-80 cursor-pointer" 
                     style={{ width: `${(stage.medio / stage.total) * 100}%` }}
                   />
+                </Tooltip>
+                <Tooltip title={`Crítico: ${stage.critico} cursos`} placement="top">
                   <div 
-                    className="bg-red-500 h-full transition-all" 
+                    className="bg-red-500 h-full transition-all hover:opacity-80 cursor-pointer" 
                     style={{ width: `${(stage.critico / stage.total) * 100}%` }}
                   />
-                </div>
-                
-                {/* Numbers below bar */}
-                <div className="flex justify-between text-xs">
-                  <span className="flex items-center gap-1 text-green-600 font-medium">
-                    <CheckCircle2 className="w-3.5 h-3.5" />
-                    {stage.normal}
-                  </span>
-                  <span className="flex items-center gap-1 text-amber-600 font-medium">
-                    <AlertTriangle className="w-3.5 h-3.5" />
-                    {stage.medio}
-                  </span>
-                  <span className="flex items-center gap-1 text-red-600 font-medium">
-                    <AlertCircle className="w-3.5 h-3.5" />
-                    {stage.critico}
-                  </span>
-                </div>
+                </Tooltip>
               </div>
             </div>
 
