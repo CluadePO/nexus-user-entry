@@ -12,8 +12,12 @@ import {
   TrendingUp,
   Award,
   Filter,
-  SlidersHorizontal
+  SlidersHorizontal,
+  ChevronRight,
+  Home,
+  X
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,6 +25,24 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+  SheetClose,
+} from '@/components/ui/sheet';
+import { Label } from '@/components/ui/label';
 
 interface Course {
   id: string;
@@ -33,8 +55,54 @@ interface Course {
   rating: number;
   participants: number;
   category: string;
+  area: string;
+  region: string;
+  imageUrl: string;
   isFavorite: boolean;
 }
+
+const courseImages = [
+  'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=250&fit=crop',
+  'https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=250&fit=crop',
+  'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=400&h=250&fit=crop',
+  'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=400&h=250&fit=crop',
+  'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400&h=250&fit=crop',
+  'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=400&h=250&fit=crop',
+  'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&h=250&fit=crop',
+  'https://images.unsplash.com/photo-1556761175-b413da4baf72?w=400&h=250&fit=crop',
+];
+
+const areas = [
+  'Tecnología',
+  'Habilidades Blandas',
+  'Seguridad',
+  'Marketing',
+  'Gestión',
+  'Idiomas',
+  'Finanzas',
+  'Servicio',
+  'Recursos Humanos',
+  'Logística',
+];
+
+const regiones = [
+  'Metropolitana',
+  'Valparaíso',
+  'Biobío',
+  'Araucanía',
+  'O\'Higgins',
+  'Maule',
+  'Los Lagos',
+  'Antofagasta',
+  'Coquimbo',
+  'Atacama',
+  'Tarapacá',
+  'Arica y Parinacota',
+  'Los Ríos',
+  'Aysén',
+  'Magallanes',
+  'Ñuble',
+];
 
 const mockCourses: Course[] = [
   {
@@ -48,6 +116,9 @@ const mockCourses: Course[] = [
     rating: 4.8,
     participants: 1250,
     category: 'Tecnología',
+    area: 'Tecnología',
+    region: 'Metropolitana',
+    imageUrl: courseImages[0],
     isFavorite: false,
   },
   {
@@ -61,6 +132,9 @@ const mockCourses: Course[] = [
     rating: 4.9,
     participants: 890,
     category: 'Habilidades Blandas',
+    area: 'Habilidades Blandas',
+    region: 'Valparaíso',
+    imageUrl: courseImages[1],
     isFavorite: true,
   },
   {
@@ -74,6 +148,9 @@ const mockCourses: Course[] = [
     rating: 4.7,
     participants: 2100,
     category: 'Seguridad',
+    area: 'Seguridad',
+    region: 'Biobío',
+    imageUrl: courseImages[2],
     isFavorite: false,
   },
   {
@@ -87,6 +164,9 @@ const mockCourses: Course[] = [
     rating: 4.6,
     participants: 3200,
     category: 'Marketing',
+    area: 'Marketing',
+    region: 'Metropolitana',
+    imageUrl: courseImages[3],
     isFavorite: false,
   },
   {
@@ -100,6 +180,9 @@ const mockCourses: Course[] = [
     rating: 4.8,
     participants: 756,
     category: 'Gestión',
+    area: 'Gestión',
+    region: 'Metropolitana',
+    imageUrl: courseImages[4],
     isFavorite: true,
   },
   {
@@ -113,6 +196,9 @@ const mockCourses: Course[] = [
     rating: 4.5,
     participants: 1890,
     category: 'Idiomas',
+    area: 'Idiomas',
+    region: 'Antofagasta',
+    imageUrl: courseImages[5],
     isFavorite: false,
   },
   {
@@ -126,6 +212,9 @@ const mockCourses: Course[] = [
     rating: 4.7,
     participants: 1120,
     category: 'Finanzas',
+    area: 'Finanzas',
+    region: 'O\'Higgins',
+    imageUrl: courseImages[6],
     isFavorite: false,
   },
   {
@@ -139,6 +228,9 @@ const mockCourses: Course[] = [
     rating: 4.4,
     participants: 4500,
     category: 'Servicio',
+    area: 'Servicio',
+    region: 'Los Lagos',
+    imageUrl: courseImages[7],
     isFavorite: false,
   },
 ];
@@ -149,6 +241,8 @@ const MiBuscador: React.FC = () => {
   const [selectedCourses, setSelectedCourses] = useState<string[]>([]);
   const [modalityFilter, setModalityFilter] = useState<string>('all');
   const [typeFilter, setTypeFilter] = useState<string>('all');
+  const [areaFilter, setAreaFilter] = useState<string>('all');
+  const [regionFilter, setRegionFilter] = useState<string>('all');
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('es-CL', {
@@ -176,13 +270,22 @@ const MiBuscador: React.FC = () => {
     );
   };
 
+  const clearAdvancedFilters = () => {
+    setAreaFilter('all');
+    setRegionFilter('all');
+  };
+
+  const activeAdvancedFilters = (areaFilter !== 'all' ? 1 : 0) + (regionFilter !== 'all' ? 1 : 0);
+
   const filteredCourses = courses.filter(course => {
     const matchesSearch = course.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           course.provider.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           course.category.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesModality = modalityFilter === 'all' || course.modality === modalityFilter;
     const matchesType = typeFilter === 'all' || course.type === typeFilter;
-    return matchesSearch && matchesModality && matchesType;
+    const matchesArea = areaFilter === 'all' || course.area === areaFilter;
+    const matchesRegion = regionFilter === 'all' || course.region === regionFilter;
+    return matchesSearch && matchesModality && matchesType && matchesArea && matchesRegion;
   });
 
   const getModalityColor = (modality: string) => {
@@ -202,6 +305,34 @@ const MiBuscador: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* Breadcrumb Navigation */}
+      <Breadcrumb>
+        <BreadcrumbList>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link to="/dashboard" className="flex items-center gap-1">
+                <Home className="h-4 w-4" />
+                Inicio
+              </Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator>
+            <ChevronRight className="h-4 w-4" />
+          </BreadcrumbSeparator>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild>
+              <Link to="#">Formación</Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbSeparator>
+            <ChevronRight className="h-4 w-4" />
+          </BreadcrumbSeparator>
+          <BreadcrumbItem>
+            <BreadcrumbPage>Mi Buscador</BreadcrumbPage>
+          </BreadcrumbItem>
+        </BreadcrumbList>
+      </Breadcrumb>
+
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Mi Buscador</h1>
@@ -385,14 +516,106 @@ const MiBuscador: React.FC = () => {
                       <SelectItem value="E-learning">E-learning</SelectItem>
                     </SelectContent>
                   </Select>
-                  <Button variant="outline" className="h-12">
-                    <SlidersHorizontal className="h-4 w-4 mr-2" />
-                    Más filtros
-                  </Button>
+                  
+                  {/* More Filters Sheet */}
+                  <Sheet>
+                    <SheetTrigger asChild>
+                      <Button variant="outline" className="h-12 relative">
+                        <SlidersHorizontal className="h-4 w-4 mr-2" />
+                        Más filtros
+                        {activeAdvancedFilters > 0 && (
+                          <Badge className="absolute -top-2 -right-2 h-5 w-5 p-0 flex items-center justify-center text-xs">
+                            {activeAdvancedFilters}
+                          </Badge>
+                        )}
+                      </Button>
+                    </SheetTrigger>
+                    <SheetContent>
+                      <SheetHeader>
+                        <SheetTitle className="flex items-center gap-2">
+                          <Filter className="h-5 w-5" />
+                          Filtros Avanzados
+                        </SheetTitle>
+                        <SheetDescription>
+                          Refina tu búsqueda con filtros adicionales
+                        </SheetDescription>
+                      </SheetHeader>
+                      <div className="space-y-6 py-6">
+                        <div className="space-y-3">
+                          <Label className="text-sm font-medium">Área de Curso</Label>
+                          <Select value={areaFilter} onValueChange={setAreaFilter}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Seleccionar área" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all">Todas las áreas</SelectItem>
+                              {areas.map(area => (
+                                <SelectItem key={area} value={area}>{area}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        
+                        <div className="space-y-3">
+                          <Label className="text-sm font-medium">Región</Label>
+                          <Select value={regionFilter} onValueChange={setRegionFilter}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Seleccionar región" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all">Todas las regiones</SelectItem>
+                              {regiones.map(region => (
+                                <SelectItem key={region} value={region}>{region}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div className="pt-4 space-y-3">
+                          <Button 
+                            variant="outline" 
+                            className="w-full"
+                            onClick={clearAdvancedFilters}
+                          >
+                            <X className="h-4 w-4 mr-2" />
+                            Limpiar filtros
+                          </Button>
+                          <SheetClose asChild>
+                            <Button className="w-full">
+                              Aplicar filtros
+                            </Button>
+                          </SheetClose>
+                        </div>
+                      </div>
+                    </SheetContent>
+                  </Sheet>
                 </div>
               </div>
             </CardContent>
           </Card>
+
+          {/* Active Filters Display */}
+          {(areaFilter !== 'all' || regionFilter !== 'all') && (
+            <div className="flex flex-wrap gap-2">
+              {areaFilter !== 'all' && (
+                <Badge variant="secondary" className="gap-1">
+                  Área: {areaFilter}
+                  <button onClick={() => setAreaFilter('all')} className="ml-1 hover:text-destructive">
+                    <X className="h-3 w-3" />
+                  </button>
+                </Badge>
+              )}
+              {regionFilter !== 'all' && (
+                <Badge variant="secondary" className="gap-1">
+                  <MapPin className="h-3 w-3" />
+                  {regionFilter}
+                  <button onClick={() => setRegionFilter('all')} className="ml-1 hover:text-destructive">
+                    <X className="h-3 w-3" />
+                  </button>
+                </Badge>
+              )}
+            </div>
+          )}
 
           {/* Compare Banner */}
           {selectedCourses.length > 0 && (
@@ -442,30 +665,37 @@ const MiBuscador: React.FC = () => {
           {/* Course Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {filteredCourses.map((course) => (
-              <Card key={course.id} className="group hover:shadow-lg transition-all duration-300 hover:border-primary/50">
-                <CardContent className="p-4 space-y-4">
-                  {/* Header with badges */}
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex flex-wrap gap-1">
-                      <Badge className={getTypeColor(course.type)} variant="outline">
-                        {course.type}
-                      </Badge>
-                      <Badge className={getModalityColor(course.modality)} variant="secondary">
-                        {course.modality}
-                      </Badge>
-                    </div>
+              <Card key={course.id} className="group hover:shadow-lg transition-all duration-300 hover:border-primary/50 overflow-hidden">
+                {/* Course Image */}
+                <div className="relative h-40 overflow-hidden">
+                  <img 
+                    src={course.imageUrl} 
+                    alt={course.name}
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                  <div className="absolute top-2 right-2">
                     <button
                       onClick={() => toggleFavorite(course.id)}
-                      className={`p-1.5 rounded-full transition-colors ${
+                      className={`p-2 rounded-full transition-colors shadow-md ${
                         course.isFavorite 
                           ? 'bg-yellow-100 text-yellow-600' 
-                          : 'bg-muted hover:bg-yellow-50 text-muted-foreground hover:text-yellow-600'
+                          : 'bg-background/80 hover:bg-yellow-50 text-muted-foreground hover:text-yellow-600'
                       }`}
                     >
                       <Star className={`h-4 w-4 ${course.isFavorite ? 'fill-current' : ''}`} />
                     </button>
                   </div>
+                  <div className="absolute bottom-2 left-2 flex gap-1">
+                    <Badge className={getTypeColor(course.type)} variant="outline">
+                      {course.type}
+                    </Badge>
+                    <Badge className={getModalityColor(course.modality)} variant="secondary">
+                      {course.modality}
+                    </Badge>
+                  </div>
+                </div>
 
+                <CardContent className="p-4 space-y-3">
                   {/* Course Name */}
                   <h3 className="font-semibold text-foreground line-clamp-2 min-h-[48px] group-hover:text-primary transition-colors">
                     {course.name}
@@ -473,8 +703,14 @@ const MiBuscador: React.FC = () => {
 
                   {/* Provider */}
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Building2 className="h-4 w-4" />
+                    <Building2 className="h-4 w-4 flex-shrink-0" />
                     <span className="truncate">{course.provider}</span>
+                  </div>
+
+                  {/* Region */}
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <MapPin className="h-4 w-4 flex-shrink-0" />
+                    <span className="truncate">{course.region}</span>
                   </div>
 
                   {/* Details */}
