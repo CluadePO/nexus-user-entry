@@ -6,7 +6,7 @@ import { DashboardMetrics } from '@/components/dashboard/DashboardMetrics';
 import { DashboardCharts } from '@/components/dashboard/DashboardCharts';
 import { DJOManagementCard } from '@/components/dashboard/DJOManagementCard';
 import { OTECHighlightMetrics } from '@/components/dashboard/OTECHighlightMetrics';
-import { EmpresaResumenFinanciero, EmpresaEtapaCursos, EmpresaProximosCursos } from '@/components/dashboard/EmpresaManagementCard';
+import { EmpresaResumenFinanciero } from '@/components/dashboard/EmpresaManagementCard';
 import { EmpresaHighlightMetrics } from '@/components/dashboard/EmpresaHighlightMetrics';
 import { EmpresaPlanCapacitacion } from '@/components/dashboard/EmpresaPlanCapacitacion';
 import { Calendar, Clock } from 'lucide-react';
@@ -75,18 +75,8 @@ const Dashboard: React.FC = () => {
             <EmpresaResumenFinanciero />
           </div>
 
-          {/* Etapa de Cursos - Below */}
-          <EmpresaEtapaCursos />
-
-          {/* Estado de Cursos and Participantes side by side + Próximos Cursos on the right */}
-          <div className="grid grid-cols-1 xl:grid-cols-12 gap-4">
-            <div className="xl:col-span-8">
-              <EmpresaHighlightMetrics />
-            </div>
-            <div className="xl:col-span-4">
-              <EmpresaProximosCursos />
-            </div>
-          </div>
+          {/* Gestión de Cursos y Participantes - Unified Section */}
+          <EmpresaHighlightMetrics />
         </>
       )}
 
