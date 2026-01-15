@@ -50,6 +50,7 @@ import {
   SheetClose,
 } from '@/components/ui/sheet';
 import { Label } from '@/components/ui/label';
+import { ChileRegionsMap } from '@/components/dashboard/ChileRegionsMap';
 
 interface Course {
   id: string;
@@ -427,113 +428,121 @@ const MiBuscador: React.FC = () => {
             </Card>
           </div>
 
-          {/* Activity & Categories Row */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Recent Activity */}
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <Clock className="h-4 w-4 text-muted-foreground" />
-                  Actividad reciente
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-full mt-0.5">
-                    <Search className="h-4 w-4 text-emerald-600" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-medium text-sm">Buscaste 'Liderazgo y gestión de equipos'</p>
-                    <p className="text-xs text-emerald-600">Hace 2 horas</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start gap-3">
-                  <div className="p-2 bg-rose-100 dark:bg-rose-900/30 rounded-full mt-0.5">
-                    <Heart className="h-4 w-4 text-rose-500" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-medium text-sm">Agregaste 'Excel Avanzado' a favoritos</p>
-                    <p className="text-xs text-emerald-600">Hace 1 día</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start gap-3">
-                  <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-full mt-0.5">
-                    <FileText className="h-4 w-4 text-emerald-600" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-medium text-sm">Enviaste cotización a OTEC Profesionales</p>
-                    <p className="text-xs text-emerald-600">Hace 3 días</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start gap-3">
-                  <div className="p-2 bg-violet-100 dark:bg-violet-900/30 rounded-full mt-0.5">
-                    <GitCompare className="h-4 w-4 text-violet-600" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-medium text-sm">Completaste comparación de 3 cursos</p>
-                    <p className="text-xs text-muted-foreground">Hace 5 días</p>
-                  </div>
-                </div>
+          {/* Map & Categories Row */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            {/* Chile Map - Tendencias por Región */}
+            <div className="lg:col-span-5">
+              <ChileRegionsMap />
+            </div>
 
-                <button className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors mt-2">
-                  Ver todo el historial <ArrowRight className="h-4 w-4" />
-                </button>
-              </CardContent>
-            </Card>
+            {/* Activity & Categories Column */}
+            <div className="lg:col-span-7 space-y-6">
+              {/* Popular Categories */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <Star className="h-4 w-4 text-amber-500" />
+                    Categorías populares
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50 transition-colors">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
+                          <Users className="h-4 w-4 text-amber-600" />
+                        </div>
+                        <span className="font-medium text-sm">Liderazgo</span>
+                      </div>
+                      <span className="text-sm text-muted-foreground">245</span>
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50 transition-colors">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
+                          <FileText className="h-4 w-4 text-emerald-600" />
+                        </div>
+                        <span className="font-medium text-sm">Excel y Office</span>
+                      </div>
+                      <span className="text-sm text-muted-foreground">189</span>
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50 transition-colors">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
+                          <Shield className="h-4 w-4 text-emerald-600" />
+                        </div>
+                        <span className="font-medium text-sm">Seguridad Laboral</span>
+                      </div>
+                      <span className="text-sm text-muted-foreground">156</span>
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50 transition-colors">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
+                          <Megaphone className="h-4 w-4 text-amber-600" />
+                        </div>
+                        <span className="font-medium text-sm">Marketing Digital</span>
+                      </div>
+                      <span className="text-sm text-muted-foreground">134</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
 
-            {/* Popular Categories */}
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <Star className="h-4 w-4 text-amber-500" />
-                  Categorías populares
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50 transition-colors">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
-                      <Users className="h-4 w-4 text-amber-600" />
+              {/* Recent Activity */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <Clock className="h-4 w-4 text-muted-foreground" />
+                    Actividad reciente
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="flex items-start gap-3 p-2 rounded-lg hover:bg-muted/30 transition-colors">
+                      <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-full mt-0.5">
+                        <Search className="h-3 w-3 text-emerald-600" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-xs truncate">Buscaste 'Liderazgo y gestión'</p>
+                        <p className="text-xs text-emerald-600">Hace 2 horas</p>
+                      </div>
                     </div>
-                    <span className="font-medium text-sm">Liderazgo</span>
-                  </div>
-                  <span className="text-sm text-muted-foreground">245 cursos</span>
-                </div>
-                
-                <div className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50 transition-colors">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
-                      <FileText className="h-4 w-4 text-emerald-600" />
+                    
+                    <div className="flex items-start gap-3 p-2 rounded-lg hover:bg-muted/30 transition-colors">
+                      <div className="p-2 bg-rose-100 dark:bg-rose-900/30 rounded-full mt-0.5">
+                        <Heart className="h-3 w-3 text-rose-500" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-xs truncate">Agregaste 'Excel Avanzado' a favoritos</p>
+                        <p className="text-xs text-emerald-600">Hace 1 día</p>
+                      </div>
                     </div>
-                    <span className="font-medium text-sm">Excel y Office</span>
-                  </div>
-                  <span className="text-sm text-muted-foreground">189 cursos</span>
-                </div>
-                
-                <div className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50 transition-colors">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
-                      <Shield className="h-4 w-4 text-emerald-600" />
+                    
+                    <div className="flex items-start gap-3 p-2 rounded-lg hover:bg-muted/30 transition-colors">
+                      <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-full mt-0.5">
+                        <FileText className="h-3 w-3 text-emerald-600" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-xs truncate">Enviaste cotización a OTEC</p>
+                        <p className="text-xs text-emerald-600">Hace 3 días</p>
+                      </div>
                     </div>
-                    <span className="font-medium text-sm">Seguridad Laboral</span>
-                  </div>
-                  <span className="text-sm text-muted-foreground">156 cursos</span>
-                </div>
-                
-                <div className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50 transition-colors">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
-                      <Megaphone className="h-4 w-4 text-amber-600" />
+                    
+                    <div className="flex items-start gap-3 p-2 rounded-lg hover:bg-muted/30 transition-colors">
+                      <div className="p-2 bg-violet-100 dark:bg-violet-900/30 rounded-full mt-0.5">
+                        <GitCompare className="h-3 w-3 text-violet-600" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-xs truncate">Comparación de 3 cursos</p>
+                        <p className="text-xs text-muted-foreground">Hace 5 días</p>
+                      </div>
                     </div>
-                    <span className="font-medium text-sm">Marketing Digital</span>
                   </div>
-                  <span className="text-sm text-muted-foreground">134 cursos</span>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </div>
           </div>
 
           {/* Recommended Courses */}
