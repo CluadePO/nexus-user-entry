@@ -181,22 +181,75 @@ export const OTECBuscadorDashboard: React.FC = () => {
           </Card>
 
           {/* Los usuarios también se interesan en */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <Users className="h-4 w-4 text-violet-500" />
-                Los usuarios también se interesan en
-              </CardTitle>
+          <Card className="overflow-hidden border-2 border-violet-200 dark:border-violet-800 bg-gradient-to-br from-violet-50/80 via-white to-fuchsia-50/50 dark:from-violet-950/40 dark:via-background dark:to-fuchsia-950/20">
+            <CardHeader className="pb-2 bg-gradient-to-r from-violet-500/10 to-fuchsia-500/10">
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <div className="p-2 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-lg shadow-lg shadow-violet-500/25">
+                    <Users className="h-4 w-4 text-white" />
+                  </div>
+                  <span className="bg-gradient-to-r from-violet-700 to-fuchsia-600 dark:from-violet-400 dark:to-fuchsia-400 bg-clip-text text-transparent font-bold">
+                    Los usuarios también se interesan en
+                  </span>
+                </CardTitle>
+                <Badge className="bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white border-0 shadow-md">
+                  Oportunidad
+                </Badge>
+              </div>
             </CardHeader>
-            <CardContent>
-              <p className="text-xs text-muted-foreground mb-3">Categorías populares que buscan usuarios interesados en tus cursos</p>
+            <CardContent className="pt-4">
+              <p className="text-sm text-muted-foreground mb-4 flex items-center gap-2">
+                <span className="inline-block w-2 h-2 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 animate-pulse"></span>
+                Categorías populares que buscan usuarios interesados en tus cursos
+              </p>
               <div className="grid grid-cols-2 gap-3">
-                {usersAlsoInterested.map((item) => (
-                  <div key={item.id} className="flex items-center justify-between p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
-                    <span className="font-medium text-sm">{item.category}</span>
-                    <span className="text-xs text-muted-foreground">{item.searches.toLocaleString()} búsquedas</span>
+                {usersAlsoInterested.map((item, index) => (
+                  <div 
+                    key={item.id} 
+                    className="group relative p-4 rounded-xl bg-white dark:bg-background border border-violet-100 dark:border-violet-800/50 hover:border-violet-300 dark:hover:border-violet-600 transition-all duration-300 hover:shadow-lg hover:shadow-violet-500/10 hover:-translate-y-0.5 cursor-pointer"
+                  >
+                    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <ChevronRight className="h-4 w-4 text-violet-500" />
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div 
+                        className="w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold text-sm shadow-md"
+                        style={{
+                          background: index === 0 
+                            ? 'linear-gradient(135deg, #8B5CF6, #A855F7)' 
+                            : index === 1 
+                            ? 'linear-gradient(135deg, #A855F7, #D946EF)' 
+                            : index === 2 
+                            ? 'linear-gradient(135deg, #D946EF, #EC4899)'
+                            : 'linear-gradient(135deg, #EC4899, #F43F5E)'
+                        }}
+                      >
+                        #{index + 1}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-sm text-foreground truncate">{item.category}</p>
+                        <div className="flex items-center gap-1 mt-1">
+                          <Search className="h-3 w-3 text-violet-500" />
+                          <span className="text-xs font-medium text-violet-600 dark:text-violet-400">{item.searches.toLocaleString()}</span>
+                          <span className="text-xs text-muted-foreground">búsquedas</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="mt-2">
+                      <div className="h-1.5 rounded-full bg-violet-100 dark:bg-violet-900/30 overflow-hidden">
+                        <div 
+                          className="h-full rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 transition-all duration-500"
+                          style={{ width: `${(item.searches / 1250) * 100}%` }}
+                        />
+                      </div>
+                    </div>
                   </div>
                 ))}
+              </div>
+              <div className="mt-4 p-3 rounded-lg bg-gradient-to-r from-violet-500/10 to-fuchsia-500/10 border border-violet-200 dark:border-violet-800">
+                <p className="text-xs text-center text-violet-700 dark:text-violet-300 font-medium">
+                  💡 Considera ampliar tu oferta en estas categorías para captar más clientes
+                </p>
               </div>
             </CardContent>
           </Card>
