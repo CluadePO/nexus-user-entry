@@ -355,19 +355,13 @@ const MiBuscador: React.FC = () => {
 
         <TabsContent value="dashboard" className="mt-6 space-y-6">
           {/* Welcome Header */}
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
-                ¡Bienvenido de vuelta! 👋
-              </h2>
-              <p className="text-muted-foreground">
-                Continúa explorando los mejores cursos para tu equipo. Tienes <span className="text-primary font-medium">3 cotizaciones pendientes</span> por revisar.
-              </p>
-            </div>
-            <Button className="bg-primary hover:bg-primary/90">
-              <Search className="h-4 w-4 mr-2" />
-              Buscar cursos
-            </Button>
+          <div>
+            <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+              ¡Bienvenido de vuelta! 👋
+            </h2>
+            <p className="text-muted-foreground">
+              Continúa explorando los mejores cursos para tu equipo.
+            </p>
           </div>
 
           {/* Metric Cards */}
@@ -579,44 +573,6 @@ const MiBuscador: React.FC = () => {
             </div>
           </div>
 
-          {/* Bottom Action Bar */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Card className="bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800 hover:shadow-md transition-shadow cursor-pointer">
-              <CardContent className="p-4 flex items-center gap-4">
-                <div className="p-3 bg-emerald-500 rounded-xl">
-                  <Search className="h-6 w-6 text-white" />
-                </div>
-                <div>
-                  <h4 className="font-semibold">Buscar cursos</h4>
-                  <p className="text-sm text-muted-foreground">Explora +5,000 cursos</p>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card className="bg-rose-50 dark:bg-rose-900/20 border-rose-200 dark:border-rose-800 hover:shadow-md transition-shadow cursor-pointer">
-              <CardContent className="p-4 flex items-center gap-4">
-                <div className="p-3 bg-rose-500 rounded-xl">
-                  <Heart className="h-6 w-6 text-white" />
-                </div>
-                <div>
-                  <h4 className="font-semibold">Mis favoritos</h4>
-                  <p className="text-sm text-muted-foreground">{courses.filter(c => c.isFavorite).length} cursos guardados</p>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card className="bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800 hover:shadow-md transition-shadow cursor-pointer">
-              <CardContent className="p-4 flex items-center gap-4">
-                <div className="p-3 bg-amber-500 rounded-xl">
-                  <Upload className="h-6 w-6 text-white" />
-                </div>
-                <div>
-                  <h4 className="font-semibold">Cargar cursos</h4>
-                  <p className="text-sm text-muted-foreground">Sube tu catálogo</p>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
         </TabsContent>
 
         <TabsContent value="buscador" className="mt-6 space-y-6">
