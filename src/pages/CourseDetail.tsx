@@ -513,46 +513,6 @@ const CourseDetail: React.FC = () => {
         {/* Sidebar - Sticky Actions */}
         <div className="lg:col-span-1">
           <div className="sticky top-6 space-y-4">
-            {/* Course Info Card */}
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <BookOpen className="h-5 w-5 text-primary" />
-                  Información del Curso
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Modalidad</span>
-                  <Badge className={getModalityColor(course.modality)} variant="secondary">
-                    {course.modality}
-                  </Badge>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Duración</span>
-                  <span className="font-medium">{course.hours} horas</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Área</span>
-                  <span className="font-medium">{course.area}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Especialidad</span>
-                  <span className="font-medium text-right text-xs">{course.specialty}</span>
-                </div>
-                {course.type === 'Sence' && (
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Código SENCE</span>
-                    <span className="font-medium font-mono text-xs">{course.senceCode}</span>
-                  </div>
-                )}
-                <div className="flex justify-between items-start">
-                  <span className="text-muted-foreground">Ubicación</span>
-                  <span className="font-medium text-right text-xs max-w-[60%]">{course.location}</span>
-                </div>
-              </CardContent>
-            </Card>
-
             {/* Price Card */}
             <Card className="border-2 border-primary/20">
               <CardContent className="pt-6 space-y-4">
