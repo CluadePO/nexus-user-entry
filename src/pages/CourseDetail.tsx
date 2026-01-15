@@ -651,26 +651,6 @@ const CourseDetail: React.FC = () => {
         {/* Sidebar - Sticky Actions */}
         <div className="lg:col-span-1">
           <div className="sticky top-6 space-y-4">
-            {/* Price Card */}
-            <Card className="border-2 border-primary/20">
-              <CardContent className="pt-6 space-y-4">
-                <div className="text-center">
-                  <p className="text-sm text-muted-foreground">Valor del curso</p>
-                  <p className="text-3xl font-bold text-primary">{formatPrice(course.price)}</p>
-                </div>
-                <Separator />
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Valor efectivo/participante</span>
-                    <span className="font-medium text-primary">{formatPrice(course.effectiveValuePerParticipant)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Valor máximo imputable</span>
-                    <span className="font-medium text-emerald-600">{formatPrice(course.maxImputableValue)}</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
 
             {/* Action Button */}
             <Card>
