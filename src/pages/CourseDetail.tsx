@@ -295,121 +295,125 @@ const CourseDetail: React.FC = () => {
         </div>
       </div>
 
-      {/* Contact & Course Info - Side by Side */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Contact Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Building2 className="h-5 w-5 text-primary" />
-              Información de Contacto
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">Nombre del Proveedor</p>
-              <p className="font-medium">{course.provider.name}</p>
-            </div>
-            <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">RUT del Proveedor</p>
-              <p className="font-medium">{course.provider.rut}</p>
-            </div>
-            <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">Sitio Web</p>
-              <a 
-                href={`https://${course.provider.website}`} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="font-medium text-primary hover:underline flex items-center gap-1"
-              >
-                <Globe className="h-4 w-4" />
-                {course.provider.website}
-              </a>
-            </div>
-            <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">Teléfono</p>
-              <p className="font-medium flex items-center gap-1">
-                <Phone className="h-4 w-4" />
-                {course.provider.phone}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Course Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <BookOpen className="h-5 w-5 text-primary" />
-              Información del Curso
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">Modalidad del curso</p>
-              <Badge className={getModalityColor(course.modality)} variant="secondary">
-                {course.modality}
-              </Badge>
-            </div>
-            {course.type === 'Sence' && (
-              <div className="space-y-1">
-                <p className="text-sm text-muted-foreground">Código SENCE</p>
-                <p className="font-medium font-mono bg-muted px-2 py-1 rounded inline-block text-sm">
-                  {course.senceCode}
-                </p>
-              </div>
-            )}
-            <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">Horas</p>
-              <p className="font-medium flex items-center gap-1">
-                <Clock className="h-4 w-4 text-muted-foreground" />
-                {course.hours} horas
-              </p>
-            </div>
-            <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">Área</p>
-              <p className="font-medium flex items-center gap-1">
-                <Tag className="h-4 w-4 text-muted-foreground" />
-                {course.area}
-              </p>
-            </div>
-            <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">Especialidad</p>
-              <p className="font-medium flex items-center gap-1">
-                <Briefcase className="h-4 w-4 text-muted-foreground" />
-                {course.specialty}
-              </p>
-            </div>
-            <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">Lugar de ejecución</p>
-              <p className="font-medium flex items-center gap-1">
-                <MapPin className="h-4 w-4 text-muted-foreground" />
-                {course.location}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Pricing Section */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="p-4 text-center border-2">
-          <p className="text-sm text-muted-foreground mb-1">Valor del curso</p>
-          <p className="text-2xl font-bold text-foreground">{formatPrice(course.price)}</p>
-        </Card>
-        <Card className="p-4 text-center border-2 border-primary/30 bg-primary/5">
-          <p className="text-sm text-muted-foreground mb-1">Valor efectivo por participante</p>
-          <p className="text-2xl font-bold text-primary">{formatPrice(course.effectiveValuePerParticipant)}</p>
-        </Card>
-        <Card className="p-4 text-center border-2 border-emerald-500/30 bg-emerald-50 dark:bg-emerald-900/20">
-          <p className="text-sm text-muted-foreground mb-1">Valor máximo imputable</p>
-          <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-400">{formatPrice(course.maxImputableValue)}</p>
-        </Card>
-      </div>
-
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
+          {/* Contact Information */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Building2 className="h-5 w-5 text-primary" />
+                Información de Contacto
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <p className="text-sm text-muted-foreground">Nombre del Proveedor</p>
+                <p className="font-medium">{course.provider.name}</p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm text-muted-foreground">RUT del Proveedor</p>
+                <p className="font-medium">{course.provider.rut}</p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm text-muted-foreground">Sitio Web</p>
+                <a 
+                  href={`https://${course.provider.website}`} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="font-medium text-primary hover:underline flex items-center gap-1"
+                >
+                  <Globe className="h-4 w-4" />
+                  {course.provider.website}
+                </a>
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm text-muted-foreground">Teléfono</p>
+                <p className="font-medium flex items-center gap-1">
+                  <Phone className="h-4 w-4" />
+                  {course.provider.phone}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Course Information */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <BookOpen className="h-5 w-5 text-primary" />
+                Información del Curso
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground">Nombre del curso</p>
+                  <p className="font-medium">{course.name}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground">Modalidad del curso</p>
+                  <Badge className={getModalityColor(course.modality)} variant="secondary">
+                    {course.modality}
+                  </Badge>
+                </div>
+                {course.type === 'Sence' && (
+                  <div className="space-y-1">
+                    <p className="text-sm text-muted-foreground">Código SENCE</p>
+                    <p className="font-medium font-mono bg-muted px-2 py-1 rounded inline-block">
+                      {course.senceCode}
+                    </p>
+                  </div>
+                )}
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground">Horas</p>
+                  <p className="font-medium flex items-center gap-1">
+                    <Clock className="h-4 w-4 text-muted-foreground" />
+                    {course.hours} horas
+                  </p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground">Área</p>
+                  <p className="font-medium flex items-center gap-1">
+                    <Tag className="h-4 w-4 text-muted-foreground" />
+                    {course.area}
+                  </p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground">Especialidad</p>
+                  <p className="font-medium flex items-center gap-1">
+                    <Briefcase className="h-4 w-4 text-muted-foreground" />
+                    {course.specialty}
+                  </p>
+                </div>
+                <div className="space-y-1 md:col-span-2">
+                  <p className="text-sm text-muted-foreground">Lugar de ejecución</p>
+                  <p className="font-medium flex items-center gap-1">
+                    <MapPin className="h-4 w-4 text-muted-foreground" />
+                    {course.location}
+                  </p>
+                </div>
+              </div>
+
+              <Separator className="my-6" />
+
+              {/* Pricing Section */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="p-4 rounded-lg bg-muted/50 text-center">
+                  <p className="text-sm text-muted-foreground mb-1">Valor del curso</p>
+                  <p className="text-xl font-bold text-foreground">{formatPrice(course.price)}</p>
+                </div>
+                <div className="p-4 rounded-lg bg-primary/10 text-center">
+                  <p className="text-sm text-muted-foreground mb-1">Valor efectivo por participante</p>
+                  <p className="text-xl font-bold text-primary">{formatPrice(course.effectiveValuePerParticipant)}</p>
+                </div>
+                <div className="p-4 rounded-lg bg-emerald-100 dark:bg-emerald-900/20 text-center">
+                  <p className="text-sm text-muted-foreground mb-1">Valor máximo imputable</p>
+                  <p className="text-xl font-bold text-emerald-700 dark:text-emerald-400">{formatPrice(course.maxImputableValue)}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Course Content */}
           <Card>
@@ -509,6 +513,66 @@ const CourseDetail: React.FC = () => {
         {/* Sidebar - Sticky Actions */}
         <div className="lg:col-span-1">
           <div className="sticky top-6 space-y-4">
+            {/* Course Info Card */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <BookOpen className="h-5 w-5 text-primary" />
+                  Información del Curso
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Modalidad</span>
+                  <Badge className={getModalityColor(course.modality)} variant="secondary">
+                    {course.modality}
+                  </Badge>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Duración</span>
+                  <span className="font-medium">{course.hours} horas</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Área</span>
+                  <span className="font-medium">{course.area}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Especialidad</span>
+                  <span className="font-medium text-right text-xs">{course.specialty}</span>
+                </div>
+                {course.type === 'Sence' && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Código SENCE</span>
+                    <span className="font-medium font-mono text-xs">{course.senceCode}</span>
+                  </div>
+                )}
+                <div className="flex justify-between items-start">
+                  <span className="text-muted-foreground">Ubicación</span>
+                  <span className="font-medium text-right text-xs max-w-[60%]">{course.location}</span>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Price Card */}
+            <Card className="border-2 border-primary/20">
+              <CardContent className="pt-6 space-y-4">
+                <div className="text-center">
+                  <p className="text-sm text-muted-foreground">Valor del curso</p>
+                  <p className="text-3xl font-bold text-primary">{formatPrice(course.price)}</p>
+                </div>
+                <Separator />
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Valor efectivo/participante</span>
+                    <span className="font-medium text-primary">{formatPrice(course.effectiveValuePerParticipant)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Valor máximo imputable</span>
+                    <span className="font-medium text-emerald-600">{formatPrice(course.maxImputableValue)}</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
             {/* Action Buttons */}
             <Card>
