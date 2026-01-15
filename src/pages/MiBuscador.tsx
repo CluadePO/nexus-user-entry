@@ -257,6 +257,9 @@ const MiBuscador: React.FC = () => {
 
   // Check if user is OTEC or OTEC_REPRESENTANTE
   const isOTECUser = user?.role === 'OTEC' || user?.role === 'OTEC_REPRESENTANTE';
+  
+  // Check if user should NOT see favorites and comparisons (OTIC, EMPRESA, EMPRESA_REPRESENTANTE)
+  const hideFavoritesAndComparisons = user?.role === 'OTIC' || user?.role === 'EMPRESA' || user?.role === 'EMPRESA_REPRESENTANTE';
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('es-CL', {
@@ -376,7 +379,7 @@ const MiBuscador: React.FC = () => {
               </div>
 
               {/* Metric Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className={`grid grid-cols-1 gap-4 ${hideFavoritesAndComparisons ? 'md:grid-cols-2' : 'md:grid-cols-2 lg:grid-cols-4'}`}>
                 <Card className="border-l-4 border-l-emerald-500">
                   <CardContent className="pt-5 pb-4">
                     <div className="flex items-start justify-between">
@@ -392,20 +395,22 @@ const MiBuscador: React.FC = () => {
                   </CardContent>
                 </Card>
                 
-                <Card className="border-l-4 border-l-rose-500">
-                  <CardContent className="pt-5 pb-4">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <p className="text-sm text-muted-foreground">Cursos favoritos</p>
-                        <p className="text-3xl font-bold mt-1">{courses.filter(c => c.isFavorite).length}</p>
-                        <p className="text-xs text-muted-foreground mt-1">3 nuevos este mes</p>
+                {!hideFavoritesAndComparisons && (
+                  <Card className="border-l-4 border-l-rose-500">
+                    <CardContent className="pt-5 pb-4">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <p className="text-sm text-muted-foreground">Cursos favoritos</p>
+                          <p className="text-3xl font-bold mt-1">{courses.filter(c => c.isFavorite).length}</p>
+                          <p className="text-xs text-muted-foreground mt-1">3 nuevos este mes</p>
+                        </div>
+                        <div className="p-3 bg-rose-100 dark:bg-rose-900/30 rounded-xl">
+                          <Heart className="h-6 w-6 text-rose-500" />
+                        </div>
                       </div>
-                      <div className="p-3 bg-rose-100 dark:bg-rose-900/30 rounded-xl">
-                        <Heart className="h-6 w-6 text-rose-500" />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
+                )}
                 
                 <Card className="border-l-4 border-l-emerald-600">
                   <CardContent className="pt-5 pb-4">
@@ -422,20 +427,22 @@ const MiBuscador: React.FC = () => {
                   </CardContent>
                 </Card>
                 
-                <Card className="border-l-4 border-l-violet-500">
-                  <CardContent className="pt-5 pb-4">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <p className="text-sm text-muted-foreground">Cursos comparados</p>
-                        <p className="text-3xl font-bold mt-1">12</p>
-                        <p className="text-xs text-muted-foreground mt-1">Última comparación hace 2 días</p>
+                {!hideFavoritesAndComparisons && (
+                  <Card className="border-l-4 border-l-violet-500">
+                    <CardContent className="pt-5 pb-4">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <p className="text-sm text-muted-foreground">Cursos comparados</p>
+                          <p className="text-3xl font-bold mt-1">12</p>
+                          <p className="text-xs text-muted-foreground mt-1">Última comparación hace 2 días</p>
+                        </div>
+                        <div className="p-3 bg-violet-100 dark:bg-violet-900/30 rounded-xl">
+                          <Users className="h-6 w-6 text-violet-600" />
+                        </div>
                       </div>
-                      <div className="p-3 bg-violet-100 dark:bg-violet-900/30 rounded-xl">
-                        <Users className="h-6 w-6 text-violet-600" />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
+                )}
               </div>
 
               {/* Map & Categories Row */}
