@@ -15,7 +15,14 @@ import {
   SlidersHorizontal,
   ChevronRight,
   Home,
-  X
+  X,
+  Heart,
+  FileText,
+  Users,
+  ArrowRight,
+  Upload,
+  Shield,
+  Megaphone
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -346,101 +353,270 @@ const MiBuscador: React.FC = () => {
           <TabsTrigger value="buscador">Buscador de Cursos</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="dashboard" className="mt-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex items-center gap-3">
-                  <div className="p-3 bg-primary/10 rounded-lg">
-                    <Search className="h-6 w-6 text-primary" />
-                  </div>
+        <TabsContent value="dashboard" className="mt-6 space-y-6">
+          {/* Welcome Header */}
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+                ¡Bienvenido de vuelta! 👋
+              </h2>
+              <p className="text-muted-foreground">
+                Continúa explorando los mejores cursos para tu equipo. Tienes <span className="text-primary font-medium">3 cotizaciones pendientes</span> por revisar.
+              </p>
+            </div>
+            <Button className="bg-primary hover:bg-primary/90">
+              <Search className="h-4 w-4 mr-2" />
+              Buscar cursos
+            </Button>
+          </div>
+
+          {/* Metric Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Card className="border-l-4 border-l-emerald-500">
+              <CardContent className="pt-5 pb-4">
+                <div className="flex items-start justify-between">
                   <div>
-                    <p className="text-2xl font-bold">156</p>
                     <p className="text-sm text-muted-foreground">Búsquedas realizadas</p>
+                    <p className="text-3xl font-bold mt-1">24</p>
+                    <p className="text-xs text-emerald-600 mt-1">+12% esta semana</p>
+                  </div>
+                  <div className="p-3 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl">
+                    <Search className="h-6 w-6 text-emerald-600" />
                   </div>
                 </div>
               </CardContent>
             </Card>
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex items-center gap-3">
-                  <div className="p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
-                    <Star className="h-6 w-6 text-yellow-600" />
-                  </div>
+            
+            <Card className="border-l-4 border-l-rose-500">
+              <CardContent className="pt-5 pb-4">
+                <div className="flex items-start justify-between">
                   <div>
-                    <p className="text-2xl font-bold">{courses.filter(c => c.isFavorite).length}</p>
                     <p className="text-sm text-muted-foreground">Cursos favoritos</p>
+                    <p className="text-3xl font-bold mt-1">{courses.filter(c => c.isFavorite).length}</p>
+                    <p className="text-xs text-muted-foreground mt-1">3 nuevos este mes</p>
+                  </div>
+                  <div className="p-3 bg-rose-100 dark:bg-rose-900/30 rounded-xl">
+                    <Heart className="h-6 w-6 text-rose-500" />
                   </div>
                 </div>
               </CardContent>
             </Card>
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex items-center gap-3">
-                  <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                    <GitCompare className="h-6 w-6 text-blue-600" />
-                  </div>
+            
+            <Card className="border-l-4 border-l-emerald-600">
+              <CardContent className="pt-5 pb-4">
+                <div className="flex items-start justify-between">
                   <div>
-                    <p className="text-2xl font-bold">12</p>
-                    <p className="text-sm text-muted-foreground">Comparaciones</p>
+                    <p className="text-sm text-muted-foreground">Cotizaciones enviadas</p>
+                    <p className="text-3xl font-bold mt-1">5</p>
+                    <p className="text-xs text-muted-foreground mt-1">2 pendientes</p>
+                  </div>
+                  <div className="p-3 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl">
+                    <FileText className="h-6 w-6 text-emerald-600" />
                   </div>
                 </div>
               </CardContent>
             </Card>
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex items-center gap-3">
-                  <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-lg">
-                    <Award className="h-6 w-6 text-green-600" />
-                  </div>
+            
+            <Card className="border-l-4 border-l-violet-500">
+              <CardContent className="pt-5 pb-4">
+                <div className="flex items-start justify-between">
                   <div>
-                    <p className="text-2xl font-bold">8</p>
-                    <p className="text-sm text-muted-foreground">Cursos contratados</p>
+                    <p className="text-sm text-muted-foreground">Cursos comparados</p>
+                    <p className="text-3xl font-bold mt-1">12</p>
+                    <p className="text-xs text-muted-foreground mt-1">Última comparación hace 2 días</p>
+                  </div>
+                  <div className="p-3 bg-violet-100 dark:bg-violet-900/30 rounded-xl">
+                    <Users className="h-6 w-6 text-violet-600" />
                   </div>
                 </div>
               </CardContent>
             </Card>
           </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-primary" />
-                Actividad Reciente
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center gap-4 p-3 bg-muted/50 rounded-lg">
-                  <div className="p-2 bg-primary/10 rounded-full">
-                    <Search className="h-4 w-4 text-primary" />
+          {/* Activity & Categories Row */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Recent Activity */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <Clock className="h-4 w-4 text-muted-foreground" />
+                  Actividad reciente
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-full mt-0.5">
+                    <Search className="h-4 w-4 text-emerald-600" />
                   </div>
                   <div className="flex-1">
-                    <p className="font-medium">Búsqueda: "Excel avanzado"</p>
-                    <p className="text-sm text-muted-foreground">Hace 2 horas • 15 resultados</p>
+                    <p className="font-medium text-sm">Buscaste 'Liderazgo y gestión de equipos'</p>
+                    <p className="text-xs text-emerald-600">Hace 2 horas</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-4 p-3 bg-muted/50 rounded-lg">
-                  <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-full">
-                    <Star className="h-4 w-4 text-yellow-600" />
+                
+                <div className="flex items-start gap-3">
+                  <div className="p-2 bg-rose-100 dark:bg-rose-900/30 rounded-full mt-0.5">
+                    <Heart className="h-4 w-4 text-rose-500" />
                   </div>
                   <div className="flex-1">
-                    <p className="font-medium">Agregado a favoritos: "Liderazgo y Gestión"</p>
-                    <p className="text-sm text-muted-foreground">Hace 1 día</p>
+                    <p className="font-medium text-sm">Agregaste 'Excel Avanzado' a favoritos</p>
+                    <p className="text-xs text-emerald-600">Hace 1 día</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-4 p-3 bg-muted/50 rounded-lg">
-                  <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-full">
-                    <GitCompare className="h-4 w-4 text-blue-600" />
+                
+                <div className="flex items-start gap-3">
+                  <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-full mt-0.5">
+                    <FileText className="h-4 w-4 text-emerald-600" />
                   </div>
                   <div className="flex-1">
-                    <p className="font-medium">Comparación: 3 cursos de seguridad</p>
-                    <p className="text-sm text-muted-foreground">Hace 3 días</p>
+                    <p className="font-medium text-sm">Enviaste cotización a OTEC Profesionales</p>
+                    <p className="text-xs text-emerald-600">Hace 3 días</p>
                   </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+                
+                <div className="flex items-start gap-3">
+                  <div className="p-2 bg-violet-100 dark:bg-violet-900/30 rounded-full mt-0.5">
+                    <GitCompare className="h-4 w-4 text-violet-600" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium text-sm">Completaste comparación de 3 cursos</p>
+                    <p className="text-xs text-muted-foreground">Hace 5 días</p>
+                  </div>
+                </div>
+
+                <button className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors mt-2">
+                  Ver todo el historial <ArrowRight className="h-4 w-4" />
+                </button>
+              </CardContent>
+            </Card>
+
+            {/* Popular Categories */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <Star className="h-4 w-4 text-amber-500" />
+                  Categorías populares
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
+                      <Users className="h-4 w-4 text-amber-600" />
+                    </div>
+                    <span className="font-medium text-sm">Liderazgo</span>
+                  </div>
+                  <span className="text-sm text-muted-foreground">245 cursos</span>
+                </div>
+                
+                <div className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
+                      <FileText className="h-4 w-4 text-emerald-600" />
+                    </div>
+                    <span className="font-medium text-sm">Excel y Office</span>
+                  </div>
+                  <span className="text-sm text-muted-foreground">189 cursos</span>
+                </div>
+                
+                <div className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
+                      <Shield className="h-4 w-4 text-emerald-600" />
+                    </div>
+                    <span className="font-medium text-sm">Seguridad Laboral</span>
+                  </div>
+                  <span className="text-sm text-muted-foreground">156 cursos</span>
+                </div>
+                
+                <div className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
+                      <Megaphone className="h-4 w-4 text-amber-600" />
+                    </div>
+                    <span className="font-medium text-sm">Marketing Digital</span>
+                  </div>
+                  <span className="text-sm text-muted-foreground">134 cursos</span>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Recommended Courses */}
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-semibold flex items-center gap-2">
+                <Star className="h-4 w-4 text-amber-500" />
+                Cursos recomendados para ti
+              </h3>
+              <button className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors">
+                Ver todos <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {courses.slice(0, 3).map((course) => (
+                <Card key={course.id} className="overflow-hidden hover:shadow-md transition-shadow">
+                  <div className="h-32 bg-muted flex items-center justify-center">
+                    <FileText className="h-12 w-12 text-muted-foreground/50" />
+                  </div>
+                  <CardContent className="p-4">
+                    <Badge className={getTypeColor(course.type)} variant="outline">
+                      {course.type}
+                    </Badge>
+                    <h4 className="font-semibold text-sm line-clamp-1 mt-2">{course.name}</h4>
+                    <p className="text-xs text-muted-foreground mb-2">{course.provider}</p>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1">
+                        <Star className="h-3 w-3 text-amber-500 fill-amber-500" />
+                        <span className="text-xs font-medium">{course.rating}</span>
+                      </div>
+                      <span className="font-bold text-sm">{formatPrice(course.price)}</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+
+          {/* Bottom Action Bar */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Card className="bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800 hover:shadow-md transition-shadow cursor-pointer">
+              <CardContent className="p-4 flex items-center gap-4">
+                <div className="p-3 bg-emerald-500 rounded-xl">
+                  <Search className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h4 className="font-semibold">Buscar cursos</h4>
+                  <p className="text-sm text-muted-foreground">Explora +5,000 cursos</p>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-rose-50 dark:bg-rose-900/20 border-rose-200 dark:border-rose-800 hover:shadow-md transition-shadow cursor-pointer">
+              <CardContent className="p-4 flex items-center gap-4">
+                <div className="p-3 bg-rose-500 rounded-xl">
+                  <Heart className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h4 className="font-semibold">Mis favoritos</h4>
+                  <p className="text-sm text-muted-foreground">{courses.filter(c => c.isFavorite).length} cursos guardados</p>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800 hover:shadow-md transition-shadow cursor-pointer">
+              <CardContent className="p-4 flex items-center gap-4">
+                <div className="p-3 bg-amber-500 rounded-xl">
+                  <Upload className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h4 className="font-semibold">Cargar cursos</h4>
+                  <p className="text-sm text-muted-foreground">Sube tu catálogo</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
         <TabsContent value="buscador" className="mt-6 space-y-6">
