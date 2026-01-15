@@ -52,6 +52,7 @@ import {
 import { Label } from '@/components/ui/label';
 import { ChileRegionsMap } from '@/components/dashboard/ChileRegionsMap';
 import { OTECBuscadorDashboard } from '@/components/dashboard/OTECBuscadorDashboard';
+import { CourseComparisonModal } from '@/components/dashboard/CourseComparisonModal';
 import { useAuth } from '@/context/AuthContext';
 
 interface Course {
@@ -254,6 +255,7 @@ const MiBuscador: React.FC = () => {
   const [typeFilter, setTypeFilter] = useState<string>('all');
   const [areaFilter, setAreaFilter] = useState<string>('all');
   const [regionFilter, setRegionFilter] = useState<string>('all');
+  const [isComparisonModalOpen, setIsComparisonModalOpen] = useState(false);
 
   // Check if user is OTEC or OTEC_REPRESENTANTE
   const isOTECUser = user?.role === 'OTEC' || user?.role === 'OTEC_REPRESENTANTE';
@@ -278,13 +280,37 @@ const MiBuscador: React.FC = () => {
   };
 
   const toggleCompare = (courseId: string) => {
-    setSelectedCourses(prev => 
-      prev.includes(courseId)
-        ? prev.filter(id => id !== courseId)
-        : prev.length < 3 
-          ? [...prev, courseId]
-          : prev
-    );
+    const course = courses.find(c => c.id === courseId);
+    if (!course) return;
+
+    if (selectedCourses.includes(courseId)) {
+      setSelectedCourses(prev => prev.filter(id => id !== courseId));
+    } else if (selectedCourses.length < 3) {
+      const newSelected = [...selectedCourses, courseId];
+      setSelectedCourses(newSelected);
+      // Auto-open modal when 2 courses are selected
+      if (newSelected.length === 2) {
+        setIsComparisonModalOpen(true);
+      }
+    }
+  };
+
+  const handleAddCourseToComparison = (course: Course) => {
+    if (selectedCourses.length < 3 && !selectedCourses.includes(course.id)) {
+      setSelectedCourses(prev => [...prev, course.id]);
+    }
+  };
+
+  const handleRemoveCourseFromComparison = (courseId: string) => {
+    setSelectedCourses(prev => prev.filter(id => id !== courseId));
+  };
+
+  const handleSwapCourse = (oldCourseId: string, newCourse: Course) => {
+    setSelectedCourses(prev => prev.map(id => id === oldCourseId ? newCourse.id : id));
+  };
+
+  const getSelectedCoursesData = () => {
+    return selectedCourses.map(id => courses.find(c => c.id === id)).filter(Boolean) as Course[];
   };
 
   const clearAdvancedFilters = () => {
@@ -778,23 +804,32 @@ const MiBuscador: React.FC = () => {
 
           {/* Compare Banner */}
           {selectedCourses.length > 0 && (
-            <Card className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
+            <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-blue-200 dark:border-blue-800">
               <CardContent className="py-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <GitCompare className="h-5 w-5 text-blue-600" />
-                    <span className="font-medium">
-                      {selectedCourses.length} curso{selectedCourses.length > 1 ? 's' : ''} seleccionado{selectedCourses.length > 1 ? 's' : ''} para comparar
-                    </span>
-                    <span className="text-sm text-muted-foreground">(máximo 3)</span>
+                    <div className="p-2 bg-blue-100 dark:bg-blue-800 rounded-lg">
+                      <GitCompare className="h-5 w-5 text-blue-600 dark:text-blue-300" />
+                    </div>
+                    <div>
+                      <span className="font-medium">
+                        {selectedCourses.length} curso{selectedCourses.length > 1 ? 's' : ''} seleccionado{selectedCourses.length > 1 ? 's' : ''} para comparar
+                      </span>
+                      <span className="text-sm text-muted-foreground ml-2">(máximo 3)</span>
+                    </div>
                   </div>
                   <div className="flex gap-2">
                     <Button variant="outline" size="sm" onClick={() => setSelectedCourses([])}>
                       Limpiar
                     </Button>
-                    <Button size="sm" disabled={selectedCourses.length < 2}>
-                      <GitCompare className="h-4 w-4 mr-2" />
-                      Comparar cursos
+                    <Button 
+                      size="sm" 
+                      disabled={selectedCourses.length < 2}
+                      onClick={() => setIsComparisonModalOpen(true)}
+                      className="gap-2"
+                    >
+                      <GitCompare className="h-4 w-4" />
+                      Ver comparación
                     </Button>
                   </div>
                 </div>
@@ -910,20 +945,6 @@ const MiBuscador: React.FC = () => {
                     </Button>
                   </div>
 
-                  {/* Compare checkbox */}
-                  <div className="flex items-center gap-2 pt-1">
-                    <Checkbox
-                      id={`compare-${course.id}`}
-                      checked={selectedCourses.includes(course.id)}
-                      onCheckedChange={() => toggleCompare(course.id)}
-                    />
-                    <label 
-                      htmlFor={`compare-${course.id}`}
-                      className="text-xs text-muted-foreground cursor-pointer"
-                    >
-                      Agregar a comparación
-                    </label>
-                  </div>
                 </CardContent>
               </Card>
             ))}
@@ -943,6 +964,17 @@ const MiBuscador: React.FC = () => {
           )}
         </TabsContent>
       </Tabs>
+
+      {/* Course Comparison Modal */}
+      <CourseComparisonModal
+        isOpen={isComparisonModalOpen}
+        onClose={() => setIsComparisonModalOpen(false)}
+        selectedCourses={getSelectedCoursesData()}
+        allCourses={courses}
+        onAddCourse={handleAddCourseToComparison}
+        onRemoveCourse={handleRemoveCourseFromComparison}
+        onSwapCourse={handleSwapCourse}
+      />
     </div>
   );
 };
