@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -188,6 +188,144 @@ const defaultCourse = {
     'Trabajo en equipo y colaboración',
   ],
   relatedTopics: ['Desarrollo Profesional', 'Habilidades Técnicas', 'Competencias Laborales'],
+};
+
+// Franchise Calculator Component
+interface FranchiseCalculatorProps {
+  effectiveValuePerParticipant: number;
+  maxImputableValue: number;
+  formatPrice: (price: number) => string;
+}
+
+const FranchiseCalculator: React.FC<FranchiseCalculatorProps> = ({
+  effectiveValuePerParticipant,
+  maxImputableValue,
+  formatPrice,
+}) => {
+  const [participants, setParticipants] = useState<number>(1);
+
+  const coverageOptions = [
+    { percentage: 15, label: '15%' },
+    { percentage: 50, label: '50%' },
+    { percentage: 100, label: '100%' },
+  ];
+
+  // Calculate values based on the minimum between effective value and max imputable value
+  const baseValuePerParticipant = Math.min(effectiveValuePerParticipant, maxImputableValue);
+  const totalEffectiveValue = effectiveValuePerParticipant * participants;
+
+  const calculateCoverage = (percentage: number) => {
+    const coveragePerParticipant = (baseValuePerParticipant * percentage) / 100;
+    return coveragePerParticipant * participants;
+  };
+
+  const handleParticipantsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value) || 0;
+    setParticipants(Math.max(0, value));
+  };
+
+  return (
+    <Card className="border-2 border-primary/20">
+      <CardHeader className="pb-3">
+        <CardTitle className="flex items-center gap-2 text-lg">
+          <Calculator className="h-5 w-5 text-primary" />
+          Calcula tu Franquicia
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {/* Participants Input */}
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-foreground">
+            Número de participantes
+          </label>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-10 w-10"
+              onClick={() => setParticipants(Math.max(0, participants - 1))}
+            >
+              -
+            </Button>
+            <input
+              type="number"
+              min="0"
+              value={participants}
+              onChange={handleParticipantsChange}
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-center text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            />
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-10 w-10"
+              onClick={() => setParticipants(participants + 1)}
+            >
+              +
+            </Button>
+          </div>
+        </div>
+
+        <Separator />
+
+        {/* Coverage Options */}
+        <div className="space-y-3">
+          <p className="text-sm font-medium text-foreground">Cobertura de Franquicia</p>
+          <div className="space-y-2">
+            {coverageOptions.map((option) => {
+              const coverage = calculateCoverage(option.percentage);
+              return (
+                <div
+                  key={option.percentage}
+                  className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
+                >
+                  <div className="flex items-center gap-2">
+                    <div className={`w-3 h-3 rounded-full ${
+                      option.percentage === 100 
+                        ? 'bg-emerald-500' 
+                        : option.percentage === 50 
+                          ? 'bg-amber-500' 
+                          : 'bg-blue-500'
+                    }`} />
+                    <span className="text-sm font-medium">{option.label}</span>
+                  </div>
+                  <span className={`font-bold ${
+                    option.percentage === 100 
+                      ? 'text-emerald-600 dark:text-emerald-400' 
+                      : option.percentage === 50 
+                        ? 'text-amber-600 dark:text-amber-400' 
+                        : 'text-blue-600 dark:text-blue-400'
+                  }`}>
+                    {formatPrice(coverage)}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <Separator />
+
+        {/* Total Summary */}
+        <div className="space-y-2">
+          <div className="flex justify-between text-sm">
+            <span className="text-muted-foreground">Valor efectivo total</span>
+            <span className="font-medium">{formatPrice(totalEffectiveValue)}</span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-muted-foreground">Base cálculo franquicia</span>
+            <span className="font-medium text-primary">{formatPrice(baseValuePerParticipant * participants)}</span>
+          </div>
+        </div>
+
+        {/* Info Note */}
+        <div className="p-3 bg-primary/5 rounded-lg">
+          <p className="text-xs text-muted-foreground">
+            El cálculo se basa en el menor valor entre el valor efectivo por participante ({formatPrice(effectiveValuePerParticipant)}) y el valor máximo imputable ({formatPrice(maxImputableValue)}).
+          </p>
+        </div>
+      </CardContent>
+    </Card>
+  );
 };
 
 const CourseDetail: React.FC = () => {
@@ -534,19 +672,22 @@ const CourseDetail: React.FC = () => {
               </CardContent>
             </Card>
 
-            {/* Action Buttons */}
+            {/* Action Button */}
             <Card>
-              <CardContent className="pt-6 space-y-3">
+              <CardContent className="pt-6">
                 <Button className="w-full gap-2" size="lg">
                   <FileText className="h-5 w-5" />
                   Cotizar el curso
                 </Button>
-                <Button variant="outline" className="w-full gap-2" size="lg">
-                  <Calculator className="h-5 w-5" />
-                  Calcula tu Franquicia
-                </Button>
               </CardContent>
             </Card>
+
+            {/* Franchise Calculator Section */}
+            <FranchiseCalculator 
+              effectiveValuePerParticipant={course.effectiveValuePerParticipant}
+              maxImputableValue={course.maxImputableValue}
+              formatPrice={formatPrice}
+            />
           </div>
         </div>
       </div>
