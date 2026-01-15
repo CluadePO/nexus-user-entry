@@ -24,7 +24,7 @@ import {
   Shield,
   Megaphone
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -248,6 +248,7 @@ const mockCourses: Course[] = [
 
 const MiBuscador: React.FC = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [courses, setCourses] = useState<Course[]>(mockCourses);
   const [selectedCourses, setSelectedCourses] = useState<string[]>([]);
@@ -931,7 +932,11 @@ const MiBuscador: React.FC = () => {
 
                   {/* Actions */}
                   <div className="flex gap-2 pt-2">
-                    <Button className="flex-1" size="sm">
+                    <Button 
+                      className="flex-1" 
+                      size="sm"
+                      onClick={() => navigate(`/formacion/curso/${course.id}`)}
+                    >
                       <Eye className="h-4 w-4 mr-1" />
                       Ver curso
                     </Button>
