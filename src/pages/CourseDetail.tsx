@@ -547,38 +547,6 @@ const CourseDetail: React.FC = () => {
                 </Button>
               </CardContent>
             </Card>
-
-            {/* Provider Card */}
-            <Card className="bg-muted/30">
-              <CardContent className="pt-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="p-3 bg-primary/10 rounded-full">
-                    <Building2 className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-sm">{course.provider.name}</p>
-                    <p className="text-xs text-muted-foreground">Proveedor verificado</p>
-                  </div>
-                </div>
-                <div className="space-y-2 text-sm">
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Phone className="h-4 w-4" />
-                    <span>{course.provider.phone}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Globe className="h-4 w-4" />
-                    <a 
-                      href={`https://${course.provider.website}`} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-primary hover:underline"
-                    >
-                      {course.provider.website}
-                    </a>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
           </div>
         </div>
       </div>
