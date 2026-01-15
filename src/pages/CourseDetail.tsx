@@ -28,6 +28,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -36,6 +45,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
+import { useToast } from '@/hooks/use-toast';
 
 // Mock course data (in real app would come from API)
 const mockCourseDetails = {
@@ -328,9 +338,170 @@ const FranchiseCalculator: React.FC<FranchiseCalculatorProps> = ({
   );
 };
 
+// Quote Modal Component
+interface QuoteModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  courseName: string;
+  providerName: string;
+}
+
+const QuoteModal: React.FC<QuoteModalProps> = ({
+  isOpen,
+  onClose,
+  courseName,
+  providerName,
+}) => {
+  const { toast } = useToast();
+  const [formData, setFormData] = useState({
+    nombre: '',
+    email: '',
+    empresa: '',
+    participantes: 1,
+    mensaje: '',
+  });
+
+  const participantOptions = [1, 2, 3, 4, 5, 6, 7, '8+'];
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Here you would send the quote request
+    toast({
+      title: "Solicitud enviada",
+      description: "El proveedor se pondrá en contacto contigo pronto.",
+    });
+    onClose();
+    setFormData({
+      nombre: '',
+      email: '',
+      empresa: '',
+      participantes: 1,
+      mensaje: '',
+    });
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="text-2xl font-bold">Solicitud de Cotización</DialogTitle>
+        </DialogHeader>
+        
+        <form onSubmit={handleSubmit} className="space-y-5 mt-4">
+          <p className="text-sm text-muted-foreground">Ingresa tus datos</p>
+          
+          {/* Nombre */}
+          <div className="space-y-2">
+            <Label htmlFor="nombre" className="text-sm font-medium">
+              <span className="text-destructive">*</span> Nombre
+            </Label>
+            <div className="relative">
+              <Input
+                id="nombre"
+                placeholder="Escribe aquí"
+                value={formData.nombre}
+                onChange={(e) => setFormData({ ...formData, nombre: e.target.value.slice(0, 50) })}
+                maxLength={50}
+                required
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
+                {formData.nombre.length} / 50
+              </span>
+            </div>
+          </div>
+
+          {/* Correo electrónico */}
+          <div className="space-y-2">
+            <Label htmlFor="email" className="text-sm font-medium">
+              <span className="text-destructive">*</span> Correo electrónico
+            </Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="Escribe aquí"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              required
+            />
+          </div>
+
+          {/* Nombre de la empresa */}
+          <div className="space-y-2">
+            <Label htmlFor="empresa" className="text-sm font-medium">
+              <span className="text-destructive">*</span> Nombre de la empresa
+            </Label>
+            <div className="relative">
+              <Input
+                id="empresa"
+                placeholder="Escribe aquí"
+                value={formData.empresa}
+                onChange={(e) => setFormData({ ...formData, empresa: e.target.value.slice(0, 50) })}
+                maxLength={50}
+                required
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
+                {formData.empresa.length} / 50
+              </span>
+            </div>
+          </div>
+
+          {/* Número de participantes */}
+          <div className="space-y-2">
+            <Label className="text-sm font-medium">
+              <span className="text-destructive">*</span> Número de participantes
+            </Label>
+            <div className="flex flex-wrap gap-2">
+              {participantOptions.map((option) => (
+                <Button
+                  key={option}
+                  type="button"
+                  variant={formData.participantes === option ? "default" : "outline"}
+                  size="sm"
+                  className="min-w-[40px]"
+                  onClick={() => setFormData({ ...formData, participantes: option as number })}
+                >
+                  {option}
+                </Button>
+              ))}
+            </div>
+          </div>
+
+          {/* Mensaje */}
+          <div className="space-y-2">
+            <Label htmlFor="mensaje" className="text-sm font-medium">
+              <span className="text-destructive">*</span> Mensaje
+            </Label>
+            <div className="relative">
+              <Textarea
+                id="mensaje"
+                placeholder="Escribe aquí..."
+                value={formData.mensaje}
+                onChange={(e) => setFormData({ ...formData, mensaje: e.target.value.slice(0, 500) })}
+                maxLength={500}
+                rows={4}
+                required
+                className="resize-none"
+              />
+              <span className="absolute right-3 bottom-3 text-xs text-muted-foreground">
+                {formData.mensaje.length} / 500
+              </span>
+            </div>
+          </div>
+
+          {/* Submit Button */}
+          <Button type="submit" className="w-full gap-2" size="lg">
+            Contactar Proveedor
+          </Button>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
 const CourseDetail: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
+  const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
 
   const course = mockCourseDetails[courseId as keyof typeof mockCourseDetails] || { ...defaultCourse, id: courseId };
 
@@ -550,6 +721,18 @@ const CourseDetail: React.FC = () => {
                   <p className="text-xl font-bold text-emerald-700 dark:text-emerald-400">{formatPrice(course.maxImputableValue)}</p>
                 </div>
               </div>
+
+              <Separator className="my-6" />
+
+              {/* Quote Button */}
+              <Button 
+                className="w-full gap-2" 
+                size="lg"
+                onClick={() => setIsQuoteModalOpen(true)}
+              >
+                <FileText className="h-5 w-5" />
+                Cotizar el curso
+              </Button>
             </CardContent>
           </Card>
 
@@ -652,15 +835,6 @@ const CourseDetail: React.FC = () => {
         <div className="lg:col-span-1">
           <div className="sticky top-6 space-y-4">
 
-            {/* Action Button */}
-            <Card>
-              <CardContent className="pt-6">
-                <Button className="w-full gap-2" size="lg">
-                  <FileText className="h-5 w-5" />
-                  Cotizar el curso
-                </Button>
-              </CardContent>
-            </Card>
 
             {/* Franchise Calculator Section */}
             <FranchiseCalculator 
@@ -671,6 +845,14 @@ const CourseDetail: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Quote Modal */}
+      <QuoteModal
+        isOpen={isQuoteModalOpen}
+        onClose={() => setIsQuoteModalOpen(false)}
+        courseName={course.name}
+        providerName={course.provider.name}
+      />
     </div>
   );
 };
