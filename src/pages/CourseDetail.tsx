@@ -344,6 +344,12 @@ interface QuoteModalProps {
   onClose: () => void;
   courseName: string;
   providerName: string;
+  courseType: string;
+  courseModality: string;
+  courseHours: number;
+  courseArea: string;
+  coursePrice: number;
+  formatPrice: (price: number) => string;
 }
 
 const QuoteModal: React.FC<QuoteModalProps> = ({
@@ -351,6 +357,12 @@ const QuoteModal: React.FC<QuoteModalProps> = ({
   onClose,
   courseName,
   providerName,
+  courseType,
+  courseModality,
+  courseHours,
+  courseArea,
+  coursePrice,
+  formatPrice,
 }) => {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
@@ -365,7 +377,6 @@ const QuoteModal: React.FC<QuoteModalProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would send the quote request
     toast({
       title: "Solicitud enviada",
       description: "El proveedor se pondrá en contacto contigo pronto.",
@@ -382,12 +393,50 @@ const QuoteModal: React.FC<QuoteModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">Solicitud de Cotización</DialogTitle>
         </DialogHeader>
+
+        {/* Course Summary */}
+        <div className="p-4 rounded-lg bg-primary/5 border border-primary/20 space-y-3">
+          <h3 className="font-semibold text-foreground flex items-center gap-2">
+            <BookOpen className="h-4 w-4 text-primary" />
+            Resumen del curso
+          </h3>
+          <div className="space-y-2">
+            <p className="font-medium text-foreground">{courseName}</p>
+            <div className="grid grid-cols-2 gap-2 text-sm">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Building2 className="h-4 w-4" />
+                <span>{providerName}</span>
+              </div>
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Clock className="h-4 w-4" />
+                <span>{courseHours} horas</span>
+              </div>
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Tag className="h-4 w-4" />
+                <span>{courseArea}</span>
+              </div>
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <MapPin className="h-4 w-4" />
+                <span>{courseModality}</span>
+              </div>
+            </div>
+            <div className="flex items-center justify-between pt-2 border-t border-primary/10">
+              <div className="flex gap-2">
+                <Badge variant="outline" className={courseType === 'Sence' ? 'border-primary/50 text-primary' : 'border-orange-400 text-orange-600'}>
+                  {courseType}
+                </Badge>
+                <Badge variant="secondary">{courseModality}</Badge>
+              </div>
+              <p className="font-bold text-primary text-lg">{formatPrice(coursePrice)}</p>
+            </div>
+          </div>
+        </div>
         
-        <form onSubmit={handleSubmit} className="space-y-5 mt-4">
+        <form onSubmit={handleSubmit} className="space-y-5 mt-2">
           <p className="text-sm text-muted-foreground">Ingresa tus datos</p>
           
           {/* Nombre */}
@@ -852,6 +901,12 @@ const CourseDetail: React.FC = () => {
         onClose={() => setIsQuoteModalOpen(false)}
         courseName={course.name}
         providerName={course.provider.name}
+        courseType={course.type}
+        courseModality={course.modality}
+        courseHours={course.hours}
+        courseArea={course.area}
+        coursePrice={course.price}
+        formatPrice={formatPrice}
       />
     </div>
   );
