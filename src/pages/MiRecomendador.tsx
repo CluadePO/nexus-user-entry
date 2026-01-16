@@ -218,13 +218,15 @@ const MiRecomendador: React.FC = () => {
   const [expandedRows, setExpandedRows] = useState<number[]>([]);
   const [showProposal, setShowProposal] = useState(false);
   const [courseProposals, setCourseProposals] = useState<CourseProposal[]>([]);
+  const [showConfirmationSummary, setShowConfirmationSummary] = useState(false);
 
   const steps = [
     { title: 'Contacto', icon: <User className="w-4 h-4" /> },
     { title: 'Cursos', icon: <GraduationCap className="w-4 h-4" /> },
     { title: 'Confirmación', icon: <CheckCircle className="w-4 h-4" /> },
     { title: 'Resultados', icon: <FileSpreadsheet className="w-4 h-4" /> },
-    { title: 'Propuesta', icon: <Calculator className="w-4 h-4" /> }
+    { title: 'Propuesta', icon: <Calculator className="w-4 h-4" /> },
+    { title: 'Resumen', icon: <FileSpreadsheet className="w-4 h-4" /> }
   ];
 
   const handleAddArea = () => {
@@ -1186,11 +1188,220 @@ const MiRecomendador: React.FC = () => {
           <Button
             type="primary"
             size="large"
-            onClick={() => message.success('Propuesta confirmada exitosamente')}
+            onClick={() => setCurrentStep(5)}
             style={{ backgroundColor: '#65BFB1', borderColor: '#65BFB1' }}
           >
             Confirmar Propuesta
           </Button>
+        </div>
+      </div>
+    );
+  };
+
+  const renderFinalSummaryStep = () => {
+    const selectedCoursesData = mockCourseResults.filter(c => selectedCourses.includes(c.id));
+    
+    // Calculate totals
+    const totalParticipants = courseProposals.reduce((sum, p) => sum + p.tramo15 + p.tramo50 + p.tramo100, 0);
+    const totalValorImputable = courseProposals.reduce((sum, p) => sum + p.valorImputable, 0);
+    const totalDiferencia = courseProposals.reduce((sum, p) => sum + p.diferencia, 0);
+
+    return (
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-xl font-semibold text-foreground">Resumen de Propuesta de Capacitación</h2>
+            <p className="text-muted-foreground text-sm">
+              Revise el resumen completo de su propuesta antes de confirmar.
+            </p>
+          </div>
+        </div>
+
+        {/* Contact Info Summary */}
+        <Card className="border shadow-sm">
+          <h4 className="font-semibold text-[#1e4a5a] mb-4 flex items-center gap-2">
+            <Building2 className="w-5 h-5 text-[#65BFB1]" />
+            Información de Contacto
+          </h4>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <p className="text-sm text-muted-foreground">Empresa</p>
+              <p className="font-medium">{contactInfo.nombreEmpresa}</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">RUT</p>
+              <p className="font-medium">{contactInfo.rutEmpresa}</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Rubro</p>
+              <p className="font-medium">{contactInfo.rubro || '-'}</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Solicitante</p>
+              <p className="font-medium">{contactInfo.nombreSolicitante || '-'}</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Cargo</p>
+              <p className="font-medium">{contactInfo.cargo || '-'}</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Email</p>
+              <p className="font-medium">{contactInfo.email || '-'}</p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Teléfono</p>
+              <p className="font-medium">{contactInfo.telefono || '-'}</p>
+            </div>
+          </div>
+        </Card>
+
+        {/* Areas de Capacitación */}
+        <Card className="border shadow-sm">
+          <h4 className="font-semibold text-[#1e4a5a] mb-4 flex items-center gap-2">
+            <GraduationCap className="w-5 h-5 text-[#65BFB1]" />
+            Áreas de Capacitación Solicitadas
+          </h4>
+          <div className="space-y-3">
+            {areasCapacitar.filter(a => a.area).map((area, idx) => (
+              <div key={area.id} className="p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <Tag color="blue">Área #{idx + 1}</Tag>
+                  <span className="font-medium">{area.area}</span>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+                  <div><span className="text-muted-foreground">Temática 1:</span> {area.tematica1 || '-'}</div>
+                  <div><span className="text-muted-foreground">Temática 2:</span> {area.tematica2 || '-'}</div>
+                  <div><span className="text-muted-foreground">Temática 3:</span> {area.tematica3 || '-'}</div>
+                  <div><span className="text-muted-foreground">Modalidad:</span> {area.modalidad || '-'}</div>
+                  <div><span className="text-muted-foreground">Región:</span> {area.region || '-'}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+
+        {/* Cursos Seleccionados y Configurados */}
+        <Card className="border shadow-sm">
+          <h4 className="font-semibold text-[#1e4a5a] mb-4 flex items-center gap-2">
+            <BookOpen className="w-5 h-5 text-[#65BFB1]" />
+            Cursos Configurados ({selectedCourses.length})
+          </h4>
+          <div className="space-y-4">
+            {courseProposals.map((proposal) => {
+              const course = mockCourseResults.find(c => c.id === proposal.courseId);
+              if (!course) return null;
+              
+              const totalParticipantsCourse = proposal.tramo15 + proposal.tramo50 + proposal.tramo100;
+
+              return (
+                <div key={proposal.courseId} className="p-4 bg-gray-50 rounded-lg">
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <h5 className="font-medium text-foreground">{course.nombreCurso}</h5>
+                      <p className="text-sm text-[#65BFB1]">{course.especialidad}</p>
+                    </div>
+                    <div className="text-right text-sm">
+                      <p className="text-muted-foreground">{course.codigoCurso}</p>
+                      <p className="text-muted-foreground">{course.horas} horas - {course.modalidad}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    <div>
+                      <p className="text-muted-foreground">Participantes Tramo 15%</p>
+                      <p className="font-semibold">{proposal.tramo15}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Participantes Tramo 50%</p>
+                      <p className="font-semibold">{proposal.tramo50}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Participantes Tramo 100%</p>
+                      <p className="font-semibold">{proposal.tramo100}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Total Participantes</p>
+                      <p className="font-semibold text-[#65BFB1]">{totalParticipantsCourse}</p>
+                    </div>
+                  </div>
+
+                  {proposal.periodos.length > 0 && (
+                    <div className="mt-3 pt-3 border-t">
+                      <p className="text-sm text-muted-foreground mb-2">Períodos de Capacitación:</p>
+                      <div className="flex flex-wrap gap-2">
+                        {proposal.periodos.map((periodo, idx) => (
+                          <Tag key={idx} color="green">
+                            {periodo.fechaDesde || 'Sin fecha'} - {periodo.fechaHasta || 'Sin fecha'}
+                          </Tag>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="mt-3 pt-3 border-t flex justify-between text-sm">
+                    <span>Valor Imputable: <strong>${proposal.valorImputable.toLocaleString('es-CL')}</strong></span>
+                    <span>Diferencia fuera de franquicia: <strong>${proposal.diferencia.toLocaleString('es-CL')}</strong></span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </Card>
+
+        {/* Totales */}
+        <Card className="border shadow-sm bg-[#65BFB1]/5">
+          <h4 className="font-semibold text-[#1e4a5a] mb-4 flex items-center gap-2">
+            <Calculator className="w-5 h-5 text-[#65BFB1]" />
+            Resumen Financiero
+          </h4>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div className="text-center p-4 bg-white rounded-lg shadow-sm">
+              <p className="text-sm text-muted-foreground">Total Cursos</p>
+              <p className="text-3xl font-bold text-[#1e4a5a]">{selectedCourses.length}</p>
+            </div>
+            <div className="text-center p-4 bg-white rounded-lg shadow-sm">
+              <p className="text-sm text-muted-foreground">Total Participantes</p>
+              <p className="text-3xl font-bold text-[#1e4a5a]">{totalParticipants}</p>
+            </div>
+            <div className="text-center p-4 bg-white rounded-lg shadow-sm">
+              <p className="text-sm text-muted-foreground">Valor Imputable Total</p>
+              <p className="text-2xl font-bold text-[#65BFB1]">${totalValorImputable.toLocaleString('es-CL')}</p>
+            </div>
+            <div className="text-center p-4 bg-white rounded-lg shadow-sm">
+              <p className="text-sm text-muted-foreground">Diferencia Total</p>
+              <p className="text-2xl font-bold text-amber-600">${totalDiferencia.toLocaleString('es-CL')}</p>
+            </div>
+          </div>
+        </Card>
+
+        {/* Action Buttons */}
+        <div className="flex justify-between pt-6 border-t mt-6">
+          <Button
+            onClick={() => setCurrentStep(4)}
+            icon={<ArrowLeft className="w-4 h-4" />}
+          >
+            Volver a Editar
+          </Button>
+          <div className="flex gap-3">
+            <Button
+              icon={<Download className="w-4 h-4" />}
+              onClick={() => message.success('Descargando PDF de la propuesta...')}
+            >
+              Descargar PDF
+            </Button>
+            <Button
+              type="primary"
+              size="large"
+              onClick={() => {
+                message.success('¡Propuesta enviada exitosamente!');
+                handleVolverAlInicio();
+              }}
+              style={{ backgroundColor: '#65BFB1', borderColor: '#65BFB1' }}
+            >
+              Enviar Propuesta
+            </Button>
+          </div>
         </div>
       </div>
     );
@@ -1208,6 +1419,8 @@ const MiRecomendador: React.FC = () => {
         return renderResultsStep();
       case 4:
         return renderProposalStep();
+      case 5:
+        return renderFinalSummaryStep();
       default:
         return null;
     }
