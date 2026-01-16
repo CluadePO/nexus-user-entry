@@ -6,11 +6,11 @@ import {
   Trash2, 
   CheckCircle2, 
   AlertCircle,
-  Clock,
   MoreHorizontal,
   Pencil,
   Power,
-  Search
+  Search,
+  FileCheck
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -31,6 +31,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import {
   Pagination,
   PaginationContent,
@@ -278,6 +286,8 @@ const CourseUploadTab: React.FC = () => {
   const [courseTypeTab, setCourseTypeTab] = useState<'sence' | 'no-sence'>('sence');
   const [isDragging, setIsDragging] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showUploadConfirmation, setShowUploadConfirmation] = useState(false);
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const ITEMS_PER_PAGE = 10;
@@ -321,9 +331,13 @@ const CourseUploadTab: React.FC = () => {
       return;
     }
 
-    toast.success('Archivo cargado correctamente', {
-      description: `${file.name} está siendo procesado.`
-    });
+    // Show confirmation dialog
+    setPendingFile(file);
+    setShowUploadConfirmation(true);
+  };
+
+  const confirmUpload = () => {
+    if (!pendingFile) return;
 
     const newCourses: UploadedCourse[] = [
       {
@@ -341,6 +355,18 @@ const CourseUploadTab: React.FC = () => {
     ];
 
     setUploadedCourses(prev => [...newCourses, ...prev]);
+    setShowUploadConfirmation(false);
+    
+    toast.success('¡Cursos cargados exitosamente!', {
+      description: `Se han procesado los cursos del archivo "${pendingFile.name}".`
+    });
+    
+    setPendingFile(null);
+  };
+
+  const cancelUpload = () => {
+    setShowUploadConfirmation(false);
+    setPendingFile(null);
   };
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -410,6 +436,36 @@ const CourseUploadTab: React.FC = () => {
   const noSenceCount = uploadedCourses.filter(c => c.type === 'No Sence').length;
 
   return (
+    <>
+      {/* Upload Confirmation Dialog */}
+      <Dialog open={showUploadConfirmation} onOpenChange={setShowUploadConfirmation}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <div className="flex items-center justify-center w-12 h-12 mx-auto mb-4 rounded-full bg-primary/10">
+              <FileCheck className="h-6 w-6 text-primary" />
+            </div>
+            <DialogTitle className="text-center">Confirmar carga de cursos</DialogTitle>
+            <DialogDescription className="text-center">
+              Estás a punto de cargar el archivo <span className="font-medium text-foreground">"{pendingFile?.name}"</span> con cursos de tipo <span className="font-medium text-foreground">{courseTypeTab === 'sence' ? 'SENCE' : 'No SENCE'}</span>.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="bg-muted/50 rounded-lg p-4 my-2">
+            <p className="text-sm text-muted-foreground">
+              Los cursos serán procesados y añadidos a tu catálogo. Podrás editarlos o eliminarlos posteriormente desde la grilla de cursos cargados.
+            </p>
+          </div>
+          <DialogFooter className="flex gap-2 sm:gap-0">
+            <Button variant="outline" onClick={cancelUpload} className="flex-1 sm:flex-none">
+              Cancelar
+            </Button>
+            <Button onClick={confirmUpload} className="flex-1 sm:flex-none">
+              <Upload className="h-4 w-4 mr-2" />
+              Confirmar Carga
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
     <div className="space-y-6">
       {/* Upload Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -652,6 +708,7 @@ const CourseUploadTab: React.FC = () => {
         </CardContent>
       </Card>
     </div>
+    </>
   );
 };
 
