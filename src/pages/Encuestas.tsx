@@ -80,32 +80,130 @@ const completedCoursesData: CompletedCourse[] = [
   { id: '7', name: 'Finanzas para No Financieros', code: 'FIN-2024-007', endDate: '2023-11-30', participants: 28, otec: 'Instituto Financiero' },
 ];
 
-// Preguntas estándar por tipo de encuesta
-const standardQuestions = {
-  satisfaccion: [
-    { id: 1, text: '¿Cómo calificaría la calidad general del curso?', type: 'rating' },
-    { id: 2, text: '¿El contenido del curso cumplió con sus expectativas?', type: 'rating' },
-    { id: 3, text: '¿Cómo evaluaría el desempeño del relator/instructor?', type: 'rating' },
-    { id: 4, text: '¿El material didáctico fue útil y de calidad?', type: 'rating' },
-    { id: 5, text: '¿Las instalaciones/plataforma fueron adecuadas?', type: 'rating' },
-    { id: 6, text: '¿La duración del curso fue apropiada?', type: 'rating' },
-    { id: 7, text: '¿Recomendaría este curso a otros compañeros?', type: 'yesno' },
-    { id: 8, text: '¿Qué aspectos del curso destacaría positivamente?', type: 'text' },
-    { id: 9, text: '¿Qué aspectos del curso mejoraría?', type: 'text' },
-    { id: 10, text: 'Comentarios adicionales', type: 'text' },
-  ],
-  transferencia: [
-    { id: 1, text: '¿Ha podido aplicar los conocimientos adquiridos en su puesto de trabajo?', type: 'rating' },
-    { id: 2, text: '¿Los contenidos del curso son relevantes para sus funciones actuales?', type: 'rating' },
-    { id: 3, text: '¿Ha mejorado su desempeño laboral después del curso?', type: 'rating' },
-    { id: 4, text: '¿Ha compartido los conocimientos adquiridos con sus compañeros?', type: 'yesno' },
-    { id: 5, text: '¿Su jefatura ha notado mejoras en su desempeño?', type: 'rating' },
-    { id: 6, text: '¿Qué conocimientos específicos ha aplicado en su trabajo?', type: 'text' },
-    { id: 7, text: '¿Qué barreras ha encontrado para aplicar lo aprendido?', type: 'text' },
-    { id: 8, text: '¿Qué apoyo adicional necesitaría para mejorar la transferencia?', type: 'text' },
-    { id: 9, text: '¿El curso le ha ayudado a resolver problemas específicos de su trabajo?', type: 'rating' },
-    { id: 10, text: 'Sugerencias para mejorar la aplicabilidad del curso', type: 'text' },
-  ],
+// Estructura de preguntas agrupadas por sección para Encuesta de Satisfacción
+interface SurveyQuestion {
+  id: number;
+  text: string;
+  type: 'rating' | 'yesno' | 'text' | 'rating5';
+}
+
+interface SurveySection {
+  id: string;
+  title: string;
+  questions: SurveyQuestion[];
+}
+
+// Preguntas de encuesta de satisfacción basadas en formulario estándar v2.0
+const satisfactionSections: SurveySection[] = [
+  {
+    id: 'relator',
+    title: 'RELATOR',
+    questions: [
+      { id: 1, text: 'El relator demostró dominio y conocimiento de los temas', type: 'rating5' },
+      { id: 2, text: 'Tuvo claridad en la exposición de los contenidos', type: 'rating5' },
+      { id: 3, text: 'Mostró disposición para aclarar dudas y responder consultas', type: 'rating5' },
+      { id: 4, text: 'Cumplió con los horarios establecidos', type: 'rating5' },
+      { id: 5, text: 'Fomentó la participación activa de los asistentes', type: 'rating5' },
+    ]
+  },
+  {
+    id: 'contenido',
+    title: 'CONTENIDO & METODOLOGÍA',
+    questions: [
+      { id: 6, text: 'Los objetivos del curso fueron explicados claramente', type: 'rating5' },
+      { id: 7, text: 'Los contenidos se relacionan con los objetivos del curso', type: 'rating5' },
+      { id: 8, text: 'Existió un balance adecuado entre teoría y práctica', type: 'rating5' },
+      { id: 9, text: 'La duración del curso fue apropiada para los contenidos', type: 'rating5' },
+    ]
+  },
+  {
+    id: 'recursos',
+    title: 'RECURSOS Y LOGÍSTICA',
+    questions: [
+      { id: 10, text: 'El material de apoyo fue adecuado y útil', type: 'rating5' },
+      { id: 11, text: 'Los recursos audiovisuales/tecnológicos facilitaron el aprendizaje', type: 'rating5' },
+      { id: 12, text: 'La logística y organización del curso fue adecuada', type: 'rating5' },
+      { id: 13, text: '[Para modalidad presencial] El espacio físico fue adecuado (comodidad, iluminación, ventilación)', type: 'rating5' },
+      { id: 14, text: '[Para modalidad virtual] La plataforma utilizada fue estable y funcional', type: 'rating5' },
+    ]
+  },
+  {
+    id: 'aplicabilidad',
+    title: 'APLICABILIDAD Y RELEVANCIA',
+    questions: [
+      { id: 15, text: 'Los conocimientos adquiridos son aplicables en mi trabajo', type: 'rating5' },
+      { id: 16, text: 'El curso contribuirá a mejorar mi desempeño laboral', type: 'rating5' },
+      { id: 17, text: 'Los contenidos cumplieron con mis expectativas', type: 'rating5' },
+    ]
+  },
+  {
+    id: 'evaluacion',
+    title: 'EVALUACIÓN GENERAL',
+    questions: [
+      { id: 18, text: 'En general, el curso cumplió con mis expectativas de aprendizaje', type: 'rating5' },
+      { id: 19, text: 'Recomendaría este curso a mis compañeros', type: 'rating5' },
+    ]
+  },
+  {
+    id: 'observaciones',
+    title: 'OBSERVACIONES',
+    questions: [
+      { id: 20, text: 'Observaciones y comentarios adicionales', type: 'text' },
+    ]
+  }
+];
+
+// Preguntas de transferencia (mantener estructura simple)
+const transferenciaSections: SurveySection[] = [
+  {
+    id: 'aplicacion',
+    title: 'APLICACIÓN EN EL TRABAJO',
+    questions: [
+      { id: 1, text: '¿Ha podido aplicar los conocimientos adquiridos en su puesto de trabajo?', type: 'rating5' },
+      { id: 2, text: '¿Los contenidos del curso son relevantes para sus funciones actuales?', type: 'rating5' },
+      { id: 3, text: '¿Ha mejorado su desempeño laboral después del curso?', type: 'rating5' },
+      { id: 4, text: '¿Ha compartido los conocimientos adquiridos con sus compañeros?', type: 'yesno' },
+      { id: 5, text: '¿Su jefatura ha notado mejoras en su desempeño?', type: 'rating5' },
+    ]
+  },
+  {
+    id: 'retroalimentacion',
+    title: 'RETROALIMENTACIÓN',
+    questions: [
+      { id: 6, text: '¿Qué conocimientos específicos ha aplicado en su trabajo?', type: 'text' },
+      { id: 7, text: '¿Qué barreras ha encontrado para aplicar lo aprendido?', type: 'text' },
+      { id: 8, text: '¿Qué apoyo adicional necesitaría para mejorar la transferencia?', type: 'text' },
+    ]
+  },
+  {
+    id: 'evaluacion',
+    title: 'EVALUACIÓN GENERAL',
+    questions: [
+      { id: 9, text: '¿El curso le ha ayudado a resolver problemas específicos de su trabajo?', type: 'rating5' },
+      { id: 10, text: 'Sugerencias para mejorar la aplicabilidad del curso', type: 'text' },
+    ]
+  }
+];
+
+// Escala de calificación
+const ratingScale = [
+  { value: 1, label: 'Muy Insatisfecho' },
+  { value: 2, label: 'Insatisfecho' },
+  { value: 3, label: 'Regular' },
+  { value: 4, label: 'Bueno' },
+  { value: 5, label: 'Muy Bueno' },
+  { value: 0, label: 'N/A' },
+];
+
+// Helper para obtener secciones según tipo
+const getSurveySections = (type: SurveyType): SurveySection[] => {
+  return type === 'satisfaccion' ? satisfactionSections : transferenciaSections;
+};
+
+// Helper para contar preguntas totales
+const getTotalQuestions = (type: SurveyType): number => {
+  const sections = getSurveySections(type);
+  return sections.reduce((acc, section) => acc + section.questions.length, 0);
 };
 
 // Datos de ejemplo de encuestas
@@ -597,19 +695,24 @@ const Encuestas: React.FC = () => {
         </div>
       )}
 
-      {selectedCourse && (
+{selectedCourse && (
         <div className="bg-gray-50 p-4 rounded-lg mb-4">
-          <div className="text-sm font-medium text-[#1e4a5a] mb-2">Preguntas estándar incluidas:</div>
-          <div className="space-y-1">
-            {standardQuestions[surveyType].slice(0, 5).map((q, idx) => (
-              <div key={idx} className="text-xs text-muted-foreground flex items-center gap-2">
+          <div className="text-sm font-medium text-[#1e4a5a] mb-2">
+            Secciones de la encuesta ({getTotalQuestions(surveyType)} preguntas):
+          </div>
+          <div className="space-y-2">
+            {getSurveySections(surveyType).slice(0, 4).map((section) => (
+              <div key={section.id} className="text-xs text-muted-foreground flex items-center gap-2">
                 <CheckCircle className="w-3 h-3 text-[#65BFB1]" />
-                {q.text}
+                <span className="font-medium">{section.title}</span>
+                <span className="text-gray-400">({section.questions.length} preguntas)</span>
               </div>
             ))}
-            <div className="text-xs text-[#65BFB1] font-medium mt-2">
-              + {standardQuestions[surveyType].length - 5} preguntas más
-            </div>
+            {getSurveySections(surveyType).length > 4 && (
+              <div className="text-xs text-[#65BFB1] font-medium mt-2">
+                + {getSurveySections(surveyType).length - 4} secciones más
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -916,20 +1019,62 @@ const Encuestas: React.FC = () => {
               </div>
             </Card>
 
-            {/* Questions Preview */}
+            {/* Questions Preview - Grouped by Sections */}
             <Card>
-              <div className="text-sm font-medium text-[#1e4a5a] mb-4">Preguntas de la Encuesta</div>
-              <div className="space-y-3">
-                {standardQuestions[selectedSurvey.type].map((q, idx) => (
-                  <div key={q.id} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                    <div className="w-6 h-6 bg-[#65BFB1] text-white rounded-full flex items-center justify-center text-xs font-medium">
-                      {idx + 1}
-                    </div>
-                    <div className="flex-1">
-                      <div className="text-sm text-[#1e4a5a]">{q.text}</div>
-                      <div className="text-xs text-muted-foreground mt-1">
-                        Tipo: {q.type === 'rating' ? 'Escala 1-5' : q.type === 'yesno' ? 'Sí/No' : 'Respuesta abierta'}
+              <div className="text-sm font-medium text-[#1e4a5a] mb-4">
+                Preguntas de la Encuesta ({getTotalQuestions(selectedSurvey.type)} preguntas)
+              </div>
+              
+              {/* Rating Scale Legend */}
+              <div className="mb-4 p-3 bg-[#65BFB1]/10 rounded-lg">
+                <div className="text-xs font-medium text-[#1e4a5a] mb-2">Escala de Calificación:</div>
+                <div className="flex flex-wrap gap-2">
+                  {ratingScale.map((item) => (
+                    <div key={item.value} className="flex items-center gap-1 text-xs">
+                      <div className="w-5 h-5 rounded-full bg-white border border-[#65BFB1] flex items-center justify-center text-[10px] font-medium text-[#1e4a5a]">
+                        {item.value === 0 ? 'NA' : item.value}
                       </div>
+                      <span className="text-muted-foreground">{item.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-4 max-h-[400px] overflow-y-auto">
+                {getSurveySections(selectedSurvey.type).map((section) => (
+                  <div key={section.id} className="border rounded-lg overflow-hidden">
+                    <div className="bg-[#1e4a5a] text-white px-4 py-2 font-medium text-sm">
+                      {section.title}
+                    </div>
+                    <div className="divide-y">
+                      {section.questions.map((q) => (
+                        <div key={q.id} className="p-3 flex items-start gap-3">
+                          <div className="flex-1">
+                            <div className="text-sm text-[#1e4a5a]">{q.text}</div>
+                          </div>
+                          {q.type === 'rating5' && (
+                            <div className="flex gap-1">
+                              {[1, 2, 3, 4, 5].map((num) => (
+                                <div key={num} className="w-6 h-6 rounded-full border border-gray-300 flex items-center justify-center text-xs text-gray-400">
+                                  {num}
+                                </div>
+                              ))}
+                              <div className="w-6 h-6 rounded-full border border-gray-300 flex items-center justify-center text-[10px] text-gray-400">
+                                NA
+                              </div>
+                            </div>
+                          )}
+                          {q.type === 'yesno' && (
+                            <div className="flex gap-2">
+                              <div className="px-2 py-1 rounded border border-gray-300 text-xs text-gray-400">Sí</div>
+                              <div className="px-2 py-1 rounded border border-gray-300 text-xs text-gray-400">No</div>
+                            </div>
+                          )}
+                          {q.type === 'text' && (
+                            <div className="text-xs text-gray-400 italic">Texto libre</div>
+                          )}
+                        </div>
+                      ))}
                     </div>
                   </div>
                 ))}
