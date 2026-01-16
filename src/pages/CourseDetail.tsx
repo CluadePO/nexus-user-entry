@@ -261,7 +261,7 @@ const FranchiseCalculator: React.FC<FranchiseCalculatorProps> = ({
           />
         )}
         
-        <div className="h-full w-80 bg-background border-l shadow-xl flex flex-col">
+        <div className="h-full w-80 bg-background border-l shadow-xl flex flex-col overflow-hidden">
           {/* Header */}
           <div className="p-4 border-b bg-gradient-to-r from-primary/10 to-transparent">
             <div className="flex items-center justify-between">
@@ -281,7 +281,7 @@ const FranchiseCalculator: React.FC<FranchiseCalculatorProps> = ({
           </div>
 
           {/* Calculator Content */}
-          <div className="flex-1 p-4 space-y-4 overflow-y-auto">
+          <div className="flex-1 p-4 space-y-4 overflow-y-auto min-h-0">
             {/* Participants Input */}
             <div className="space-y-2">
               <label className="text-sm font-medium text-foreground">
