@@ -372,13 +372,13 @@ const FranchiseCalculator: React.FC<FranchiseCalculatorProps> = ({
                 El cálculo se basa en el menor valor entre el valor efectivo por participante ({formatPrice(effectiveValuePerParticipant)}) y el valor máximo imputable ({formatPrice(maxImputableValue)}).
               </p>
             </div>
-          </div>
 
-          {/* Footer */}
-          <div className="p-4 border-t bg-muted/30 flex-shrink-0">
-            <p className="text-xs text-muted-foreground text-center whitespace-nowrap">
-              Simulador de franquicia SENCE
-            </p>
+            {/* Footer inside scroll area */}
+            <div className="pt-4 mt-2 border-t">
+              <p className="text-xs text-muted-foreground text-center">
+                Simulador de franquicia SENCE
+              </p>
+            </div>
           </div>
         </div>
       </div>
