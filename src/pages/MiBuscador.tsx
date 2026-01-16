@@ -349,7 +349,7 @@ const MiBuscador: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pr-14">
       {/* Breadcrumb Navigation */}
       <Breadcrumb>
         <BreadcrumbList>
