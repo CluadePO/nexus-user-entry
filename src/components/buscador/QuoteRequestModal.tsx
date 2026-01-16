@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { useToast } from '@/hooks/use-toast';
 import { 
   Building2, 
   Hash, 
@@ -18,7 +19,8 @@ import {
   Clock, 
   Briefcase,
   DollarSign,
-  BookOpen
+  BookOpen,
+  CheckCircle
 } from 'lucide-react';
 
 interface CourseInfo {
@@ -46,6 +48,7 @@ const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
   courseInfo,
   formatPrice,
 }) => {
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -66,7 +69,25 @@ const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Quote request submitted:', formData);
+    
+    // Reset form
+    setFormData({
+      name: '',
+      email: '',
+      company: '',
+      participants: 1,
+      message: '',
+    });
+    
+    // Close modal
     onOpenChange(false);
+    
+    // Show success toast
+    toast({
+      title: "¡Solicitud enviada con éxito!",
+      description: "El proveedor se pondrá en contacto contigo pronto para darte más información sobre el curso.",
+      duration: 5000,
+    });
   };
 
   const courseDetails = [
