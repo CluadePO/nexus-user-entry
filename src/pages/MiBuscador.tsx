@@ -16,8 +16,6 @@ import {
   ChevronRight,
   Home,
   X,
-  ChevronDown,
-  ChevronUp,
   Heart,
   FileText,
   Users,
@@ -247,142 +245,6 @@ const mockCourses: Course[] = [
     isFavorite: false,
   },
 ];
-
-// Favorites Sidebar Component
-interface FavoritesSidebarProps {
-  courses: Course[];
-  onToggleFavorite: (courseId: string) => void;
-  onNavigate: (path: string) => void;
-  formatPrice: (price: number) => string;
-}
-
-const FavoritesSidebar: React.FC<FavoritesSidebarProps> = ({
-  courses,
-  onToggleFavorite,
-  onNavigate,
-  formatPrice,
-}) => {
-  const [isExpanded, setIsExpanded] = useState(true);
-  const favoriteCourses = courses.filter(c => c.isFavorite);
-
-  return (
-    <div className="hidden lg:block w-80 flex-shrink-0">
-      <div className="sticky top-6">
-        <Card className="border-2 border-primary/20 shadow-lg">
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <Heart className="h-5 w-5 text-rose-500 fill-rose-500" />
-                Mis Favoritos
-                <Badge variant="secondary" className="ml-1">
-                  {favoriteCourses.length}
-                </Badge>
-              </CardTitle>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8"
-                onClick={() => setIsExpanded(!isExpanded)}
-              >
-                {isExpanded ? (
-                  <ChevronUp className="h-4 w-4" />
-                ) : (
-                  <ChevronDown className="h-4 w-4" />
-                )}
-              </Button>
-            </div>
-          </CardHeader>
-          
-          {isExpanded && (
-            <CardContent className="pt-0">
-              {favoriteCourses.length === 0 ? (
-                <div className="text-center py-6">
-                  <Heart className="h-10 w-10 text-muted-foreground/30 mx-auto mb-3" />
-                  <p className="text-sm text-muted-foreground">
-                    No tienes cursos favoritos
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Haz clic en ⭐ para agregar cursos
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-3 max-h-[calc(100vh-200px)] overflow-y-auto pr-1">
-                  {favoriteCourses.map((course) => (
-                    <div 
-                      key={course.id} 
-                      className="group p-3 rounded-lg border bg-muted/30 hover:bg-muted/50 transition-colors"
-                    >
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="flex-1 min-w-0">
-                          <h4 
-                            className="font-medium text-sm line-clamp-2 cursor-pointer hover:text-primary transition-colors"
-                            onClick={() => onNavigate(`/formacion/curso/${course.id}`)}
-                          >
-                            {course.name}
-                          </h4>
-                          <p className="text-xs text-muted-foreground mt-1 truncate">
-                            {course.provider}
-                          </p>
-                          <div className="flex items-center gap-2 mt-2">
-                            <Badge 
-                              variant="outline" 
-                              className={`text-xs ${course.type === 'Sence' ? 'border-primary/50 text-primary' : 'border-orange-400 text-orange-600'}`}
-                            >
-                              {course.type}
-                            </Badge>
-                            <span className="text-sm font-bold text-primary">
-                              {formatPrice(course.price)}
-                            </span>
-                          </div>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-7 w-7 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                          onClick={() => onToggleFavorite(course.id)}
-                        >
-                          <X className="h-4 w-4 text-muted-foreground hover:text-destructive" />
-                        </Button>
-                      </div>
-                      <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
-                        <span className="flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
-                          {course.hours}h
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Star className="h-3 w-3 text-amber-500 fill-amber-500" />
-                          {course.rating}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <MapPin className="h-3 w-3" />
-                          {course.region}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-              
-              {favoriteCourses.length > 0 && (
-                <div className="mt-4 pt-3 border-t">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full gap-2"
-                    onClick={() => {/* Could navigate to a dedicated favorites page */}}
-                  >
-                    <Eye className="h-4 w-4" />
-                    Ver todos mis favoritos
-                  </Button>
-                </div>
-              )}
-            </CardContent>
-          )}
-        </Card>
-      </div>
-    </div>
-  );
-};
 
 const MiBuscador: React.FC = () => {
   const { user } = useAuth();
@@ -767,10 +629,7 @@ const MiBuscador: React.FC = () => {
           )}
         </TabsContent>
 
-        <TabsContent value="buscador" className="mt-6">
-          <div className="flex gap-6">
-            {/* Main Content */}
-            <div className="flex-1 space-y-6">
+        <TabsContent value="buscador" className="mt-6 space-y-6">
           {/* Hero Section - Selling Courses */}
           <Card className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent border-primary/20">
             <CardContent className="py-8">
@@ -1108,16 +967,6 @@ const MiBuscador: React.FC = () => {
               </CardContent>
             </Card>
           )}
-            </div>
-
-            {/* Favorites Sticky Sidebar */}
-            <FavoritesSidebar 
-              courses={courses} 
-              onToggleFavorite={toggleFavorite}
-              onNavigate={navigate}
-              formatPrice={formatPrice}
-            />
-          </div>
         </TabsContent>
       </Tabs>
 
