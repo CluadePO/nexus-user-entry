@@ -869,6 +869,32 @@ const MiRecomendador: React.FC = () => {
 
     const COLORS = ['#65BFB1', '#3B82F6', '#F59E0B', '#EF4444', '#8B5CF6'];
 
+    // Calculate consolidated monthly data from all calculated courses
+    const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+    const calculatedProposals = courseProposals.filter(p => p.calculated);
+    
+    const consolidatedMonthlyData = months.map((month, idx) => {
+      let anoActual = 0;
+      let anoProximo = 0;
+      
+      calculatedProposals.forEach(proposal => {
+        if (proposal.monthlyData[idx]) {
+          if (proposal.monthlyData[idx].anoActual > 0) anoActual += 1;
+          if (proposal.monthlyData[idx].anoProximo > 0) anoProximo += 1;
+        }
+      });
+      
+      // Convert to percentage based on total calculated courses
+      const totalCalculated = calculatedProposals.length || 1;
+      return {
+        month,
+        anoActual: Math.round((anoActual / totalCalculated) * 100),
+        anoProximo: Math.round((anoProximo / totalCalculated) * 100)
+      };
+    });
+    
+    const hasCalculatedCourses = calculatedProposals.length > 0;
+
     return (
       <div className="space-y-6">
         {/* Header */}
@@ -955,6 +981,36 @@ const MiRecomendador: React.FC = () => {
             </div>
           </div>
         </Card>
+
+        {/* Meses para capacitar - Consolidated Chart */}
+        {hasCalculatedCourses && (
+          <Card className="border shadow-sm">
+            <h4 className="font-medium text-[#1e4a5a] mb-4">Meses para capacitar</h4>
+            <div className="flex justify-end mb-2">
+              <div className="flex items-center gap-4 text-sm">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-[#1e4a5a]" />
+                  <span>Año actual</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-[#65BFB1]" />
+                  <span>Año próximo</span>
+                </div>
+              </div>
+            </div>
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={consolidatedMonthlyData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                  <XAxis dataKey="month" tick={{ fontSize: 11 }} />
+                  <YAxis tickFormatter={(value) => `${value}%`} domain={[0, 100]} tick={{ fontSize: 11 }} />
+                  <Tooltip formatter={(value) => [`${value}%`, '']} />
+                  <Bar dataKey="anoActual" fill="#1e4a5a" name="Año actual" />
+                  <Bar dataKey="anoProximo" fill="#65BFB1" name="Año próximo" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </Card>
+        )}
 
         {/* Listado de capacitaciones */}
         <div>
@@ -1092,36 +1148,6 @@ const MiRecomendador: React.FC = () => {
                     Calcular
                   </Button>
                 </div>
-
-                {/* Monthly Chart - Shows after calculation */}
-                {proposal.calculated && proposal.monthlyData.length > 0 && (
-                  <div className="mb-4 p-4 bg-gray-50 rounded-lg">
-                    <h4 className="font-medium text-[#1e4a5a] mb-4">Meses para capacitar</h4>
-                    <div className="flex justify-end mb-2">
-                      <div className="flex items-center gap-4 text-sm">
-                        <div className="flex items-center gap-2">
-                          <div className="w-3 h-3 rounded-full bg-[#1e4a5a]" />
-                          <span>Año actual</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <div className="w-3 h-3 rounded-full bg-[#65BFB1]" />
-                          <span>Año próximo</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="h-64">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={proposal.monthlyData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-                          <XAxis dataKey="month" tick={{ fontSize: 11 }} />
-                          <YAxis tickFormatter={(value) => `${value}%`} domain={[0, 100]} tick={{ fontSize: 11 }} />
-                          <Tooltip formatter={(value) => [`${value}%`, '']} />
-                          <Bar dataKey="anoActual" fill="#1e4a5a" name="Año actual" />
-                          <Bar dataKey="anoProximo" fill="#65BFB1" name="Año próximo" />
-                        </BarChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </div>
-                )}
 
                 {/* Footer con valores */}
                 <div className="flex items-center justify-between pt-4 border-t">
