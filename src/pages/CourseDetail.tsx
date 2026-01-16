@@ -229,7 +229,7 @@ const FranchiseCalculator: React.FC<FranchiseCalculatorProps> = ({
     <>
       {/* Collapsed Tab - Always visible */}
       <div 
-        className={`fixed right-0 top-1/3 -translate-y-1/2 z-40 transition-all duration-300 ${
+        className={`fixed right-0 bottom-24 z-40 transition-all duration-300 ${
           isExpanded ? 'translate-x-full' : 'translate-x-0'
         }`}
       >
