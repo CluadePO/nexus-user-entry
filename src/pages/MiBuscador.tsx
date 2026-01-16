@@ -54,6 +54,7 @@ import { ChileRegionsMap } from '@/components/dashboard/ChileRegionsMap';
 import { OTECBuscadorDashboard } from '@/components/dashboard/OTECBuscadorDashboard';
 import { CourseComparisonModal } from '@/components/dashboard/CourseComparisonModal';
 import FavoritesSidebar from '@/components/buscador/FavoritesSidebar';
+import CourseUploadTab from '@/components/buscador/CourseUploadTab';
 import { useAuth } from '@/context/AuthContext';
 
 interface Course {
@@ -262,6 +263,9 @@ const MiBuscador: React.FC = () => {
   // Check if user is OTEC or OTEC_REPRESENTANTE
   const isOTECUser = user?.role === 'OTEC' || user?.role === 'OTEC_REPRESENTANTE';
   
+  // Check if user can upload courses (OTIC, OTEC, OTEC_REPRESENTANTE)
+  const canUploadCourses = user?.role === 'OTIC' || user?.role === 'OTEC' || user?.role === 'OTEC_REPRESENTANTE';
+  
   // Check if user should NOT see favorites and comparisons (OTIC, EMPRESA, EMPRESA_REPRESENTANTE)
   const hideFavoritesAndComparisons = user?.role === 'OTIC' || user?.role === 'EMPRESA' || user?.role === 'EMPRESA_REPRESENTANTE';
 
@@ -386,9 +390,12 @@ const MiBuscador: React.FC = () => {
       </div>
 
       <Tabs defaultValue="buscador" className="w-full">
-        <TabsList className="grid w-full max-w-md grid-cols-2">
+        <TabsList className={`grid w-full max-w-md ${canUploadCourses ? 'grid-cols-3' : 'grid-cols-2'}`}>
           <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
           <TabsTrigger value="buscador">Buscador de Cursos</TabsTrigger>
+          {canUploadCourses && (
+            <TabsTrigger value="carga">Carga de Cursos</TabsTrigger>
+          )}
         </TabsList>
 
         <TabsContent value="dashboard" className="mt-6 space-y-6">
@@ -969,6 +976,13 @@ const MiBuscador: React.FC = () => {
             </Card>
           )}
         </TabsContent>
+
+        {/* Course Upload Tab - Only for OTIC, OTEC, OTEC_REPRESENTANTE */}
+        {canUploadCourses && (
+          <TabsContent value="carga" className="mt-6">
+            <CourseUploadTab />
+          </TabsContent>
+        )}
       </Tabs>
 
       {/* Favorites Sidebar */}
