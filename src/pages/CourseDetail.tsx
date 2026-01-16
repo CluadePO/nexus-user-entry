@@ -242,7 +242,7 @@ const FranchiseCalculator: React.FC<FranchiseCalculatorProps> = ({
             className="text-xs font-medium whitespace-nowrap"
             style={{ writingMode: 'vertical-rl', textOrientation: 'mixed', transform: 'rotate(180deg)' }}
           >
-            Calculadora
+            Calcula tu Franquicia
           </span>
         </button>
       </div>
@@ -411,7 +411,7 @@ const CourseDetail: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 pb-8">
+    <div className="space-y-6 pb-8 pr-14">
       {/* Breadcrumb Navigation */}
       <Breadcrumb>
         <BreadcrumbList>
