@@ -53,23 +53,9 @@ const FAQStickyPanel: React.FC = () => {
   return (
     <div className="w-full mt-8">
       <div className="w-full max-w-4xl mx-auto">
-        {/* Sticky Tab Button */}
-        <Button
-          onClick={() => setIsOpen(!isOpen)}
-          className="w-full rounded-t-lg rounded-b-none h-10 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg flex items-center justify-center gap-2"
-        >
-          <HelpCircle className="h-4 w-4" />
-          <span className="font-medium">Preguntas Frecuentes</span>
-          {isOpen ? (
-            <ChevronDown className="h-4 w-4 ml-1" />
-          ) : (
-            <ChevronUp className="h-4 w-4 ml-1" />
-          )}
-        </Button>
-
-        {/* Expanded Panel */}
+        {/* Expanded Panel - appears above the button */}
         {isOpen && (
-          <div className="bg-background border border-t-0 rounded-b-xl shadow-lg animate-in slide-in-from-top duration-300">
+          <div className="bg-background border border-b-0 rounded-t-xl shadow-lg animate-in slide-in-from-bottom duration-300">
             <div className="p-4 border-b">
               <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
                 <HelpCircle className="h-5 w-5 text-primary" />
@@ -97,6 +83,22 @@ const FAQStickyPanel: React.FC = () => {
             </ScrollArea>
           </div>
         )}
+
+        {/* Tab Button - always at the bottom */}
+        <Button
+          onClick={() => setIsOpen(!isOpen)}
+          className={`w-full h-10 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg flex items-center justify-center gap-2 ${
+            isOpen ? 'rounded-t-none rounded-b-lg' : 'rounded-lg'
+          }`}
+        >
+          <HelpCircle className="h-4 w-4" />
+          <span className="font-medium">Preguntas Frecuentes</span>
+          {isOpen ? (
+            <ChevronDown className="h-4 w-4 ml-1" />
+          ) : (
+            <ChevronUp className="h-4 w-4 ml-1" />
+          )}
+        </Button>
       </div>
     </div>
   );
