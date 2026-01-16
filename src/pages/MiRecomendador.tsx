@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, Steps, Button, Form, Input, Select, Table, Checkbox, Tag, message, InputNumber, DatePicker } from 'antd';
+import { Card, Steps, Button, Form, Input, Select, Table, Checkbox, Tag, message, InputNumber, DatePicker, Modal } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { 
   ArrowLeft, 
@@ -219,6 +219,7 @@ const MiRecomendador: React.FC = () => {
   const [showProposal, setShowProposal] = useState(false);
   const [courseProposals, setCourseProposals] = useState<CourseProposal[]>([]);
   const [showConfirmationSummary, setShowConfirmationSummary] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const steps = [
     { title: 'Contacto', icon: <User className="w-4 h-4" /> },
@@ -1399,21 +1400,43 @@ const MiRecomendador: React.FC = () => {
             <Button
               type="primary"
               size="large"
-              onClick={() => {
-                message.success(
-                  'Hemos recibido satisfactoriamente su Propuesta de Capacitación, para su ejecución recibirá el contacto de uno de nuestros ejecutivos comerciales dentro de 48 hrs hábiles o contáctenos al +56 2 2405 2000 o escríbanos en consultas@ccc.cl',
-                  10
-                );
-                setTimeout(() => {
-                  handleVolverAlInicio();
-                }, 3000);
-              }}
+              onClick={() => setShowSuccessModal(true)}
               style={{ backgroundColor: '#65BFB1', borderColor: '#65BFB1' }}
             >
               Enviar Propuesta
             </Button>
           </div>
         </div>
+
+        {/* Success Modal */}
+        <Modal
+          open={showSuccessModal}
+          onCancel={() => setShowSuccessModal(false)}
+          footer={null}
+          centered
+          width={500}
+        >
+          <div className="text-center py-6">
+            <div className="w-16 h-16 bg-[#65BFB1]/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <CheckCircle className="w-10 h-10 text-[#65BFB1]" />
+            </div>
+            <h3 className="text-xl font-semibold text-[#1e4a5a] mb-4">¡Propuesta Enviada!</h3>
+            <p className="text-muted-foreground mb-6 leading-relaxed">
+              Hemos recibido satisfactoriamente su Propuesta de Capacitación, para su ejecución recibirá el contacto de uno de nuestros ejecutivos comerciales dentro de <strong>48 hrs hábiles</strong> o contáctenos al <strong>+56 2 2405 2000</strong> o escríbanos en <strong>consultas@ccc.cl</strong>.
+            </p>
+            <Button
+              type="primary"
+              size="large"
+              onClick={() => {
+                setShowSuccessModal(false);
+                navigate('/asesor');
+              }}
+              style={{ backgroundColor: '#65BFB1', borderColor: '#65BFB1' }}
+            >
+              Volver al Rol Asesor
+            </Button>
+          </div>
+        </Modal>
       </div>
     );
   };
