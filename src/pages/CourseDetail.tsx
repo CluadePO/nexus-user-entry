@@ -191,7 +191,7 @@ const defaultCourse = {
   relatedTopics: ['Desarrollo Profesional', 'Habilidades Técnicas', 'Competencias Laborales'],
 };
 
-// Franchise Calculator Component
+// Franchise Calculator Component - Floating Sidebar Style
 interface FranchiseCalculatorProps {
   effectiveValuePerParticipant: number;
   maxImputableValue: number;
@@ -204,6 +204,7 @@ const FranchiseCalculator: React.FC<FranchiseCalculatorProps> = ({
   formatPrice,
 }) => {
   const [participants, setParticipants] = useState<number>(1);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const coverageOptions = [
     { percentage: 15, label: '15%' },
@@ -211,7 +212,6 @@ const FranchiseCalculator: React.FC<FranchiseCalculatorProps> = ({
     { percentage: 100, label: '100%' },
   ];
 
-  // Calculate values based on the minimum between effective value and max imputable value
   const baseValuePerParticipant = Math.min(effectiveValuePerParticipant, maxImputableValue);
   const totalEffectiveValue = effectiveValuePerParticipant * participants;
 
@@ -226,106 +226,163 @@ const FranchiseCalculator: React.FC<FranchiseCalculatorProps> = ({
   };
 
   return (
-    <Card className="border-2 border-primary/20">
-      <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-lg">
-          <Calculator className="h-5 w-5 text-primary" />
-          Calcula tu Franquicia
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {/* Participants Input */}
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-foreground">
-            Número de participantes
-          </label>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-10 w-10"
-              onClick={() => setParticipants(Math.max(0, participants - 1))}
-            >
-              -
-            </Button>
-            <input
-              type="number"
-              min="0"
-              value={participants}
-              onChange={handleParticipantsChange}
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-center text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-            />
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-10 w-10"
-              onClick={() => setParticipants(participants + 1)}
-            >
-              +
-            </Button>
+    <>
+      {/* Collapsed Tab - Always visible */}
+      <div 
+        className={`fixed right-0 top-1/3 -translate-y-1/2 z-40 transition-all duration-300 ${
+          isExpanded ? 'translate-x-full' : 'translate-x-0'
+        }`}
+      >
+        <button
+          onClick={() => setIsExpanded(true)}
+          className="flex flex-col items-center gap-2 bg-primary text-primary-foreground px-3 py-4 rounded-l-lg shadow-lg hover:bg-primary/90 transition-colors"
+        >
+          <Calculator className="h-5 w-5" />
+          <span 
+            className="text-xs font-medium whitespace-nowrap"
+            style={{ writingMode: 'vertical-rl', textOrientation: 'mixed', transform: 'rotate(180deg)' }}
+          >
+            Calculadora
+          </span>
+        </button>
+      </div>
+
+      {/* Expanded Sidebar */}
+      <div
+        className={`fixed right-0 top-0 h-full z-50 transition-transform duration-300 ${
+          isExpanded ? 'translate-x-0' : 'translate-x-full'
+        }`}
+      >
+        {/* Overlay */}
+        {isExpanded && (
+          <div 
+            className="fixed inset-0 bg-black/30 -z-10"
+            onClick={() => setIsExpanded(false)}
+          />
+        )}
+        
+        <div className="h-full w-80 bg-background border-l shadow-xl flex flex-col">
+          {/* Header */}
+          <div className="p-4 border-b bg-gradient-to-r from-primary/10 to-transparent">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Calculator className="h-5 w-5 text-primary" />
+                <h2 className="font-semibold text-lg">Calcula tu Franquicia</h2>
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsExpanded(false)}
+                className="h-8 w-8"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
-        </div>
 
-        <Separator />
-
-        {/* Coverage Options */}
-        <div className="space-y-3">
-          <p className="text-sm font-medium text-foreground">Cobertura de Franquicia</p>
-          <div className="space-y-2">
-            {coverageOptions.map((option) => {
-              const coverage = calculateCoverage(option.percentage);
-              return (
-                <div
-                  key={option.percentage}
-                  className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
+          {/* Calculator Content */}
+          <div className="flex-1 p-4 space-y-4 overflow-y-auto">
+            {/* Participants Input */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground">
+                Número de participantes
+              </label>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-10 w-10"
+                  onClick={() => setParticipants(Math.max(0, participants - 1))}
                 >
-                  <div className="flex items-center gap-2">
-                    <div className={`w-3 h-3 rounded-full ${
-                      option.percentage === 100 
-                        ? 'bg-emerald-500' 
-                        : option.percentage === 50 
-                          ? 'bg-amber-500' 
-                          : 'bg-blue-500'
-                    }`} />
-                    <span className="text-sm font-medium">{option.label}</span>
-                  </div>
-                  <span className={`font-bold ${
-                    option.percentage === 100 
-                      ? 'text-emerald-600 dark:text-emerald-400' 
-                      : option.percentage === 50 
-                        ? 'text-amber-600 dark:text-amber-400' 
-                        : 'text-blue-600 dark:text-blue-400'
-                  }`}>
-                    {formatPrice(coverage)}
-                  </span>
-                </div>
-              );
-            })}
+                  -
+                </Button>
+                <input
+                  type="number"
+                  min="0"
+                  value={participants}
+                  onChange={handleParticipantsChange}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-center text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                />
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-10 w-10"
+                  onClick={() => setParticipants(participants + 1)}
+                >
+                  +
+                </Button>
+              </div>
+            </div>
+
+            <Separator />
+
+            {/* Coverage Options */}
+            <div className="space-y-3">
+              <p className="text-sm font-medium text-foreground">Cobertura de Franquicia</p>
+              <div className="space-y-2">
+                {coverageOptions.map((option) => {
+                  const coverage = calculateCoverage(option.percentage);
+                  return (
+                    <div
+                      key={option.percentage}
+                      className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
+                    >
+                      <div className="flex items-center gap-2">
+                        <div className={`w-3 h-3 rounded-full ${
+                          option.percentage === 100 
+                            ? 'bg-emerald-500' 
+                            : option.percentage === 50 
+                              ? 'bg-amber-500' 
+                              : 'bg-blue-500'
+                        }`} />
+                        <span className="text-sm font-medium">{option.label}</span>
+                      </div>
+                      <span className={`font-bold ${
+                        option.percentage === 100 
+                          ? 'text-emerald-600 dark:text-emerald-400' 
+                          : option.percentage === 50 
+                            ? 'text-amber-600 dark:text-amber-400' 
+                            : 'text-blue-600 dark:text-blue-400'
+                      }`}>
+                        {formatPrice(coverage)}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <Separator />
+
+            {/* Total Summary */}
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Valor efectivo total</span>
+                <span className="font-medium">{formatPrice(totalEffectiveValue)}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Base cálculo franquicia</span>
+                <span className="font-medium text-primary">{formatPrice(baseValuePerParticipant * participants)}</span>
+              </div>
+            </div>
+
+            {/* Info Note */}
+            <div className="p-3 bg-primary/5 rounded-lg">
+              <p className="text-xs text-muted-foreground">
+                El cálculo se basa en el menor valor entre el valor efectivo por participante ({formatPrice(effectiveValuePerParticipant)}) y el valor máximo imputable ({formatPrice(maxImputableValue)}).
+              </p>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="p-4 border-t bg-muted/30">
+            <p className="text-xs text-muted-foreground text-center">
+              Simulador de franquicia SENCE
+            </p>
           </div>
         </div>
-
-        <Separator />
-
-        {/* Total Summary */}
-        <div className="space-y-2">
-          <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Valor efectivo total</span>
-            <span className="font-medium">{formatPrice(totalEffectiveValue)}</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Base cálculo franquicia</span>
-            <span className="font-medium text-primary">{formatPrice(baseValuePerParticipant * participants)}</span>
-          </div>
-        </div>
-
-        {/* Info Note */}
-        <div className="p-3 bg-primary/5 rounded-lg">
-          <p className="text-xs text-muted-foreground">
-            El cálculo se basa en el menor valor entre el valor efectivo por participante ({formatPrice(effectiveValuePerParticipant)}) y el valor máximo imputable ({formatPrice(maxImputableValue)}).
-          </p>
-        </div>
-      </CardContent>
-    </Card>
+      </div>
+    </>
   );
 };
 
@@ -435,9 +492,9 @@ const CourseDetail: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="space-y-6">
         {/* Main Content */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="space-y-6">
           {/* Contact Information */}
           <Card>
             <CardHeader>
@@ -661,19 +718,14 @@ const CourseDetail: React.FC = () => {
             </CardContent>
           </Card>
         </div>
-
-        {/* Sidebar - Sticky Actions */}
-        <div className="lg:col-span-1">
-          <div className="sticky top-6 space-y-4">
-            {/* Franchise Calculator Section */}
-            <FranchiseCalculator 
-              effectiveValuePerParticipant={course.effectiveValuePerParticipant}
-              maxImputableValue={course.maxImputableValue}
-              formatPrice={formatPrice}
-            />
-          </div>
-        </div>
       </div>
+
+      {/* Floating Franchise Calculator */}
+      <FranchiseCalculator 
+        effectiveValuePerParticipant={course.effectiveValuePerParticipant}
+        maxImputableValue={course.maxImputableValue}
+        formatPrice={formatPrice}
+      />
 
       {/* Quote Request Modal */}
       <QuoteRequestModal
