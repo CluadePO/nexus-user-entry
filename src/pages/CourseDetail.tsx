@@ -435,9 +435,9 @@ const CourseDetail: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:grid-rows-[auto_auto_1fr_auto]">
         {/* Main Content */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 lg:row-span-4 space-y-6">
           {/* Contact Information */}
           <Card>
             <CardHeader>
@@ -663,7 +663,7 @@ const CourseDetail: React.FC = () => {
         </div>
 
         {/* Sidebar - Sticky Actions */}
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-1 lg:row-span-2 lg:row-start-2">
           <div className="sticky top-6 space-y-4">
             {/* Franchise Calculator Section */}
             <FranchiseCalculator 
