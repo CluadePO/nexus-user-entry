@@ -53,6 +53,7 @@ import { Label } from '@/components/ui/label';
 import { ChileRegionsMap } from '@/components/dashboard/ChileRegionsMap';
 import { OTECBuscadorDashboard } from '@/components/dashboard/OTECBuscadorDashboard';
 import { CourseComparisonModal } from '@/components/dashboard/CourseComparisonModal';
+import FavoritesSidebar from '@/components/buscador/FavoritesSidebar';
 import { useAuth } from '@/context/AuthContext';
 
 interface Course {
@@ -969,6 +970,13 @@ const MiBuscador: React.FC = () => {
           )}
         </TabsContent>
       </Tabs>
+
+      {/* Favorites Sidebar */}
+      <FavoritesSidebar
+        favoriteCourses={courses.filter(c => c.isFavorite)}
+        onRemoveFavorite={toggleFavorite}
+        formatPrice={formatPrice}
+      />
 
       {/* Course Comparison Modal */}
       <CourseComparisonModal
