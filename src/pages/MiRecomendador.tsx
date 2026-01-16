@@ -788,7 +788,7 @@ const MiRecomendador: React.FC = () => {
               style={{ backgroundColor: '#65BFB1', borderColor: '#65BFB1' }}
               icon={<ArrowRight className="w-4 h-4" />}
             >
-              {currentStep === 2 ? 'Buscar Cursos' : 'Siguiente'}
+              Siguiente
             </Button>
           )}
         </div>
