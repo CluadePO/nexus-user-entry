@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, Steps, Button, Form, Input, Select, Table, Checkbox, Tag, message } from 'antd';
+import { Card, Steps, Button, Form, Input, Select, Table, Checkbox, Tag, message, InputNumber, DatePicker } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { 
   ArrowLeft, 
@@ -13,9 +13,15 @@ import {
   Download,
   ChevronDown,
   ChevronUp,
-  FileSpreadsheet
+  FileSpreadsheet,
+  Clock,
+  Calendar,
+  Monitor,
+  BookOpen,
+  Calculator
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts';
 
 const { Option } = Select;
 
@@ -167,6 +173,17 @@ interface CourseResult {
   objetivo: string;
 }
 
+interface CourseProposal {
+  courseId: number;
+  tramo15: number;
+  tramo50: number;
+  tramo100: number;
+  periodos: { fechaDesde: string | null; fechaHasta: string | null }[];
+  valorImputable: number;
+  diferencia: number;
+  expanded: boolean;
+}
+
 const MiRecomendador: React.FC = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
@@ -197,12 +214,15 @@ const MiRecomendador: React.FC = () => {
   
   const [selectedCourses, setSelectedCourses] = useState<number[]>([]);
   const [expandedRows, setExpandedRows] = useState<number[]>([]);
+  const [showProposal, setShowProposal] = useState(false);
+  const [courseProposals, setCourseProposals] = useState<CourseProposal[]>([]);
 
   const steps = [
     { title: 'Contacto', icon: <User className="w-4 h-4" /> },
     { title: 'Cursos', icon: <GraduationCap className="w-4 h-4" /> },
     { title: 'Confirmación', icon: <CheckCircle className="w-4 h-4" /> },
-    { title: 'Resultados', icon: <FileSpreadsheet className="w-4 h-4" /> }
+    { title: 'Resultados', icon: <FileSpreadsheet className="w-4 h-4" /> },
+    { title: 'Propuesta', icon: <Calculator className="w-4 h-4" /> }
   ];
 
   const handleAddArea = () => {
@@ -267,8 +287,68 @@ const MiRecomendador: React.FC = () => {
       message.warning('Por favor seleccione al menos un curso');
       return;
     }
-    message.success('Cotización validada correctamente');
-    // Navigate or trigger next action
+    // Initialize course proposals for selected courses
+    const proposals = selectedCourses.map(courseId => ({
+      courseId,
+      tramo15: 0,
+      tramo50: 0,
+      tramo100: 0,
+      periodos: [{ fechaDesde: null, fechaHasta: null }],
+      valorImputable: 0,
+      diferencia: 0,
+      expanded: false
+    }));
+    setCourseProposals(proposals);
+    setCurrentStep(4); // Go to Propuesta step
+  };
+
+  const handleUpdateProposal = (courseId: number, field: keyof CourseProposal, value: any) => {
+    setCourseProposals(prev => prev.map(p => 
+      p.courseId === courseId ? { ...p, [field]: value } : p
+    ));
+  };
+
+  const handleAddPeriodo = (courseId: number) => {
+    setCourseProposals(prev => prev.map(p => 
+      p.courseId === courseId 
+        ? { ...p, periodos: [...p.periodos, { fechaDesde: null, fechaHasta: null }] }
+        : p
+    ));
+  };
+
+  const handleRemovePeriodo = (courseId: number, index: number) => {
+    setCourseProposals(prev => prev.map(p => 
+      p.courseId === courseId 
+        ? { ...p, periodos: p.periodos.filter((_, i) => i !== index) }
+        : p
+    ));
+  };
+
+  const handleCalculate = (courseId: number) => {
+    const proposal = courseProposals.find(p => p.courseId === courseId);
+    const course = mockCourseResults.find(c => c.id === courseId);
+    if (proposal && course) {
+      // Mock calculation
+      const totalParticipants = proposal.tramo15 + proposal.tramo50 + proposal.tramo100;
+      const valorBase = 50000; // Mock base value per hour
+      const valorImputable = valorBase * course.horas;
+      const diferencia = totalParticipants > 0 ? valorImputable * 0.15 : 0;
+      handleUpdateProposal(courseId, 'valorImputable', valorImputable);
+      handleUpdateProposal(courseId, 'diferencia', diferencia);
+      message.success('Cálculo realizado correctamente');
+    }
+  };
+
+  const toggleProposalExpanded = (courseId: number) => {
+    setCourseProposals(prev => prev.map(p => 
+      p.courseId === courseId ? { ...p, expanded: !p.expanded } : p
+    ));
+  };
+
+  const handleVolverAlInicio = () => {
+    setCurrentStep(0);
+    setSelectedCourses([]);
+    setCourseProposals([]);
   };
 
   const toggleRowExpanded = (id: number) => {
@@ -726,6 +806,288 @@ const MiRecomendador: React.FC = () => {
     </div>
   );
 
+  const renderProposalStep = () => {
+    const selectedCoursesData = mockCourseResults.filter(c => selectedCourses.includes(c.id));
+    
+    // Calculate modality distribution
+    const modalityCount = selectedCoursesData.reduce((acc, course) => {
+      acc[course.modalidad] = (acc[course.modalidad] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+    
+    const modalityData = Object.entries(modalityCount).map(([name, value]) => ({
+      name,
+      value,
+      percentage: Math.round((value / selectedCoursesData.length) * 100)
+    }));
+
+    // Calculate specialty distribution
+    const specialtyCount = selectedCoursesData.reduce((acc, course) => {
+      acc[course.especialidad] = (acc[course.especialidad] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+    
+    const specialtyData = Object.entries(specialtyCount).map(([name, value]) => ({
+      name,
+      value,
+      percentage: Math.round((value / selectedCoursesData.length) * 100)
+    }));
+
+    const COLORS = ['#65BFB1', '#3B82F6', '#F59E0B', '#EF4444', '#8B5CF6'];
+
+    return (
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-xl font-semibold text-foreground">Recomendación - Propuesta de capacitación</h2>
+            <p className="text-muted-foreground text-sm">
+              Valoriza y programa los cursos seleccionados, de acuerdo a los participantes por tramo y fechas en que desees ejecutar la capacitación.
+            </p>
+          </div>
+          <Button
+            onClick={handleVolverAlInicio}
+            className="border-[#65BFB1] text-[#65BFB1]"
+          >
+            Volver al inicio
+          </Button>
+        </div>
+
+        {/* Summary Cards */}
+        <Card className="border shadow-sm">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Cursos */}
+            <div className="flex items-center gap-4">
+              <div className="text-4xl font-bold text-[#1e4a5a]">{selectedCourses.length}</div>
+              <div className="flex items-center gap-2">
+                <BookOpen className="w-6 h-6 text-[#65BFB1]" />
+                <span className="text-sm text-muted-foreground">Cursos<br/>seleccionados</span>
+              </div>
+            </div>
+
+            {/* Modalidad */}
+            <div>
+              <h4 className="font-medium text-foreground mb-2">Modalidad</h4>
+              <div className="flex items-center gap-4">
+                <div className="space-y-1 text-sm">
+                  {modalityData.map((item, idx) => (
+                    <div key={item.name} className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[idx % COLORS.length] }} />
+                      <span>{item.name}: {item.percentage}%</span>
+                    </div>
+                  ))}
+                  {modalityData.length === 0 && (
+                    <>
+                      <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-amber-400" /><span>Presencial: 0%</span></div>
+                      <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-blue-500" /><span>E-learning: 0%</span></div>
+                      <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-red-500" /><span>A Distancia: 0%</span></div>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Especialidades */}
+            <div>
+              <h4 className="font-medium text-foreground mb-2">Especialidades de capacitación</h4>
+              <div className="flex items-center gap-4">
+                <div className="w-20 h-20">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={specialtyData.length > 0 ? specialtyData : [{ name: 'Sin datos', value: 1 }]}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={20}
+                        outerRadius={35}
+                        dataKey="value"
+                      >
+                        {(specialtyData.length > 0 ? specialtyData : [{ name: 'Sin datos', value: 1 }]).map((_, index) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                      </Pie>
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="space-y-1 text-sm">
+                  {specialtyData.map((item, idx) => (
+                    <div key={item.name} className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[idx % COLORS.length] }} />
+                      <span>{item.name}: {item.percentage}%</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        {/* Listado de capacitaciones */}
+        <div>
+          <h3 className="text-lg font-semibold text-foreground mb-4">Listado de capacitaciones</h3>
+          
+          {courseProposals.map((proposal) => {
+            const course = mockCourseResults.find(c => c.id === proposal.courseId);
+            if (!course) return null;
+
+            return (
+              <Card key={proposal.courseId} className="border shadow-sm mb-4">
+                {/* Course Header */}
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-start gap-3">
+                    <div className="p-2 bg-gray-100 rounded">
+                      <BookOpen className="w-5 h-5 text-gray-600" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-foreground">{course.nombreCurso}</h4>
+                      <p className="text-sm text-[#65BFB1]">{course.especialidad.toUpperCase()}</p>
+                    </div>
+                  </div>
+                  <div className="text-right text-sm space-y-1">
+                    <div className="flex items-center gap-2 justify-end text-muted-foreground">
+                      <Monitor className="w-4 h-4" />
+                      <span>{course.codigoCurso}</span>
+                    </div>
+                    <div className="flex items-center gap-2 justify-end text-muted-foreground">
+                      <Clock className="w-4 h-4" />
+                      <span>{course.horas} horas</span>
+                    </div>
+                    <div className="flex items-center gap-2 justify-end text-muted-foreground">
+                      <Calendar className="w-4 h-4" />
+                      <span>Vigencia del curso</span>
+                    </div>
+                    <div className="flex items-center gap-2 justify-end text-muted-foreground">
+                      <Monitor className="w-4 h-4" />
+                      <span>{course.modalidad}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Tramos y Fechas */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-4">
+                  {/* Cantidad de personas por tramo */}
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-3">Cantidad de personas por tramo</label>
+                    <div className="grid grid-cols-3 gap-3">
+                      <div>
+                        <label className="block text-xs text-muted-foreground mb-1">Tramo 15%</label>
+                        <InputNumber
+                          className="w-full"
+                          min={0}
+                          value={proposal.tramo15}
+                          onChange={(value) => handleUpdateProposal(proposal.courseId, 'tramo15', value || 0)}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-muted-foreground mb-1">Tramo 50%</label>
+                        <InputNumber
+                          className="w-full"
+                          min={0}
+                          value={proposal.tramo50}
+                          onChange={(value) => handleUpdateProposal(proposal.courseId, 'tramo50', value || 0)}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs text-muted-foreground mb-1">Tramo 100%</label>
+                        <InputNumber
+                          className="w-full"
+                          min={0}
+                          value={proposal.tramo100}
+                          onChange={(value) => handleUpdateProposal(proposal.courseId, 'tramo100', value || 0)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Fecha referencial */}
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-3">Fecha referencial de capacitación</label>
+                    {proposal.periodos.map((periodo, idx) => (
+                      <div key={idx} className="flex items-center gap-2 mb-2">
+                        <div className="flex-1">
+                          <label className="block text-xs text-muted-foreground mb-1">Fecha desde</label>
+                          <DatePicker
+                            className="w-full"
+                            placeholder="Seleccionar"
+                            onChange={(date) => {
+                              const newPeriodos = [...proposal.periodos];
+                              newPeriodos[idx] = { ...newPeriodos[idx], fechaDesde: date?.format('YYYY-MM-DD') || null };
+                              handleUpdateProposal(proposal.courseId, 'periodos', newPeriodos);
+                            }}
+                          />
+                        </div>
+                        <div className="flex-1">
+                          <label className="block text-xs text-muted-foreground mb-1">Fecha hasta</label>
+                          <DatePicker
+                            className="w-full"
+                            placeholder="Seleccionar"
+                            onChange={(date) => {
+                              const newPeriodos = [...proposal.periodos];
+                              newPeriodos[idx] = { ...newPeriodos[idx], fechaHasta: date?.format('YYYY-MM-DD') || null };
+                              handleUpdateProposal(proposal.courseId, 'periodos', newPeriodos);
+                            }}
+                          />
+                        </div>
+                        {proposal.periodos.length > 1 && (
+                          <Button
+                            type="text"
+                            danger
+                            icon={<Trash2 className="w-4 h-4" />}
+                            onClick={() => handleRemovePeriodo(proposal.courseId, idx)}
+                            className="mt-5"
+                          />
+                        )}
+                      </div>
+                    ))}
+                    <Button
+                      type="link"
+                      onClick={() => handleAddPeriodo(proposal.courseId)}
+                      className="text-[#65BFB1] p-0"
+                    >
+                      Agregar otro período
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Calcular Button */}
+                <div className="flex justify-start mb-4">
+                  <Button
+                    onClick={() => handleCalculate(proposal.courseId)}
+                    className="bg-gray-100 text-gray-600 border-gray-200"
+                  >
+                    Calcular
+                  </Button>
+                </div>
+
+                {/* Footer con valores */}
+                <div className="flex items-center justify-between pt-4 border-t">
+                  <Button
+                    type="link"
+                    onClick={() => toggleProposalExpanded(proposal.courseId)}
+                    className="text-[#65BFB1] p-0 flex items-center gap-1"
+                  >
+                    Configurar curso {proposal.expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                  </Button>
+                  <div className="flex items-center gap-8 text-sm">
+                    <span>Valor Imputable por participante: <strong>${proposal.valorImputable.toLocaleString('es-CL')}</strong></span>
+                    <span>Diferencia a pagar fuera de cobertura franquicia: <strong>${proposal.diferencia.toLocaleString('es-CL')}</strong></span>
+                  </div>
+                </div>
+
+                {/* Expanded Config */}
+                {proposal.expanded && (
+                  <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                    <p className="text-sm text-muted-foreground">Configuración adicional del curso (pendiente de implementar)</p>
+                  </div>
+                )}
+              </Card>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
   const renderStepContent = () => {
     switch (currentStep) {
       case 0:
@@ -736,6 +1098,8 @@ const MiRecomendador: React.FC = () => {
         return renderConfirmationStep();
       case 3:
         return renderResultsStep();
+      case 4:
+        return renderProposalStep();
       default:
         return null;
     }
@@ -772,26 +1136,27 @@ const MiRecomendador: React.FC = () => {
           {renderStepContent()}
         </div>
 
-        {/* Navigation Buttons */}
-        <div className="flex justify-between pt-6 border-t mt-6">
-          <Button
-            onClick={handlePrev}
-            disabled={currentStep === 0}
-            icon={<ArrowLeft className="w-4 h-4" />}
-          >
-            Anterior
-          </Button>
-          {currentStep < 3 && (
+        {currentStep < 4 && (
+          <div className="flex justify-between pt-6 border-t mt-6">
             <Button
-              type="primary"
-              onClick={handleNext}
-              style={{ backgroundColor: '#65BFB1', borderColor: '#65BFB1' }}
-              icon={<ArrowRight className="w-4 h-4" />}
+              onClick={handlePrev}
+              disabled={currentStep === 0}
+              icon={<ArrowLeft className="w-4 h-4" />}
             >
-              Siguiente
+              Anterior
             </Button>
-          )}
-        </div>
+            {currentStep < 3 && (
+              <Button
+                type="primary"
+                onClick={handleNext}
+                style={{ backgroundColor: '#65BFB1', borderColor: '#65BFB1' }}
+                icon={<ArrowRight className="w-4 h-4" />}
+              >
+                Siguiente
+              </Button>
+            )}
+          </div>
+        )}
       </Card>
     </div>
   );
