@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { HelpCircle, ChevronUp, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   Accordion,
   AccordionContent,
@@ -49,13 +48,26 @@ const faqItems = [
 
 const FAQStickyPanel: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  const handleToggle = () => {
+    const newState = !isOpen;
+    setIsOpen(newState);
+    
+    // Scroll to button when opening to ensure visibility
+    if (newState && buttonRef.current) {
+      setTimeout(() => {
+        buttonRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      }, 100);
+    }
+  };
 
   return (
-    <div className="w-full mt-8">
+    <div className="w-full mt-8 pb-4">
       <div className="w-full max-w-4xl mx-auto">
         {/* Expanded Panel - appears above the button */}
         {isOpen && (
-          <div className="bg-background border border-b-0 rounded-t-xl shadow-lg animate-in slide-in-from-bottom duration-300">
+          <div className="bg-background border border-b-0 rounded-t-xl shadow-lg">
             <div className="p-4 border-b">
               <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
                 <HelpCircle className="h-5 w-5 text-primary" />
@@ -65,7 +77,7 @@ const FAQStickyPanel: React.FC = () => {
                 Aquí podrás encontrar respuestas a tus inquietudes, si persisten tus dudas, comunícate con nosotros.
               </p>
             </div>
-            <ScrollArea className="max-h-[400px]">
+            <div className="max-h-[400px] overflow-y-auto">
               <div className="p-4">
                 <Accordion type="single" collapsible className="w-full">
                   {faqItems.map((item) => (
@@ -80,13 +92,14 @@ const FAQStickyPanel: React.FC = () => {
                   ))}
                 </Accordion>
               </div>
-            </ScrollArea>
+            </div>
           </div>
         )}
 
         {/* Tab Button - always at the bottom */}
         <Button
-          onClick={() => setIsOpen(!isOpen)}
+          ref={buttonRef}
+          onClick={handleToggle}
           className={`w-full h-10 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg flex items-center justify-center gap-2 ${
             isOpen ? 'rounded-t-none rounded-b-lg' : 'rounded-lg'
           }`}
