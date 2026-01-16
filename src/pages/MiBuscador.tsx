@@ -391,13 +391,13 @@ const MiBuscador: React.FC = () => {
       </div>
 
       <Tabs defaultValue="buscador" className="w-full">
-        <TabsList className={`grid w-full ${canUploadCourses ? 'max-w-2xl grid-cols-4' : 'max-w-md grid-cols-2'}`}>
-          <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-          <TabsTrigger value="buscador">Buscador de Cursos</TabsTrigger>
+        <TabsList className={`inline-flex h-10 w-auto ${canUploadCourses ? '' : 'max-w-md grid grid-cols-2'}`}>
+          <TabsTrigger value="dashboard" className="px-4">Dashboard</TabsTrigger>
+          <TabsTrigger value="buscador" className="px-4">Buscador de Cursos</TabsTrigger>
           {canUploadCourses && (
             <>
-              <TabsTrigger value="carga">Carga de Cursos</TabsTrigger>
-              <TabsTrigger value="cotizaciones">Cotizaciones del Proveedor</TabsTrigger>
+              <TabsTrigger value="carga" className="px-4">Carga de Cursos</TabsTrigger>
+              <TabsTrigger value="cotizaciones" className="px-4">Cotizaciones del Proveedor</TabsTrigger>
             </>
           )}
         </TabsList>
