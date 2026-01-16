@@ -1385,6 +1385,12 @@ const MiRecomendador: React.FC = () => {
           </Button>
           <div className="flex gap-3">
             <Button
+              icon={<GraduationCap className="w-4 h-4" />}
+              onClick={() => navigate('/inscripcion')}
+            >
+              Inscribir Cursos de la Recomendación
+            </Button>
+            <Button
               icon={<Download className="w-4 h-4" />}
               onClick={() => message.success('Descargando PDF de la propuesta...')}
             >
@@ -1394,8 +1400,13 @@ const MiRecomendador: React.FC = () => {
               type="primary"
               size="large"
               onClick={() => {
-                message.success('¡Propuesta enviada exitosamente!');
-                handleVolverAlInicio();
+                message.success(
+                  'Hemos recibido satisfactoriamente su Propuesta de Capacitación, para su ejecución recibirá el contacto de uno de nuestros ejecutivos comerciales dentro de 48 hrs hábiles o contáctenos al +56 2 2405 2000 o escríbanos en consultas@ccc.cl',
+                  10
+                );
+                setTimeout(() => {
+                  handleVolverAlInicio();
+                }, 3000);
               }}
               style={{ backgroundColor: '#65BFB1', borderColor: '#65BFB1' }}
             >
