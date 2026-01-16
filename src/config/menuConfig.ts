@@ -66,6 +66,7 @@ export const menuByRole: Record<UserRole, MenuItem[]> = {
       icon: 'BarChart3',
       children: [
         { key: 'reportes-main', label: 'Reportes', url: '/reportes' },
+        { key: 'encuestas', label: 'Encuestas', url: '/encuestas' },
       ]
     },
     { 
@@ -113,6 +114,7 @@ export const menuByRole: Record<UserRole, MenuItem[]> = {
       icon: 'BarChart3',
       children: [
         { key: 'reportes-main', label: 'Reportes', url: '/reportes' },
+        { key: 'encuestas', label: 'Encuestas', url: '/encuestas' },
       ]
     },
     { 
@@ -244,6 +246,7 @@ export const menuByRole: Record<UserRole, MenuItem[]> = {
       children: [
         { key: 'data360', label: 'Data 360', url: '/data360' },
         { key: 'reportes-main', label: 'Reportes', url: '/reportes' },
+        { key: 'encuestas', label: 'Encuestas', url: '/encuestas' },
       ]
     },
     { 
