@@ -176,6 +176,102 @@ const CourseUploadTab: React.FC = () => {
       uploadDate: '2025-01-06',
       status: 'active'
     },
+    {
+      id: '11',
+      name: 'Negociación Efectiva',
+      specialty: 'Habilidades Blandas',
+      type: 'Sence',
+      code: '1237889463',
+      validUntil: '2026-05-15',
+      price: 290000,
+      modality: 'Presencial',
+      uploadDate: '2025-01-05',
+      status: 'active'
+    },
+    {
+      id: '12',
+      name: 'Primeros Auxilios',
+      specialty: 'Prevención de Riesgos',
+      type: 'Sence',
+      code: '1237889464',
+      validUntil: '2026-08-20',
+      price: 180000,
+      modality: 'Presencial',
+      uploadDate: '2025-01-04',
+      status: 'active'
+    },
+    {
+      id: '13',
+      name: 'Word y PowerPoint Avanzado',
+      specialty: 'Ofimática',
+      type: 'Sence',
+      code: '1237889465',
+      validUntil: '2026-11-30',
+      price: 160000,
+      modality: 'E-learning',
+      uploadDate: '2025-01-03',
+      status: 'active'
+    },
+    {
+      id: '14',
+      name: 'Ventas Consultivas',
+      specialty: 'Ventas',
+      type: 'Sence',
+      code: '1237889466',
+      validUntil: '2026-02-28',
+      price: 320000,
+      modality: 'Presencial',
+      uploadDate: '2025-01-02',
+      status: 'inactive'
+    },
+    {
+      id: '15',
+      name: 'Gestión del Tiempo',
+      specialty: 'Habilidades Blandas',
+      type: 'Sence',
+      code: '1237889467',
+      validUntil: '2026-07-01',
+      price: 140000,
+      modality: 'E-learning',
+      uploadDate: '2025-01-01',
+      status: 'active'
+    },
+    {
+      id: '16',
+      name: 'Diseño Gráfico Básico',
+      specialty: 'Diseño',
+      type: 'No Sence',
+      code: 'NS-004',
+      validUntil: '2025-10-15',
+      price: 175000,
+      modality: 'E-learning',
+      uploadDate: '2024-12-31',
+      status: 'active'
+    },
+    {
+      id: '17',
+      name: 'Redes Sociales para Negocios',
+      specialty: 'Marketing',
+      type: 'No Sence',
+      code: 'NS-005',
+      validUntil: '2025-09-20',
+      price: 130000,
+      modality: 'E-learning',
+      uploadDate: '2024-12-30',
+      status: 'active'
+    },
+    {
+      id: '18',
+      name: 'Fotografía Profesional',
+      specialty: 'Diseño',
+      type: 'No Sence',
+      code: 'NS-006',
+      validUntil: '2025-12-01',
+      price: 200000,
+      modality: 'Presencial',
+      uploadDate: '2024-12-29',
+      status: 'inactive'
+    },
   ]);
 
   const [currentPage, setCurrentPage] = useState(1);
