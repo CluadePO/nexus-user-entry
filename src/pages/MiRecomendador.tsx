@@ -1084,6 +1084,24 @@ const MiRecomendador: React.FC = () => {
             );
           })}
         </div>
+
+        {/* Action Buttons */}
+        <div className="flex justify-between pt-6 border-t mt-6">
+          <Button
+            onClick={() => setCurrentStep(3)}
+            icon={<ArrowLeft className="w-4 h-4" />}
+          >
+            Volver
+          </Button>
+          <Button
+            type="primary"
+            size="large"
+            onClick={() => message.success('Propuesta confirmada exitosamente')}
+            style={{ backgroundColor: '#65BFB1', borderColor: '#65BFB1' }}
+          >
+            Confirmar Propuesta
+          </Button>
+        </div>
       </div>
     );
   };
