@@ -55,6 +55,7 @@ import { OTECBuscadorDashboard } from '@/components/dashboard/OTECBuscadorDashbo
 import { CourseComparisonModal } from '@/components/dashboard/CourseComparisonModal';
 import FavoritesSidebar from '@/components/buscador/FavoritesSidebar';
 import CourseUploadTab from '@/components/buscador/CourseUploadTab';
+import ProviderQuotesTab from '@/components/buscador/ProviderQuotesTab';
 import { useAuth } from '@/context/AuthContext';
 
 interface Course {
@@ -390,11 +391,14 @@ const MiBuscador: React.FC = () => {
       </div>
 
       <Tabs defaultValue="buscador" className="w-full">
-        <TabsList className={`grid w-full max-w-md ${canUploadCourses ? 'grid-cols-3' : 'grid-cols-2'}`}>
+        <TabsList className={`grid w-full ${canUploadCourses ? 'max-w-2xl grid-cols-4' : 'max-w-md grid-cols-2'}`}>
           <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
           <TabsTrigger value="buscador">Buscador de Cursos</TabsTrigger>
           {canUploadCourses && (
-            <TabsTrigger value="carga">Carga de Cursos</TabsTrigger>
+            <>
+              <TabsTrigger value="carga">Carga de Cursos</TabsTrigger>
+              <TabsTrigger value="cotizaciones">Cotizaciones del Proveedor</TabsTrigger>
+            </>
           )}
         </TabsList>
 
@@ -981,6 +985,13 @@ const MiBuscador: React.FC = () => {
         {canUploadCourses && (
           <TabsContent value="carga" className="mt-6">
             <CourseUploadTab />
+          </TabsContent>
+        )}
+
+        {/* Provider Quotes Tab - Only for OTIC, OTEC, OTEC_REPRESENTANTE */}
+        {canUploadCourses && (
+          <TabsContent value="cotizaciones" className="mt-6">
+            <ProviderQuotesTab />
           </TabsContent>
         )}
       </Tabs>
