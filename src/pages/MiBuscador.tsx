@@ -56,6 +56,7 @@ import { CourseComparisonModal } from '@/components/dashboard/CourseComparisonMo
 import FavoritesSidebar from '@/components/buscador/FavoritesSidebar';
 import CourseUploadTab from '@/components/buscador/CourseUploadTab';
 import ProviderQuotesTab from '@/components/buscador/ProviderQuotesTab';
+import FAQStickyPanel from '@/components/buscador/FAQStickyPanel';
 import { useAuth } from '@/context/AuthContext';
 
 interface Course {
@@ -1013,6 +1014,9 @@ const MiBuscador: React.FC = () => {
         onRemoveCourse={handleRemoveCourseFromComparison}
         onSwapCourse={handleSwapCourse}
       />
+
+      {/* FAQ Sticky Panel */}
+      <FAQStickyPanel />
     </div>
   );
 };
