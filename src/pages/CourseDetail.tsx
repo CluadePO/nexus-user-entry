@@ -375,8 +375,8 @@ const FranchiseCalculator: React.FC<FranchiseCalculatorProps> = ({
           </div>
 
           {/* Footer */}
-          <div className="p-4 border-t bg-muted/30">
-            <p className="text-xs text-muted-foreground text-center">
+          <div className="p-4 border-t bg-muted/30 flex-shrink-0">
+            <p className="text-xs text-muted-foreground text-center whitespace-nowrap">
               Simulador de franquicia SENCE
             </p>
           </div>
