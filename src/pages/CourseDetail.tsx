@@ -24,6 +24,7 @@ import {
   Heart,
   Award
 } from 'lucide-react';
+import QuoteRequestModal from '@/components/buscador/QuoteRequestModal';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -331,6 +332,7 @@ const FranchiseCalculator: React.FC<FranchiseCalculatorProps> = ({
 const CourseDetail: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
+  const [quoteModalOpen, setQuoteModalOpen] = useState(false);
 
   const course = mockCourseDetails[courseId as keyof typeof mockCourseDetails] || { ...defaultCourse, id: courseId };
 
@@ -550,6 +552,18 @@ const CourseDetail: React.FC = () => {
                   <p className="text-xl font-bold text-emerald-700 dark:text-emerald-400">{formatPrice(course.maxImputableValue)}</p>
                 </div>
               </div>
+
+              {/* Quote Button */}
+              <div className="mt-6">
+                <Button 
+                  className="w-full gap-2" 
+                  size="lg"
+                  onClick={() => setQuoteModalOpen(true)}
+                >
+                  <FileText className="h-5 w-5" />
+                  Cotizar el curso
+                </Button>
+              </div>
             </CardContent>
           </Card>
 
@@ -651,17 +665,6 @@ const CourseDetail: React.FC = () => {
         {/* Sidebar - Sticky Actions */}
         <div className="lg:col-span-1">
           <div className="sticky top-6 space-y-4">
-
-            {/* Action Button */}
-            <Card>
-              <CardContent className="pt-6">
-                <Button className="w-full gap-2" size="lg">
-                  <FileText className="h-5 w-5" />
-                  Cotizar el curso
-                </Button>
-              </CardContent>
-            </Card>
-
             {/* Franchise Calculator Section */}
             <FranchiseCalculator 
               effectiveValuePerParticipant={course.effectiveValuePerParticipant}
@@ -671,6 +674,24 @@ const CourseDetail: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Quote Request Modal */}
+      <QuoteRequestModal
+        open={quoteModalOpen}
+        onOpenChange={setQuoteModalOpen}
+        courseInfo={{
+          name: course.name,
+          provider: course.provider.name,
+          senceCode: course.senceCode,
+          area: course.area,
+          modality: course.modality,
+          hours: course.hours,
+          specialty: course.specialty,
+          effectiveValuePerParticipant: course.effectiveValuePerParticipant,
+          maxImputableValue: course.maxImputableValue,
+        }}
+        formatPrice={formatPrice}
+      />
     </div>
   );
 };
