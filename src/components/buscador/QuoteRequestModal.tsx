@@ -172,48 +172,101 @@ const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
           </div>
 
           {/* Right Side - Course Info */}
-          <div className="bg-primary p-6 text-primary-foreground flex flex-col justify-center">
-            <h3 className="text-2xl font-bold mb-6">Información del curso</h3>
+          <div className="bg-gradient-to-br from-primary via-primary to-primary/80 p-8 text-primary-foreground flex flex-col justify-center relative overflow-hidden">
+            {/* Decorative elements */}
+            <div className="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+            <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
+            <div className="absolute top-1/2 right-0 w-24 h-24 bg-white/5 rounded-full translate-x-1/2" />
+            
+            <div className="relative z-10">
+              <h3 className="text-2xl font-bold mb-2">Información del curso</h3>
+              <div className="w-16 h-1 bg-white/40 rounded-full mb-6" />
 
-            <div className="space-y-4">
-              <p className="text-lg font-semibold leading-tight">
-                {courseInfo.name}
-              </p>
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-5 mb-6">
+                <p className="text-lg font-semibold leading-tight">
+                  {courseInfo.name}
+                </p>
+              </div>
 
-              <div className="space-y-3 text-sm">
-                <div>
-                  <span className="font-semibold">Proveedor:</span>{' '}
-                  {courseInfo.provider}
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center flex-shrink-0">
+                    <span className="text-xs font-bold">P</span>
+                  </div>
+                  <div>
+                    <p className="text-xs text-white/60 uppercase tracking-wide">Proveedor</p>
+                    <p className="font-medium">{courseInfo.provider}</p>
+                  </div>
                 </div>
-                <div>
-                  <span className="font-semibold">Código:</span>{' '}
-                  {courseInfo.senceCode}
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center flex-shrink-0">
+                      <span className="text-xs font-bold">#</span>
+                    </div>
+                    <div>
+                      <p className="text-xs text-white/60 uppercase tracking-wide">Código</p>
+                      <p className="font-medium text-sm">{courseInfo.senceCode}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center flex-shrink-0">
+                      <span className="text-xs font-bold">A</span>
+                    </div>
+                    <div>
+                      <p className="text-xs text-white/60 uppercase tracking-wide">Área</p>
+                      <p className="font-medium text-sm">{courseInfo.area}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center flex-shrink-0">
+                      <span className="text-xs font-bold">M</span>
+                    </div>
+                    <div>
+                      <p className="text-xs text-white/60 uppercase tracking-wide">Modalidad</p>
+                      <p className="font-medium text-sm">{courseInfo.modality}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center flex-shrink-0">
+                      <span className="text-xs font-bold">H</span>
+                    </div>
+                    <div>
+                      <p className="text-xs text-white/60 uppercase tracking-wide">Horas</p>
+                      <p className="font-medium text-sm">{courseInfo.hours}</p>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <span className="font-semibold">Área:</span> {courseInfo.area}
-                </div>
-                <div>
-                  <span className="font-semibold">Modalidad de ejecución:</span>{' '}
-                  {courseInfo.modality}
-                </div>
-                <div>
-                  <span className="font-semibold">Horas:</span> {courseInfo.hours}
-                </div>
-                <div>
-                  <span className="font-semibold">Especialidad:</span>{' '}
-                  {courseInfo.specialty}
-                </div>
-                <div>
-                  <span className="font-semibold">Valor efectivo por participante:</span>{' '}
-                  {formatPrice(courseInfo.effectiveValuePerParticipant)}
-                </div>
-                <div>
-                  <span className="font-semibold">Valor máximo imputable:</span>{' '}
-                  {formatPrice(courseInfo.maxImputableValue)}
+
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center flex-shrink-0">
+                    <span className="text-xs font-bold">E</span>
+                  </div>
+                  <div>
+                    <p className="text-xs text-white/60 uppercase tracking-wide">Especialidad</p>
+                    <p className="font-medium text-sm">{courseInfo.specialty}</p>
+                  </div>
                 </div>
               </div>
 
-              <p className="text-xs mt-6 opacity-80">
+              {/* Pricing cards */}
+              <div className="grid grid-cols-2 gap-3 mt-6">
+                <div className="bg-white/15 backdrop-blur-sm rounded-xl p-4 text-center">
+                  <p className="text-xs text-white/70 mb-1">Valor efectivo</p>
+                  <p className="text-lg font-bold">{formatPrice(courseInfo.effectiveValuePerParticipant)}</p>
+                  <p className="text-xs text-white/60">por participante</p>
+                </div>
+                <div className="bg-white/15 backdrop-blur-sm rounded-xl p-4 text-center">
+                  <p className="text-xs text-white/70 mb-1">Máximo imputable</p>
+                  <p className="text-lg font-bold">{formatPrice(courseInfo.maxImputableValue)}</p>
+                  <p className="text-xs text-white/60">franquicia</p>
+                </div>
+              </div>
+
+              <p className="text-xs mt-6 text-white/60 leading-relaxed">
                 (*) Valor según información proporcionada por el proveedor para uso
                 de la franquicia tributaria. Pueden existir diferencias con los
                 valores particulares.
