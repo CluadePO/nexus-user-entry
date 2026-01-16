@@ -21,7 +21,7 @@ import {
   Calculator
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from 'recharts';
 
 const { Option } = Select;
 
@@ -182,6 +182,8 @@ interface CourseProposal {
   valorImputable: number;
   diferencia: number;
   expanded: boolean;
+  calculated: boolean;
+  monthlyData: { month: string; anoActual: number; anoProximo: number }[];
 }
 
 const MiRecomendador: React.FC = () => {
@@ -296,7 +298,9 @@ const MiRecomendador: React.FC = () => {
       periodos: [{ fechaDesde: null, fechaHasta: null }],
       valorImputable: 0,
       diferencia: 0,
-      expanded: false
+      expanded: false,
+      calculated: false,
+      monthlyData: []
     }));
     setCourseProposals(proposals);
     setCurrentStep(4); // Go to Propuesta step
@@ -333,8 +337,38 @@ const MiRecomendador: React.FC = () => {
       const valorBase = 50000; // Mock base value per hour
       const valorImputable = valorBase * course.horas;
       const diferencia = totalParticipants > 0 ? valorImputable * 0.15 : 0;
+      
+      // Generate monthly data based on selected dates
+      const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+      const monthlyData = months.map((month, idx) => {
+        // Check if any periodo falls in this month
+        let anoActual = 0;
+        let anoProximo = 0;
+        
+        proposal.periodos.forEach(periodo => {
+          if (periodo.fechaDesde) {
+            const startMonth = new Date(periodo.fechaDesde).getMonth();
+            const endMonth = periodo.fechaHasta ? new Date(periodo.fechaHasta).getMonth() : startMonth;
+            const startYear = new Date(periodo.fechaDesde).getFullYear();
+            const currentYear = new Date().getFullYear();
+            
+            if (idx >= startMonth && idx <= endMonth) {
+              if (startYear === currentYear) {
+                anoActual = 100;
+              } else {
+                anoProximo = 100;
+              }
+            }
+          }
+        });
+        
+        return { month, anoActual, anoProximo };
+      });
+      
       handleUpdateProposal(courseId, 'valorImputable', valorImputable);
       handleUpdateProposal(courseId, 'diferencia', diferencia);
+      handleUpdateProposal(courseId, 'calculated', true);
+      handleUpdateProposal(courseId, 'monthlyData', monthlyData);
       message.success('Cálculo realizado correctamente');
     }
   };
@@ -1058,6 +1092,36 @@ const MiRecomendador: React.FC = () => {
                     Calcular
                   </Button>
                 </div>
+
+                {/* Monthly Chart - Shows after calculation */}
+                {proposal.calculated && proposal.monthlyData.length > 0 && (
+                  <div className="mb-4 p-4 bg-gray-50 rounded-lg">
+                    <h4 className="font-medium text-[#1e4a5a] mb-4">Meses para capacitar</h4>
+                    <div className="flex justify-end mb-2">
+                      <div className="flex items-center gap-4 text-sm">
+                        <div className="flex items-center gap-2">
+                          <div className="w-3 h-3 rounded-full bg-[#1e4a5a]" />
+                          <span>Año actual</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="w-3 h-3 rounded-full bg-[#65BFB1]" />
+                          <span>Año próximo</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="h-64">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={proposal.monthlyData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                          <XAxis dataKey="month" tick={{ fontSize: 11 }} />
+                          <YAxis tickFormatter={(value) => `${value}%`} domain={[0, 100]} tick={{ fontSize: 11 }} />
+                          <Tooltip formatter={(value) => [`${value}%`, '']} />
+                          <Bar dataKey="anoActual" fill="#1e4a5a" name="Año actual" />
+                          <Bar dataKey="anoProximo" fill="#65BFB1" name="Año próximo" />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+                )}
 
                 {/* Footer con valores */}
                 <div className="flex items-center justify-between pt-4 border-t">
