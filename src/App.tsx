@@ -12,6 +12,7 @@ import Dashboard from "./pages/Dashboard";
 import Inscripcion from "./pages/Inscripcion";
 import AsesorDashboard from "./pages/AsesorDashboard";
 import MiBuscador from "./pages/MiBuscador";
+import MiRecomendador from "./pages/MiRecomendador";
 import CourseDetail from "./pages/CourseDetail";
 import NotFound from "./pages/NotFound";
 
@@ -55,7 +56,7 @@ const App = () => (
                 <Route path="/asesor/resultados" element={<PlaceholderPage title="Resultados" />} />
                 <Route path="/asesor/plan" element={<PlaceholderPage title="Plan de Capacitación" />} />
                 <Route path="/asesor/buscador" element={<PlaceholderPage title="Mi Buscador" />} />
-                <Route path="/asesor/recomendador" element={<PlaceholderPage title="Mi Recomendador" />} />
+                <Route path="/asesor/recomendador" element={<MiRecomendador />} />
                 <Route path="/asesor/dnc" element={<PlaceholderPage title="Mi DNC" />} />
                 <Route path="/asesor/ruta" element={<PlaceholderPage title="Mi Ruta" />} />
                 <Route path="/documentos/*" element={<PlaceholderPage title="Gestión Documental" />} />
