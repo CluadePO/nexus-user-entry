@@ -10,7 +10,10 @@ import {
   Pencil,
   Power,
   Search,
-  FileCheck
+  FileCheck,
+  Loader2,
+  XCircle,
+  AlertTriangle
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -288,6 +291,9 @@ const CourseUploadTab: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showUploadConfirmation, setShowUploadConfirmation] = useState(false);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [fileValidationStatus, setFileValidationStatus] = useState<'validating' | 'valid' | 'error'>('validating');
+  const [fileErrors, setFileErrors] = useState<string[]>([]);
+  const [validCoursesCount, setValidCoursesCount] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const ITEMS_PER_PAGE = 10;
@@ -331,9 +337,30 @@ const CourseUploadTab: React.FC = () => {
       return;
     }
 
-    // Show confirmation dialog
+    // Reset validation state and show confirmation dialog
     setPendingFile(file);
+    setFileValidationStatus('validating');
+    setFileErrors([]);
+    setValidCoursesCount(0);
     setShowUploadConfirmation(true);
+
+    // Simulate file validation (in real app, this would parse the Excel)
+    setTimeout(() => {
+      // Simulate random validation result for demo
+      const hasErrors = Math.random() > 0.7; // 30% chance of errors
+      
+      if (hasErrors) {
+        setFileValidationStatus('error');
+        setFileErrors([
+          'Fila 3: El campo "Código Sence" está vacío',
+          'Fila 7: El valor del campo "Precio" no es válido',
+          'Fila 12: La fecha de vigencia tiene un formato incorrecto'
+        ]);
+      } else {
+        setFileValidationStatus('valid');
+        setValidCoursesCount(Math.floor(Math.random() * 10) + 5); // 5-15 courses
+      }
+    }, 1500);
   };
 
   const confirmUpload = () => {
@@ -367,6 +394,8 @@ const CourseUploadTab: React.FC = () => {
   const cancelUpload = () => {
     setShowUploadConfirmation(false);
     setPendingFile(null);
+    setFileValidationStatus('validating');
+    setFileErrors([]);
   };
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -438,30 +467,106 @@ const CourseUploadTab: React.FC = () => {
   return (
     <>
       {/* Upload Confirmation Dialog */}
-      <Dialog open={showUploadConfirmation} onOpenChange={setShowUploadConfirmation}>
+      <Dialog open={showUploadConfirmation} onOpenChange={(open) => {
+        if (!open) cancelUpload();
+      }}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <div className="flex items-center justify-center w-12 h-12 mx-auto mb-4 rounded-full bg-primary/10">
-              <FileCheck className="h-6 w-6 text-primary" />
+            {/* Dynamic Icon based on status */}
+            <div className={`flex items-center justify-center w-12 h-12 mx-auto mb-4 rounded-full ${
+              fileValidationStatus === 'validating' ? 'bg-muted' :
+              fileValidationStatus === 'valid' ? 'bg-emerald-100 dark:bg-emerald-900/30' :
+              'bg-red-100 dark:bg-red-900/30'
+            }`}>
+              {fileValidationStatus === 'validating' && (
+                <Loader2 className="h-6 w-6 text-muted-foreground animate-spin" />
+              )}
+              {fileValidationStatus === 'valid' && (
+                <CheckCircle2 className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
+              )}
+              {fileValidationStatus === 'error' && (
+                <XCircle className="h-6 w-6 text-red-600 dark:text-red-400" />
+              )}
             </div>
-            <DialogTitle className="text-center">Confirmar carga de cursos</DialogTitle>
+            
+            <DialogTitle className="text-center">
+              {fileValidationStatus === 'validating' && 'Validando archivo...'}
+              {fileValidationStatus === 'valid' && 'Archivo validado correctamente'}
+              {fileValidationStatus === 'error' && 'Se encontraron errores en el archivo'}
+            </DialogTitle>
+            
             <DialogDescription className="text-center">
-              Estás a punto de cargar el archivo <span className="font-medium text-foreground">"{pendingFile?.name}"</span> con cursos de tipo <span className="font-medium text-foreground">{courseTypeTab === 'sence' ? 'SENCE' : 'No SENCE'}</span>.
+              {fileValidationStatus === 'validating' && (
+                <>Analizando <span className="font-medium text-foreground">"{pendingFile?.name}"</span>...</>
+              )}
+              {fileValidationStatus === 'valid' && (
+                <>El archivo <span className="font-medium text-foreground">"{pendingFile?.name}"</span> está listo para cargar.</>
+              )}
+              {fileValidationStatus === 'error' && (
+                <>El archivo <span className="font-medium text-foreground">"{pendingFile?.name}"</span> contiene errores que deben corregirse.</>
+              )}
             </DialogDescription>
           </DialogHeader>
-          <div className="bg-muted/50 rounded-lg p-4 my-2">
-            <p className="text-sm text-muted-foreground">
-              Los cursos serán procesados y añadidos a tu catálogo. Podrás editarlos o eliminarlos posteriormente desde la grilla de cursos cargados.
-            </p>
-          </div>
+          
+          {/* Content based on status */}
+          {fileValidationStatus === 'validating' && (
+            <div className="bg-muted/50 rounded-lg p-4 my-2">
+              <p className="text-sm text-muted-foreground text-center">
+                Verificando estructura y datos del archivo Excel...
+              </p>
+            </div>
+          )}
+          
+          {fileValidationStatus === 'valid' && (
+            <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg p-4 my-2">
+              <div className="flex items-start gap-3">
+                <CheckCircle2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400 mt-0.5 shrink-0" />
+                <div>
+                  <p className="text-sm font-medium text-emerald-800 dark:text-emerald-300">
+                    {validCoursesCount} cursos listos para cargar
+                  </p>
+                  <p className="text-sm text-emerald-700 dark:text-emerald-400 mt-1">
+                    Tipo: {courseTypeTab === 'sence' ? 'SENCE' : 'No SENCE'}. Los cursos serán añadidos a tu catálogo y podrás editarlos posteriormente.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {fileValidationStatus === 'error' && (
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 my-2">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400 mt-0.5 shrink-0" />
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-red-800 dark:text-red-300 mb-2">
+                    Errores encontrados ({fileErrors.length}):
+                  </p>
+                  <ul className="space-y-1">
+                    {fileErrors.map((error, index) => (
+                      <li key={index} className="text-sm text-red-700 dark:text-red-400 flex items-start gap-2">
+                        <span className="text-red-400">•</span>
+                        {error}
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="text-xs text-red-600 dark:text-red-400 mt-3">
+                    Corrige los errores en el archivo Excel y vuelve a intentar.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+          
           <DialogFooter className="flex gap-2 sm:gap-0">
             <Button variant="outline" onClick={cancelUpload} className="flex-1 sm:flex-none">
-              Cancelar
+              {fileValidationStatus === 'error' ? 'Cerrar' : 'Cancelar'}
             </Button>
-            <Button onClick={confirmUpload} className="flex-1 sm:flex-none">
-              <Upload className="h-4 w-4 mr-2" />
-              Confirmar Carga
-            </Button>
+            {fileValidationStatus === 'valid' && (
+              <Button onClick={confirmUpload} className="flex-1 sm:flex-none">
+                <Upload className="h-4 w-4 mr-2" />
+                Confirmar Carga
+              </Button>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>
