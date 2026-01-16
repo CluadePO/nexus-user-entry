@@ -83,7 +83,7 @@ const FavoritesSidebar: React.FC<FavoritesSidebarProps> = ({
           />
         )}
         
-        <div className="h-full w-80 bg-background border-l shadow-xl flex flex-col">
+        <div className="h-full w-80 bg-background border-l shadow-xl flex flex-col overflow-hidden">
           {/* Header */}
           <div className="p-4 border-b bg-gradient-to-r from-primary/10 to-transparent">
             <div className="flex items-center justify-between">
@@ -106,7 +106,7 @@ const FavoritesSidebar: React.FC<FavoritesSidebarProps> = ({
           </div>
 
           {/* Favorite Courses List */}
-          <ScrollArea className="flex-1 p-4">
+          <ScrollArea className="flex-1 p-4 min-h-0">
             {favoriteCourses.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 text-center">
                 <div className="p-4 bg-muted rounded-full mb-4">
@@ -190,18 +190,16 @@ const FavoritesSidebar: React.FC<FavoritesSidebarProps> = ({
                     </div>
                   </div>
                 ))}
+
+                {/* Footer inside scroll area */}
+                <div className="pt-4 mt-2 border-t">
+                  <p className="text-xs text-muted-foreground text-center">
+                    {favoriteCourses.length} curso{favoriteCourses.length !== 1 ? 's' : ''} en favoritos
+                  </p>
+                </div>
               </div>
             )}
           </ScrollArea>
-
-          {/* Footer */}
-          {favoriteCourses.length > 0 && (
-            <div className="p-4 border-t bg-muted/30">
-              <p className="text-xs text-muted-foreground text-center">
-                {favoriteCourses.length} curso{favoriteCourses.length !== 1 ? 's' : ''} en favoritos
-              </p>
-            </div>
-          )}
         </div>
       </div>
     </>
