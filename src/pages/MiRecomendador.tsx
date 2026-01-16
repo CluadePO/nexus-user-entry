@@ -420,30 +420,33 @@ const MiRecomendador: React.FC = () => {
 
   const renderCoursesStep = () => (
     <div className="space-y-6">
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
-          <div className="p-3 bg-purple-50 rounded-lg">
-            <GraduationCap className="w-6 h-6 text-purple-600" />
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold">Información de los Cursos</h3>
-            <p className="text-muted-foreground text-sm">Seleccione las áreas y temáticas de capacitación</p>
-          </div>
+      <div className="flex items-center gap-3 mb-6">
+        <div className="p-3 bg-purple-50 rounded-lg">
+          <GraduationCap className="w-6 h-6 text-purple-600" />
         </div>
-        <Button 
-          type="primary"
-          icon={<Plus className="w-4 h-4" />}
-          onClick={handleAddArea}
-          style={{ backgroundColor: '#65BFB1', borderColor: '#65BFB1' }}
-        >
-          Agregar Área
-        </Button>
+        <div>
+          <h3 className="text-lg font-semibold">Información de los Cursos</h3>
+          <p className="text-muted-foreground text-sm">Seleccione las áreas y temáticas de capacitación</p>
+        </div>
       </div>
 
       {areasCapacitar.map((area, index) => (
         <Card key={area.id} className="border shadow-sm">
           <div className="flex items-center justify-between mb-4">
-            <h4 className="font-medium text-foreground">Área de Capacitación #{index + 1}</h4>
+            <div className="flex items-center gap-3">
+              <h4 className="font-medium text-foreground">Área de Capacitación #{index + 1}</h4>
+              {index === 0 && (
+                <Button 
+                  type="primary"
+                  size="small"
+                  icon={<Plus className="w-3 h-3" />}
+                  onClick={handleAddArea}
+                  style={{ backgroundColor: '#65BFB1', borderColor: '#65BFB1' }}
+                >
+                  Agregar Área
+                </Button>
+              )}
+            </div>
             {areasCapacitar.length > 1 && (
               <Button 
                 type="text" 
@@ -456,11 +459,11 @@ const MiRecomendador: React.FC = () => {
             )}
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium mb-2">Área a Capacitar *</label>
               <Select
-                className="w-full"
+                className="w-full md:w-1/2"
                 placeholder="Seleccione área"
                 value={area.area || undefined}
                 onChange={(value) => handleAreaChange(area.id, 'area', value)}
@@ -470,73 +473,90 @@ const MiRecomendador: React.FC = () => {
                 ))}
               </Select>
             </div>
-            <div>
-              <label className="block text-sm font-medium mb-2">Temática 1 *</label>
-              <Select
-                className="w-full"
-                placeholder="Seleccione temática"
-                value={area.tematica1 || undefined}
-                onChange={(value) => handleAreaChange(area.id, 'tematica1', value)}
-                disabled={!area.area}
-              >
-                {(tematicas[area.area] || []).map(t => (
-                  <Option key={t} value={t}>{t}</Option>
-                ))}
-              </Select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-2">Temática 2</label>
-              <Select
-                className="w-full"
-                placeholder="Seleccione temática"
-                value={area.tematica2 || undefined}
-                onChange={(value) => handleAreaChange(area.id, 'tematica2', value)}
-                disabled={!area.area}
-              >
-                {(tematicas[area.area] || []).map(t => (
-                  <Option key={t} value={t}>{t}</Option>
-                ))}
-              </Select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-2">Temática 3</label>
-              <Select
-                className="w-full"
-                placeholder="Seleccione temática"
-                value={area.tematica3 || undefined}
-                onChange={(value) => handleAreaChange(area.id, 'tematica3', value)}
-                disabled={!area.area}
-              >
-                {(tematicas[area.area] || []).map(t => (
-                  <Option key={t} value={t}>{t}</Option>
-                ))}
-              </Select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-2">Modalidad *</label>
-              <Select
-                className="w-full"
-                placeholder="Seleccione modalidad"
-                value={area.modalidad || undefined}
-                onChange={(value) => handleAreaChange(area.id, 'modalidad', value)}
-              >
-                {modalidades.map(m => (
-                  <Option key={m} value={m}>{m}</Option>
-                ))}
-              </Select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-2">Región *</label>
-              <Select
-                className="w-full"
-                placeholder="Seleccione región"
-                value={area.region || undefined}
-                onChange={(value) => handleAreaChange(area.id, 'region', value)}
-              >
-                {regiones.map(r => (
-                  <Option key={r} value={r}>{r}</Option>
-                ))}
-              </Select>
+
+            {/* Temáticas con dropdown cascada */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Temática a desarrollar 1 *</label>
+                <Select
+                  className="w-full"
+                  placeholder="Seleccionar"
+                  value={area.tematica1 ? `${area.tematica1}${area.modalidad ? ' / ' + area.modalidad : ''}${area.region ? ' / ' + area.region : ''}` : undefined}
+                  disabled={!area.area}
+                  dropdownRender={() => (
+                    <div className="flex bg-white border rounded-lg shadow-lg">
+                      {/* Columna Temática */}
+                      <div className="flex-1 border-r max-h-64 overflow-y-auto">
+                        {(tematicas[area.area] || []).map(t => (
+                          <div
+                            key={t}
+                            className={`px-4 py-2 cursor-pointer flex items-center justify-between hover:bg-gray-100 ${area.tematica1 === t ? 'bg-[#65BFB1]/10 text-[#65BFB1] font-medium' : ''}`}
+                            onClick={() => handleAreaChange(area.id, 'tematica1', t)}
+                          >
+                            <span>{t}</span>
+                            <ArrowRight className="w-3 h-3 text-gray-400" />
+                          </div>
+                        ))}
+                      </div>
+                      {/* Columna Modalidad */}
+                      <div className="flex-1 border-r max-h-64 overflow-y-auto">
+                        {modalidades.map(m => (
+                          <div
+                            key={m}
+                            className={`px-4 py-2 cursor-pointer flex items-center justify-between hover:bg-gray-100 ${area.modalidad === m ? 'bg-[#65BFB1]/10 text-[#65BFB1] font-medium' : ''}`}
+                            onClick={() => handleAreaChange(area.id, 'modalidad', m)}
+                          >
+                            <span>{m}</span>
+                            <ArrowRight className="w-3 h-3 text-gray-400" />
+                          </div>
+                        ))}
+                      </div>
+                      {/* Columna Región */}
+                      <div className="flex-1 max-h-64 overflow-y-auto">
+                        {regiones.map(r => (
+                          <div
+                            key={r}
+                            className={`px-4 py-2 cursor-pointer hover:bg-gray-100 ${area.region === r ? 'bg-[#65BFB1]/10 text-[#65BFB1] font-medium' : ''}`}
+                            onClick={() => handleAreaChange(area.id, 'region', r)}
+                          >
+                            {r}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                >
+                  <Option value="placeholder">Seleccionar</Option>
+                </Select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Temática a desarrollar 2 (Opcional)</label>
+                <Select
+                  className="w-full"
+                  placeholder="Seleccionar"
+                  value={area.tematica2 || undefined}
+                  onChange={(value) => handleAreaChange(area.id, 'tematica2', value)}
+                  disabled={!area.area}
+                >
+                  {(tematicas[area.area] || []).map(t => (
+                    <Option key={t} value={t}>{t}</Option>
+                  ))}
+                </Select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Temática a desarrollar 3 (Opcional)</label>
+                <Select
+                  className="w-full"
+                  placeholder="Seleccionar"
+                  value={area.tematica3 || undefined}
+                  onChange={(value) => handleAreaChange(area.id, 'tematica3', value)}
+                  disabled={!area.area}
+                >
+                  {(tematicas[area.area] || []).map(t => (
+                    <Option key={t} value={t}>{t}</Option>
+                  ))}
+                </Select>
+              </div>
             </div>
           </div>
         </Card>
