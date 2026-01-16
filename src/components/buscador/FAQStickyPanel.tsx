@@ -51,11 +51,25 @@ const FAQStickyPanel: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-center pointer-events-none">
-      <div className="pointer-events-auto w-full max-w-4xl mx-4">
+    <div className="w-full mt-8">
+      <div className="w-full max-w-4xl mx-auto">
+        {/* Sticky Tab Button */}
+        <Button
+          onClick={() => setIsOpen(!isOpen)}
+          className="w-full rounded-t-lg rounded-b-none h-10 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg flex items-center justify-center gap-2"
+        >
+          <HelpCircle className="h-4 w-4" />
+          <span className="font-medium">Preguntas Frecuentes</span>
+          {isOpen ? (
+            <ChevronDown className="h-4 w-4 ml-1" />
+          ) : (
+            <ChevronUp className="h-4 w-4 ml-1" />
+          )}
+        </Button>
+
         {/* Expanded Panel */}
         {isOpen && (
-          <div className="bg-background border border-b-0 rounded-t-xl shadow-2xl animate-in slide-in-from-bottom duration-300">
+          <div className="bg-background border border-t-0 rounded-b-xl shadow-lg animate-in slide-in-from-top duration-300">
             <div className="p-4 border-b">
               <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
                 <HelpCircle className="h-5 w-5 text-primary" />
@@ -65,7 +79,7 @@ const FAQStickyPanel: React.FC = () => {
                 Aquí podrás encontrar respuestas a tus inquietudes, si persisten tus dudas, comunícate con nosotros.
               </p>
             </div>
-            <ScrollArea className="h-[400px]">
+            <ScrollArea className="max-h-[400px]">
               <div className="p-4">
                 <Accordion type="single" collapsible className="w-full">
                   {faqItems.map((item) => (
@@ -83,20 +97,6 @@ const FAQStickyPanel: React.FC = () => {
             </ScrollArea>
           </div>
         )}
-
-        {/* Sticky Tab Button */}
-        <Button
-          onClick={() => setIsOpen(!isOpen)}
-          className="w-full rounded-none rounded-t-lg h-10 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg flex items-center justify-center gap-2"
-        >
-          <HelpCircle className="h-4 w-4" />
-          <span className="font-medium">Preguntas Frecuentes</span>
-          {isOpen ? (
-            <ChevronDown className="h-4 w-4 ml-1" />
-          ) : (
-            <ChevronUp className="h-4 w-4 ml-1" />
-          )}
-        </Button>
       </div>
     </div>
   );
