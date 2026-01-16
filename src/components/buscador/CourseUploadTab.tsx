@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import { 
   Upload, 
   FileSpreadsheet, 
@@ -6,17 +6,17 @@ import {
   Trash2, 
   CheckCircle2, 
   AlertCircle,
-  BookOpen,
   Clock,
-  DollarSign,
-  Building2,
-  ChevronLeft,
-  ChevronRight
+  MoreHorizontal,
+  Pencil,
+  Power,
+  Search
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Input } from '@/components/ui/input';
 import {
   Table,
   TableBody,
@@ -25,6 +25,12 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import {
   Pagination,
   PaginationContent,
@@ -38,24 +44,25 @@ import { toast } from 'sonner';
 interface UploadedCourse {
   id: string;
   name: string;
+  specialty: string;
   type: 'Sence' | 'No Sence';
   code: string;
-  hours: number;
+  validUntil: string;
   price: number;
   modality: string;
   uploadDate: string;
-  status: 'active' | 'pending' | 'error';
+  status: 'active' | 'inactive';
 }
 
 const CourseUploadTab: React.FC = () => {
   const [uploadedCourses, setUploadedCourses] = useState<UploadedCourse[]>([
-    // Mock data for demonstration
     {
       id: '1',
       name: 'Excel Avanzado para Empresas',
+      specialty: 'Ofimática',
       type: 'Sence',
       code: '1237889456',
-      hours: 40,
+      validUntil: '2026-12-31',
       price: 180000,
       modality: 'E-learning',
       uploadDate: '2025-01-15',
@@ -64,9 +71,10 @@ const CourseUploadTab: React.FC = () => {
     {
       id: '2',
       name: 'Liderazgo y Gestión de Equipos',
+      specialty: 'Habilidades Blandas',
       type: 'Sence',
       code: '1237889457',
-      hours: 24,
+      validUntil: '2026-06-30',
       price: 350000,
       modality: 'Presencial',
       uploadDate: '2025-01-14',
@@ -75,20 +83,22 @@ const CourseUploadTab: React.FC = () => {
     {
       id: '3',
       name: 'Marketing Digital Básico',
+      specialty: 'Marketing',
       type: 'No Sence',
       code: 'NS-001',
-      hours: 20,
+      validUntil: '2025-12-31',
       price: 150000,
       modality: 'E-learning',
       uploadDate: '2025-01-13',
-      status: 'pending'
+      status: 'inactive'
     },
     {
       id: '4',
       name: 'Seguridad Industrial',
+      specialty: 'Prevención de Riesgos',
       type: 'Sence',
       code: '1237889458',
-      hours: 32,
+      validUntil: '2026-03-15',
       price: 280000,
       modality: 'Presencial',
       uploadDate: '2025-01-12',
@@ -97,9 +107,10 @@ const CourseUploadTab: React.FC = () => {
     {
       id: '5',
       name: 'Comunicación Efectiva',
+      specialty: 'Habilidades Blandas',
       type: 'No Sence',
       code: 'NS-002',
-      hours: 16,
+      validUntil: '2025-08-20',
       price: 120000,
       modality: 'Distancia',
       uploadDate: '2025-01-11',
@@ -108,20 +119,22 @@ const CourseUploadTab: React.FC = () => {
     {
       id: '6',
       name: 'Gestión de Proyectos Ágiles',
+      specialty: 'Gestión',
       type: 'Sence',
       code: '1237889459',
-      hours: 48,
+      validUntil: '2026-09-01',
       price: 420000,
       modality: 'E-learning',
       uploadDate: '2025-01-10',
-      status: 'error'
+      status: 'inactive'
     },
     {
       id: '7',
       name: 'Inglés Técnico Nivel 1',
+      specialty: 'Idiomas',
       type: 'Sence',
       code: '1237889460',
-      hours: 60,
+      validUntil: '2026-07-15',
       price: 220000,
       modality: 'E-learning',
       uploadDate: '2025-01-09',
@@ -130,12 +143,37 @@ const CourseUploadTab: React.FC = () => {
     {
       id: '8',
       name: 'Atención al Cliente Premium',
+      specialty: 'Servicio al Cliente',
       type: 'No Sence',
       code: 'NS-003',
-      hours: 12,
+      validUntil: '2025-11-30',
       price: 95000,
       modality: 'E-learning',
       uploadDate: '2025-01-08',
+      status: 'active'
+    },
+    {
+      id: '9',
+      name: 'Python para Análisis de Datos',
+      specialty: 'Tecnología',
+      type: 'Sence',
+      code: '1237889461',
+      validUntil: '2026-10-20',
+      price: 380000,
+      modality: 'E-learning',
+      uploadDate: '2025-01-07',
+      status: 'active'
+    },
+    {
+      id: '10',
+      name: 'Contabilidad Básica',
+      specialty: 'Finanzas',
+      type: 'Sence',
+      code: '1237889462',
+      validUntil: '2026-04-10',
+      price: 250000,
+      modality: 'Presencial',
+      uploadDate: '2025-01-06',
       status: 'active'
     },
   ]);
@@ -143,13 +181,26 @@ const CourseUploadTab: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [courseTypeTab, setCourseTypeTab] = useState<'sence' | 'no-sence'>('sence');
   const [isDragging, setIsDragging] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const ITEMS_PER_PAGE = 5;
+  const ITEMS_PER_PAGE = 10;
 
-  const filteredCourses = uploadedCourses.filter(course => 
-    courseTypeTab === 'sence' ? course.type === 'Sence' : course.type === 'No Sence'
-  );
+  const filteredCourses = useMemo(() => {
+    return uploadedCourses
+      .filter(course => courseTypeTab === 'sence' ? course.type === 'Sence' : course.type === 'No Sence')
+      .filter(course => {
+        if (!searchQuery.trim()) return true;
+        const query = searchQuery.toLowerCase();
+        return (
+          course.name.toLowerCase().includes(query) ||
+          course.specialty.toLowerCase().includes(query) ||
+          course.code.toLowerCase().includes(query) ||
+          course.modality.toLowerCase().includes(query)
+        );
+      })
+      .sort((a, b) => new Date(b.uploadDate).getTime() - new Date(a.uploadDate).getTime());
+  }, [uploadedCourses, courseTypeTab, searchQuery]);
 
   const totalPages = Math.ceil(filteredCourses.length / ITEMS_PER_PAGE);
   const paginatedCourses = filteredCourses.slice(
@@ -174,23 +225,22 @@ const CourseUploadTab: React.FC = () => {
       return;
     }
 
-    // Simulate file processing
     toast.success('Archivo cargado correctamente', {
       description: `${file.name} está siendo procesado.`
     });
 
-    // Add mock courses from the uploaded file
     const newCourses: UploadedCourse[] = [
       {
         id: `new-${Date.now()}`,
         name: 'Nuevo Curso Cargado',
+        specialty: 'General',
         type: courseTypeTab === 'sence' ? 'Sence' : 'No Sence',
         code: courseTypeTab === 'sence' ? '1237889999' : 'NS-NEW',
-        hours: 30,
+        validUntil: '2026-12-31',
         price: 200000,
         modality: 'E-learning',
         uploadDate: new Date().toISOString().split('T')[0],
-        status: 'pending'
+        status: 'active'
       }
     ];
 
@@ -218,6 +268,23 @@ const CourseUploadTab: React.FC = () => {
     toast.success('Curso eliminado correctamente');
   };
 
+  const handleEditCourse = (courseId: string) => {
+    toast.info('Editar curso', {
+      description: `Editando curso ID: ${courseId}`
+    });
+  };
+
+  const handleToggleCourseStatus = (courseId: string) => {
+    setUploadedCourses(prev => prev.map(course => {
+      if (course.id === courseId) {
+        const newStatus = course.status === 'active' ? 'inactive' : 'active';
+        toast.success(`Curso ${newStatus === 'active' ? 'activado' : 'desactivado'} correctamente`);
+        return { ...course, status: newStatus };
+      }
+      return course;
+    }));
+  };
+
   const downloadTemplate = (type: 'sence' | 'no-sence') => {
     toast.success('Descargando plantilla', {
       description: `Plantilla de cursos ${type === 'sence' ? 'SENCE' : 'No SENCE'} descargada.`
@@ -236,10 +303,8 @@ const CourseUploadTab: React.FC = () => {
     switch (status) {
       case 'active':
         return <Badge className="bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300">Activo</Badge>;
-      case 'pending':
-        return <Badge className="bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">Pendiente</Badge>;
-      case 'error':
-        return <Badge className="bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300">Error</Badge>;
+      case 'inactive':
+        return <Badge className="bg-slate-100 text-slate-600 dark:bg-slate-800/50 dark:text-slate-400">No Activo</Badge>;
       default:
         return null;
     }
@@ -381,24 +446,43 @@ const CourseUploadTab: React.FC = () => {
           <Tabs value={courseTypeTab} onValueChange={(v) => {
             setCourseTypeTab(v as 'sence' | 'no-sence');
             setCurrentPage(1);
+            setSearchQuery('');
           }}>
-            <TabsList className="mb-4">
-              <TabsTrigger value="sence" className="gap-2">
-                <CheckCircle2 className="h-4 w-4" />
-                SENCE
-                <Badge variant="secondary" className="ml-1">{senceCount}</Badge>
-              </TabsTrigger>
-              <TabsTrigger value="no-sence" className="gap-2">
-                <AlertCircle className="h-4 w-4" />
-                No SENCE
-                <Badge variant="secondary" className="ml-1">{noSenceCount}</Badge>
-              </TabsTrigger>
-            </TabsList>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+              <TabsList>
+                <TabsTrigger value="sence" className="gap-2">
+                  <CheckCircle2 className="h-4 w-4" />
+                  SENCE
+                  <Badge variant="secondary" className="ml-1">{senceCount}</Badge>
+                </TabsTrigger>
+                <TabsTrigger value="no-sence" className="gap-2">
+                  <AlertCircle className="h-4 w-4" />
+                  No SENCE
+                  <Badge variant="secondary" className="ml-1">{noSenceCount}</Badge>
+                </TabsTrigger>
+              </TabsList>
+
+              {/* Search Input */}
+              <div className="relative w-full sm:w-72">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Buscar cursos..."
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  className="pl-9"
+                />
+              </div>
+            </div>
 
             <TabsContent value="sence" className="mt-0">
               <CourseTable 
                 courses={paginatedCourses} 
                 onDelete={handleDeleteCourse}
+                onEdit={handleEditCourse}
+                onToggleStatus={handleToggleCourseStatus}
                 formatPrice={formatPrice}
                 getStatusBadge={getStatusBadge}
               />
@@ -408,6 +492,8 @@ const CourseUploadTab: React.FC = () => {
               <CourseTable 
                 courses={paginatedCourses} 
                 onDelete={handleDeleteCourse}
+                onEdit={handleEditCourse}
+                onToggleStatus={handleToggleCourseStatus}
                 formatPrice={formatPrice}
                 getStatusBadge={getStatusBadge}
               />
@@ -416,7 +502,7 @@ const CourseUploadTab: React.FC = () => {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="mt-4 flex items-center justify-between">
+            <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-4">
               <p className="text-sm text-muted-foreground">
                 Mostrando {((currentPage - 1) * ITEMS_PER_PAGE) + 1} - {Math.min(currentPage * ITEMS_PER_PAGE, filteredCourses.length)} de {filteredCourses.length} cursos
               </p>
@@ -428,17 +514,29 @@ const CourseUploadTab: React.FC = () => {
                       className={currentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
                     />
                   </PaginationItem>
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                    <PaginationItem key={page}>
-                      <PaginationLink
-                        onClick={() => setCurrentPage(page)}
-                        isActive={currentPage === page}
-                        className="cursor-pointer"
-                      >
-                        {page}
-                      </PaginationLink>
-                    </PaginationItem>
-                  ))}
+                  {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                    let page: number;
+                    if (totalPages <= 5) {
+                      page = i + 1;
+                    } else if (currentPage <= 3) {
+                      page = i + 1;
+                    } else if (currentPage >= totalPages - 2) {
+                      page = totalPages - 4 + i;
+                    } else {
+                      page = currentPage - 2 + i;
+                    }
+                    return (
+                      <PaginationItem key={page}>
+                        <PaginationLink
+                          onClick={() => setCurrentPage(page)}
+                          isActive={currentPage === page}
+                          className="cursor-pointer"
+                        >
+                          {page}
+                        </PaginationLink>
+                      </PaginationItem>
+                    );
+                  })}
                   <PaginationItem>
                     <PaginationNext 
                       onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
@@ -447,6 +545,12 @@ const CourseUploadTab: React.FC = () => {
                   </PaginationItem>
                 </PaginationContent>
               </Pagination>
+            </div>
+          )}
+
+          {filteredCourses.length === 0 && searchQuery && (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">No se encontraron cursos que coincidan con "{searchQuery}"</p>
             </div>
           )}
         </CardContent>
@@ -458,11 +562,13 @@ const CourseUploadTab: React.FC = () => {
 interface CourseTableProps {
   courses: UploadedCourse[];
   onDelete: (id: string) => void;
+  onEdit: (id: string) => void;
+  onToggleStatus: (id: string) => void;
   formatPrice: (price: number) => string;
   getStatusBadge: (status: string) => React.ReactNode;
 }
 
-const CourseTable: React.FC<CourseTableProps> = ({ courses, onDelete, formatPrice, getStatusBadge }) => {
+const CourseTable: React.FC<CourseTableProps> = ({ courses, onDelete, onEdit, onToggleStatus, formatPrice, getStatusBadge }) => {
   if (courses.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center">
@@ -477,55 +583,80 @@ const CourseTable: React.FC<CourseTableProps> = ({ courses, onDelete, formatPric
     );
   }
 
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('es-CL', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  };
+
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md border overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Curso</TableHead>
-            <TableHead>Código</TableHead>
-            <TableHead className="text-center">Horas</TableHead>
-            <TableHead className="text-right">Precio</TableHead>
-            <TableHead>Modalidad</TableHead>
-            <TableHead>Estado</TableHead>
-            <TableHead className="text-center">Acciones</TableHead>
+            <TableHead className="min-w-[200px]">Nombre del curso</TableHead>
+            <TableHead className="min-w-[120px]">Especialidad</TableHead>
+            <TableHead className="min-w-[120px]">Código Sence</TableHead>
+            <TableHead className="min-w-[110px]">Vigencia</TableHead>
+            <TableHead className="min-w-[100px]">Modalidad</TableHead>
+            <TableHead className="min-w-[130px] text-right">Valor p/participante</TableHead>
+            <TableHead className="min-w-[90px]">Estado</TableHead>
+            <TableHead className="min-w-[80px] text-center">Acciones</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {courses.map((course) => (
             <TableRow key={course.id}>
-              <TableCell className="font-medium max-w-[200px] truncate">
+              <TableCell className="font-medium">
                 {course.name}
+              </TableCell>
+              <TableCell className="text-muted-foreground">
+                {course.specialty}
               </TableCell>
               <TableCell className="text-muted-foreground font-mono text-sm">
                 {course.code}
               </TableCell>
-              <TableCell className="text-center">
-                <div className="flex items-center justify-center gap-1">
-                  <Clock className="h-3 w-3 text-muted-foreground" />
-                  {course.hours}h
-                </div>
-              </TableCell>
-              <TableCell className="text-right font-medium">
-                {formatPrice(course.price)}
+              <TableCell className="text-muted-foreground">
+                {formatDate(course.validUntil)}
               </TableCell>
               <TableCell>
                 <Badge variant="outline" className="text-xs">
                   {course.modality}
                 </Badge>
               </TableCell>
+              <TableCell className="text-right font-medium">
+                {formatPrice(course.price)}
+              </TableCell>
               <TableCell>
                 {getStatusBadge(course.status)}
               </TableCell>
               <TableCell className="text-center">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
-                  onClick={() => onDelete(course.id)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => onEdit(course.id)}>
+                      <Pencil className="h-4 w-4 mr-2" />
+                      Editar Curso
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => onToggleStatus(course.id)}>
+                      <Power className="h-4 w-4 mr-2" />
+                      {course.status === 'active' ? 'Desactivar Curso' : 'Activar Curso'}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      onClick={() => onDelete(course.id)}
+                      className="text-destructive focus:text-destructive"
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Eliminar Curso
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </TableCell>
             </TableRow>
           ))}
