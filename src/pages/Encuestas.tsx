@@ -349,9 +349,9 @@ const generateSurveyParticipants = (surveyId: string, courseId: string, totalRes
   }));
 };
 
-// Datos de ejemplo de encuestas
+// Datos de ejemplo de encuestas estándar
 const initialSurveys: Survey[] = [{
-  id: '1',
+  id: 'ENC-STD-001',
   type: 'satisfaccion',
   name: 'Encuesta Satisfacción - Excel Avanzado',
   courseId: '1',
@@ -364,9 +364,9 @@ const initialSurveys: Survey[] = [{
   totalParticipants: 25,
   responses: 22,
   responseRate: 88,
-  participants: generateSurveyParticipants('1', '1', 22, 25)
+  participants: generateSurveyParticipants('ENC-STD-001', '1', 22, 25)
 }, {
-  id: '2',
+  id: 'ENC-STD-002',
   type: 'transferencia',
   name: 'Encuesta Transferencia - Liderazgo',
   courseId: '2',
@@ -379,9 +379,9 @@ const initialSurveys: Survey[] = [{
   totalParticipants: 18,
   responses: 8,
   responseRate: 44,
-  participants: generateSurveyParticipants('2', '2', 8, 18)
+  participants: generateSurveyParticipants('ENC-STD-002', '2', 8, 18)
 }, {
-  id: '3',
+  id: 'ENC-STD-003',
   type: 'satisfaccion',
   name: 'Encuesta Satisfacción - Seguridad Industrial',
   courseId: '3',
@@ -393,11 +393,83 @@ const initialSurveys: Survey[] = [{
   totalParticipants: 30,
   responses: 0,
   responseRate: 0,
-  participants: generateSurveyParticipants('3', '3', 0, 30)
+  participants: generateSurveyParticipants('ENC-STD-003', '3', 0, 30)
+}];
+
+// Datos de ejemplo de encuestas personalizadas
+interface CustomSurvey extends Survey {
+  isCustom: true;
+  customQuestions: { id: number; text: string; type: 'rating5' | 'text' | 'yesno' }[];
+}
+
+const initialCustomSurveys: CustomSurvey[] = [{
+  id: 'ENC-PERS-001',
+  type: 'satisfaccion',
+  name: 'Evaluación Clima Laboral Q1 2024',
+  courseId: '',
+  courseName: 'N/A - Encuesta Personalizada',
+  status: 'active',
+  createdAt: '2024-01-15',
+  scheduledDate: '2024-01-16',
+  reminderEnabled: true,
+  reminderDays: 7,
+  totalParticipants: 50,
+  responses: 32,
+  responseRate: 64,
+  isCustom: true,
+  customQuestions: [
+    { id: 1, text: '¿Cómo califica el ambiente de trabajo?', type: 'rating5' },
+    { id: 2, text: '¿Se siente valorado en su puesto?', type: 'rating5' },
+    { id: 3, text: '¿Qué mejoras sugiere para el equipo?', type: 'text' }
+  ],
+  participants: generateSurveyParticipants('ENC-PERS-001', 'clima', 32, 50)
+}, {
+  id: 'ENC-PERS-002',
+  type: 'transferencia',
+  name: 'Satisfacción Beneficios Empresa',
+  courseId: '',
+  courseName: 'N/A - Encuesta Personalizada',
+  status: 'completed',
+  createdAt: '2023-12-01',
+  scheduledDate: '2023-12-05',
+  reminderEnabled: false,
+  totalParticipants: 120,
+  responses: 98,
+  responseRate: 82,
+  isCustom: true,
+  customQuestions: [
+    { id: 1, text: '¿Está satisfecho con los beneficios ofrecidos?', type: 'rating5' },
+    { id: 2, text: '¿Utiliza el seguro de salud complementario?', type: 'yesno' },
+    { id: 3, text: '¿Qué beneficio adicional le gustaría tener?', type: 'text' }
+  ],
+  participants: generateSurveyParticipants('ENC-PERS-002', 'beneficios', 98, 120)
+}, {
+  id: 'ENC-PERS-003',
+  type: 'satisfaccion',
+  name: 'Feedback Proceso Onboarding',
+  courseId: '',
+  courseName: 'N/A - Encuesta Personalizada',
+  status: 'scheduled',
+  createdAt: '2024-01-18',
+  scheduledDate: '2024-02-01',
+  reminderEnabled: true,
+  reminderDays: 3,
+  totalParticipants: 15,
+  responses: 0,
+  responseRate: 0,
+  isCustom: true,
+  customQuestions: [
+    { id: 1, text: '¿El proceso de inducción fue claro?', type: 'rating5' },
+    { id: 2, text: '¿Recibió toda la información necesaria?', type: 'yesno' },
+    { id: 3, text: '¿Cómo podemos mejorar la bienvenida a nuevos colaboradores?', type: 'text' }
+  ],
+  participants: generateSurveyParticipants('ENC-PERS-003', 'onboarding', 0, 15)
 }];
 const Encuestas: React.FC = () => {
   const [surveys, setSurveys] = useState<Survey[]>(initialSurveys);
+  const [customSurveys, setCustomSurveys] = useState<CustomSurvey[]>(initialCustomSurveys);
   const [mainTab, setMainTab] = useState<string>('encuestas');
+  const [customFilterTab, setCustomFilterTab] = useState<string>('all');
   const [surveyFilterTab, setSurveyFilterTab] = useState<string>('all');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
@@ -485,6 +557,12 @@ const Encuestas: React.FC = () => {
 
   // Columnas para la tabla de encuestas (mantenedor)
   const surveyColumns: ColumnsType<Survey> = [{
+    title: 'ID',
+    dataIndex: 'id',
+    key: 'id',
+    width: 130,
+    render: (id) => <Tag color="default" className="font-mono text-xs">{id}</Tag>
+  }, {
     title: 'Encuesta',
     dataIndex: 'name',
     key: 'name',
@@ -1245,6 +1323,108 @@ const Encuestas: React.FC = () => {
           }} locale={{
             emptyText: 'No hay encuestas registradas'
           }} />
+                </div>
+      }, {
+        key: 'personalizadas',
+        label: <span className="flex items-center gap-2">
+                  <FileText className="w-4 h-4" />
+                  Encuestas Personalizadas
+                </span>,
+        children: <div className="space-y-4">
+                  <Tabs activeKey={customFilterTab} onChange={setCustomFilterTab} size="small" items={[{
+            key: 'all',
+            label: 'Todas'
+          }, {
+            key: 'active',
+            label: 'Activas'
+          }, {
+            key: 'completed',
+            label: 'Completadas'
+          }]} />
+                  <Table 
+                    columns={[
+                      {
+                        title: 'ID',
+                        dataIndex: 'id',
+                        key: 'id',
+                        width: 140,
+                        render: (id: string) => <Tag color="purple" className="font-mono text-xs">{id}</Tag>
+                      },
+                      {
+                        title: 'Encuesta',
+                        dataIndex: 'name',
+                        key: 'name',
+                        render: (name: string) => <div className="font-medium text-[#1e4a5a]">{name}</div>
+                      },
+                      {
+                        title: 'Preguntas',
+                        key: 'questions',
+                        width: 100,
+                        render: (_: unknown, record: CustomSurvey) => (
+                          <Tag color="blue">{record.customQuestions.length} preguntas</Tag>
+                        )
+                      },
+                      {
+                        title: 'Estado',
+                        dataIndex: 'status',
+                        key: 'status',
+                        render: (status: Survey['status']) => getStatusTag(status)
+                      },
+                      {
+                        title: 'Respuestas',
+                        key: 'responses',
+                        render: (_: unknown, record: CustomSurvey) => (
+                          <div className="flex items-center gap-2">
+                            <Users className="w-4 h-4 text-muted-foreground" />
+                            <span>{record.responses}/{record.totalParticipants}</span>
+                            <Badge count={`${record.responseRate}%`} style={{
+                              backgroundColor: record.responseRate >= 70 ? '#65BFB1' : record.responseRate >= 40 ? '#faad14' : '#ff4d4f'
+                            }} />
+                          </div>
+                        )
+                      },
+                      {
+                        title: 'Acciones',
+                        key: 'actions',
+                        render: (_: unknown, record: CustomSurvey) => (
+                          <Space>
+                            <Tooltip title="Ver encuesta">
+                              <Button type="text" icon={<Eye className="w-4 h-4" />} onClick={() => handleViewSurvey(record)} />
+                            </Tooltip>
+                            {(record.status === 'active' || record.status === 'completed') && (
+                              <Tooltip title="Ver resultados">
+                                <Button type="text" icon={<BarChart3 className="w-4 h-4 text-[#65BFB1]" />} onClick={() => handleViewResults(record)} />
+                              </Tooltip>
+                            )}
+                            <Tooltip title="Eliminar">
+                              <Popconfirm 
+                                title="¿Eliminar encuesta?" 
+                                description="Esta acción no se puede deshacer." 
+                                onConfirm={() => {
+                                  setCustomSurveys(customSurveys.filter(s => s.id !== record.id));
+                                  message.success('Encuesta personalizada eliminada');
+                                }} 
+                                okText="Eliminar" 
+                                cancelText="Cancelar" 
+                                okButtonProps={{ danger: true }}
+                              >
+                                <Button type="text" danger icon={<Trash2 className="w-4 h-4" />} />
+                              </Popconfirm>
+                            </Tooltip>
+                          </Space>
+                        )
+                      }
+                    ]} 
+                    dataSource={customSurveys.filter(s => {
+                      if (customFilterTab === 'all') return true;
+                      if (customFilterTab === 'active') return s.status === 'active';
+                      if (customFilterTab === 'completed') return s.status === 'completed';
+                      return true;
+                    })} 
+                    rowKey="id" 
+                    pagination={{ pageSize: 10 }} 
+                    locale={{ emptyText: 'No hay encuestas personalizadas registradas' }} 
+                  />
                 </div>
       }, {
         key: 'cursos',
