@@ -1,49 +1,14 @@
 import React, { useState } from 'react';
-import { 
-  Card, 
-  Button, 
-  Table, 
-  Tag, 
-  Tabs, 
-  Modal, 
-  Form, 
-  Input, 
-  Select, 
-  DatePicker, 
-  Switch, 
-  Space, 
-  Tooltip, 
-  Badge,
-  message,
-  InputNumber,
-  Divider,
-  Popconfirm
-} from 'antd';
+import { Card, Button, Table, Tag, Tabs, Modal, Form, Input, Select, DatePicker, Switch, Space, Tooltip, Badge, message, InputNumber, Divider, Popconfirm } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import { 
-  Plus, 
-  Send, 
-  Eye, 
-  Edit, 
-  Trash2, 
-  Clock, 
-  Users, 
-  FileText,
-  CheckCircle,
-  Calendar,
-  Bell,
-  BarChart3,
-  ClipboardList,
-  BookOpen,
-  Link as LinkIcon
-} from 'lucide-react';
+import { Plus, Send, Eye, Edit, Trash2, Clock, Users, FileText, CheckCircle, Calendar, Bell, BarChart3, ClipboardList, BookOpen, Link as LinkIcon } from 'lucide-react';
 import SurveyResultsModal from '@/components/encuestas/SurveyResultsModal';
-
-const { TextArea } = Input;
+const {
+  TextArea
+} = Input;
 
 // Tipos de encuesta
 type SurveyType = 'satisfaccion' | 'transferencia';
-
 interface Survey {
   id: string;
   type: SurveyType;
@@ -60,7 +25,6 @@ interface Survey {
   responseRate: number;
   participants?: SurveyParticipant[];
 }
-
 interface Participant {
   id: string;
   name: string;
@@ -69,11 +33,9 @@ interface Participant {
   responded?: boolean;
   responseDate?: string;
 }
-
 interface SurveyParticipant extends Participant {
   surveyId: string;
 }
-
 interface CompletedCourse {
   id: string;
   name: string;
@@ -89,24 +51,81 @@ interface CompletedCourse {
 const generateParticipants = (count: number, courseId: string): Participant[] => {
   const names = ['Juan Pérez', 'María González', 'Carlos López', 'Ana Martínez', 'Pedro Sánchez', 'Laura García', 'Roberto Díaz', 'Carmen Silva', 'Francisco Torres', 'Isabel Fernández'];
   const statuses: Participant['status'][] = ['activo', 'activo', 'activo', 'activo', 'eliminado', 'anulado', 'activo', 'activo', 'activo', 'activo'];
-  return Array.from({ length: count }, (_, i) => ({
+  return Array.from({
+    length: count
+  }, (_, i) => ({
     id: `${courseId}-p${i + 1}`,
     name: names[i % names.length],
     email: `participante${i + 1}.curso${courseId}@email.com`,
-    status: statuses[i % statuses.length],
+    status: statuses[i % statuses.length]
   }));
 };
 
 // Datos de ejemplo de cursos finalizados
-const completedCoursesData: CompletedCourse[] = [
-  { id: '1', name: 'Excel Avanzado para Análisis de Datos', code: 'EXC-2024-001', endDate: '2024-01-10', participants: 25, otec: 'Capacitaciones CCC', relator: 'Dr. Roberto Sánchez', participantsList: generateParticipants(10, '1') },
-  { id: '2', name: 'Liderazgo y Gestión de Equipos', code: 'LID-2024-002', endDate: '2024-01-05', participants: 18, otec: 'Instituto de Liderazgo', relator: 'Lic. Patricia Morales', participantsList: generateParticipants(10, '2') },
-  { id: '3', name: 'Seguridad Industrial Básica', code: 'SEG-2024-003', endDate: '2023-12-20', participants: 30, otec: 'Safety Training Chile', relator: 'Ing. Carlos Mendoza', participantsList: generateParticipants(10, '3') },
-  { id: '4', name: 'Comunicación Efectiva', code: 'COM-2024-004', endDate: '2023-12-15', participants: 22, otec: 'Capacitaciones CCC', relator: 'Dra. Marcela Reyes', participantsList: generateParticipants(10, '4') },
-  { id: '5', name: 'Gestión del Tiempo y Productividad', code: 'GTP-2024-005', endDate: '2023-12-10', participants: 15, otec: 'Productividad Chile', relator: 'Lic. Fernando Araya', participantsList: generateParticipants(10, '5') },
-  { id: '6', name: 'Marketing Digital Básico', code: 'MKT-2024-006', endDate: '2023-12-05', participants: 20, otec: 'Digital Academy', relator: 'Ing. Sofía Contreras', participantsList: generateParticipants(10, '6') },
-  { id: '7', name: 'Finanzas para No Financieros', code: 'FIN-2024-007', endDate: '2023-11-30', participants: 28, otec: 'Instituto Financiero', relator: 'Dr. Miguel Valenzuela', participantsList: generateParticipants(10, '7') },
-];
+const completedCoursesData: CompletedCourse[] = [{
+  id: '1',
+  name: 'Excel Avanzado para Análisis de Datos',
+  code: 'EXC-2024-001',
+  endDate: '2024-01-10',
+  participants: 25,
+  otec: 'Capacitaciones CCC',
+  relator: 'Dr. Roberto Sánchez',
+  participantsList: generateParticipants(10, '1')
+}, {
+  id: '2',
+  name: 'Liderazgo y Gestión de Equipos',
+  code: 'LID-2024-002',
+  endDate: '2024-01-05',
+  participants: 18,
+  otec: 'Instituto de Liderazgo',
+  relator: 'Lic. Patricia Morales',
+  participantsList: generateParticipants(10, '2')
+}, {
+  id: '3',
+  name: 'Seguridad Industrial Básica',
+  code: 'SEG-2024-003',
+  endDate: '2023-12-20',
+  participants: 30,
+  otec: 'Safety Training Chile',
+  relator: 'Ing. Carlos Mendoza',
+  participantsList: generateParticipants(10, '3')
+}, {
+  id: '4',
+  name: 'Comunicación Efectiva',
+  code: 'COM-2024-004',
+  endDate: '2023-12-15',
+  participants: 22,
+  otec: 'Capacitaciones CCC',
+  relator: 'Dra. Marcela Reyes',
+  participantsList: generateParticipants(10, '4')
+}, {
+  id: '5',
+  name: 'Gestión del Tiempo y Productividad',
+  code: 'GTP-2024-005',
+  endDate: '2023-12-10',
+  participants: 15,
+  otec: 'Productividad Chile',
+  relator: 'Lic. Fernando Araya',
+  participantsList: generateParticipants(10, '5')
+}, {
+  id: '6',
+  name: 'Marketing Digital Básico',
+  code: 'MKT-2024-006',
+  endDate: '2023-12-05',
+  participants: 20,
+  otec: 'Digital Academy',
+  relator: 'Ing. Sofía Contreras',
+  participantsList: generateParticipants(10, '6')
+}, {
+  id: '7',
+  name: 'Finanzas para No Financieros',
+  code: 'FIN-2024-007',
+  endDate: '2023-11-30',
+  participants: 28,
+  otec: 'Instituto Financiero',
+  relator: 'Dr. Miguel Valenzuela',
+  participantsList: generateParticipants(10, '7')
+}];
 
 // Estructura de preguntas agrupadas por sección para Encuesta de Satisfacción
 interface SurveyQuestion {
@@ -114,7 +133,6 @@ interface SurveyQuestion {
   text: string;
   type: 'rating' | 'yesno' | 'text' | 'rating5';
 }
-
 interface SurveySection {
   id: string;
   title: string;
@@ -122,106 +140,187 @@ interface SurveySection {
 }
 
 // Preguntas de encuesta de satisfacción basadas en formulario estándar v2.0
-const satisfactionSections: SurveySection[] = [
-  {
-    id: 'relator',
-    title: 'RELATOR',
-    questions: [
-      { id: 1, text: 'El relator demostró dominio y conocimiento de los temas', type: 'rating5' },
-      { id: 2, text: 'Tuvo claridad en la exposición de los contenidos', type: 'rating5' },
-      { id: 3, text: 'Mostró disposición para aclarar dudas y responder consultas', type: 'rating5' },
-      { id: 4, text: 'Cumplió con los horarios establecidos', type: 'rating5' },
-      { id: 5, text: 'Fomentó la participación activa de los asistentes', type: 'rating5' },
-    ]
-  },
-  {
-    id: 'contenido',
-    title: 'CONTENIDO & METODOLOGÍA',
-    questions: [
-      { id: 6, text: 'Los objetivos del curso fueron explicados claramente', type: 'rating5' },
-      { id: 7, text: 'Los contenidos se relacionan con los objetivos del curso', type: 'rating5' },
-      { id: 8, text: 'Existió un balance adecuado entre teoría y práctica', type: 'rating5' },
-      { id: 9, text: 'La duración del curso fue apropiada para los contenidos', type: 'rating5' },
-    ]
-  },
-  {
-    id: 'recursos',
-    title: 'RECURSOS Y LOGÍSTICA',
-    questions: [
-      { id: 10, text: 'El material de apoyo fue adecuado y útil', type: 'rating5' },
-      { id: 11, text: 'Los recursos audiovisuales/tecnológicos facilitaron el aprendizaje', type: 'rating5' },
-      { id: 12, text: 'La logística y organización del curso fue adecuada', type: 'rating5' },
-      { id: 13, text: '[Para modalidad presencial] El espacio físico fue adecuado (comodidad, iluminación, ventilación)', type: 'rating5' },
-      { id: 14, text: '[Para modalidad virtual] La plataforma utilizada fue estable y funcional', type: 'rating5' },
-    ]
-  },
-  {
-    id: 'aplicabilidad',
-    title: 'APLICABILIDAD Y RELEVANCIA',
-    questions: [
-      { id: 15, text: 'Los conocimientos adquiridos son aplicables en mi trabajo', type: 'rating5' },
-      { id: 16, text: 'El curso contribuirá a mejorar mi desempeño laboral', type: 'rating5' },
-      { id: 17, text: 'Los contenidos cumplieron con mis expectativas', type: 'rating5' },
-    ]
-  },
-  {
-    id: 'evaluacion',
-    title: 'EVALUACIÓN GENERAL',
-    questions: [
-      { id: 18, text: 'En general, el curso cumplió con mis expectativas de aprendizaje', type: 'rating5' },
-      { id: 19, text: 'Recomendaría este curso a mis compañeros', type: 'rating5' },
-    ]
-  },
-  {
-    id: 'observaciones',
-    title: 'OBSERVACIONES',
-    questions: [
-      { id: 20, text: 'Observaciones y comentarios adicionales', type: 'text' },
-    ]
-  }
-];
+const satisfactionSections: SurveySection[] = [{
+  id: 'relator',
+  title: 'RELATOR',
+  questions: [{
+    id: 1,
+    text: 'El relator demostró dominio y conocimiento de los temas',
+    type: 'rating5'
+  }, {
+    id: 2,
+    text: 'Tuvo claridad en la exposición de los contenidos',
+    type: 'rating5'
+  }, {
+    id: 3,
+    text: 'Mostró disposición para aclarar dudas y responder consultas',
+    type: 'rating5'
+  }, {
+    id: 4,
+    text: 'Cumplió con los horarios establecidos',
+    type: 'rating5'
+  }, {
+    id: 5,
+    text: 'Fomentó la participación activa de los asistentes',
+    type: 'rating5'
+  }]
+}, {
+  id: 'contenido',
+  title: 'CONTENIDO & METODOLOGÍA',
+  questions: [{
+    id: 6,
+    text: 'Los objetivos del curso fueron explicados claramente',
+    type: 'rating5'
+  }, {
+    id: 7,
+    text: 'Los contenidos se relacionan con los objetivos del curso',
+    type: 'rating5'
+  }, {
+    id: 8,
+    text: 'Existió un balance adecuado entre teoría y práctica',
+    type: 'rating5'
+  }, {
+    id: 9,
+    text: 'La duración del curso fue apropiada para los contenidos',
+    type: 'rating5'
+  }]
+}, {
+  id: 'recursos',
+  title: 'RECURSOS Y LOGÍSTICA',
+  questions: [{
+    id: 10,
+    text: 'El material de apoyo fue adecuado y útil',
+    type: 'rating5'
+  }, {
+    id: 11,
+    text: 'Los recursos audiovisuales/tecnológicos facilitaron el aprendizaje',
+    type: 'rating5'
+  }, {
+    id: 12,
+    text: 'La logística y organización del curso fue adecuada',
+    type: 'rating5'
+  }, {
+    id: 13,
+    text: '[Para modalidad presencial] El espacio físico fue adecuado (comodidad, iluminación, ventilación)',
+    type: 'rating5'
+  }, {
+    id: 14,
+    text: '[Para modalidad virtual] La plataforma utilizada fue estable y funcional',
+    type: 'rating5'
+  }]
+}, {
+  id: 'aplicabilidad',
+  title: 'APLICABILIDAD Y RELEVANCIA',
+  questions: [{
+    id: 15,
+    text: 'Los conocimientos adquiridos son aplicables en mi trabajo',
+    type: 'rating5'
+  }, {
+    id: 16,
+    text: 'El curso contribuirá a mejorar mi desempeño laboral',
+    type: 'rating5'
+  }, {
+    id: 17,
+    text: 'Los contenidos cumplieron con mis expectativas',
+    type: 'rating5'
+  }]
+}, {
+  id: 'evaluacion',
+  title: 'EVALUACIÓN GENERAL',
+  questions: [{
+    id: 18,
+    text: 'En general, el curso cumplió con mis expectativas de aprendizaje',
+    type: 'rating5'
+  }, {
+    id: 19,
+    text: 'Recomendaría este curso a mis compañeros',
+    type: 'rating5'
+  }]
+}, {
+  id: 'observaciones',
+  title: 'OBSERVACIONES',
+  questions: [{
+    id: 20,
+    text: 'Observaciones y comentarios adicionales',
+    type: 'text'
+  }]
+}];
 
 // Preguntas de transferencia (mantener estructura simple)
-const transferenciaSections: SurveySection[] = [
-  {
-    id: 'aplicacion',
-    title: 'APLICACIÓN EN EL TRABAJO',
-    questions: [
-      { id: 1, text: '¿Ha podido aplicar los conocimientos adquiridos en su puesto de trabajo?', type: 'rating5' },
-      { id: 2, text: '¿Los contenidos del curso son relevantes para sus funciones actuales?', type: 'rating5' },
-      { id: 3, text: '¿Ha mejorado su desempeño laboral después del curso?', type: 'rating5' },
-      { id: 4, text: '¿Ha compartido los conocimientos adquiridos con sus compañeros?', type: 'yesno' },
-      { id: 5, text: '¿Su jefatura ha notado mejoras en su desempeño?', type: 'rating5' },
-    ]
-  },
-  {
-    id: 'retroalimentacion',
-    title: 'RETROALIMENTACIÓN',
-    questions: [
-      { id: 6, text: '¿Qué conocimientos específicos ha aplicado en su trabajo?', type: 'text' },
-      { id: 7, text: '¿Qué barreras ha encontrado para aplicar lo aprendido?', type: 'text' },
-      { id: 8, text: '¿Qué apoyo adicional necesitaría para mejorar la transferencia?', type: 'text' },
-    ]
-  },
-  {
-    id: 'evaluacion',
-    title: 'EVALUACIÓN GENERAL',
-    questions: [
-      { id: 9, text: '¿El curso le ha ayudado a resolver problemas específicos de su trabajo?', type: 'rating5' },
-      { id: 10, text: 'Sugerencias para mejorar la aplicabilidad del curso', type: 'text' },
-    ]
-  }
-];
+const transferenciaSections: SurveySection[] = [{
+  id: 'aplicacion',
+  title: 'APLICACIÓN EN EL TRABAJO',
+  questions: [{
+    id: 1,
+    text: '¿Ha podido aplicar los conocimientos adquiridos en su puesto de trabajo?',
+    type: 'rating5'
+  }, {
+    id: 2,
+    text: '¿Los contenidos del curso son relevantes para sus funciones actuales?',
+    type: 'rating5'
+  }, {
+    id: 3,
+    text: '¿Ha mejorado su desempeño laboral después del curso?',
+    type: 'rating5'
+  }, {
+    id: 4,
+    text: '¿Ha compartido los conocimientos adquiridos con sus compañeros?',
+    type: 'yesno'
+  }, {
+    id: 5,
+    text: '¿Su jefatura ha notado mejoras en su desempeño?',
+    type: 'rating5'
+  }]
+}, {
+  id: 'retroalimentacion',
+  title: 'RETROALIMENTACIÓN',
+  questions: [{
+    id: 6,
+    text: '¿Qué conocimientos específicos ha aplicado en su trabajo?',
+    type: 'text'
+  }, {
+    id: 7,
+    text: '¿Qué barreras ha encontrado para aplicar lo aprendido?',
+    type: 'text'
+  }, {
+    id: 8,
+    text: '¿Qué apoyo adicional necesitaría para mejorar la transferencia?',
+    type: 'text'
+  }]
+}, {
+  id: 'evaluacion',
+  title: 'EVALUACIÓN GENERAL',
+  questions: [{
+    id: 9,
+    text: '¿El curso le ha ayudado a resolver problemas específicos de su trabajo?',
+    type: 'rating5'
+  }, {
+    id: 10,
+    text: 'Sugerencias para mejorar la aplicabilidad del curso',
+    type: 'text'
+  }]
+}];
 
 // Escala de calificación
-const ratingScale = [
-  { value: 1, label: 'Muy Insatisfecho' },
-  { value: 2, label: 'Insatisfecho' },
-  { value: 3, label: 'Regular' },
-  { value: 4, label: 'Bueno' },
-  { value: 5, label: 'Muy Bueno' },
-  { value: 0, label: 'N/A' },
-];
+const ratingScale = [{
+  value: 1,
+  label: 'Muy Insatisfecho'
+}, {
+  value: 2,
+  label: 'Insatisfecho'
+}, {
+  value: 3,
+  label: 'Regular'
+}, {
+  value: 4,
+  label: 'Bueno'
+}, {
+  value: 5,
+  label: 'Muy Bueno'
+}, {
+  value: 0,
+  label: 'N/A'
+}];
 
 // Helper para obtener secciones según tipo
 const getSurveySections = (type: SurveyType): SurveySection[] => {
@@ -237,68 +336,65 @@ const getTotalQuestions = (type: SurveyType): number => {
 // Generar participantes con estado de respuesta para encuestas
 const generateSurveyParticipants = (surveyId: string, courseId: string, totalResponses: number, total: number): SurveyParticipant[] => {
   const names = ['Juan Pérez', 'María González', 'Carlos López', 'Ana Martínez', 'Pedro Sánchez', 'Laura García', 'Roberto Díaz', 'Carmen Silva', 'Francisco Torres', 'Isabel Fernández', 'Diego Vargas', 'Lucía Moreno', 'Andrés Rojas', 'Patricia Vega', 'Miguel Herrera'];
-  return Array.from({ length: total }, (_, i) => ({
+  return Array.from({
+    length: total
+  }, (_, i) => ({
     id: `${surveyId}-p${i + 1}`,
     surveyId,
     name: names[i % names.length],
     email: `participante${i + 1}.curso${courseId}@email.com`,
     status: 'activo' as const,
     responded: i < totalResponses,
-    responseDate: i < totalResponses ? `2024-01-${String(12 + (i % 5)).padStart(2, '0')}` : undefined,
+    responseDate: i < totalResponses ? `2024-01-${String(12 + i % 5).padStart(2, '0')}` : undefined
   }));
 };
 
 // Datos de ejemplo de encuestas
-const initialSurveys: Survey[] = [
-  {
-    id: '1',
-    type: 'satisfaccion',
-    name: 'Encuesta Satisfacción - Excel Avanzado',
-    courseId: '1',
-    courseName: 'Excel Avanzado para Análisis de Datos',
-    status: 'completed',
-    createdAt: '2024-01-11',
-    scheduledDate: '2024-01-11',
-    reminderEnabled: true,
-    reminderDays: 3,
-    totalParticipants: 25,
-    responses: 22,
-    responseRate: 88,
-    participants: generateSurveyParticipants('1', '1', 22, 25),
-  },
-  {
-    id: '2',
-    type: 'transferencia',
-    name: 'Encuesta Transferencia - Liderazgo',
-    courseId: '2',
-    courseName: 'Liderazgo y Gestión de Equipos',
-    status: 'active',
-    createdAt: '2024-01-06',
-    scheduledDate: '2024-02-05',
-    reminderEnabled: true,
-    reminderDays: 5,
-    totalParticipants: 18,
-    responses: 8,
-    responseRate: 44,
-    participants: generateSurveyParticipants('2', '2', 8, 18),
-  },
-  {
-    id: '3',
-    type: 'satisfaccion',
-    name: 'Encuesta Satisfacción - Seguridad Industrial',
-    courseId: '3',
-    courseName: 'Seguridad Industrial Básica',
-    status: 'scheduled',
-    createdAt: '2023-12-21',
-    scheduledDate: '2024-01-20',
-    reminderEnabled: false,
-    totalParticipants: 30,
-    responses: 0,
-    responseRate: 0,
-    participants: generateSurveyParticipants('3', '3', 0, 30),
-  },
-];
-
+const initialSurveys: Survey[] = [{
+  id: '1',
+  type: 'satisfaccion',
+  name: 'Encuesta Satisfacción - Excel Avanzado',
+  courseId: '1',
+  courseName: 'Excel Avanzado para Análisis de Datos',
+  status: 'completed',
+  createdAt: '2024-01-11',
+  scheduledDate: '2024-01-11',
+  reminderEnabled: true,
+  reminderDays: 3,
+  totalParticipants: 25,
+  responses: 22,
+  responseRate: 88,
+  participants: generateSurveyParticipants('1', '1', 22, 25)
+}, {
+  id: '2',
+  type: 'transferencia',
+  name: 'Encuesta Transferencia - Liderazgo',
+  courseId: '2',
+  courseName: 'Liderazgo y Gestión de Equipos',
+  status: 'active',
+  createdAt: '2024-01-06',
+  scheduledDate: '2024-02-05',
+  reminderEnabled: true,
+  reminderDays: 5,
+  totalParticipants: 18,
+  responses: 8,
+  responseRate: 44,
+  participants: generateSurveyParticipants('2', '2', 8, 18)
+}, {
+  id: '3',
+  type: 'satisfaccion',
+  name: 'Encuesta Satisfacción - Seguridad Industrial',
+  courseId: '3',
+  courseName: 'Seguridad Industrial Básica',
+  status: 'scheduled',
+  createdAt: '2023-12-21',
+  scheduledDate: '2024-01-20',
+  reminderEnabled: false,
+  totalParticipants: 30,
+  responses: 0,
+  responseRate: 0,
+  participants: generateSurveyParticipants('3', '3', 0, 30)
+}];
 const Encuestas: React.FC = () => {
   const [surveys, setSurveys] = useState<Survey[]>(initialSurveys);
   const [mainTab, setMainTab] = useState<string>('encuestas');
@@ -321,9 +417,7 @@ const Encuestas: React.FC = () => {
 
   // Estado para personalización de correo
   const [isEmailCustomizeOpen, setIsEmailCustomizeOpen] = useState(false);
-  const [emailTemplate, setEmailTemplate] = useState<string>(
-    `Estimado/a participante,\n\nLe invitamos a completar la encuesta de satisfacción del curso que ha finalizado recientemente.\n\nSu opinión es muy importante para nosotros y nos ayudará a mejorar nuestros servicios de capacitación.\n\nPor favor, haga clic en el enlace a continuación para acceder a la encuesta:\n[ENLACE_ENCUESTA]\n\nGracias por su tiempo.\n\nSaludos cordiales,\nEquipo de Capacitación`
-  );
+  const [emailTemplate, setEmailTemplate] = useState<string>(`Estimado/a participante,\n\nLe invitamos a completar la encuesta de satisfacción del curso que ha finalizado recientemente.\n\nSu opinión es muy importante para nosotros y nos ayudará a mejorar nuestros servicios de capacitación.\n\nPor favor, haga clic en el enlace a continuación para acceder a la encuesta:\n[ENLACE_ENCUESTA]\n\nGracias por su tiempo.\n\nSaludos cordiales,\nEquipo de Capacitación`);
   const [includeCourseName, setIncludeCourseName] = useState(true);
   const [includeCourseDate, setIncludeCourseDate] = useState(true);
   const [includeRelatorName, setIncludeRelatorName] = useState(true);
@@ -334,31 +428,52 @@ const Encuestas: React.FC = () => {
   // Estado para modal de resultados
   const [isResultsModalOpen, setIsResultsModalOpen] = useState(false);
   const [selectedSurveyForResults, setSelectedSurveyForResults] = useState<Survey | null>(null);
-
   const handleViewResults = (survey: Survey) => {
     setSelectedSurveyForResults(survey);
     setIsResultsModalOpen(true);
   };
-
   const getStatusTag = (status: Survey['status']) => {
     const config = {
-      draft: { color: 'default', label: 'Borrador', icon: <FileText className="w-3 h-3" /> },
-      scheduled: { color: 'blue', label: 'Programada', icon: <Clock className="w-3 h-3" /> },
-      active: { color: 'green', label: 'Activa', icon: <CheckCircle className="w-3 h-3" /> },
-      completed: { color: 'purple', label: 'Completada', icon: <CheckCircle className="w-3 h-3" /> },
+      draft: {
+        color: 'default',
+        label: 'Borrador',
+        icon: <FileText className="w-3 h-3" />
+      },
+      scheduled: {
+        color: 'blue',
+        label: 'Programada',
+        icon: <Clock className="w-3 h-3" />
+      },
+      active: {
+        color: 'green',
+        label: 'Activa',
+        icon: <CheckCircle className="w-3 h-3" />
+      },
+      completed: {
+        color: 'purple',
+        label: 'Completada',
+        icon: <CheckCircle className="w-3 h-3" />
+      }
     };
-    const { color, label, icon } = config[status];
-    return (
-      <Tag color={color} className="flex items-center gap-1 px-2 py-0.5">
+    const {
+      color,
+      label,
+      icon
+    } = config[status];
+    return <Tag color={color} className="flex items-center gap-1 px-2 py-0.5">
         {icon} {label}
-      </Tag>
-    );
+      </Tag>;
   };
-
   const getTypeTag = (type: SurveyType) => {
     const config = {
-      satisfaccion: { color: '#65BFB1', label: 'Satisfacción' },
-      transferencia: { color: '#1e4a5a', label: 'Transferencia' },
+      satisfaccion: {
+        color: '#65BFB1',
+        label: 'Satisfacción'
+      },
+      transferencia: {
+        color: '#1e4a5a',
+        label: 'Transferencia'
+      }
     };
     return <Tag color={config[type].color}>{config[type].label}</Tag>;
   };
@@ -369,248 +484,152 @@ const Encuestas: React.FC = () => {
   };
 
   // Columnas para la tabla de encuestas (mantenedor)
-  const surveyColumns: ColumnsType<Survey> = [
-    {
-      title: 'Encuesta',
-      dataIndex: 'name',
-      key: 'name',
-      render: (name, record) => (
-        <div>
+  const surveyColumns: ColumnsType<Survey> = [{
+    title: 'Encuesta',
+    dataIndex: 'name',
+    key: 'name',
+    render: (name, record) => <div>
           <div className="font-medium text-[#1e4a5a]">{name}</div>
           <div className="text-xs text-muted-foreground">{record.courseName}</div>
         </div>
-      ),
-    },
-    {
-      title: 'Tipo',
-      dataIndex: 'type',
-      key: 'type',
-      render: (type) => getTypeTag(type),
-    },
-    {
-      title: 'Estado',
-      dataIndex: 'status',
-      key: 'status',
-      render: (status) => getStatusTag(status),
-    },
-    {
-      title: 'Programación',
-      dataIndex: 'scheduledDate',
-      key: 'scheduledDate',
-      render: (date, record) => (
-        <div className="flex items-center gap-2">
+  }, {
+    title: 'Tipo',
+    dataIndex: 'type',
+    key: 'type',
+    render: type => getTypeTag(type)
+  }, {
+    title: 'Estado',
+    dataIndex: 'status',
+    key: 'status',
+    render: status => getStatusTag(status)
+  }, {
+    title: 'Programación',
+    dataIndex: 'scheduledDate',
+    key: 'scheduledDate',
+    render: (date, record) => <div className="flex items-center gap-2">
           <Calendar className="w-4 h-4 text-muted-foreground" />
           <span>{date || 'Sin programar'}</span>
-          {record.reminderEnabled && (
-            <Tooltip title={`Recordatorio: ${record.reminderDays} días después`}>
+          {record.reminderEnabled && <Tooltip title={`Recordatorio: ${record.reminderDays} días después`}>
               <Bell className="w-4 h-4 text-[#65BFB1]" />
-            </Tooltip>
-          )}
+            </Tooltip>}
         </div>
-      ),
-    },
-    {
-      title: 'Respuestas',
-      key: 'responses',
-      render: (_, record) => (
-        <div className="flex items-center gap-2">
+  }, {
+    title: 'Respuestas',
+    key: 'responses',
+    render: (_, record) => <div className="flex items-center gap-2">
           <Users className="w-4 h-4 text-muted-foreground" />
           <span>{record.responses}/{record.totalParticipants}</span>
-          <Badge 
-            count={`${record.responseRate}%`} 
-            style={{ 
-              backgroundColor: record.responseRate >= 70 ? '#65BFB1' : record.responseRate >= 40 ? '#faad14' : '#ff4d4f' 
-            }} 
-          />
+          <Badge count={`${record.responseRate}%`} style={{
+        backgroundColor: record.responseRate >= 70 ? '#65BFB1' : record.responseRate >= 40 ? '#faad14' : '#ff4d4f'
+      }} />
         </div>
-      ),
-    },
-    {
-      title: 'Acciones',
-      key: 'actions',
-      render: (_, record) => (
-        <Space>
+  }, {
+    title: 'Acciones',
+    key: 'actions',
+    render: (_, record) => <Space>
           <Tooltip title="Ver encuesta">
-            <Button 
-              type="text" 
-              icon={<Eye className="w-4 h-4" />} 
-              onClick={() => handleViewSurvey(record)}
-            />
+            <Button type="text" icon={<Eye className="w-4 h-4" />} onClick={() => handleViewSurvey(record)} />
           </Tooltip>
-          {record.status === 'draft' && (
-            <Tooltip title="Editar">
+          {record.status === 'draft' && <Tooltip title="Editar">
               <Button type="text" icon={<Edit className="w-4 h-4" />} />
-            </Tooltip>
-          )}
+            </Tooltip>}
           <Tooltip title="Eliminar">
-            <Popconfirm
-              title="¿Eliminar encuesta?"
-              description="Esta acción no se puede deshacer."
-              onConfirm={() => handleDeleteSurvey(record.id)}
-              okText="Eliminar"
-              cancelText="Cancelar"
-              okButtonProps={{ danger: true }}
-            >
-              <Button 
-                type="text" 
-                danger 
-                icon={<Trash2 className="w-4 h-4" />} 
-              />
+            <Popconfirm title="¿Eliminar encuesta?" description="Esta acción no se puede deshacer." onConfirm={() => handleDeleteSurvey(record.id)} okText="Eliminar" cancelText="Cancelar" okButtonProps={{
+          danger: true
+        }}>
+              <Button type="text" danger icon={<Trash2 className="w-4 h-4" />} />
             </Popconfirm>
           </Tooltip>
-          {record.status === 'scheduled' && (
-            <Tooltip title="Enviar ahora">
-              <Button 
-                type="text" 
-                icon={<Send className="w-4 h-4 text-[#65BFB1]" />} 
-                onClick={() => handleSendNow(record.id)}
-              />
-            </Tooltip>
-          )}
-          {(record.status === 'active' || record.status === 'completed') && (
-            <Tooltip title="Ver resultados">
-              <Button 
-                type="text" 
-                icon={<BarChart3 className="w-4 h-4 text-[#65BFB1]" />} 
-                onClick={() => handleViewResults(record)}
-              />
-            </Tooltip>
-          )}
-          {record.status === 'active' && (
-            <Tooltip title="Enviar recordatorio">
-              <Button 
-                type="text" 
-                icon={<Bell className="w-4 h-4 text-orange-500" />} 
-                onClick={() => handleSendReminder(record.id)}
-              />
-            </Tooltip>
-          )}
+          {record.status === 'scheduled' && <Tooltip title="Enviar ahora">
+              <Button type="text" icon={<Send className="w-4 h-4 text-[#65BFB1]" />} onClick={() => handleSendNow(record.id)} />
+            </Tooltip>}
+          {(record.status === 'active' || record.status === 'completed') && <Tooltip title="Ver resultados">
+              <Button type="text" icon={<BarChart3 className="w-4 h-4 text-[#65BFB1]" />} onClick={() => handleViewResults(record)} />
+            </Tooltip>}
+          {record.status === 'active' && <Tooltip title="Enviar recordatorio">
+              <Button type="text" icon={<Bell className="w-4 h-4 text-orange-500" />} onClick={() => handleSendReminder(record.id)} />
+            </Tooltip>}
         </Space>
-      ),
-    },
-  ];
+  }];
 
   // Columnas para la tabla de cursos
-  const courseColumns: ColumnsType<CompletedCourse> = [
-    {
-      title: 'Curso',
-      dataIndex: 'name',
-      key: 'name',
-      render: (name, record) => (
-        <div>
+  const courseColumns: ColumnsType<CompletedCourse> = [{
+    title: 'Curso',
+    dataIndex: 'name',
+    key: 'name',
+    render: (name, record) => <div>
           <div className="font-medium text-[#1e4a5a]">{name}</div>
           <div className="text-xs text-muted-foreground">{record.code}</div>
         </div>
-      ),
-    },
-    {
-      title: 'OTEC',
-      dataIndex: 'otec',
-      key: 'otec',
-    },
-    {
-      title: 'Fecha Término',
-      dataIndex: 'endDate',
-      key: 'endDate',
-      render: (date) => (
-        <div className="flex items-center gap-2">
+  }, {
+    title: 'OTEC',
+    dataIndex: 'otec',
+    key: 'otec'
+  }, {
+    title: 'Fecha Término',
+    dataIndex: 'endDate',
+    key: 'endDate',
+    render: date => <div className="flex items-center gap-2">
           <Calendar className="w-4 h-4 text-muted-foreground" />
           <span>{date}</span>
         </div>
-      ),
-    },
-    {
-      title: 'Participantes',
-      dataIndex: 'participants',
-      key: 'participants',
-      render: (participants) => (
-        <div className="flex items-center gap-2">
+  }, {
+    title: 'Participantes',
+    dataIndex: 'participants',
+    key: 'participants',
+    render: participants => <div className="flex items-center gap-2">
           <Users className="w-4 h-4 text-muted-foreground" />
           <span>{participants}</span>
         </div>
-      ),
-    },
-    {
-      title: 'Encuestas Asignadas',
-      key: 'surveys',
-      render: (_, record) => {
-        const courseSurveys = getSurveysForCourse(record.id);
-        if (courseSurveys.length === 0) {
-          return <Tag color="default">Sin encuestas</Tag>;
-        }
-        return (
-          <div className="flex flex-wrap gap-1">
-            {courseSurveys.map(s => (
-              <Tag key={s.id} color={s.type === 'satisfaccion' ? '#65BFB1' : '#1e4a5a'}>
+  }, {
+    title: 'Encuestas Asignadas',
+    key: 'surveys',
+    render: (_, record) => {
+      const courseSurveys = getSurveysForCourse(record.id);
+      if (courseSurveys.length === 0) {
+        return <Tag color="default">Sin encuestas</Tag>;
+      }
+      return <div className="flex flex-wrap gap-1">
+            {courseSurveys.map(s => <Tag key={s.id} color={s.type === 'satisfaccion' ? '#65BFB1' : '#1e4a5a'}>
                 {s.type === 'satisfaccion' ? 'Satisfacción' : 'Transferencia'}
-              </Tag>
-            ))}
-          </div>
-        );
-      },
-    },
-    {
-      title: 'Acciones',
-      key: 'actions',
-      render: (_, record) => {
-        const courseSurveys = getSurveysForCourse(record.id);
-        return (
-          <Space>
+              </Tag>)}
+          </div>;
+    }
+  }, {
+    title: 'Acciones',
+    key: 'actions',
+    render: (_, record) => {
+      const courseSurveys = getSurveysForCourse(record.id);
+      return <Space>
             <Tooltip title="Asignar encuesta">
-              <Button 
-                type="text" 
-                icon={<Plus className="w-4 h-4 text-[#65BFB1]" />} 
-                onClick={() => handleOpenAssignModal(record)}
-              />
+              <Button type="text" icon={<Plus className="w-4 h-4 text-[#65BFB1]" />} onClick={() => handleOpenAssignModal(record)} />
             </Tooltip>
-            {courseSurveys.length > 0 && (
-              <Tooltip title="Eliminar encuestas del curso">
-                <Popconfirm
-                  title="¿Eliminar todas las encuestas de este curso?"
-                  description={`Se eliminarán ${courseSurveys.length} encuesta(s) asociadas.`}
-                  onConfirm={() => handleDeleteCourseSurveys(record.id)}
-                  okText="Eliminar"
-                  cancelText="Cancelar"
-                  okButtonProps={{ danger: true }}
-                >
-                  <Button 
-                    type="text" 
-                    danger 
-                    icon={<Trash2 className="w-4 h-4" />} 
-                  />
+            {courseSurveys.length > 0 && <Tooltip title="Eliminar encuestas del curso">
+                <Popconfirm title="¿Eliminar todas las encuestas de este curso?" description={`Se eliminarán ${courseSurveys.length} encuesta(s) asociadas.`} onConfirm={() => handleDeleteCourseSurveys(record.id)} okText="Eliminar" cancelText="Cancelar" okButtonProps={{
+            danger: true
+          }}>
+                  <Button type="text" danger icon={<Trash2 className="w-4 h-4" />} />
                 </Popconfirm>
-              </Tooltip>
-            )}
+              </Tooltip>}
             <Tooltip title="Ver encuestas">
-              <Button 
-                type="text" 
-                icon={<Eye className="w-4 h-4" />} 
-                onClick={() => handleViewCourseSurveys(record)}
-                disabled={courseSurveys.length === 0}
-              />
+              <Button type="text" icon={<Eye className="w-4 h-4" />} onClick={() => handleViewCourseSurveys(record)} disabled={courseSurveys.length === 0} />
             </Tooltip>
-          </Space>
-        );
-      },
-    },
-  ];
-
+          </Space>;
+    }
+  }];
   const handleViewSurvey = (survey: Survey) => {
     setSelectedSurvey(survey);
     setIsViewModalOpen(true);
   };
-
   const handleDeleteSurvey = (id: string) => {
     setSurveys(surveys.filter(s => s.id !== id));
     message.success('Encuesta eliminada correctamente');
   };
-
   const handleDeleteCourseSurveys = (courseId: string) => {
     const count = surveys.filter(s => s.courseId === courseId).length;
     setSurveys(surveys.filter(s => s.courseId !== courseId));
     message.success(`Se eliminaron ${count} encuesta(s) del curso`);
   };
-
   const handleViewCourseSurveys = (course: CompletedCourse) => {
     const courseSurveys = getSurveysForCourse(course.id);
     if (courseSurveys.length > 0) {
@@ -618,7 +637,6 @@ const Encuestas: React.FC = () => {
       setIsViewModalOpen(true);
     }
   };
-
   const handleOpenAssignModal = (course: CompletedCourse) => {
     setCourseToAssign(course);
     setSelectedCourse(course.id);
@@ -626,7 +644,6 @@ const Encuestas: React.FC = () => {
     setParticipants([...course.participantsList]);
     setIsAssignModalOpen(true);
   };
-
   const handleSendNow = (id: string) => {
     Modal.confirm({
       title: '¿Enviar encuesta ahora?',
@@ -634,20 +651,19 @@ const Encuestas: React.FC = () => {
       okText: 'Enviar',
       cancelText: 'Cancelar',
       onOk: () => {
-        setSurveys(surveys.map(s => 
-          s.id === id ? { ...s, status: 'active' as const } : s
-        ));
+        setSurveys(surveys.map(s => s.id === id ? {
+          ...s,
+          status: 'active' as const
+        } : s));
         message.success('Encuesta enviada a los participantes');
-      },
+      }
     });
   };
-
   const handleSendReminder = (id: string) => {
     message.success('Recordatorio enviado a participantes pendientes');
   };
-
   const handleCreateSurvey = () => {
-    form.validateFields().then((values) => {
+    form.validateFields().then(values => {
       const course = completedCoursesData.find(c => c.id === selectedCourse);
       const newSurvey: Survey = {
         id: String(Date.now()),
@@ -662,7 +678,7 @@ const Encuestas: React.FC = () => {
         reminderDays: values.reminderDays,
         totalParticipants: course?.participants || 0,
         responses: 0,
-        responseRate: 0,
+        responseRate: 0
       };
       setSurveys([newSurvey, ...surveys]);
       setIsCreateModalOpen(false);
@@ -680,34 +696,26 @@ const Encuestas: React.FC = () => {
       message.success('Encuesta creada y programada correctamente');
     });
   };
-
   const filteredSurveys = surveys.filter(s => {
     if (surveyFilterTab === 'all') return true;
     if (surveyFilterTab === 'satisfaccion') return s.type === 'satisfaccion';
     if (surveyFilterTab === 'transferencia') return s.type === 'transferencia';
     return true;
   });
-
   const surveyStats = {
     total: surveys.length,
     active: surveys.filter(s => s.status === 'active').length,
     scheduled: surveys.filter(s => s.status === 'scheduled').length,
     completed: surveys.filter(s => s.status === 'completed').length,
-    avgResponseRate: surveys.length > 0 
-      ? Math.round(surveys.reduce((acc, s) => acc + s.responseRate, 0) / surveys.length) 
-      : 0,
+    avgResponseRate: surveys.length > 0 ? Math.round(surveys.reduce((acc, s) => acc + s.responseRate, 0) / surveys.length) : 0
   };
 
   // Render del formulario de creación (compartido entre ambos modales)
-  const renderSurveyForm = (showCourseSelect: boolean = true) => (
-    <Form form={form} layout="vertical" className="mt-4">
+  const renderSurveyForm = (showCourseSelect: boolean = true) => <Form form={form} layout="vertical" className="mt-4">
       {/* Tipo de Encuesta */}
       <Form.Item label="Tipo de Encuesta" required>
         <div className="grid grid-cols-2 gap-4">
-          <Card 
-            className={`cursor-pointer transition-all ${surveyType === 'satisfaccion' ? 'border-2 border-[#65BFB1] bg-[#65BFB1]/5' : 'hover:border-[#65BFB1]/50'}`}
-            onClick={() => setSurveyType('satisfaccion')}
-          >
+          <Card className={`cursor-pointer transition-all ${surveyType === 'satisfaccion' ? 'border-2 border-[#65BFB1] bg-[#65BFB1]/5' : 'hover:border-[#65BFB1]/50'}`} onClick={() => setSurveyType('satisfaccion')}>
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-[#65BFB1]/20 rounded-full flex items-center justify-center">
                 <CheckCircle className="w-6 h-6 text-[#65BFB1]" />
@@ -718,10 +726,7 @@ const Encuestas: React.FC = () => {
               </div>
             </div>
           </Card>
-          <Card 
-            className={`cursor-pointer transition-all ${surveyType === 'transferencia' ? 'border-2 border-[#1e4a5a] bg-[#1e4a5a]/5' : 'hover:border-[#1e4a5a]/50'}`}
-            onClick={() => setSurveyType('transferencia')}
-          >
+          <Card className={`cursor-pointer transition-all ${surveyType === 'transferencia' ? 'border-2 border-[#1e4a5a] bg-[#1e4a5a]/5' : 'hover:border-[#1e4a5a]/50'}`} onClick={() => setSurveyType('transferencia')}>
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-[#1e4a5a]/20 rounded-full flex items-center justify-center">
                 <Users className="w-6 h-6 text-[#1e4a5a]" />
@@ -736,140 +741,104 @@ const Encuestas: React.FC = () => {
       </Form.Item>
 
       {/* Nombre de la Encuesta */}
-      <Form.Item 
-        name="name" 
-        label="Nombre de la Encuesta" 
-        rules={[{ required: true, message: 'Ingrese un nombre' }]}
-      >
+      <Form.Item name="name" label="Nombre de la Encuesta" rules={[{
+      required: true,
+      message: 'Ingrese un nombre'
+    }]}>
         <Input placeholder="Ej: Encuesta de satisfacción - Excel Avanzado Enero 2024" />
       </Form.Item>
 
       {/* Curso Asociado */}
-      {showCourseSelect ? (
-        <Form.Item label="Curso Finalizado Asociado" required>
-          <Select
-            placeholder="Seleccione un curso finalizado"
-            value={selectedCourse}
-            onChange={(value) => {
-              setSelectedCourse(value);
-              const course = completedCoursesData.find(c => c.id === value);
-              if (course) {
-                setRelator(course.relator);
-                setParticipants([...course.participantsList]);
-              }
-            }}
-            options={completedCoursesData.map(c => ({
-              value: c.id,
-              label: (
-                <div className="flex justify-between items-center">
+      {showCourseSelect ? <Form.Item label="Curso Finalizado Asociado" required>
+          <Select placeholder="Seleccione un curso finalizado" value={selectedCourse} onChange={value => {
+        setSelectedCourse(value);
+        const course = completedCoursesData.find(c => c.id === value);
+        if (course) {
+          setRelator(course.relator);
+          setParticipants([...course.participantsList]);
+        }
+      }} options={completedCoursesData.map(c => ({
+        value: c.id,
+        label: <div className="flex justify-between items-center">
                   <div>
                     <div className="font-medium">{c.name}</div>
                     <div className="text-xs text-muted-foreground">{c.code} • {c.otec}</div>
                   </div>
                   <Tag color="blue">{c.participants} participantes</Tag>
                 </div>
-              ),
-            }))}
-          />
-        </Form.Item>
-      ) : courseToAssign && (
-        <div className="bg-gray-50 p-4 rounded-lg mb-4">
+      }))} />
+        </Form.Item> : courseToAssign && <div className="bg-gray-50 p-4 rounded-lg mb-4">
           <div className="text-sm font-medium text-[#1e4a5a] mb-1">Curso seleccionado:</div>
           <div className="font-semibold text-[#1e4a5a]">{courseToAssign.name}</div>
           <div className="text-xs text-muted-foreground">{courseToAssign.code} • {courseToAssign.otec} • {courseToAssign.participants} participantes</div>
-        </div>
-      )}
+        </div>}
 
       {/* Relator del curso */}
-      {(selectedCourse || courseToAssign) && (
-        <Form.Item label="Relator del Curso" required>
-          <Input 
-            placeholder="Nombre del relator" 
-            value={relator}
-            onChange={(e) => setRelator(e.target.value)}
-          />
-        </Form.Item>
-      )}
+      {(selectedCourse || courseToAssign) && <Form.Item label="Relator del Curso" required>
+          <Input placeholder="Nombre del relator" value={relator} onChange={e => setRelator(e.target.value)} />
+        </Form.Item>}
 
       {/* Lista de participantes */}
-      {(selectedCourse || courseToAssign) && participants.length > 0 && (
-        <div className="mb-4">
+      {(selectedCourse || courseToAssign) && participants.length > 0 && <div className="mb-4">
           <div className="flex items-center justify-between mb-3">
             <div className="text-sm font-medium text-[#1e4a5a]">
               Participantes del Curso ({participants.filter(p => p.status === 'activo').length} activos de {participants.length})
             </div>
             <Space>
-              <Button 
-                size="small" 
-                type="default"
-                onClick={() => setParticipants(participants.filter(p => p.status !== 'eliminado'))}
-                disabled={!participants.some(p => p.status === 'eliminado')}
-              >
+              <Button size="small" type="default" onClick={() => setParticipants(participants.filter(p => p.status !== 'eliminado'))} disabled={!participants.some(p => p.status === 'eliminado')}>
                 Excluir Eliminados ({participants.filter(p => p.status === 'eliminado').length})
               </Button>
-              <Button 
-                size="small" 
-                type="default"
-                onClick={() => setParticipants(participants.filter(p => p.status !== 'anulado'))}
-                disabled={!participants.some(p => p.status === 'anulado')}
-              >
+              <Button size="small" type="default" onClick={() => setParticipants(participants.filter(p => p.status !== 'anulado'))} disabled={!participants.some(p => p.status === 'anulado')}>
                 Excluir Anulados ({participants.filter(p => p.status === 'anulado').length})
               </Button>
             </Space>
           </div>
           <div className="border rounded-lg overflow-hidden max-h-60 overflow-y-auto">
-            <Table
-              dataSource={participants}
-              rowKey="id"
-              size="small"
-              pagination={false}
-              columns={[
-                {
-                  title: 'Nombre',
-                  dataIndex: 'name',
-                  key: 'name',
-                  width: '30%',
-                  render: (name) => <span className="font-medium text-[#1e4a5a]">{name}</span>,
-                },
-                {
-                  title: 'Correo Electrónico',
-                  dataIndex: 'email',
-                  key: 'email',
-                  width: '40%',
-                  render: (email, record) => (
-                    <Input 
-                      size="small"
-                      value={email}
-                      onChange={(e) => {
-                        setParticipants(participants.map(p => 
-                          p.id === record.id ? { ...p, email: e.target.value } : p
-                        ));
-                      }}
-                    />
-                  ),
-                },
-                {
-                  title: 'Estado',
-                  dataIndex: 'status',
-                  key: 'status',
-                  width: '20%',
-                  render: (status, record) => {
-                    const statusConfig = {
-                      activo: { color: 'green', label: 'Activo' },
-                      eliminado: { color: 'red', label: 'Eliminado' },
-                      anulado: { color: 'orange', label: 'Anulado' },
-                    };
-                    return (
-                      <Select
-                        size="small"
-                        value={status}
-                        onChange={(value) => {
-                          setParticipants(participants.map(p => 
-                            p.id === record.id ? { ...p, status: value } : p
-                          ));
-                        }}
-                        style={{ width: '100%' }}
-                      >
+            <Table dataSource={participants} rowKey="id" size="small" pagination={false} columns={[{
+          title: 'Nombre',
+          dataIndex: 'name',
+          key: 'name',
+          width: '30%',
+          render: name => <span className="font-medium text-[#1e4a5a]">{name}</span>
+        }, {
+          title: 'Correo Electrónico',
+          dataIndex: 'email',
+          key: 'email',
+          width: '40%',
+          render: (email, record) => <Input size="small" value={email} onChange={e => {
+            setParticipants(participants.map(p => p.id === record.id ? {
+              ...p,
+              email: e.target.value
+            } : p));
+          }} />
+        }, {
+          title: 'Estado',
+          dataIndex: 'status',
+          key: 'status',
+          width: '20%',
+          render: (status, record) => {
+            const statusConfig = {
+              activo: {
+                color: 'green',
+                label: 'Activo'
+              },
+              eliminado: {
+                color: 'red',
+                label: 'Eliminado'
+              },
+              anulado: {
+                color: 'orange',
+                label: 'Anulado'
+              }
+            };
+            return <Select size="small" value={status} onChange={value => {
+              setParticipants(participants.map(p => p.id === record.id ? {
+                ...p,
+                status: value
+              } : p));
+            }} style={{
+              width: '100%'
+            }}>
                         <Select.Option value="activo">
                           <Tag color="green">Activo</Tag>
                         </Select.Option>
@@ -879,139 +848,84 @@ const Encuestas: React.FC = () => {
                         <Select.Option value="anulado">
                           <Tag color="orange">Anulado</Tag>
                         </Select.Option>
-                      </Select>
-                    );
-                  },
-                },
-                {
-                  title: '',
-                  key: 'actions',
-                  width: '10%',
-                  render: (_, record) => (
-                    <Tooltip title="Quitar participante">
-                      <Button 
-                        type="text" 
-                        size="small"
-                        danger
-                        icon={<Trash2 className="w-3 h-3" />}
-                        onClick={() => setParticipants(participants.filter(p => p.id !== record.id))}
-                      />
+                      </Select>;
+          }
+        }, {
+          title: '',
+          key: 'actions',
+          width: '10%',
+          render: (_, record) => <Tooltip title="Quitar participante">
+                      <Button type="text" size="small" danger icon={<Trash2 className="w-3 h-3" />} onClick={() => setParticipants(participants.filter(p => p.id !== record.id))} />
                     </Tooltip>
-                  ),
-                },
-              ]}
-            />
+        }]} />
           </div>
-        </div>
-      )}
+        </div>}
 
-      {selectedCourse && (
-        <div className="bg-gray-50 p-4 rounded-lg mb-4">
+      {selectedCourse && <div className="bg-gray-50 p-4 rounded-lg mb-4">
           <div className="text-sm font-medium text-[#1e4a5a] mb-2">
             Secciones de la encuesta ({getTotalQuestions(surveyType)} preguntas):
           </div>
           <div className="space-y-2">
-            {getSurveySections(surveyType).slice(0, 4).map((section) => (
-              <div key={section.id} className="text-xs text-muted-foreground flex items-center gap-2">
+            {getSurveySections(surveyType).slice(0, 4).map(section => <div key={section.id} className="text-xs text-muted-foreground flex items-center gap-2">
                 <CheckCircle className="w-3 h-3 text-[#65BFB1]" />
                 <span className="font-medium">{section.title}</span>
                 <span className="text-gray-400">({section.questions.length} preguntas)</span>
-              </div>
-            ))}
-            {getSurveySections(surveyType).length > 4 && (
-              <div className="text-xs text-[#65BFB1] font-medium mt-2">
+              </div>)}
+            {getSurveySections(surveyType).length > 4 && <div className="text-xs text-[#65BFB1] font-medium mt-2">
                 + {getSurveySections(surveyType).length - 4} secciones más
-              </div>
-            )}
+              </div>}
           </div>
-        </div>
-      )}
+        </div>}
 
       <Divider />
 
       {/* Programación */}
       <div className="text-sm font-medium text-[#1e4a5a] mb-3">Programación de Envío</div>
 
-      <Form.Item 
-        name="scheduledDate" 
-        label="Fecha de Envío Programado"
-        rules={[{ required: true, message: 'Seleccione una fecha de envío' }]}
-      >
-        <DatePicker 
-          className="w-full" 
-          placeholder="Seleccione fecha"
-          format="DD/MM/YYYY"
-        />
+      <Form.Item name="scheduledDate" label="Fecha de Envío Programado" rules={[{
+      required: true,
+      message: 'Seleccione una fecha de envío'
+    }]}>
+        <DatePicker className="w-full" placeholder="Seleccione fecha" format="DD/MM/YYYY" />
       </Form.Item>
 
-      <Form.Item 
-        name="expirationDate" 
-        label="Fecha de Caducidad de la Encuesta"
-        rules={[{ required: true, message: 'Seleccione una fecha de caducidad' }]}
-      >
-        <DatePicker 
-          className="w-full" 
-          placeholder="Seleccione fecha de caducidad"
-          format="DD/MM/YYYY"
-        />
+      <Form.Item name="expirationDate" label="Fecha de Caducidad de la Encuesta" rules={[{
+      required: true,
+      message: 'Seleccione una fecha de caducidad'
+    }]}>
+        <DatePicker className="w-full" placeholder="Seleccione fecha de caducidad" format="DD/MM/YYYY" />
       </Form.Item>
 
       {/* Recordatorios */}
       <div className="flex items-center gap-3 mb-3">
-        <Switch 
-          checked={reminderEnabled} 
-          onChange={setReminderEnabled}
-        />
+        <Switch checked={reminderEnabled} onChange={setReminderEnabled} />
         <span className="text-sm">Habilitar recordatorios automáticos</span>
       </div>
 
-      {reminderEnabled && (
-        <Form.Item 
-          name="reminderDays" 
-          label="Enviar recordatorio después de (días)"
-        >
+      {reminderEnabled && <Form.Item name="reminderDays" label="Enviar recordatorio después de (días)">
           <InputNumber min={1} max={30} defaultValue={3} className="w-full" />
-        </Form.Item>
-      )}
+        </Form.Item>}
 
       <Divider />
 
       {/* Personalización de Correo */}
       <div className="text-sm font-medium text-[#1e4a5a] mb-3">Correo de Envío</div>
-      <Button
-        type="default"
-        icon={<Edit className="w-4 h-4" />}
-        onClick={() => setIsEmailCustomizeOpen(true)}
-        className="w-full mb-4"
-      >
+      <Button type="default" icon={<Edit className="w-4 h-4" />} onClick={() => setIsEmailCustomizeOpen(true)} className="w-full mb-4">
         Personalizar Correo de Envío
       </Button>
 
       {/* Modal de personalización de correo */}
-      <Modal
-        title={
-          <div className="flex items-center gap-2">
+      <Modal title={<div className="flex items-center gap-2">
             <Send className="w-5 h-5 text-[#65BFB1]" />
             <span>Personalizar Correo de Envío</span>
-          </div>
-        }
-        open={isEmailCustomizeOpen}
-        onCancel={() => setIsEmailCustomizeOpen(false)}
-        footer={[
-          <Button key="cancel" onClick={() => setIsEmailCustomizeOpen(false)}>
+          </div>} open={isEmailCustomizeOpen} onCancel={() => setIsEmailCustomizeOpen(false)} footer={[<Button key="cancel" onClick={() => setIsEmailCustomizeOpen(false)}>
             Cancelar
-          </Button>,
-          <Button 
-            key="save" 
-            type="primary" 
-            onClick={() => setIsEmailCustomizeOpen(false)}
-            style={{ backgroundColor: '#65BFB1', borderColor: '#65BFB1' }}
-          >
+          </Button>, <Button key="save" type="primary" onClick={() => setIsEmailCustomizeOpen(false)} style={{
+      backgroundColor: '#65BFB1',
+      borderColor: '#65BFB1'
+    }}>
             Guardar Plantilla
-          </Button>
-        ]}
-        width={700}
-      >
+          </Button>]} width={700}>
         <div className="space-y-4 mt-4">
           <div className="bg-gray-50 p-4 rounded-lg">
             <div className="text-sm font-medium text-[#1e4a5a] mb-3">Variables dinámicas a incluir:</div>
@@ -1024,10 +938,7 @@ const Encuestas: React.FC = () => {
                     <div className="text-xs text-muted-foreground">Se insertará: [NOMBRE_CURSO]</div>
                   </div>
                 </div>
-                <Switch 
-                  checked={includeCourseName} 
-                  onChange={setIncludeCourseName}
-                />
+                <Switch checked={includeCourseName} onChange={setIncludeCourseName} />
               </div>
               <div className="flex items-center justify-between p-3 bg-white rounded-lg border">
                 <div className="flex items-center gap-3">
@@ -1037,10 +948,7 @@ const Encuestas: React.FC = () => {
                     <div className="text-xs text-muted-foreground">Se insertará: [FECHA_REALIZACION]</div>
                   </div>
                 </div>
-                <Switch 
-                  checked={includeCourseDate} 
-                  onChange={setIncludeCourseDate}
-                />
+                <Switch checked={includeCourseDate} onChange={setIncludeCourseDate} />
               </div>
               <div className="flex items-center justify-between p-3 bg-white rounded-lg border">
                 <div className="flex items-center gap-3">
@@ -1050,21 +958,13 @@ const Encuestas: React.FC = () => {
                     <div className="text-xs text-muted-foreground">Se insertará: [NOMBRE_RELATOR]</div>
                   </div>
                 </div>
-                <Switch 
-                  checked={includeRelatorName} 
-                  onChange={setIncludeRelatorName}
-                />
+                <Switch checked={includeRelatorName} onChange={setIncludeRelatorName} />
               </div>
             </div>
           </div>
 
           <Form.Item label="Plantilla del Correo">
-            <TextArea
-              rows={10}
-              value={emailTemplate}
-              onChange={(e) => setEmailTemplate(e.target.value)}
-              placeholder="Escriba el contenido del correo..."
-            />
+            <TextArea rows={10} value={emailTemplate} onChange={e => setEmailTemplate(e.target.value)} placeholder="Escriba el contenido del correo..." />
           </Form.Item>
 
           <div className="bg-blue-50 p-3 rounded-lg">
@@ -1086,88 +986,66 @@ const Encuestas: React.FC = () => {
 
       <div className="flex justify-end gap-3">
         <Button onClick={() => {
-          setIsCreateModalOpen(false);
-          setIsAssignModalOpen(false);
-          setCourseToAssign(null);
-          form.resetFields();
-          setReminderEnabled(false);
-          setSelectedCourse('');
-          setRelator('');
-          setParticipants([]);
-          setEmailTemplate(`Estimado/a participante,\n\nLe invitamos a completar la encuesta de satisfacción del curso que ha finalizado recientemente.\n\nSu opinión es muy importante para nosotros y nos ayudará a mejorar nuestros servicios de capacitación.\n\nPor favor, haga clic en el enlace a continuación para acceder a la encuesta:\n[ENLACE_ENCUESTA]\n\nGracias por su tiempo.\n\nSaludos cordiales,\nEquipo de Capacitación`);
-          setIncludeCourseName(true);
-          setIncludeCourseDate(true);
-          setIncludeRelatorName(true);
-        }}>
+        setIsCreateModalOpen(false);
+        setIsAssignModalOpen(false);
+        setCourseToAssign(null);
+        form.resetFields();
+        setReminderEnabled(false);
+        setSelectedCourse('');
+        setRelator('');
+        setParticipants([]);
+        setEmailTemplate(`Estimado/a participante,\n\nLe invitamos a completar la encuesta de satisfacción del curso que ha finalizado recientemente.\n\nSu opinión es muy importante para nosotros y nos ayudará a mejorar nuestros servicios de capacitación.\n\nPor favor, haga clic en el enlace a continuación para acceder a la encuesta:\n[ENLACE_ENCUESTA]\n\nGracias por su tiempo.\n\nSaludos cordiales,\nEquipo de Capacitación`);
+        setIncludeCourseName(true);
+        setIncludeCourseDate(true);
+        setIncludeRelatorName(true);
+      }}>
           Cancelar
         </Button>
-        <Button
-          type="default"
-          icon={<Eye className="w-4 h-4" />}
-          onClick={() => setIsEmailPreviewOpen(true)}
-          disabled={!selectedCourse && !courseToAssign}
-        >
+        <Button type="default" icon={<Eye className="w-4 h-4" />} onClick={() => setIsEmailPreviewOpen(true)} disabled={!selectedCourse && !courseToAssign}>
           Vista Previa Correo
         </Button>
-        <Button
-          type="primary"
-          onClick={handleCreateSurvey}
-          style={{ backgroundColor: '#65BFB1', borderColor: '#65BFB1' }}
-        >
+        <Button type="primary" onClick={handleCreateSurvey} style={{
+        backgroundColor: '#65BFB1',
+        borderColor: '#65BFB1'
+      }}>
           Crear Encuesta
         </Button>
       </div>
 
       {/* Modal de vista previa del correo */}
-      <Modal
-        title={
-          <div className="flex items-center gap-2">
+      <Modal title={<div className="flex items-center gap-2">
             <Send className="w-5 h-5 text-[#65BFB1]" />
             <span>Vista Previa del Correo de Envío</span>
-          </div>
-        }
-        open={isEmailPreviewOpen}
-        onCancel={() => setIsEmailPreviewOpen(false)}
-        footer={[
-          <Button key="close" onClick={() => setIsEmailPreviewOpen(false)}>
+          </div>} open={isEmailPreviewOpen} onCancel={() => setIsEmailPreviewOpen(false)} footer={[<Button key="close" onClick={() => setIsEmailPreviewOpen(false)}>
             Cerrar
-          </Button>,
-          <Button 
-            key="sendNow" 
-            type="primary" 
-            icon={<Send className="w-4 h-4" />}
-            onClick={() => {
-              setIsEmailPreviewOpen(false);
-              handleCreateSurvey();
-            }}
-            style={{ backgroundColor: '#65BFB1', borderColor: '#65BFB1' }}
-          >
+          </Button>, <Button key="sendNow" type="primary" icon={<Send className="w-4 h-4" />} onClick={() => {
+      setIsEmailPreviewOpen(false);
+      handleCreateSurvey();
+    }} style={{
+      backgroundColor: '#65BFB1',
+      borderColor: '#65BFB1'
+    }}>
             Enviar Ahora
-          </Button>
-        ]}
-        width={700}
-      >
+          </Button>]} width={700}>
         {(() => {
-          const course = courseToAssign || completedCoursesData.find(c => c.id === selectedCourse);
-          const activeParticipants = participants.filter(p => p.status === 'activo');
-          const firstParticipant = activeParticipants[0];
-          
-          // Generar el correo con las variables reemplazadas
-          let processedEmail = emailTemplate;
-          if (includeCourseName && course) {
-            processedEmail = processedEmail.replace(/\[NOMBRE_CURSO\]/g, course.name);
-          }
-          if (includeCourseDate && course) {
-            processedEmail = processedEmail.replace(/\[FECHA_REALIZACION\]/g, course.endDate);
-          }
-          if (includeRelatorName && relator) {
-            processedEmail = processedEmail.replace(/\[NOMBRE_RELATOR\]/g, relator);
-          }
-          processedEmail = processedEmail.replace(/\[NOMBRE_PARTICIPANTE\]/g, firstParticipant?.name || 'Juan Pérez');
-          processedEmail = processedEmail.replace(/\[ENLACE_ENCUESTA\]/g, 'https://encuestas.otic.cl/s/abc123xyz');
-          
-          return (
-            <div className="space-y-4 mt-4">
+        const course = courseToAssign || completedCoursesData.find(c => c.id === selectedCourse);
+        const activeParticipants = participants.filter(p => p.status === 'activo');
+        const firstParticipant = activeParticipants[0];
+
+        // Generar el correo con las variables reemplazadas
+        let processedEmail = emailTemplate;
+        if (includeCourseName && course) {
+          processedEmail = processedEmail.replace(/\[NOMBRE_CURSO\]/g, course.name);
+        }
+        if (includeCourseDate && course) {
+          processedEmail = processedEmail.replace(/\[FECHA_REALIZACION\]/g, course.endDate);
+        }
+        if (includeRelatorName && relator) {
+          processedEmail = processedEmail.replace(/\[NOMBRE_RELATOR\]/g, relator);
+        }
+        processedEmail = processedEmail.replace(/\[NOMBRE_PARTICIPANTE\]/g, firstParticipant?.name || 'Juan Pérez');
+        processedEmail = processedEmail.replace(/\[ENLACE_ENCUESTA\]/g, 'https://encuestas.otic.cl/s/abc123xyz');
+        return <div className="space-y-4 mt-4">
               {/* Info de envío */}
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
@@ -1201,9 +1079,7 @@ const Encuestas: React.FC = () => {
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-gray-500 w-16">Para:</span>
                     <span className="text-gray-800">{firstParticipant?.email || 'participante@email.com'}</span>
-                    {activeParticipants.length > 1 && (
-                      <Tag color="blue">+{activeParticipants.length - 1} más</Tag>
-                    )}
+                    {activeParticipants.length > 1 && <Tag color="blue">+{activeParticipants.length - 1} más</Tag>}
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-gray-500 w-16">Asunto:</span>
@@ -1218,22 +1094,14 @@ const Encuestas: React.FC = () => {
                   <div className="max-w-lg mx-auto">
                     {/* Contenido principal */}
                     <div className="whitespace-pre-wrap text-gray-700 text-sm leading-relaxed">
-                      {processedEmail.split('[ENLACE_ENCUESTA]').map((part, index, array) => (
-                        <React.Fragment key={index}>
+                      {processedEmail.split('[ENLACE_ENCUESTA]').map((part, index, array) => <React.Fragment key={index}>
                           {part}
-                          {index < array.length - 1 && (
-                            <div className="my-4">
-                              <a 
-                                href="#" 
-                                className="inline-block bg-[#65BFB1] text-white px-6 py-3 rounded-lg font-medium hover:bg-[#4da89a] transition-colors"
-                                onClick={(e) => e.preventDefault()}
-                              >
+                          {index < array.length - 1 && <div className="my-4">
+                              <a href="#" className="inline-block bg-[#65BFB1] text-white px-6 py-3 rounded-lg font-medium hover:bg-[#4da89a] transition-colors" onClick={e => e.preventDefault()}>
                                 📝 Completar Encuesta
                               </a>
-                            </div>
-                          )}
-                        </React.Fragment>
-                      ))}
+                            </div>}
+                        </React.Fragment>)}
                     </div>
                     
                     {/* Footer del correo */}
@@ -1255,39 +1123,29 @@ const Encuestas: React.FC = () => {
               <div className="bg-gray-50 rounded-lg p-4">
                 <div className="text-sm font-medium text-[#1e4a5a] mb-2">Variables incluidas en el correo:</div>
                 <div className="flex flex-wrap gap-2">
-                  {includeCourseName && (
-                    <Tag color="green">
+                  {includeCourseName && <Tag color="green">
                       <BookOpen className="w-3 h-3 inline mr-1" />
                       Nombre del Curso
-                    </Tag>
-                  )}
-                  {includeCourseDate && (
-                    <Tag color="green">
+                    </Tag>}
+                  {includeCourseDate && <Tag color="green">
                       <Calendar className="w-3 h-3 inline mr-1" />
                       Fecha de Realización
-                    </Tag>
-                  )}
-                  {includeRelatorName && (
-                    <Tag color="green">
+                    </Tag>}
+                  {includeRelatorName && <Tag color="green">
                       <Users className="w-3 h-3 inline mr-1" />
                       Nombre del Relator
-                    </Tag>
-                  )}
+                    </Tag>}
                   <Tag color="blue">
                     <LinkIcon className="w-3 h-3 inline mr-1" />
                     Enlace único por participante
                   </Tag>
                 </div>
               </div>
-            </div>
-          );
-        })()}
+            </div>;
+      })()}
       </Modal>
-    </Form>
-  );
-
-  return (
-    <div className="space-y-6">
+    </Form>;
+  return <div className="space-y-6">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
@@ -1296,13 +1154,10 @@ const Encuestas: React.FC = () => {
             Gestiona encuestas de satisfacción y transferencia de puesto de trabajo
           </p>
         </div>
-        <Button
-          type="primary"
-          icon={<Plus className="w-4 h-4" />}
-          onClick={() => setIsCreateModalOpen(true)}
-          style={{ backgroundColor: '#65BFB1', borderColor: '#65BFB1' }}
-          size="large"
-        >
+        <Button type="primary" icon={<Plus className="w-4 h-4" />} onClick={() => setIsCreateModalOpen(true)} style={{
+        backgroundColor: '#65BFB1',
+        borderColor: '#65BFB1'
+      }} size="large">
           Nueva Encuesta
         </Button>
       </div>
@@ -1368,125 +1223,81 @@ const Encuestas: React.FC = () => {
 
       {/* Main Tabs */}
       <Card>
-        <Tabs
-          activeKey={mainTab}
-          onChange={setMainTab}
-          items={[
-            { 
-              key: 'encuestas', 
-              label: (
-                <span className="flex items-center gap-2">
+        <Tabs activeKey={mainTab} onChange={setMainTab} items={[{
+        key: 'encuestas',
+        label: <span className="flex items-center gap-2">
                   <ClipboardList className="w-4 h-4" />
-                  Encuestas Creadas
-                </span>
-              ),
-              children: (
-                <div className="space-y-4">
-                  <Tabs
-                    activeKey={surveyFilterTab}
-                    onChange={setSurveyFilterTab}
-                    size="small"
-                    items={[
-                      { key: 'all', label: 'Todas' },
-                      { key: 'satisfaccion', label: 'Satisfacción' },
-                      { key: 'transferencia', label: 'Transferencia' },
-                    ]}
-                  />
-                  <Table
-                    columns={surveyColumns}
-                    dataSource={filteredSurveys}
-                    rowKey="id"
-                    pagination={{ pageSize: 10 }}
-                    locale={{ emptyText: 'No hay encuestas registradas' }}
-                  />
+                  Encuestas Estándar 
+                </span>,
+        children: <div className="space-y-4">
+                  <Tabs activeKey={surveyFilterTab} onChange={setSurveyFilterTab} size="small" items={[{
+            key: 'all',
+            label: 'Todas'
+          }, {
+            key: 'satisfaccion',
+            label: 'Satisfacción'
+          }, {
+            key: 'transferencia',
+            label: 'Transferencia'
+          }]} />
+                  <Table columns={surveyColumns} dataSource={filteredSurveys} rowKey="id" pagination={{
+            pageSize: 10
+          }} locale={{
+            emptyText: 'No hay encuestas registradas'
+          }} />
                 </div>
-              )
-            },
-            { 
-              key: 'cursos', 
-              label: (
-                <span className="flex items-center gap-2">
+      }, {
+        key: 'cursos',
+        label: <span className="flex items-center gap-2">
                   <BookOpen className="w-4 h-4" />
                   Cursos Finalizados
-                </span>
-              ),
-              children: (
-                <div className="space-y-4">
+                </span>,
+        children: <div className="space-y-4">
                   <div className="text-sm text-muted-foreground">
                     Seleccione un curso para asignar o eliminar encuestas asociadas.
                   </div>
-                  <Table
-                    columns={courseColumns}
-                    dataSource={completedCoursesData}
-                    rowKey="id"
-                    pagination={{ pageSize: 10 }}
-                    locale={{ emptyText: 'No hay cursos finalizados' }}
-                  />
+                  <Table columns={courseColumns} dataSource={completedCoursesData} rowKey="id" pagination={{
+            pageSize: 10
+          }} locale={{
+            emptyText: 'No hay cursos finalizados'
+          }} />
                 </div>
-              )
-            },
-          ]}
-        />
+      }]} />
       </Card>
 
       {/* Create Survey Modal */}
-      <Modal
-        title={
-          <div className="flex items-center gap-2">
+      <Modal title={<div className="flex items-center gap-2">
             <Plus className="w-5 h-5 text-[#65BFB1]" />
             <span>Crear Nueva Encuesta</span>
-          </div>
-        }
-        open={isCreateModalOpen}
-        onCancel={() => {
-          setIsCreateModalOpen(false);
-          form.resetFields();
-          setReminderEnabled(false);
-          setSelectedCourse('');
-        }}
-        footer={null}
-        width={700}
-      >
+          </div>} open={isCreateModalOpen} onCancel={() => {
+      setIsCreateModalOpen(false);
+      form.resetFields();
+      setReminderEnabled(false);
+      setSelectedCourse('');
+    }} footer={null} width={700}>
         {renderSurveyForm(true)}
       </Modal>
 
       {/* Assign Survey Modal (desde pestaña de cursos) */}
-      <Modal
-        title={
-          <div className="flex items-center gap-2">
+      <Modal title={<div className="flex items-center gap-2">
             <LinkIcon className="w-5 h-5 text-[#65BFB1]" />
             <span>Asignar Encuesta al Curso</span>
-          </div>
-        }
-        open={isAssignModalOpen}
-        onCancel={() => {
-          setIsAssignModalOpen(false);
-          setCourseToAssign(null);
-          form.resetFields();
-          setReminderEnabled(false);
-          setSelectedCourse('');
-        }}
-        footer={null}
-        width={700}
-      >
+          </div>} open={isAssignModalOpen} onCancel={() => {
+      setIsAssignModalOpen(false);
+      setCourseToAssign(null);
+      form.resetFields();
+      setReminderEnabled(false);
+      setSelectedCourse('');
+    }} footer={null} width={700}>
         {renderSurveyForm(false)}
       </Modal>
 
       {/* View Survey Modal */}
-      <Modal
-        title={
-          <div className="flex items-center gap-2">
+      <Modal title={<div className="flex items-center gap-2">
             <Eye className="w-5 h-5 text-[#65BFB1]" />
             <span>Detalle de Encuesta</span>
-          </div>
-        }
-        open={isViewModalOpen}
-        onCancel={() => setIsViewModalOpen(false)}
-        footer={null}
-        width={800}
-      >
-        {selectedSurvey && (
-          <div className="space-y-6 mt-4">
+          </div>} open={isViewModalOpen} onCancel={() => setIsViewModalOpen(false)} footer={null} width={800}>
+        {selectedSurvey && <div className="space-y-6 mt-4">
             {/* Survey Info */}
             <div className="grid grid-cols-2 gap-4">
               <Card className="bg-gray-50">
@@ -1527,8 +1338,7 @@ const Encuestas: React.FC = () => {
             </Card>
 
             {/* Participants Status */}
-            {selectedSurvey.participants && selectedSurvey.participants.length > 0 && (
-              <Card>
+            {selectedSurvey.participants && selectedSurvey.participants.length > 0 && <Card>
                 <div className="text-sm font-medium text-[#1e4a5a] mb-4 flex items-center justify-between">
                   <span className="flex items-center gap-2">
                     <Users className="w-4 h-4" />
@@ -1547,74 +1357,41 @@ const Encuestas: React.FC = () => {
                 </div>
                 
                 <div className="max-h-[250px] overflow-y-auto">
-                  <Table
-                    dataSource={selectedSurvey.participants}
-                    rowKey="id"
-                    size="small"
-                    pagination={false}
-                    columns={[
-                      {
-                        title: 'Participante',
-                        dataIndex: 'name',
-                        key: 'name',
-                        render: (name: string, record: SurveyParticipant) => (
-                          <div>
+                  <Table dataSource={selectedSurvey.participants} rowKey="id" size="small" pagination={false} columns={[{
+              title: 'Participante',
+              dataIndex: 'name',
+              key: 'name',
+              render: (name: string, record: SurveyParticipant) => <div>
                             <div className="font-medium text-[#1e4a5a]">{name}</div>
                             <div className="text-xs text-muted-foreground">{record.email}</div>
                           </div>
-                        ),
-                      },
-                      {
-                        title: 'Estado',
-                        key: 'responded',
-                        width: 140,
-                        render: (_: unknown, record: SurveyParticipant) => (
-                          record.responded ? (
-                            <Tag color="success" className="flex items-center gap-1 w-fit">
+            }, {
+              title: 'Estado',
+              key: 'responded',
+              width: 140,
+              render: (_: unknown, record: SurveyParticipant) => record.responded ? <Tag color="success" className="flex items-center gap-1 w-fit">
                               <CheckCircle className="w-3 h-3" />
                               Respondida
-                            </Tag>
-                          ) : (
-                            <Tag color="warning" className="flex items-center gap-1 w-fit">
+                            </Tag> : <Tag color="warning" className="flex items-center gap-1 w-fit">
                               <Clock className="w-3 h-3" />
                               Pendiente
                             </Tag>
-                          )
-                        ),
-                      },
-                      {
-                        title: 'Fecha Respuesta',
-                        dataIndex: 'responseDate',
-                        key: 'responseDate',
-                        width: 130,
-                        render: (date: string) => date ? (
-                          <span className="text-sm text-muted-foreground">{date}</span>
-                        ) : (
-                          <span className="text-sm text-muted-foreground italic">-</span>
-                        ),
-                      },
-                      {
-                        title: 'Acción',
-                        key: 'action',
-                        width: 100,
-                        render: (_: unknown, record: SurveyParticipant) => (
-                          !record.responded && selectedSurvey.status === 'active' ? (
-                            <Tooltip title="Enviar recordatorio individual">
-                              <Button 
-                                type="text" 
-                                size="small"
-                                icon={<Send className="w-3 h-3 text-[#65BFB1]" />}
-                                onClick={() => message.success(`Recordatorio enviado a ${record.name}`)}
-                              />
-                            </Tooltip>
-                          ) : null
-                        ),
-                      },
-                    ]}
-                  />
+            }, {
+              title: 'Fecha Respuesta',
+              dataIndex: 'responseDate',
+              key: 'responseDate',
+              width: 130,
+              render: (date: string) => date ? <span className="text-sm text-muted-foreground">{date}</span> : <span className="text-sm text-muted-foreground italic">-</span>
+            }, {
+              title: 'Acción',
+              key: 'action',
+              width: 100,
+              render: (_: unknown, record: SurveyParticipant) => !record.responded && selectedSurvey.status === 'active' ? <Tooltip title="Enviar recordatorio individual">
+                              <Button type="text" size="small" icon={<Send className="w-3 h-3 text-[#65BFB1]" />} onClick={() => message.success(`Recordatorio enviado a ${record.name}`)} />
+                            </Tooltip> : null
+            }]} />
                 </div>
-              </Card>
-            )}
+              </Card>}
 
             {/* Questions Preview - Grouped by Sections */}
             <Card>
@@ -1626,55 +1403,41 @@ const Encuestas: React.FC = () => {
               <div className="mb-4 p-3 bg-[#65BFB1]/10 rounded-lg">
                 <div className="text-xs font-medium text-[#1e4a5a] mb-2">Escala de Calificación:</div>
                 <div className="flex flex-wrap gap-2">
-                  {ratingScale.map((item) => (
-                    <div key={item.value} className="flex items-center gap-1 text-xs">
+                  {ratingScale.map(item => <div key={item.value} className="flex items-center gap-1 text-xs">
                       <div className="w-5 h-5 rounded-full bg-white border border-[#65BFB1] flex items-center justify-center text-[10px] font-medium text-[#1e4a5a]">
                         {item.value === 0 ? 'NA' : item.value}
                       </div>
                       <span className="text-muted-foreground">{item.label}</span>
-                    </div>
-                  ))}
+                    </div>)}
                 </div>
               </div>
 
               <div className="space-y-4 max-h-[400px] overflow-y-auto">
-                {getSurveySections(selectedSurvey.type).map((section) => (
-                  <div key={section.id} className="border rounded-lg overflow-hidden">
+                {getSurveySections(selectedSurvey.type).map(section => <div key={section.id} className="border rounded-lg overflow-hidden">
                     <div className="bg-[#1e4a5a] text-white px-4 py-2 font-medium text-sm">
                       {section.title}
                     </div>
                     <div className="divide-y">
-                      {section.questions.map((q) => (
-                        <div key={q.id} className="p-3 flex items-start gap-3">
+                      {section.questions.map(q => <div key={q.id} className="p-3 flex items-start gap-3">
                           <div className="flex-1">
                             <div className="text-sm text-[#1e4a5a]">{q.text}</div>
                           </div>
-                          {q.type === 'rating5' && (
-                            <div className="flex gap-1">
-                              {[1, 2, 3, 4, 5].map((num) => (
-                                <div key={num} className="w-6 h-6 rounded-full border border-gray-300 flex items-center justify-center text-xs text-gray-400">
+                          {q.type === 'rating5' && <div className="flex gap-1">
+                              {[1, 2, 3, 4, 5].map(num => <div key={num} className="w-6 h-6 rounded-full border border-gray-300 flex items-center justify-center text-xs text-gray-400">
                                   {num}
-                                </div>
-                              ))}
+                                </div>)}
                               <div className="w-6 h-6 rounded-full border border-gray-300 flex items-center justify-center text-[10px] text-gray-400">
                                 NA
                               </div>
-                            </div>
-                          )}
-                          {q.type === 'yesno' && (
-                            <div className="flex gap-2">
+                            </div>}
+                          {q.type === 'yesno' && <div className="flex gap-2">
                               <div className="px-2 py-1 rounded border border-gray-300 text-xs text-gray-400">Sí</div>
                               <div className="px-2 py-1 rounded border border-gray-300 text-xs text-gray-400">No</div>
-                            </div>
-                          )}
-                          {q.type === 'text' && (
-                            <div className="text-xs text-gray-400 italic">Texto libre</div>
-                          )}
-                        </div>
-                      ))}
+                            </div>}
+                          {q.type === 'text' && <div className="text-xs text-gray-400 italic">Texto libre</div>}
+                        </div>)}
                     </div>
-                  </div>
-                ))}
+                  </div>)}
               </div>
             </Card>
 
@@ -1683,43 +1446,27 @@ const Encuestas: React.FC = () => {
               <Button onClick={() => setIsViewModalOpen(false)}>
                 Cerrar
               </Button>
-              {selectedSurvey.status === 'active' && (
-                <Button
-                  icon={<Bell className="w-4 h-4" />}
-                  onClick={() => {
-                    handleSendReminder(selectedSurvey.id);
-                    setIsViewModalOpen(false);
-                  }}
-                >
+              {selectedSurvey.status === 'active' && <Button icon={<Bell className="w-4 h-4" />} onClick={() => {
+            handleSendReminder(selectedSurvey.id);
+            setIsViewModalOpen(false);
+          }}>
                   Enviar Recordatorio
-                </Button>
-              )}
-              {(selectedSurvey.status === 'active' || selectedSurvey.status === 'completed') && (
-                <Button
-                  type="primary"
-                  icon={<BarChart3 className="w-4 h-4" />}
-                  style={{ backgroundColor: '#65BFB1', borderColor: '#65BFB1' }}
-                  onClick={() => {
-                    setIsViewModalOpen(false);
-                    handleViewResults(selectedSurvey);
-                  }}
-                >
+                </Button>}
+              {(selectedSurvey.status === 'active' || selectedSurvey.status === 'completed') && <Button type="primary" icon={<BarChart3 className="w-4 h-4" />} style={{
+            backgroundColor: '#65BFB1',
+            borderColor: '#65BFB1'
+          }} onClick={() => {
+            setIsViewModalOpen(false);
+            handleViewResults(selectedSurvey);
+          }}>
                   Ver Resultados
-                </Button>
-              )}
+                </Button>}
             </div>
-          </div>
-        )}
+          </div>}
       </Modal>
 
       {/* Modal de Resultados */}
-      <SurveyResultsModal
-        open={isResultsModalOpen}
-        onClose={() => setIsResultsModalOpen(false)}
-        survey={selectedSurveyForResults}
-      />
-    </div>
-  );
+      <SurveyResultsModal open={isResultsModalOpen} onClose={() => setIsResultsModalOpen(false)} survey={selectedSurveyForResults} />
+    </div>;
 };
-
 export default Encuestas;
