@@ -60,6 +60,13 @@ interface Survey {
   responseRate: number;
 }
 
+interface Participant {
+  id: string;
+  name: string;
+  email: string;
+  status: 'activo' | 'eliminado' | 'anulado';
+}
+
 interface CompletedCourse {
   id: string;
   name: string;
@@ -67,17 +74,31 @@ interface CompletedCourse {
   endDate: string;
   participants: number;
   otec: string;
+  relator: string;
+  participantsList: Participant[];
 }
+
+// Datos de ejemplo de participantes
+const generateParticipants = (count: number, courseId: string): Participant[] => {
+  const names = ['Juan Pérez', 'María González', 'Carlos López', 'Ana Martínez', 'Pedro Sánchez', 'Laura García', 'Roberto Díaz', 'Carmen Silva', 'Francisco Torres', 'Isabel Fernández'];
+  const statuses: Participant['status'][] = ['activo', 'activo', 'activo', 'activo', 'eliminado', 'anulado', 'activo', 'activo', 'activo', 'activo'];
+  return Array.from({ length: count }, (_, i) => ({
+    id: `${courseId}-p${i + 1}`,
+    name: names[i % names.length],
+    email: `participante${i + 1}.curso${courseId}@email.com`,
+    status: statuses[i % statuses.length],
+  }));
+};
 
 // Datos de ejemplo de cursos finalizados
 const completedCoursesData: CompletedCourse[] = [
-  { id: '1', name: 'Excel Avanzado para Análisis de Datos', code: 'EXC-2024-001', endDate: '2024-01-10', participants: 25, otec: 'Capacitaciones CCC' },
-  { id: '2', name: 'Liderazgo y Gestión de Equipos', code: 'LID-2024-002', endDate: '2024-01-05', participants: 18, otec: 'Instituto de Liderazgo' },
-  { id: '3', name: 'Seguridad Industrial Básica', code: 'SEG-2024-003', endDate: '2023-12-20', participants: 30, otec: 'Safety Training Chile' },
-  { id: '4', name: 'Comunicación Efectiva', code: 'COM-2024-004', endDate: '2023-12-15', participants: 22, otec: 'Capacitaciones CCC' },
-  { id: '5', name: 'Gestión del Tiempo y Productividad', code: 'GTP-2024-005', endDate: '2023-12-10', participants: 15, otec: 'Productividad Chile' },
-  { id: '6', name: 'Marketing Digital Básico', code: 'MKT-2024-006', endDate: '2023-12-05', participants: 20, otec: 'Digital Academy' },
-  { id: '7', name: 'Finanzas para No Financieros', code: 'FIN-2024-007', endDate: '2023-11-30', participants: 28, otec: 'Instituto Financiero' },
+  { id: '1', name: 'Excel Avanzado para Análisis de Datos', code: 'EXC-2024-001', endDate: '2024-01-10', participants: 25, otec: 'Capacitaciones CCC', relator: 'Dr. Roberto Sánchez', participantsList: generateParticipants(10, '1') },
+  { id: '2', name: 'Liderazgo y Gestión de Equipos', code: 'LID-2024-002', endDate: '2024-01-05', participants: 18, otec: 'Instituto de Liderazgo', relator: 'Lic. Patricia Morales', participantsList: generateParticipants(10, '2') },
+  { id: '3', name: 'Seguridad Industrial Básica', code: 'SEG-2024-003', endDate: '2023-12-20', participants: 30, otec: 'Safety Training Chile', relator: 'Ing. Carlos Mendoza', participantsList: generateParticipants(10, '3') },
+  { id: '4', name: 'Comunicación Efectiva', code: 'COM-2024-004', endDate: '2023-12-15', participants: 22, otec: 'Capacitaciones CCC', relator: 'Dra. Marcela Reyes', participantsList: generateParticipants(10, '4') },
+  { id: '5', name: 'Gestión del Tiempo y Productividad', code: 'GTP-2024-005', endDate: '2023-12-10', participants: 15, otec: 'Productividad Chile', relator: 'Lic. Fernando Araya', participantsList: generateParticipants(10, '5') },
+  { id: '6', name: 'Marketing Digital Básico', code: 'MKT-2024-006', endDate: '2023-12-05', participants: 20, otec: 'Digital Academy', relator: 'Ing. Sofía Contreras', participantsList: generateParticipants(10, '6') },
+  { id: '7', name: 'Finanzas para No Financieros', code: 'FIN-2024-007', endDate: '2023-11-30', participants: 28, otec: 'Instituto Financiero', relator: 'Dr. Miguel Valenzuela', participantsList: generateParticipants(10, '7') },
 ];
 
 // Estructura de preguntas agrupadas por sección para Encuesta de Satisfacción
@@ -269,6 +290,10 @@ const Encuestas: React.FC = () => {
   // Para crear encuesta desde la pestaña de cursos
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
   const [courseToAssign, setCourseToAssign] = useState<CompletedCourse | null>(null);
+
+  // Estado para participantes y relator
+  const [relator, setRelator] = useState<string>('');
+  const [participants, setParticipants] = useState<Participant[]>([]);
 
   const getStatusTag = (status: Survey['status']) => {
     const config = {
@@ -548,6 +573,8 @@ const Encuestas: React.FC = () => {
   const handleOpenAssignModal = (course: CompletedCourse) => {
     setCourseToAssign(course);
     setSelectedCourse(course.id);
+    setRelator(course.relator);
+    setParticipants([...course.participantsList]);
     setIsAssignModalOpen(true);
   };
 
@@ -595,6 +622,8 @@ const Encuestas: React.FC = () => {
       form.resetFields();
       setReminderEnabled(false);
       setSelectedCourse('');
+      setRelator('');
+      setParticipants([]);
       message.success(
         values.sendImmediately 
           ? 'Encuesta creada y enviada a los participantes' 
@@ -672,7 +701,14 @@ const Encuestas: React.FC = () => {
           <Select
             placeholder="Seleccione un curso finalizado"
             value={selectedCourse}
-            onChange={setSelectedCourse}
+            onChange={(value) => {
+              setSelectedCourse(value);
+              const course = completedCoursesData.find(c => c.id === value);
+              if (course) {
+                setRelator(course.relator);
+                setParticipants([...course.participantsList]);
+              }
+            }}
             options={completedCoursesData.map(c => ({
               value: c.id,
               label: (
@@ -695,7 +731,132 @@ const Encuestas: React.FC = () => {
         </div>
       )}
 
-{selectedCourse && (
+      {/* Relator del curso */}
+      {(selectedCourse || courseToAssign) && (
+        <Form.Item label="Relator del Curso" required>
+          <Input 
+            placeholder="Nombre del relator" 
+            value={relator}
+            onChange={(e) => setRelator(e.target.value)}
+          />
+        </Form.Item>
+      )}
+
+      {/* Lista de participantes */}
+      {(selectedCourse || courseToAssign) && participants.length > 0 && (
+        <div className="mb-4">
+          <div className="flex items-center justify-between mb-3">
+            <div className="text-sm font-medium text-[#1e4a5a]">
+              Participantes del Curso ({participants.filter(p => p.status === 'activo').length} activos de {participants.length})
+            </div>
+            <Space>
+              <Button 
+                size="small" 
+                type="default"
+                onClick={() => setParticipants(participants.filter(p => p.status !== 'eliminado'))}
+                disabled={!participants.some(p => p.status === 'eliminado')}
+              >
+                Excluir Eliminados ({participants.filter(p => p.status === 'eliminado').length})
+              </Button>
+              <Button 
+                size="small" 
+                type="default"
+                onClick={() => setParticipants(participants.filter(p => p.status !== 'anulado'))}
+                disabled={!participants.some(p => p.status === 'anulado')}
+              >
+                Excluir Anulados ({participants.filter(p => p.status === 'anulado').length})
+              </Button>
+            </Space>
+          </div>
+          <div className="border rounded-lg overflow-hidden max-h-60 overflow-y-auto">
+            <Table
+              dataSource={participants}
+              rowKey="id"
+              size="small"
+              pagination={false}
+              columns={[
+                {
+                  title: 'Nombre',
+                  dataIndex: 'name',
+                  key: 'name',
+                  width: '30%',
+                  render: (name) => <span className="font-medium text-[#1e4a5a]">{name}</span>,
+                },
+                {
+                  title: 'Correo Electrónico',
+                  dataIndex: 'email',
+                  key: 'email',
+                  width: '40%',
+                  render: (email, record) => (
+                    <Input 
+                      size="small"
+                      value={email}
+                      onChange={(e) => {
+                        setParticipants(participants.map(p => 
+                          p.id === record.id ? { ...p, email: e.target.value } : p
+                        ));
+                      }}
+                    />
+                  ),
+                },
+                {
+                  title: 'Estado',
+                  dataIndex: 'status',
+                  key: 'status',
+                  width: '20%',
+                  render: (status, record) => {
+                    const statusConfig = {
+                      activo: { color: 'green', label: 'Activo' },
+                      eliminado: { color: 'red', label: 'Eliminado' },
+                      anulado: { color: 'orange', label: 'Anulado' },
+                    };
+                    return (
+                      <Select
+                        size="small"
+                        value={status}
+                        onChange={(value) => {
+                          setParticipants(participants.map(p => 
+                            p.id === record.id ? { ...p, status: value } : p
+                          ));
+                        }}
+                        style={{ width: '100%' }}
+                      >
+                        <Select.Option value="activo">
+                          <Tag color="green">Activo</Tag>
+                        </Select.Option>
+                        <Select.Option value="eliminado">
+                          <Tag color="red">Eliminado</Tag>
+                        </Select.Option>
+                        <Select.Option value="anulado">
+                          <Tag color="orange">Anulado</Tag>
+                        </Select.Option>
+                      </Select>
+                    );
+                  },
+                },
+                {
+                  title: '',
+                  key: 'actions',
+                  width: '10%',
+                  render: (_, record) => (
+                    <Tooltip title="Quitar participante">
+                      <Button 
+                        type="text" 
+                        size="small"
+                        danger
+                        icon={<Trash2 className="w-3 h-3" />}
+                        onClick={() => setParticipants(participants.filter(p => p.id !== record.id))}
+                      />
+                    </Tooltip>
+                  ),
+                },
+              ]}
+            />
+          </div>
+        </div>
+      )}
+
+      {selectedCourse && (
         <div className="bg-gray-50 p-4 rounded-lg mb-4">
           <div className="text-sm font-medium text-[#1e4a5a] mb-2">
             Secciones de la encuesta ({getTotalQuestions(surveyType)} preguntas):
@@ -765,6 +926,8 @@ const Encuestas: React.FC = () => {
           form.resetFields();
           setReminderEnabled(false);
           setSelectedCourse('');
+          setRelator('');
+          setParticipants([]);
         }}>
           Cancelar
         </Button>
