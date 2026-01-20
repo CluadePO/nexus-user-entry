@@ -303,6 +303,9 @@ const Encuestas: React.FC = () => {
   const [includeCourseDate, setIncludeCourseDate] = useState(true);
   const [includeRelatorName, setIncludeRelatorName] = useState(true);
 
+  // Estado para vista previa del correo
+  const [isEmailPreviewOpen, setIsEmailPreviewOpen] = useState(false);
+
   const getStatusTag = (status: Survey['status']) => {
     const config = {
       draft: { color: 'default', label: 'Borrador', icon: <FileText className="w-3 h-3" /> },
@@ -1061,6 +1064,14 @@ const Encuestas: React.FC = () => {
           Cancelar
         </Button>
         <Button
+          type="default"
+          icon={<Eye className="w-4 h-4" />}
+          onClick={() => setIsEmailPreviewOpen(true)}
+          disabled={!selectedCourse && !courseToAssign}
+        >
+          Vista Previa Correo
+        </Button>
+        <Button
           type="primary"
           onClick={handleCreateSurvey}
           style={{ backgroundColor: '#65BFB1', borderColor: '#65BFB1' }}
@@ -1068,6 +1079,172 @@ const Encuestas: React.FC = () => {
           Crear Encuesta
         </Button>
       </div>
+
+      {/* Modal de vista previa del correo */}
+      <Modal
+        title={
+          <div className="flex items-center gap-2">
+            <Send className="w-5 h-5 text-[#65BFB1]" />
+            <span>Vista Previa del Correo de Envío</span>
+          </div>
+        }
+        open={isEmailPreviewOpen}
+        onCancel={() => setIsEmailPreviewOpen(false)}
+        footer={[
+          <Button key="close" onClick={() => setIsEmailPreviewOpen(false)}>
+            Cerrar
+          </Button>,
+          <Button 
+            key="sendNow" 
+            type="primary" 
+            icon={<Send className="w-4 h-4" />}
+            onClick={() => {
+              setIsEmailPreviewOpen(false);
+              handleCreateSurvey();
+            }}
+            style={{ backgroundColor: '#65BFB1', borderColor: '#65BFB1' }}
+          >
+            Enviar Ahora
+          </Button>
+        ]}
+        width={700}
+      >
+        {(() => {
+          const course = courseToAssign || completedCoursesData.find(c => c.id === selectedCourse);
+          const activeParticipants = participants.filter(p => p.status === 'activo');
+          const firstParticipant = activeParticipants[0];
+          
+          // Generar el correo con las variables reemplazadas
+          let processedEmail = emailTemplate;
+          if (includeCourseName && course) {
+            processedEmail = processedEmail.replace(/\[NOMBRE_CURSO\]/g, course.name);
+          }
+          if (includeCourseDate && course) {
+            processedEmail = processedEmail.replace(/\[FECHA_REALIZACION\]/g, course.endDate);
+          }
+          if (includeRelatorName && relator) {
+            processedEmail = processedEmail.replace(/\[NOMBRE_RELATOR\]/g, relator);
+          }
+          processedEmail = processedEmail.replace(/\[NOMBRE_PARTICIPANTE\]/g, firstParticipant?.name || 'Juan Pérez');
+          processedEmail = processedEmail.replace(/\[ENLACE_ENCUESTA\]/g, 'https://encuestas.otic.cl/s/abc123xyz');
+          
+          return (
+            <div className="space-y-4 mt-4">
+              {/* Info de envío */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <Users className="w-4 h-4 text-blue-600" />
+                  <span className="font-medium text-blue-800">Información de Envío</span>
+                </div>
+                <div className="text-sm text-blue-700 space-y-1">
+                  <div><strong>Destinatarios:</strong> {activeParticipants.length} participantes activos</div>
+                  <div><strong>Tipo de encuesta:</strong> {surveyType === 'satisfaccion' ? 'Satisfacción' : 'Transferencia'}</div>
+                  <div><strong>Curso:</strong> {course?.name || 'No seleccionado'}</div>
+                </div>
+              </div>
+
+              {/* Simulación del correo */}
+              <div className="border rounded-lg overflow-hidden shadow-sm">
+                {/* Header del email */}
+                <div className="bg-gradient-to-r from-[#1e4a5a] to-[#2a6a7a] p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
+                      <BookOpen className="w-5 h-5 text-[#1e4a5a]" />
+                    </div>
+                    <div>
+                      <div className="text-white font-semibold">Sistema de Encuestas OTIC</div>
+                      <div className="text-white/70 text-xs">encuestas@otic.cl</div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Metadatos del correo */}
+                <div className="bg-gray-50 border-b px-4 py-3 text-sm">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-gray-500 w-16">Para:</span>
+                    <span className="text-gray-800">{firstParticipant?.email || 'participante@email.com'}</span>
+                    {activeParticipants.length > 1 && (
+                      <Tag color="blue">+{activeParticipants.length - 1} más</Tag>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-500 w-16">Asunto:</span>
+                    <span className="text-gray-800 font-medium">
+                      Invitación a Encuesta de {surveyType === 'satisfaccion' ? 'Satisfacción' : 'Transferencia'} - {course?.name || 'Curso'}
+                    </span>
+                  </div>
+                </div>
+                
+                {/* Cuerpo del correo */}
+                <div className="bg-white p-6">
+                  <div className="max-w-lg mx-auto">
+                    {/* Contenido principal */}
+                    <div className="whitespace-pre-wrap text-gray-700 text-sm leading-relaxed">
+                      {processedEmail.split('[ENLACE_ENCUESTA]').map((part, index, array) => (
+                        <React.Fragment key={index}>
+                          {part}
+                          {index < array.length - 1 && (
+                            <div className="my-4">
+                              <a 
+                                href="#" 
+                                className="inline-block bg-[#65BFB1] text-white px-6 py-3 rounded-lg font-medium hover:bg-[#4da89a] transition-colors"
+                                onClick={(e) => e.preventDefault()}
+                              >
+                                📝 Completar Encuesta
+                              </a>
+                            </div>
+                          )}
+                        </React.Fragment>
+                      ))}
+                    </div>
+                    
+                    {/* Footer del correo */}
+                    <div className="mt-8 pt-4 border-t border-gray-200">
+                      <div className="text-xs text-gray-500 text-center space-y-2">
+                        <p>Este correo fue enviado desde el Sistema de Gestión de Capacitación OTIC.</p>
+                        <p>Si tiene alguna pregunta, contacte a soporte@otic.cl</p>
+                        <div className="flex items-center justify-center gap-2 mt-3">
+                          <LinkIcon className="w-3 h-3" />
+                          <span>Enlace único válido hasta la fecha de caducidad de la encuesta</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Variables incluidas */}
+              <div className="bg-gray-50 rounded-lg p-4">
+                <div className="text-sm font-medium text-[#1e4a5a] mb-2">Variables incluidas en el correo:</div>
+                <div className="flex flex-wrap gap-2">
+                  {includeCourseName && (
+                    <Tag color="green">
+                      <BookOpen className="w-3 h-3 inline mr-1" />
+                      Nombre del Curso
+                    </Tag>
+                  )}
+                  {includeCourseDate && (
+                    <Tag color="green">
+                      <Calendar className="w-3 h-3 inline mr-1" />
+                      Fecha de Realización
+                    </Tag>
+                  )}
+                  {includeRelatorName && (
+                    <Tag color="green">
+                      <Users className="w-3 h-3 inline mr-1" />
+                      Nombre del Relator
+                    </Tag>
+                  )}
+                  <Tag color="blue">
+                    <LinkIcon className="w-3 h-3 inline mr-1" />
+                    Enlace único por participante
+                  </Tag>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+      </Modal>
     </Form>
   );
 
