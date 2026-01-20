@@ -37,6 +37,7 @@ import {
   BookOpen,
   Link as LinkIcon
 } from 'lucide-react';
+import SurveyResultsModal from '@/components/encuestas/SurveyResultsModal';
 
 const { TextArea } = Input;
 
@@ -330,6 +331,15 @@ const Encuestas: React.FC = () => {
   // Estado para vista previa del correo
   const [isEmailPreviewOpen, setIsEmailPreviewOpen] = useState(false);
 
+  // Estado para modal de resultados
+  const [isResultsModalOpen, setIsResultsModalOpen] = useState(false);
+  const [selectedSurveyForResults, setSelectedSurveyForResults] = useState<Survey | null>(null);
+
+  const handleViewResults = (survey: Survey) => {
+    setSelectedSurveyForResults(survey);
+    setIsResultsModalOpen(true);
+  };
+
   const getStatusTag = (status: Survey['status']) => {
     const config = {
       draft: { color: 'default', label: 'Borrador', icon: <FileText className="w-3 h-3" /> },
@@ -459,7 +469,11 @@ const Encuestas: React.FC = () => {
           )}
           {(record.status === 'active' || record.status === 'completed') && (
             <Tooltip title="Ver resultados">
-              <Button type="text" icon={<BarChart3 className="w-4 h-4 text-[#65BFB1]" />} />
+              <Button 
+                type="text" 
+                icon={<BarChart3 className="w-4 h-4 text-[#65BFB1]" />} 
+                onClick={() => handleViewResults(record)}
+              />
             </Tooltip>
           )}
           {record.status === 'active' && (
@@ -1685,6 +1699,10 @@ const Encuestas: React.FC = () => {
                   type="primary"
                   icon={<BarChart3 className="w-4 h-4" />}
                   style={{ backgroundColor: '#65BFB1', borderColor: '#65BFB1' }}
+                  onClick={() => {
+                    setIsViewModalOpen(false);
+                    handleViewResults(selectedSurvey);
+                  }}
                 >
                   Ver Resultados
                 </Button>
@@ -1693,6 +1711,13 @@ const Encuestas: React.FC = () => {
           </div>
         )}
       </Modal>
+
+      {/* Modal de Resultados */}
+      <SurveyResultsModal
+        open={isResultsModalOpen}
+        onClose={() => setIsResultsModalOpen(false)}
+        survey={selectedSurveyForResults}
+      />
     </div>
   );
 };
