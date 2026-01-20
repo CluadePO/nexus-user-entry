@@ -57,6 +57,7 @@ interface Survey {
   totalParticipants: number;
   responses: number;
   responseRate: number;
+  participants?: SurveyParticipant[];
 }
 
 interface Participant {
@@ -64,6 +65,12 @@ interface Participant {
   name: string;
   email: string;
   status: 'activo' | 'eliminado' | 'anulado';
+  responded?: boolean;
+  responseDate?: string;
+}
+
+interface SurveyParticipant extends Participant {
+  surveyId: string;
 }
 
 interface CompletedCourse {
@@ -226,6 +233,20 @@ const getTotalQuestions = (type: SurveyType): number => {
   return sections.reduce((acc, section) => acc + section.questions.length, 0);
 };
 
+// Generar participantes con estado de respuesta para encuestas
+const generateSurveyParticipants = (surveyId: string, courseId: string, totalResponses: number, total: number): SurveyParticipant[] => {
+  const names = ['Juan Pérez', 'María González', 'Carlos López', 'Ana Martínez', 'Pedro Sánchez', 'Laura García', 'Roberto Díaz', 'Carmen Silva', 'Francisco Torres', 'Isabel Fernández', 'Diego Vargas', 'Lucía Moreno', 'Andrés Rojas', 'Patricia Vega', 'Miguel Herrera'];
+  return Array.from({ length: total }, (_, i) => ({
+    id: `${surveyId}-p${i + 1}`,
+    surveyId,
+    name: names[i % names.length],
+    email: `participante${i + 1}.curso${courseId}@email.com`,
+    status: 'activo' as const,
+    responded: i < totalResponses,
+    responseDate: i < totalResponses ? `2024-01-${String(12 + (i % 5)).padStart(2, '0')}` : undefined,
+  }));
+};
+
 // Datos de ejemplo de encuestas
 const initialSurveys: Survey[] = [
   {
@@ -242,6 +263,7 @@ const initialSurveys: Survey[] = [
     totalParticipants: 25,
     responses: 22,
     responseRate: 88,
+    participants: generateSurveyParticipants('1', '1', 22, 25),
   },
   {
     id: '2',
@@ -257,6 +279,7 @@ const initialSurveys: Survey[] = [
     totalParticipants: 18,
     responses: 8,
     responseRate: 44,
+    participants: generateSurveyParticipants('2', '2', 8, 18),
   },
   {
     id: '3',
@@ -271,6 +294,7 @@ const initialSurveys: Survey[] = [
     totalParticipants: 30,
     responses: 0,
     responseRate: 0,
+    participants: generateSurveyParticipants('3', '3', 0, 30),
   },
 ];
 
@@ -1487,6 +1511,96 @@ const Encuestas: React.FC = () => {
                 </div>
               </div>
             </Card>
+
+            {/* Participants Status */}
+            {selectedSurvey.participants && selectedSurvey.participants.length > 0 && (
+              <Card>
+                <div className="text-sm font-medium text-[#1e4a5a] mb-4 flex items-center justify-between">
+                  <span className="flex items-center gap-2">
+                    <Users className="w-4 h-4" />
+                    Estado de Participantes
+                  </span>
+                  <div className="flex gap-2">
+                    <Tag color="success" className="flex items-center gap-1">
+                      <CheckCircle className="w-3 h-3" />
+                      {selectedSurvey.participants.filter(p => p.responded).length} Respondidas
+                    </Tag>
+                    <Tag color="warning" className="flex items-center gap-1">
+                      <Clock className="w-3 h-3" />
+                      {selectedSurvey.participants.filter(p => !p.responded).length} Pendientes
+                    </Tag>
+                  </div>
+                </div>
+                
+                <div className="max-h-[250px] overflow-y-auto">
+                  <Table
+                    dataSource={selectedSurvey.participants}
+                    rowKey="id"
+                    size="small"
+                    pagination={false}
+                    columns={[
+                      {
+                        title: 'Participante',
+                        dataIndex: 'name',
+                        key: 'name',
+                        render: (name: string, record: SurveyParticipant) => (
+                          <div>
+                            <div className="font-medium text-[#1e4a5a]">{name}</div>
+                            <div className="text-xs text-muted-foreground">{record.email}</div>
+                          </div>
+                        ),
+                      },
+                      {
+                        title: 'Estado',
+                        key: 'responded',
+                        width: 140,
+                        render: (_: unknown, record: SurveyParticipant) => (
+                          record.responded ? (
+                            <Tag color="success" className="flex items-center gap-1 w-fit">
+                              <CheckCircle className="w-3 h-3" />
+                              Respondida
+                            </Tag>
+                          ) : (
+                            <Tag color="warning" className="flex items-center gap-1 w-fit">
+                              <Clock className="w-3 h-3" />
+                              Pendiente
+                            </Tag>
+                          )
+                        ),
+                      },
+                      {
+                        title: 'Fecha Respuesta',
+                        dataIndex: 'responseDate',
+                        key: 'responseDate',
+                        width: 130,
+                        render: (date: string) => date ? (
+                          <span className="text-sm text-muted-foreground">{date}</span>
+                        ) : (
+                          <span className="text-sm text-muted-foreground italic">-</span>
+                        ),
+                      },
+                      {
+                        title: 'Acción',
+                        key: 'action',
+                        width: 100,
+                        render: (_: unknown, record: SurveyParticipant) => (
+                          !record.responded && selectedSurvey.status === 'active' ? (
+                            <Tooltip title="Enviar recordatorio individual">
+                              <Button 
+                                type="text" 
+                                size="small"
+                                icon={<Send className="w-3 h-3 text-[#65BFB1]" />}
+                                onClick={() => message.success(`Recordatorio enviado a ${record.name}`)}
+                              />
+                            </Tooltip>
+                          ) : null
+                        ),
+                      },
+                    ]}
+                  />
+                </div>
+              </Card>
+            )}
 
             {/* Questions Preview - Grouped by Sections */}
             <Card>
