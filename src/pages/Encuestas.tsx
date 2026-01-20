@@ -15,7 +15,6 @@ import {
   Tooltip, 
   Badge,
   message,
-  Checkbox,
   InputNumber,
   Divider,
   Popconfirm
@@ -294,6 +293,15 @@ const Encuestas: React.FC = () => {
   // Estado para participantes y relator
   const [relator, setRelator] = useState<string>('');
   const [participants, setParticipants] = useState<Participant[]>([]);
+
+  // Estado para personalización de correo
+  const [isEmailCustomizeOpen, setIsEmailCustomizeOpen] = useState(false);
+  const [emailTemplate, setEmailTemplate] = useState<string>(
+    `Estimado/a participante,\n\nLe invitamos a completar la encuesta de satisfacción del curso que ha finalizado recientemente.\n\nSu opinión es muy importante para nosotros y nos ayudará a mejorar nuestros servicios de capacitación.\n\nPor favor, haga clic en el enlace a continuación para acceder a la encuesta:\n[ENLACE_ENCUESTA]\n\nGracias por su tiempo.\n\nSaludos cordiales,\nEquipo de Capacitación`
+  );
+  const [includeCourseName, setIncludeCourseName] = useState(true);
+  const [includeCourseDate, setIncludeCourseDate] = useState(true);
+  const [includeRelatorName, setIncludeRelatorName] = useState(true);
 
   const getStatusTag = (status: Survey['status']) => {
     const config = {
@@ -606,7 +614,7 @@ const Encuestas: React.FC = () => {
         name: values.name,
         courseId: selectedCourse,
         courseName: course?.name || '',
-        status: values.sendImmediately ? 'active' : 'scheduled',
+        status: 'scheduled',
         createdAt: new Date().toISOString().split('T')[0],
         scheduledDate: values.scheduledDate?.format('YYYY-MM-DD'),
         reminderEnabled: reminderEnabled,
@@ -624,11 +632,11 @@ const Encuestas: React.FC = () => {
       setSelectedCourse('');
       setRelator('');
       setParticipants([]);
-      message.success(
-        values.sendImmediately 
-          ? 'Encuesta creada y enviada a los participantes' 
-          : 'Encuesta creada y programada correctamente'
-      );
+      setEmailTemplate(`Estimado/a participante,\n\nLe invitamos a completar la encuesta de satisfacción del curso que ha finalizado recientemente.\n\nSu opinión es muy importante para nosotros y nos ayudará a mejorar nuestros servicios de capacitación.\n\nPor favor, haga clic en el enlace a continuación para acceder a la encuesta:\n[ENLACE_ENCUESTA]\n\nGracias por su tiempo.\n\nSaludos cordiales,\nEquipo de Capacitación`);
+      setIncludeCourseName(true);
+      setIncludeCourseDate(true);
+      setIncludeRelatorName(true);
+      message.success('Encuesta creada y programada correctamente');
     });
   };
 
@@ -882,18 +890,27 @@ const Encuestas: React.FC = () => {
 
       {/* Programación */}
       <div className="text-sm font-medium text-[#1e4a5a] mb-3">Programación de Envío</div>
-      
-      <Form.Item name="sendImmediately" valuePropName="checked">
-        <Checkbox>Enviar inmediatamente</Checkbox>
-      </Form.Item>
 
       <Form.Item 
         name="scheduledDate" 
         label="Fecha de Envío Programado"
+        rules={[{ required: true, message: 'Seleccione una fecha de envío' }]}
       >
         <DatePicker 
           className="w-full" 
           placeholder="Seleccione fecha"
+          format="DD/MM/YYYY"
+        />
+      </Form.Item>
+
+      <Form.Item 
+        name="expirationDate" 
+        label="Fecha de Caducidad de la Encuesta"
+        rules={[{ required: true, message: 'Seleccione una fecha de caducidad' }]}
+      >
+        <DatePicker 
+          className="w-full" 
+          placeholder="Seleccione fecha de caducidad"
           format="DD/MM/YYYY"
         />
       </Form.Item>
@@ -918,6 +935,114 @@ const Encuestas: React.FC = () => {
 
       <Divider />
 
+      {/* Personalización de Correo */}
+      <div className="text-sm font-medium text-[#1e4a5a] mb-3">Correo de Envío</div>
+      <Button
+        type="default"
+        icon={<Edit className="w-4 h-4" />}
+        onClick={() => setIsEmailCustomizeOpen(true)}
+        className="w-full mb-4"
+      >
+        Personalizar Correo de Envío
+      </Button>
+
+      {/* Modal de personalización de correo */}
+      <Modal
+        title={
+          <div className="flex items-center gap-2">
+            <Send className="w-5 h-5 text-[#65BFB1]" />
+            <span>Personalizar Correo de Envío</span>
+          </div>
+        }
+        open={isEmailCustomizeOpen}
+        onCancel={() => setIsEmailCustomizeOpen(false)}
+        footer={[
+          <Button key="cancel" onClick={() => setIsEmailCustomizeOpen(false)}>
+            Cancelar
+          </Button>,
+          <Button 
+            key="save" 
+            type="primary" 
+            onClick={() => setIsEmailCustomizeOpen(false)}
+            style={{ backgroundColor: '#65BFB1', borderColor: '#65BFB1' }}
+          >
+            Guardar Plantilla
+          </Button>
+        ]}
+        width={700}
+      >
+        <div className="space-y-4 mt-4">
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <div className="text-sm font-medium text-[#1e4a5a] mb-3">Variables dinámicas a incluir:</div>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between p-3 bg-white rounded-lg border">
+                <div className="flex items-center gap-3">
+                  <BookOpen className="w-4 h-4 text-[#65BFB1]" />
+                  <div>
+                    <div className="font-medium text-sm">Nombre del Curso</div>
+                    <div className="text-xs text-muted-foreground">Se insertará: [NOMBRE_CURSO]</div>
+                  </div>
+                </div>
+                <Switch 
+                  checked={includeCourseName} 
+                  onChange={setIncludeCourseName}
+                />
+              </div>
+              <div className="flex items-center justify-between p-3 bg-white rounded-lg border">
+                <div className="flex items-center gap-3">
+                  <Calendar className="w-4 h-4 text-[#65BFB1]" />
+                  <div>
+                    <div className="font-medium text-sm">Fecha de Realización</div>
+                    <div className="text-xs text-muted-foreground">Se insertará: [FECHA_REALIZACION]</div>
+                  </div>
+                </div>
+                <Switch 
+                  checked={includeCourseDate} 
+                  onChange={setIncludeCourseDate}
+                />
+              </div>
+              <div className="flex items-center justify-between p-3 bg-white rounded-lg border">
+                <div className="flex items-center gap-3">
+                  <Users className="w-4 h-4 text-[#65BFB1]" />
+                  <div>
+                    <div className="font-medium text-sm">Nombre del Relator</div>
+                    <div className="text-xs text-muted-foreground">Se insertará: [NOMBRE_RELATOR]</div>
+                  </div>
+                </div>
+                <Switch 
+                  checked={includeRelatorName} 
+                  onChange={setIncludeRelatorName}
+                />
+              </div>
+            </div>
+          </div>
+
+          <Form.Item label="Plantilla del Correo">
+            <TextArea
+              rows={10}
+              value={emailTemplate}
+              onChange={(e) => setEmailTemplate(e.target.value)}
+              placeholder="Escriba el contenido del correo..."
+            />
+          </Form.Item>
+
+          <div className="bg-blue-50 p-3 rounded-lg">
+            <div className="text-xs text-blue-700">
+              <strong>Tip:</strong> Use las siguientes etiquetas en su plantilla y serán reemplazadas automáticamente:
+              <ul className="mt-2 space-y-1 list-disc list-inside">
+                {includeCourseName && <li>[NOMBRE_CURSO] - Nombre del curso</li>}
+                {includeCourseDate && <li>[FECHA_REALIZACION] - Fecha de realización del curso</li>}
+                {includeRelatorName && <li>[NOMBRE_RELATOR] - Nombre del relator</li>}
+                <li>[ENLACE_ENCUESTA] - Enlace para acceder a la encuesta</li>
+                <li>[NOMBRE_PARTICIPANTE] - Nombre del participante</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </Modal>
+
+      <Divider />
+
       <div className="flex justify-end gap-3">
         <Button onClick={() => {
           setIsCreateModalOpen(false);
@@ -928,6 +1053,10 @@ const Encuestas: React.FC = () => {
           setSelectedCourse('');
           setRelator('');
           setParticipants([]);
+          setEmailTemplate(`Estimado/a participante,\n\nLe invitamos a completar la encuesta de satisfacción del curso que ha finalizado recientemente.\n\nSu opinión es muy importante para nosotros y nos ayudará a mejorar nuestros servicios de capacitación.\n\nPor favor, haga clic en el enlace a continuación para acceder a la encuesta:\n[ENLACE_ENCUESTA]\n\nGracias por su tiempo.\n\nSaludos cordiales,\nEquipo de Capacitación`);
+          setIncludeCourseName(true);
+          setIncludeCourseDate(true);
+          setIncludeRelatorName(true);
         }}>
           Cancelar
         </Button>
