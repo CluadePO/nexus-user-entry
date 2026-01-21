@@ -1110,7 +1110,7 @@ export const OTICDashboardSections: React.FC = () => {
   );
 };
 
-// Export pending management tabs builder for reuse
+// Export pending management tabs builder for reuse (OTIC role)
 export const usePendingManagementTabs = () => {
   const { selectedHoldingId, selectedCompanyId } = useOTICFilter();
 
@@ -1241,6 +1241,191 @@ export const usePendingManagementTabs = () => {
           iconColor="text-purple-500"
         />
       ),
+    },
+  ];
+
+  return tabItems;
+};
+
+// Mock data for EMPRESA pending documentation courses
+const empresaPendingDocsCourses = [
+  { id: '1', senceId: 'SC-2024-001234', name: 'Excel Avanzado', courseType: 'SENCE', sc: 'SC-001', docType: 'Contrato', docStatus: 'Pendiente' },
+  { id: '2', senceId: 'SC-2024-001235', name: 'Liderazgo y Gestión', courseType: 'SENCE', sc: 'SC-002', docType: 'Anexo Técnico', docStatus: 'En Revisión' },
+  { id: '3', senceId: 'NS-2024-000456', name: 'Seguridad Industrial', courseType: 'No SENCE', sc: 'SC-003', docType: 'Certificado Instructor', docStatus: 'Pendiente' },
+  { id: '4', senceId: 'SC-2024-001236', name: 'Python para Negocios', courseType: 'SENCE', sc: 'SC-004', docType: 'Lista Participantes', docStatus: 'Rechazado' },
+  { id: '5', senceId: 'SC-2024-001237', name: 'Atención al Cliente', courseType: 'SENCE', sc: 'SC-005', docType: 'Convenio Marco', docStatus: 'Pendiente' },
+];
+
+const empresaPendingContributionCourses = [
+  { id: '1', senceId: 'SC-2024-001238', name: 'Marketing Digital', courseType: 'SENCE', sc: 'SC-006', currentAccount: 'Cuenta Principal', pendingAmount: 450000 },
+  { id: '2', senceId: 'SC-2024-001239', name: 'Gestión de Proyectos', courseType: 'SENCE', sc: 'SC-007', currentAccount: 'Cuenta Secundaria', pendingAmount: 780000 },
+  { id: '3', senceId: 'NS-2024-000789', name: 'Inglés Empresarial', courseType: 'No SENCE', sc: 'SC-008', currentAccount: 'Cuenta Principal', pendingAmount: 320000 },
+];
+
+// EMPRESA pending documentation table component
+const EmpresaPendingDocsTable: React.FC = () => {
+  const columns = [
+    {
+      title: 'ID Sence',
+      dataIndex: 'senceId',
+      key: 'senceId',
+      width: 140,
+    },
+    {
+      title: 'Curso',
+      dataIndex: 'name',
+      key: 'name',
+    },
+    {
+      title: 'Tipo de Curso',
+      dataIndex: 'courseType',
+      key: 'courseType',
+      width: 120,
+      render: (type: string) => (
+        <Tag color={type === 'SENCE' ? 'blue' : 'default'}>{type}</Tag>
+      ),
+    },
+    {
+      title: 'SC',
+      dataIndex: 'sc',
+      key: 'sc',
+      width: 100,
+    },
+    {
+      title: 'Tipo de Documento',
+      dataIndex: 'docType',
+      key: 'docType',
+      width: 160,
+    },
+    {
+      title: 'Estado del Documento',
+      dataIndex: 'docStatus',
+      key: 'docStatus',
+      width: 150,
+      render: (status: string) => {
+        const colorMap: Record<string, string> = {
+          'Pendiente': 'warning',
+          'En Revisión': 'processing',
+          'Rechazado': 'error',
+          'Aprobado': 'success',
+        };
+        return <Tag color={colorMap[status] || 'default'}>{status}</Tag>;
+      },
+    },
+    {
+      title: 'Acción',
+      key: 'action',
+      width: 140,
+      render: () => (
+        <Button type="primary" size="small" icon={<FileText className="w-3 h-3" />}>
+          Subir Documento
+        </Button>
+      ),
+    },
+  ];
+
+  return (
+    <Table
+      dataSource={empresaPendingDocsCourses}
+      columns={columns}
+      rowKey="id"
+      size="small"
+      pagination={{ pageSize: 10, showSizeChanger: true }}
+    />
+  );
+};
+
+// EMPRESA pending contribution table component
+const EmpresaPendingContributionTable: React.FC = () => {
+  const columns = [
+    {
+      title: 'ID Sence',
+      dataIndex: 'senceId',
+      key: 'senceId',
+      width: 140,
+    },
+    {
+      title: 'Curso',
+      dataIndex: 'name',
+      key: 'name',
+    },
+    {
+      title: 'Tipo de Curso',
+      dataIndex: 'courseType',
+      key: 'courseType',
+      width: 120,
+      render: (type: string) => (
+        <Tag color={type === 'SENCE' ? 'blue' : 'default'}>{type}</Tag>
+      ),
+    },
+    {
+      title: 'SC',
+      dataIndex: 'sc',
+      key: 'sc',
+      width: 100,
+    },
+    {
+      title: 'Cuenta Actual',
+      dataIndex: 'currentAccount',
+      key: 'currentAccount',
+      width: 150,
+    },
+    {
+      title: 'Monto Pendiente',
+      dataIndex: 'pendingAmount',
+      key: 'pendingAmount',
+      width: 140,
+      render: (amount: number) => (
+        <span className="font-medium text-orange-600">
+          ${amount.toLocaleString('es-CL')}
+        </span>
+      ),
+    },
+    {
+      title: 'Acción',
+      key: 'action',
+      width: 200,
+      render: () => (
+        <Button type="primary" size="small" icon={<DollarSign className="w-3 h-3" />}>
+          Cambiar Cuenta de Financiamiento
+        </Button>
+      ),
+    },
+  ];
+
+  return (
+    <Table
+      dataSource={empresaPendingContributionCourses}
+      columns={columns}
+      rowKey="id"
+      size="small"
+      pagination={{ pageSize: 10, showSizeChanger: true }}
+    />
+  );
+};
+
+// Export EMPRESA pending management tabs builder
+export const useEmpresaPendingManagementTabs = () => {
+  const tabItems = [
+    {
+      key: '1',
+      label: (
+        <span className="flex items-center gap-2">
+          <FileWarning className="w-4 h-4" /> Cursos con Documentación Pendiente
+          <Tag color="warning">{empresaPendingDocsCourses.length}</Tag>
+        </span>
+      ),
+      children: <EmpresaPendingDocsTable />,
+    },
+    {
+      key: '2',
+      label: (
+        <span className="flex items-center gap-2">
+          <DollarSign className="w-4 h-4" /> Cursos con Aporte Pendiente
+          <Tag color="error">{empresaPendingContributionCourses.length}</Tag>
+        </span>
+      ),
+      children: <EmpresaPendingContributionTable />,
     },
   ];
 
