@@ -1,8 +1,8 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { Badge, Avatar, Dropdown, Select, Tag } from 'antd';
-import { BellOutlined, SettingOutlined } from '@ant-design/icons';
-import { Building2, Building, Filter } from 'lucide-react';
+import { BellOutlined, SettingOutlined, ReloadOutlined } from '@ant-design/icons';
+import { Building2, Building, Filter, RotateCcw } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { getRoleDisplayName } from '@/config/menuConfig';
 import { useOTICFilter } from '@/context/OTICFilterContext';
@@ -63,15 +63,17 @@ export const AppHeader: React.FC = () => {
           <Building2 className="w-4 h-4 text-primary hidden sm:block" />
           <Select
             placeholder="Holding"
-            allowClear
             value={selectedHoldingId}
             onChange={setSelectedHoldingId}
             className="w-40 lg:w-48"
             size="small"
-            options={holdings.map(h => ({
-              value: h.id,
-              label: h.name,
-            }))}
+            options={[
+              { value: null, label: 'Todos los Holdings' },
+              ...holdings.map(h => ({
+                value: h.id,
+                label: h.name,
+              }))
+            ]}
             popupClassName="bg-card"
           />
         </div>
@@ -80,19 +82,31 @@ export const AppHeader: React.FC = () => {
           <Building className="w-4 h-4 text-primary hidden sm:block" />
           <Select
             placeholder="Empresa"
-            allowClear
             value={selectedCompanyId}
             onChange={setSelectedCompanyId}
             className="w-40 lg:w-48"
             size="small"
-            disabled={!selectedHoldingId}
-            options={filteredCompanies.map(c => ({
-              value: c.id,
-              label: c.name,
-            }))}
+            options={[
+              { value: null, label: 'Todas las Empresas' },
+              ...filteredCompanies.map(c => ({
+                value: c.id,
+                label: c.name,
+              }))
+            ]}
             popupClassName="bg-card"
           />
         </div>
+
+        <button
+          onClick={() => {
+            setSelectedHoldingId(null);
+            setSelectedCompanyId(null);
+          }}
+          className="p-1.5 rounded-md hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
+          title="Reiniciar filtros"
+        >
+          <RotateCcw className="w-4 h-4" />
+        </button>
       </div>
 
       {/* Right: Actions */}
