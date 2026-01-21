@@ -1,9 +1,10 @@
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs as AntTabs, Card as AntCard } from 'antd';
 import { useAuth } from '@/context/AuthContext';
 import { BookOpen, Briefcase } from 'lucide-react';
-import { CourseStagesSection } from '@/components/dashboard/OTICDashboardSections';
+import { CourseStagesSection, CourseSearchGrid, usePendingManagementTabs } from '@/components/dashboard/OTICDashboardSections';
 
 const CursosResumen: React.FC = () => {
   const { user } = useAuth();
@@ -11,6 +12,9 @@ const CursosResumen: React.FC = () => {
 
   // Check if user has access to the tabs (OTIC, EMPRESA, EMPRESA_REPRESENTANTE)
   const hasTabAccess = userRole === 'OTIC' || userRole === 'EMPRESA' || userRole === 'EMPRESA_REPRESENTANTE';
+
+  // Get pending management tabs
+  const pendingTabItems = usePendingManagementTabs();
 
   if (!hasTabAccess) {
     // For other roles, show a simple placeholder
@@ -51,9 +55,17 @@ const CursosResumen: React.FC = () => {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="cursos" className="mt-6">
-          {/* Course Stages Pipeline moved from Dashboard */}
+        <TabsContent value="cursos" className="mt-6 space-y-6">
+          {/* Course Stages Pipeline */}
           <CourseStagesSection />
+
+          {/* Course Search */}
+          <CourseSearchGrid />
+
+          {/* Pending Issues Management */}
+          <AntCard title="Gestión de Pendientes" className="shadow-sm">
+            <AntTabs items={pendingTabItems} />
+          </AntCard>
         </TabsContent>
 
         <TabsContent value="servicios" className="mt-6">

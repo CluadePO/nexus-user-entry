@@ -754,7 +754,7 @@ const AccountStatusSection: React.FC = () => {
   );
 };
 
-const CourseSearchGrid: React.FC = () => {
+export const CourseSearchGrid: React.FC = () => {
   const [searchValue, setSearchValue] = useState('');
   const [searchType, setSearchType] = useState<'idSence' | 'idInscripcion' | 'codigoSence'>('idSence');
   const [hasSearched, setHasSearched] = useState(false);
@@ -1102,18 +1102,147 @@ export const OTICDashboardSections: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Course Stages Section removed - now in Cursos y Servicios > Resumen */}
+      {/* Course Stages, Search, and Pending sections moved to Cursos y Servicios > Resumen */}
 
       {/* Account Status by Holding */}
       <AccountStatusSection />
-
-      {/* Course Search Grid */}
-      <CourseSearchGrid />
-
-      {/* Pending Issues Tabs */}
-      <Card title="Gestión de Pendientes" className="shadow-sm">
-        <Tabs items={tabItems} />
-      </Card>
     </div>
   );
+};
+
+// Export pending management tabs builder for reuse
+export const usePendingManagementTabs = () => {
+  const { selectedHoldingId, selectedCompanyId } = useOTICFilter();
+
+  const filteredPendingOC = useMemo(() => 
+    filterByHoldingCompany(pendingOCCourses, selectedHoldingId, selectedCompanyId), 
+    [selectedHoldingId, selectedCompanyId]
+  );
+  const filteredMissingReq = useMemo(() => 
+    filterByHoldingCompany(missingRequirementsCourses, selectedHoldingId, selectedCompanyId), 
+    [selectedHoldingId, selectedCompanyId]
+  );
+  const filteredPrecontract = useMemo(() => 
+    filterByHoldingCompany(precontractPendingDocs, selectedHoldingId, selectedCompanyId), 
+    [selectedHoldingId, selectedCompanyId]
+  );
+  const filteredSenceDiff = useMemo(() => 
+    filterByHoldingCompany(senceDifferenceCourses, selectedHoldingId, selectedCompanyId), 
+    [selectedHoldingId, selectedCompanyId]
+  );
+  const filteredCriticalLiq = useMemo(() => 
+    filterByHoldingCompany(criticalLiquidationCourses, selectedHoldingId, selectedCompanyId), 
+    [selectedHoldingId, selectedCompanyId]
+  );
+  const filteredMdaRect = useMemo(() => 
+    filterByHoldingCompany(mdaRectificationCourses, selectedHoldingId, selectedCompanyId), 
+    [selectedHoldingId, selectedCompanyId]
+  );
+
+  const tabItems = [
+    {
+      key: '1',
+      label: (
+        <span className="flex items-center gap-2">
+          <Receipt className="w-4 h-4" /> Pendiente OC
+          <Tag color="error">{filteredPendingOC.length}</Tag>
+        </span>
+      ),
+      children: (
+        <PendingCoursesSection
+          title="Cursos Pendientes por Emitir OC"
+          icon={<Receipt className="w-5 h-5" />}
+          courses={filteredPendingOC}
+          iconColor="text-orange-500"
+        />
+      ),
+    },
+    {
+      key: '2',
+      label: (
+        <span className="flex items-center gap-2">
+          <FileWarning className="w-4 h-4" /> Requisitos
+          <Tag color="warning">{filteredMissingReq.length}</Tag>
+        </span>
+      ),
+      children: (
+        <PendingCoursesSection
+          title="Cursos con Requisitos Faltantes"
+          icon={<FileWarning className="w-5 h-5" />}
+          courses={filteredMissingReq}
+          iconColor="text-amber-500"
+        />
+      ),
+    },
+    {
+      key: '3',
+      label: (
+        <span className="flex items-center gap-2">
+          <FileX className="w-4 h-4" /> Precontratos
+          <Tag color="warning">{filteredPrecontract.length}</Tag>
+        </span>
+      ),
+      children: (
+        <PendingCoursesSection
+          title="Precontratos con Documentos Pendientes"
+          icon={<FileX className="w-5 h-5" />}
+          courses={filteredPrecontract}
+          iconColor="text-yellow-500"
+        />
+      ),
+    },
+    {
+      key: '4',
+      label: (
+        <span className="flex items-center gap-2">
+          <DollarSign className="w-4 h-4" /> Diferencia SENCE
+          <Tag color="error">{filteredSenceDiff.length}</Tag>
+        </span>
+      ),
+      children: (
+        <PendingCoursesSection
+          title="Cursos con Diferencia en Montos SENCE"
+          icon={<DollarSign className="w-5 h-5" />}
+          courses={filteredSenceDiff}
+          iconColor="text-red-500"
+        />
+      ),
+    },
+    {
+      key: '5',
+      label: (
+        <span className="flex items-center gap-2">
+          <AlertCircle className="w-4 h-4" /> Críticos Liquidar
+          <Tag color="error">{filteredCriticalLiq.length}</Tag>
+        </span>
+      ),
+      children: (
+        <PendingCoursesSection
+          title="Cursos Críticos por Liquidar"
+          icon={<AlertCircle className="w-5 h-5" />}
+          courses={filteredCriticalLiq}
+          iconColor="text-red-600"
+        />
+      ),
+    },
+    {
+      key: '6',
+      label: (
+        <span className="flex items-center gap-2">
+          <RotateCcw className="w-4 h-4" /> MDA Pendiente
+          <Tag color="warning">{filteredMdaRect.length}</Tag>
+        </span>
+      ),
+      children: (
+        <PendingCoursesSection
+          title="Cursos con MDA Rectificación Pendiente"
+          icon={<RotateCcw className="w-5 h-5" />}
+          courses={filteredMdaRect}
+          iconColor="text-purple-500"
+        />
+      ),
+    },
+  ];
+
+  return tabItems;
 };
