@@ -902,37 +902,34 @@ export const CourseSearchGrid: React.FC = () => {
       <div className="flex flex-wrap gap-3 mb-4 items-end p-3 bg-muted/30 rounded-lg border">
         <div className="flex flex-col gap-1">
           <span className="text-xs text-muted-foreground">Buscar por</span>
-          <div className="flex">
-            <Select
-              value={searchType}
-              onChange={(value) => {
-                setSearchType(value);
-                setHasSearched(false);
-                setSearchResults([]);
-              }}
-              style={{ width: 170 }}
-              className="[&_.ant-select-selector]:!rounded-r-none [&_.ant-select-selector]:!border-r-0"
-              options={[
-                { value: 'idSence', label: 'ID Sence' },
-                { value: 'idInscripcion', label: 'ID de Inscripción' },
-                { value: 'codigoSence', label: 'Código Sence' },
-                { value: 'solicitudCompra', label: 'Solicitud de Compra' },
-                { value: 'ordenCompra', label: 'Orden de Compra' },
-                { value: 'nombreCurso', label: 'Nombre del Curso' },
-              ]}
-            />
-            <Input
-              placeholder={`Ingrese ${searchTypeLabels[searchType]}...`}
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
-              onPressEnter={handleSearch}
-              style={{ width: 220 }}
-              className="!rounded-none !border-r-0"
-            />
-            <Button type="primary" onClick={handleSearch} className="!rounded-l-none">
-              <Search className="w-4 h-4" />
-            </Button>
-          </div>
+          <Select
+            value={searchType}
+            onChange={(value) => {
+              setSearchType(value);
+              setHasSearched(false);
+              setSearchResults([]);
+            }}
+            className="w-44"
+            size="middle"
+            options={[
+              { value: 'idSence', label: 'ID Sence' },
+              { value: 'idInscripcion', label: 'ID de Inscripción' },
+              { value: 'codigoSence', label: 'Código Sence' },
+              { value: 'solicitudCompra', label: 'Solicitud de Compra' },
+              { value: 'ordenCompra', label: 'Orden de Compra' },
+              { value: 'nombreCurso', label: 'Nombre del Curso' },
+            ]}
+          />
+        </div>
+        <div className="flex flex-col gap-1 flex-1 min-w-48 max-w-xs">
+          <span className="text-xs text-muted-foreground">Valor a buscar</span>
+          <Input
+            placeholder={`Ingrese ${searchTypeLabels[searchType]}...`}
+            prefix={<Search className="w-4 h-4 text-muted-foreground" />}
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            onPressEnter={handleSearch}
+          />
         </div>
         <div className="flex flex-col gap-1">
           <span className="text-xs text-muted-foreground">Tipo de Curso</span>
@@ -967,13 +964,16 @@ export const CourseSearchGrid: React.FC = () => {
             ]}
           />
         </div>
-        {(hasSearched || hasActiveFilters) && (
-          <div className="flex items-end">
+        <div className="flex gap-2">
+          <Button type="primary" icon={<Search className="w-4 h-4" />} onClick={handleSearch}>
+            Buscar
+          </Button>
+          {(hasSearched || hasActiveFilters) && (
             <Button onClick={handleClear} icon={<RotateCcw className="w-4 h-4" />}>
               Limpiar
             </Button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Active filters tags */}
