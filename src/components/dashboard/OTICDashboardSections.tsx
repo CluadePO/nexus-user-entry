@@ -932,9 +932,16 @@ export const CourseSearchGrid: React.FC = () => {
             className="w-full"
           />
         </div>
-        <Button type="primary" icon={<Search className="w-4 h-4" />} onClick={handleSearch}>
-          Buscar
-        </Button>
+        <div className="flex gap-2">
+          <Button type="primary" icon={<Search className="w-4 h-4" />} onClick={handleSearch}>
+            Buscar
+          </Button>
+          {(hasSearched || hasActiveFilters) && (
+            <Button onClick={handleClear} icon={<RotateCcw className="w-4 h-4" />}>
+              Limpiar
+            </Button>
+          )}
+        </div>
 
         {/* Divider */}
         <div className="h-8 w-px bg-border hidden sm:block" />
@@ -971,13 +978,6 @@ export const CourseSearchGrid: React.FC = () => {
             ]}
           />
         </div>
-
-        {/* Clear button */}
-        {(hasSearched || hasActiveFilters) && (
-          <Button onClick={handleClear} icon={<RotateCcw className="w-4 h-4" />}>
-            Limpiar
-          </Button>
-        )}
       </div>
 
       {/* Active filters tags */}
