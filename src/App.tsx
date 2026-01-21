@@ -16,6 +16,7 @@ import MiBuscador from "./pages/MiBuscador";
 import MiRecomendador from "./pages/MiRecomendador";
 import CourseDetail from "./pages/CourseDetail";
 import Encuestas from "./pages/Encuestas";
+import CursosResumen from "./pages/CursosResumen";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -46,7 +47,8 @@ const App = () => (
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/inscripcion" element={<Inscripcion />} />
                 <Route path="/cursos/inscripcion" element={<Inscripcion />} />
-                {/* Placeholder routes */}
+                {/* Cursos y Servicios routes */}
+                <Route path="/cursos/resumen" element={<CursosResumen />} />
                 <Route path="/cursos/*" element={<PlaceholderPage title="Cursos y Servicios" />} />
                 <Route path="/reportes" element={<PlaceholderPage title="Reportes" />} />
                 <Route path="/data360" element={<PlaceholderPage title="Data 360" />} />
