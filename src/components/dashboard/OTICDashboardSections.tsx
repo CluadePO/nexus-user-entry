@@ -898,8 +898,9 @@ export const CourseSearchGrid: React.FC = () => {
 
   return (
     <Card title="Búsqueda de Cursos" className="shadow-sm">
-      {/* Search Row */}
-      <div className="flex flex-wrap gap-3 mb-4 items-end">
+      {/* Search and Filters - Unified Row */}
+      <div className="flex flex-wrap gap-4 mb-4 p-3 bg-muted/30 rounded-lg border items-end">
+        {/* Search section */}
         <div className="flex flex-col gap-1">
           <span className="text-xs text-muted-foreground">Buscar por</span>
           <Select
@@ -934,17 +935,13 @@ export const CourseSearchGrid: React.FC = () => {
         <Button type="primary" icon={<Search className="w-4 h-4" />} onClick={handleSearch}>
           Buscar
         </Button>
-        {(hasSearched || hasActiveFilters) && (
-          <Button onClick={handleClear} icon={<RotateCcw className="w-4 h-4" />}>
-            Limpiar
-          </Button>
-        )}
-      </div>
 
-      {/* Filters Row */}
-      <div className="flex flex-wrap gap-4 mb-4 p-3 bg-muted/30 rounded-lg border">
+        {/* Divider */}
+        <div className="h-8 w-px bg-border hidden sm:block" />
+
+        {/* Filters section */}
         <div className="flex flex-col gap-1">
-          <span className="text-xs font-medium text-muted-foreground">Tipo de Curso</span>
+          <span className="text-xs text-muted-foreground">Tipo de Curso</span>
           <Select
             value={tipoCursoFilter}
             onChange={(value) => setTipoCursoFilter(value)}
@@ -960,7 +957,7 @@ export const CourseSearchGrid: React.FC = () => {
           />
         </div>
         <div className="flex flex-col gap-1">
-          <span className="text-xs font-medium text-muted-foreground">Modalidad</span>
+          <span className="text-xs text-muted-foreground">Modalidad</span>
           <Select
             value={modalidadFilter}
             onChange={(value) => setModalidadFilter(value)}
@@ -974,16 +971,23 @@ export const CourseSearchGrid: React.FC = () => {
             ]}
           />
         </div>
-        {hasActiveFilters && (
-          <div className="flex items-end">
-            <div className="flex gap-2 items-center text-xs text-muted-foreground">
-              <span>Filtros activos:</span>
-              {tipoCursoFilter && <Tag color="blue" closable onClose={() => setTipoCursoFilter(null)}>{tipoCursoFilter}</Tag>}
-              {modalidadFilter && <Tag color="cyan" closable onClose={() => setModalidadFilter(null)}>{modalidadFilter}</Tag>}
-            </div>
-          </div>
+
+        {/* Clear button */}
+        {(hasSearched || hasActiveFilters) && (
+          <Button onClick={handleClear} icon={<RotateCcw className="w-4 h-4" />}>
+            Limpiar
+          </Button>
         )}
       </div>
+
+      {/* Active filters tags */}
+      {hasActiveFilters && (
+        <div className="flex gap-2 items-center text-xs text-muted-foreground mb-4">
+          <span>Filtros activos:</span>
+          {tipoCursoFilter && <Tag color="blue" closable onClose={() => setTipoCursoFilter(null)}>{tipoCursoFilter}</Tag>}
+          {modalidadFilter && <Tag color="cyan" closable onClose={() => setModalidadFilter(null)}>{modalidadFilter}</Tag>}
+        </div>
+      )}
 
       {hasSearched && (
         <div className="border-t pt-4">
