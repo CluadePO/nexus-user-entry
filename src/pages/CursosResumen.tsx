@@ -10,16 +10,16 @@ const CursosResumen: React.FC = () => {
   const { user } = useAuth();
   const userRole = user?.role;
 
-  // Check if user has access to the tabs (OTIC, EMPRESA, EMPRESA_REPRESENTANTE)
-  const hasTabAccess = userRole === 'OTIC' || userRole === 'EMPRESA' || userRole === 'EMPRESA_REPRESENTANTE';
-  const isEmpresaRole = userRole === 'EMPRESA' || userRole === 'EMPRESA_REPRESENTANTE';
+  // Check if user has access to the tabs (OTIC, EMPRESA, EMPRESA_REPRESENTANTE, OTEC, OTEC_REPRESENTANTE)
+  const hasTabAccess = userRole === 'OTIC' || userRole === 'EMPRESA' || userRole === 'EMPRESA_REPRESENTANTE' || userRole === 'OTEC' || userRole === 'OTEC_REPRESENTANTE';
+  const isEmpresaOrOtecRole = userRole === 'EMPRESA' || userRole === 'EMPRESA_REPRESENTANTE' || userRole === 'OTEC' || userRole === 'OTEC_REPRESENTANTE';
 
   // Get pending management tabs based on role
   const oticPendingTabItems = usePendingManagementTabs();
   const empresaPendingTabItems = useEmpresaPendingManagementTabs();
   
-  // Use appropriate tabs based on role
-  const pendingTabItems = isEmpresaRole ? empresaPendingTabItems : oticPendingTabItems;
+  // Use appropriate tabs based on role - OTEC uses same tabs as Empresa
+  const pendingTabItems = isEmpresaOrOtecRole ? empresaPendingTabItems : oticPendingTabItems;
 
   if (!hasTabAccess) {
     // For other roles, show a simple placeholder
@@ -68,7 +68,7 @@ const CursosResumen: React.FC = () => {
           <CourseSearchGrid />
 
           {/* Pending Issues Management */}
-          <AntCard title={isEmpresaRole ? "Gestión de Pendientes Cursos Franquicia" : "Gestión de Pendientes"} className="shadow-sm">
+          <AntCard title={isEmpresaOrOtecRole ? "Gestión de Pendientes Cursos Franquicia" : "Gestión de Pendientes"} className="shadow-sm">
             <AntTabs items={pendingTabItems} />
           </AntCard>
         </TabsContent>
