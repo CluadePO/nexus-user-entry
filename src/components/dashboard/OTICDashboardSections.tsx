@@ -898,8 +898,8 @@ export const CourseSearchGrid: React.FC = () => {
 
   return (
     <Card title="Búsqueda de Cursos" className="shadow-sm">
-      {/* All filters in one row */}
-      <div className="flex flex-wrap gap-3 mb-4 items-end p-3 bg-muted/30 rounded-lg border">
+      {/* Search Row */}
+      <div className="flex flex-wrap gap-3 mb-4 items-end">
         <div className="flex flex-col gap-1">
           <span className="text-xs text-muted-foreground">Buscar por</span>
           <Select
@@ -909,8 +909,7 @@ export const CourseSearchGrid: React.FC = () => {
               setHasSearched(false);
               setSearchResults([]);
             }}
-            className="w-44"
-            size="middle"
+            className="w-52"
             options={[
               { value: 'idSence', label: 'ID Sence' },
               { value: 'idInscripcion', label: 'ID de Inscripción' },
@@ -921,7 +920,7 @@ export const CourseSearchGrid: React.FC = () => {
             ]}
           />
         </div>
-        <div className="flex flex-col gap-1 flex-1 min-w-48 max-w-xs">
+        <div className="flex flex-col gap-1 flex-1 max-w-md">
           <span className="text-xs text-muted-foreground">Valor a buscar</span>
           <Input
             placeholder={`Ingrese ${searchTypeLabels[searchType]}...`}
@@ -929,15 +928,27 @@ export const CourseSearchGrid: React.FC = () => {
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
             onPressEnter={handleSearch}
+            className="w-full"
           />
         </div>
+        <Button type="primary" icon={<Search className="w-4 h-4" />} onClick={handleSearch}>
+          Buscar
+        </Button>
+        {(hasSearched || hasActiveFilters) && (
+          <Button onClick={handleClear} icon={<RotateCcw className="w-4 h-4" />}>
+            Limpiar
+          </Button>
+        )}
+      </div>
+
+      {/* Filters Row */}
+      <div className="flex flex-wrap gap-4 mb-4 p-3 bg-muted/30 rounded-lg border">
         <div className="flex flex-col gap-1">
-          <span className="text-xs text-muted-foreground">Tipo de Curso</span>
+          <span className="text-xs font-medium text-muted-foreground">Tipo de Curso</span>
           <Select
             value={tipoCursoFilter}
             onChange={(value) => setTipoCursoFilter(value)}
-            className="w-36"
-            size="middle"
+            className="w-40"
             allowClear
             placeholder="Todos"
             options={[
@@ -949,12 +960,11 @@ export const CourseSearchGrid: React.FC = () => {
           />
         </div>
         <div className="flex flex-col gap-1">
-          <span className="text-xs text-muted-foreground">Modalidad</span>
+          <span className="text-xs font-medium text-muted-foreground">Modalidad</span>
           <Select
             value={modalidadFilter}
             onChange={(value) => setModalidadFilter(value)}
-            className="w-32"
-            size="middle"
+            className="w-36"
             allowClear
             placeholder="Todas"
             options={[
@@ -964,26 +974,16 @@ export const CourseSearchGrid: React.FC = () => {
             ]}
           />
         </div>
-        <div className="flex gap-2">
-          <Button type="primary" icon={<Search className="w-4 h-4" />} onClick={handleSearch}>
-            Buscar
-          </Button>
-          {(hasSearched || hasActiveFilters) && (
-            <Button onClick={handleClear} icon={<RotateCcw className="w-4 h-4" />}>
-              Limpiar
-            </Button>
-          )}
-        </div>
+        {hasActiveFilters && (
+          <div className="flex items-end">
+            <div className="flex gap-2 items-center text-xs text-muted-foreground">
+              <span>Filtros activos:</span>
+              {tipoCursoFilter && <Tag color="blue" closable onClose={() => setTipoCursoFilter(null)}>{tipoCursoFilter}</Tag>}
+              {modalidadFilter && <Tag color="cyan" closable onClose={() => setModalidadFilter(null)}>{modalidadFilter}</Tag>}
+            </div>
+          </div>
+        )}
       </div>
-
-      {/* Active filters tags */}
-      {hasActiveFilters && (
-        <div className="flex gap-2 items-center text-xs text-muted-foreground mb-4">
-          <span>Filtros activos:</span>
-          {tipoCursoFilter && <Tag color="blue" closable onClose={() => setTipoCursoFilter(null)}>{tipoCursoFilter}</Tag>}
-          {modalidadFilter && <Tag color="cyan" closable onClose={() => setModalidadFilter(null)}>{modalidadFilter}</Tag>}
-        </div>
-      )}
 
       {hasSearched && (
         <div className="border-t pt-4">
