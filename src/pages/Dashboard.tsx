@@ -10,6 +10,7 @@ import { EmpresaResumenFinanciero } from '@/components/dashboard/EmpresaManageme
 import { EmpresaHighlightMetrics } from '@/components/dashboard/EmpresaHighlightMetrics';
 import { EmpresaPlanCapacitacion } from '@/components/dashboard/EmpresaPlanCapacitacion';
 import { OTICDashboardSections } from '@/components/dashboard/OTICDashboardSections';
+import { OTICOperationalMetrics } from '@/components/dashboard/OTICOperationalMetrics';
 import { Calendar, Clock } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
@@ -83,7 +84,12 @@ const Dashboard: React.FC = () => {
       )}
 
       {/* OTIC Operational Dashboard */}
-      {isOTICRole && <OTICDashboardSections />}
+      {isOTICRole && (
+        <>
+          <OTICOperationalMetrics />
+          <OTICDashboardSections />
+        </>
+      )}
     </div>
   );
 };
