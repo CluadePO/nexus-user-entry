@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs as AntTabs, Card as AntCard } from 'antd';
 import { useAuth } from '@/context/AuthContext';
 import { BookOpen, Briefcase } from 'lucide-react';
-import { CourseStagesSection, CourseSearchGrid, usePendingManagementTabs, useEmpresaPendingManagementTabs, ServiceStagesSection } from '@/components/dashboard/OTICDashboardSections';
+import { CourseStagesSection, CourseSearchGrid, usePendingManagementTabs, useEmpresaPendingManagementTabs, ServiceStagesSection, ServiceSearchGrid } from '@/components/dashboard/OTICDashboardSections';
 
 const CursosResumen: React.FC = () => {
   const { user } = useAuth();
@@ -76,6 +76,9 @@ const CursosResumen: React.FC = () => {
         <TabsContent value="servicios" className="mt-6 space-y-6">
           {/* Service Stages Pipeline */}
           <ServiceStagesSection />
+
+          {/* Service Search */}
+          <ServiceSearchGrid />
         </TabsContent>
       </Tabs>
     </div>
