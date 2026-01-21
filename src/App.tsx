@@ -7,6 +7,7 @@ import { ConfigProvider } from 'antd';
 import esES from 'antd/locale/es_ES';
 import { AuthProvider } from "@/context/AuthContext";
 import { AppLayout } from "@/components/layout/AppLayout";
+import { OTICFilterProvider } from "@/context/OTICFilterContext";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Inscripcion from "./pages/Inscripcion";
@@ -40,7 +41,7 @@ const App = () => (
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
-              <Route element={<AppLayout />}>
+              <Route element={<OTICFilterProvider><AppLayout /></OTICFilterProvider>}>
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/inscripcion" element={<Inscripcion />} />
                 <Route path="/cursos/inscripcion" element={<Inscripcion />} />
