@@ -1,13 +1,24 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
-import { Badge, Avatar, Dropdown } from 'antd';
+import { Badge, Avatar, Dropdown, Select, Tag } from 'antd';
 import { BellOutlined, SettingOutlined } from '@ant-design/icons';
+import { Building2, Building, Filter } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { getRoleDisplayName } from '@/config/menuConfig';
+import { useOTICFilter } from '@/context/OTICFilterContext';
 
 export const AppHeader: React.FC = () => {
   const { user } = useAuth();
   const location = useLocation();
+  const {
+    holdings,
+    filteredCompanies,
+    selectedHoldingId,
+    selectedCompanyId,
+    setSelectedHoldingId,
+    setSelectedCompanyId,
+    filterLabel,
+  } = useOTICFilter();
 
   const getPageTitle = () => {
     const path = location.pathname;
@@ -30,18 +41,20 @@ export const AppHeader: React.FC = () => {
   ];
 
   return (
-    <header className="h-16 bg-card border-b border-border px-6 flex items-center justify-between">
-      <div>
-        <h1 className="text-xl font-semibold text-foreground">{getPageTitle()}</h1>
-        {user && (
-          <p className="text-sm text-muted-foreground">
-            {getRoleDisplayName(user.role)} • {user.company}
-          </p>
-        )}
-      </div>
+    <header className="bg-card border-b border-border px-6 py-3">
+      {/* Top row: Title and actions */}
+      <div className="flex items-center justify-between mb-3">
+        <div>
+          <h1 className="text-xl font-semibold text-foreground">{getPageTitle()}</h1>
+          {user && (
+            <p className="text-sm text-muted-foreground">
+              {getRoleDisplayName(user.role)} • {user.company}
+            </p>
+          )}
+        </div>
 
-      <div className="flex items-center gap-4">
-        <Dropdown
+        <div className="flex items-center gap-4">
+          <Dropdown
           menu={{ items: notificationItems }}
           placement="bottomRight"
           trigger={['click']}
@@ -68,6 +81,60 @@ export const AppHeader: React.FC = () => {
             </div>
           </div>
         )}
+        </div>
+      </div>
+
+      {/* Bottom row: Filter bar */}
+      <div className="flex flex-wrap items-center gap-4 pt-3 border-t border-border">
+        <div className="flex items-center gap-2 text-muted-foreground">
+          <Filter className="w-4 h-4" />
+          <span className="text-sm font-medium">Filtrar datos por:</span>
+        </div>
+        
+        <div className="flex flex-wrap items-center gap-3">
+          {/* Holding Filter */}
+          <div className="flex items-center gap-2">
+            <Building2 className="w-4 h-4 text-primary" />
+            <Select
+              placeholder="Seleccione Holding"
+              allowClear
+              value={selectedHoldingId}
+              onChange={setSelectedHoldingId}
+              className="w-56"
+              options={holdings.map(h => ({
+                value: h.id,
+                label: h.name,
+              }))}
+              popupClassName="bg-card"
+            />
+          </div>
+
+          {/* Company Filter */}
+          <div className="flex items-center gap-2">
+            <Building className="w-4 h-4 text-primary" />
+            <Select
+              placeholder="Seleccione Empresa"
+              allowClear
+              value={selectedCompanyId}
+              onChange={setSelectedCompanyId}
+              className="w-56"
+              disabled={!selectedHoldingId}
+              options={filteredCompanies.map(c => ({
+                value: c.id,
+                label: c.name,
+              }))}
+              popupClassName="bg-card"
+            />
+          </div>
+        </div>
+
+        {/* Current Filter Label */}
+        <div className="ml-auto flex items-center gap-2">
+          <span className="text-sm text-muted-foreground">Mostrando:</span>
+          <Tag color="blue" className="m-0 text-sm">
+            {filterLabel}
+          </Tag>
+        </div>
       </div>
     </header>
   );
