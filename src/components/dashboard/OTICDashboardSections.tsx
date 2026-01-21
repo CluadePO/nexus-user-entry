@@ -480,7 +480,15 @@ export const ServiceStagesSection: React.FC = () => {
 
   return (
     <Card 
-      title="Estado de Servicios por Etapa"
+      title={
+        <div className="flex items-center justify-between w-full">
+          <span>Estado de Servicios por Etapa</span>
+          <div className="flex items-center gap-2 text-sm font-normal">
+            <span className="text-muted-foreground">Total:</span>
+            <span className="font-semibold text-primary">{totalServices} servicios</span>
+          </div>
+        </div>
+      }
       className="shadow-sm"
     >
       {/* Pipeline visual */}
