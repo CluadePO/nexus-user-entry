@@ -1257,9 +1257,11 @@ const empresaPendingDocsCourses = [
 ];
 
 const empresaPendingContributionCourses = [
-  { id: '1', senceId: 'SC-2024-001238', name: 'Marketing Digital', courseType: 'SENCE', sc: 'SC-006', currentAccount: 'Cuenta Principal', pendingAmount: 450000 },
-  { id: '2', senceId: 'SC-2024-001239', name: 'Gestión de Proyectos', courseType: 'SENCE', sc: 'SC-007', currentAccount: 'Cuenta Secundaria', pendingAmount: 780000 },
-  { id: '3', senceId: 'NS-2024-000789', name: 'Inglés Empresarial', courseType: 'No SENCE', sc: 'SC-008', currentAccount: 'Cuenta Principal', pendingAmount: 320000 },
+  { id: '1', senceId: 'SC-2024-001238', name: 'Marketing Digital', sc: 'SC-006', currentAccount: 'Cuenta al Año', courseValue: 450000 },
+  { id: '2', senceId: 'SC-2024-001239', name: 'Gestión de Proyectos', sc: 'SC-007', currentAccount: 'Excedente', courseValue: 780000 },
+  { id: '3', senceId: 'NS-2024-000789', name: 'Inglés Empresarial', sc: 'SC-008', currentAccount: 'Cuenta Mixta', courseValue: 320000 },
+  { id: '4', senceId: 'SC-2024-001240', name: 'Comunicación Efectiva', sc: 'SC-009', currentAccount: 'Reparto Año', courseValue: 550000 },
+  { id: '5', senceId: 'SC-2024-001241', name: 'Trabajo en Equipo', sc: 'SC-010', currentAccount: 'Reparto Excedente', courseValue: 420000 },
 ];
 
 // EMPRESA pending documentation table component
@@ -1369,15 +1371,6 @@ const EmpresaPendingContributionTable: React.FC = () => {
       key: 'name',
     },
     {
-      title: 'Tipo de Curso',
-      dataIndex: 'courseType',
-      key: 'courseType',
-      width: 120,
-      render: (type: string) => (
-        <Tag color={type === 'SENCE' ? 'blue' : 'default'}>{type}</Tag>
-      ),
-    },
-    {
       title: 'SC',
       dataIndex: 'sc',
       key: 'sc',
@@ -1388,11 +1381,21 @@ const EmpresaPendingContributionTable: React.FC = () => {
       dataIndex: 'currentAccount',
       key: 'currentAccount',
       width: 150,
+      render: (account: string) => {
+        const colorMap: Record<string, string> = {
+          'Cuenta al Año': 'blue',
+          'Excedente': 'green',
+          'Cuenta Mixta': 'purple',
+          'Reparto Año': 'orange',
+          'Reparto Excedente': 'cyan',
+        };
+        return <Tag color={colorMap[account] || 'default'}>{account}</Tag>;
+      },
     },
     {
-      title: 'Monto Pendiente',
-      dataIndex: 'pendingAmount',
-      key: 'pendingAmount',
+      title: 'Valor del Curso',
+      dataIndex: 'courseValue',
+      key: 'courseValue',
       width: 140,
       render: (amount: number) => (
         <span className="font-medium text-orange-600">

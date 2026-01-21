@@ -68,7 +68,7 @@ const CursosResumen: React.FC = () => {
           <CourseSearchGrid />
 
           {/* Pending Issues Management */}
-          <AntCard title="Gestión de Pendientes" className="shadow-sm">
+          <AntCard title={isEmpresaRole ? "Gestión de Pendientes Cursos Franquicia" : "Gestión de Pendientes"} className="shadow-sm">
             <AntTabs items={pendingTabItems} />
           </AntCard>
         </TabsContent>
