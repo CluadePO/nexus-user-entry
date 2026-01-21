@@ -1246,3 +1246,168 @@ export const usePendingManagementTabs = () => {
 
   return tabItems;
 };
+
+// Mock data for Empresa pending documentation
+const pendingDocumentationData = [
+  { id: '1', idSence: 'SENCE-2024-00123', curso: 'Excel Avanzado', tipoCurso: 'Presencial', sc: 'SC-001', tipoDocumento: 'Certificado de Notas', estadoDocumento: 'Pendiente' },
+  { id: '2', idSence: 'SENCE-2024-00456', curso: 'Liderazgo Empresarial', tipoCurso: 'E-Learning', sc: 'SC-002', tipoDocumento: 'Asistencia', estadoDocumento: 'En revisión' },
+  { id: '3', idSence: 'SENCE-2024-00789', curso: 'Seguridad Industrial', tipoCurso: 'Presencial', sc: 'SC-003', tipoDocumento: 'Evaluación Final', estadoDocumento: 'Rechazado' },
+  { id: '4', idSence: 'SENCE-2024-01012', curso: 'Python Básico', tipoCurso: 'E-Learning', sc: 'SC-004', tipoDocumento: 'Contrato Firmado', estadoDocumento: 'Pendiente' },
+];
+
+const pendingContributionCourses = [
+  { id: '1', idSence: 'SENCE-2024-00234', curso: 'Gestión de Proyectos', tipoCurso: 'Presencial', empresa: 'Empresa ABC', montoAporte: 850000, estado: 'Pendiente Pago' },
+  { id: '2', idSence: 'SENCE-2024-00567', curso: 'Marketing Digital', tipoCurso: 'E-Learning', empresa: 'Industria Tech', montoAporte: 620000, estado: 'Cuenta por Confirmar' },
+  { id: '3', idSence: 'SENCE-2024-00890', curso: 'Contabilidad Avanzada', tipoCurso: 'Presencial', empresa: 'Retail Plus', montoAporte: 750000, estado: 'Pendiente Pago' },
+];
+
+const pendingAttendanceCourses = [
+  { id: '1', idSence: 'SENCE-2024-00345', curso: 'Atención al Cliente', tipoCurso: 'Presencial', fechaInicio: '2026-01-10', fechaTermino: '2026-01-20', participantes: 15, asistenciaFaltante: 3 },
+  { id: '2', idSence: 'SENCE-2024-00678', curso: 'Normativa Laboral', tipoCurso: 'Presencial', fechaInicio: '2026-01-08', fechaTermino: '2026-01-18', participantes: 20, asistenciaFaltante: 5 },
+  { id: '3', idSence: 'SENCE-2024-00901', curso: 'Seguridad Operacional', tipoCurso: 'Presencial', fechaInicio: '2026-01-12', fechaTermino: '2026-01-22', participantes: 12, asistenciaFaltante: 2 },
+];
+
+// Export pending management tabs builder for EMPRESA users
+export const useEmpresaPendingManagementTabs = () => {
+  const documentationColumns = [
+    { title: 'ID Sence', dataIndex: 'idSence', key: 'idSence', render: (text: string) => <span className="font-mono text-xs">{text}</span> },
+    { title: 'Curso', dataIndex: 'curso', key: 'curso', render: (text: string) => <span className="font-medium">{text}</span> },
+    { title: 'Tipo de Curso', dataIndex: 'tipoCurso', key: 'tipoCurso', render: (text: string) => <Tag color={text === 'Presencial' ? 'blue' : 'green'}>{text}</Tag> },
+    { title: 'SC', dataIndex: 'sc', key: 'sc' },
+    { title: 'Tipo de Documento', dataIndex: 'tipoDocumento', key: 'tipoDocumento' },
+    { 
+      title: 'Estado del Documento', 
+      dataIndex: 'estadoDocumento', 
+      key: 'estadoDocumento',
+      render: (text: string) => {
+        const colorMap: Record<string, string> = {
+          'Pendiente': 'warning',
+          'En revisión': 'processing',
+          'Rechazado': 'error',
+          'Aprobado': 'success',
+        };
+        return <Tag color={colorMap[text] || 'default'}>{text}</Tag>;
+      }
+    },
+    { 
+      title: '', 
+      key: 'action', 
+      render: () => (
+        <Button type="primary" size="small" icon={<FileText className="w-4 h-4" />}>
+          Subir Documento
+        </Button>
+      )
+    },
+  ];
+
+  const contributionColumns = [
+    { title: 'ID Sence', dataIndex: 'idSence', key: 'idSence', render: (text: string) => <span className="font-mono text-xs">{text}</span> },
+    { title: 'Curso', dataIndex: 'curso', key: 'curso', render: (text: string) => <span className="font-medium">{text}</span> },
+    { title: 'Tipo de Curso', dataIndex: 'tipoCurso', key: 'tipoCurso', render: (text: string) => <Tag color={text === 'Presencial' ? 'blue' : 'green'}>{text}</Tag> },
+    { title: 'Empresa', dataIndex: 'empresa', key: 'empresa' },
+    { 
+      title: 'Monto Aporte', 
+      dataIndex: 'montoAporte', 
+      key: 'montoAporte',
+      render: (amount: number) => <span className="font-semibold">${amount.toLocaleString('es-CL')}</span>
+    },
+    { 
+      title: 'Estado', 
+      dataIndex: 'estado', 
+      key: 'estado',
+      render: (text: string) => <Tag color="warning">{text}</Tag>
+    },
+    { 
+      title: '', 
+      key: 'action', 
+      render: () => (
+        <Button type="primary" size="small" icon={<DollarSign className="w-4 h-4" />}>
+          Cambiar Cuenta de Financiamiento
+        </Button>
+      )
+    },
+  ];
+
+  const attendanceColumns = [
+    { title: 'ID Sence', dataIndex: 'idSence', key: 'idSence', render: (text: string) => <span className="font-mono text-xs">{text}</span> },
+    { title: 'Curso', dataIndex: 'curso', key: 'curso', render: (text: string) => <span className="font-medium">{text}</span> },
+    { title: 'Tipo de Curso', dataIndex: 'tipoCurso', key: 'tipoCurso', render: (text: string) => <Tag color={text === 'Presencial' ? 'blue' : 'green'}>{text}</Tag> },
+    { title: 'Fecha Inicio', dataIndex: 'fechaInicio', key: 'fechaInicio' },
+    { title: 'Fecha Término', dataIndex: 'fechaTermino', key: 'fechaTermino' },
+    { title: 'Participantes', dataIndex: 'participantes', key: 'participantes', render: (num: number) => <Tag color="blue">{num}</Tag> },
+    { 
+      title: 'Días Faltantes', 
+      dataIndex: 'asistenciaFaltante', 
+      key: 'asistenciaFaltante',
+      render: (num: number) => <Tag color="error">{num} días</Tag>
+    },
+    { 
+      title: '', 
+      key: 'action', 
+      render: () => (
+        <Button type="primary" size="small" icon={<Users className="w-4 h-4" />}>
+          Ingresar Asistencia
+        </Button>
+      )
+    },
+  ];
+
+  const tabItems = [
+    {
+      key: '1',
+      label: (
+        <span className="flex items-center gap-2">
+          <FileText className="w-4 h-4" /> Documentación Pendiente
+          <Tag color="warning">{pendingDocumentationData.length}</Tag>
+        </span>
+      ),
+      children: (
+        <Table 
+          dataSource={pendingDocumentationData} 
+          columns={documentationColumns} 
+          pagination={{ pageSize: 5, showSizeChanger: true, showTotal: (total) => `Total: ${total} documentos` }}
+          size="small"
+          rowKey="id"
+        />
+      ),
+    },
+    {
+      key: '2',
+      label: (
+        <span className="flex items-center gap-2">
+          <DollarSign className="w-4 h-4" /> Gestión de Aportes
+          <Tag color="warning">{pendingContributionCourses.length}</Tag>
+        </span>
+      ),
+      children: (
+        <Table 
+          dataSource={pendingContributionCourses} 
+          columns={contributionColumns} 
+          pagination={{ pageSize: 5, showSizeChanger: true, showTotal: (total) => `Total: ${total} cursos` }}
+          size="small"
+          rowKey="id"
+        />
+      ),
+    },
+    {
+      key: '3',
+      label: (
+        <span className="flex items-center gap-2">
+          <Users className="w-4 h-4" /> Gestión de Asistencia
+          <Tag color="warning">{pendingAttendanceCourses.length}</Tag>
+        </span>
+      ),
+      children: (
+        <Table 
+          dataSource={pendingAttendanceCourses} 
+          columns={attendanceColumns} 
+          pagination={{ pageSize: 5, showSizeChanger: true, showTotal: (total) => `Total: ${total} cursos` }}
+          size="small"
+          rowKey="id"
+        />
+      ),
+    },
+  ];
+
+  return tabItems;
+};
