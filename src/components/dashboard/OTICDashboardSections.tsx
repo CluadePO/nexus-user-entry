@@ -570,7 +570,7 @@ export const ServiceStagesSection: React.FC = () => {
 };
 
 // Service Search Grid Component
-type ServiceSearchType = 'ordenCompra' | 'solicitudCompra' | 'nombreServicio' | 'tipoServicio';
+type ServiceSearchType = 'ordenCompra' | 'solicitudCompra';
 
 export const ServiceSearchGrid: React.FC = () => {
   const [searchValue, setSearchValue] = useState('');
@@ -680,10 +680,6 @@ export const ServiceSearchGrid: React.FC = () => {
             return service.ordenCompra.toLowerCase().includes(value);
           case 'solicitudCompra':
             return service.solicitudCompra.toLowerCase().includes(value);
-          case 'nombreServicio':
-            return service.name.toLowerCase().includes(value);
-          case 'tipoServicio':
-            return service.tipoServicio.toLowerCase().includes(value);
           default:
             return false;
         }
@@ -713,8 +709,6 @@ export const ServiceSearchGrid: React.FC = () => {
   const searchTypeLabels: Record<ServiceSearchType, string> = {
     ordenCompra: 'Orden de Compra',
     solicitudCompra: 'Solicitud de Compra',
-    nombreServicio: 'Nombre del Servicio',
-    tipoServicio: 'Tipo de Servicio',
   };
 
   const hasActiveFilters = tipoServicioFilter || etapaFilter;
@@ -737,8 +731,6 @@ export const ServiceSearchGrid: React.FC = () => {
             options={[
               { value: 'ordenCompra', label: 'Orden de Compra' },
               { value: 'solicitudCompra', label: 'Solicitud de Compra' },
-              { value: 'nombreServicio', label: 'Nombre del Servicio' },
-              { value: 'tipoServicio', label: 'Tipo de Servicio' },
             ]}
           />
         </div>
