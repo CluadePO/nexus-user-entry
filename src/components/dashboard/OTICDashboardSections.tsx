@@ -900,35 +900,33 @@ export const CourseSearchGrid: React.FC = () => {
     <Card title="Búsqueda de Cursos" className="shadow-sm">
       {/* All filters in one row */}
       <div className="flex flex-wrap gap-3 mb-4 items-end p-3 bg-muted/30 rounded-lg border">
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1 flex-1 min-w-72 max-w-lg">
           <span className="text-xs text-muted-foreground">Buscar por</span>
-          <Select
-            value={searchType}
-            onChange={(value) => {
-              setSearchType(value);
-              setHasSearched(false);
-              setSearchResults([]);
-            }}
-            className="w-44"
-            size="middle"
-            options={[
-              { value: 'idSence', label: 'ID Sence' },
-              { value: 'idInscripcion', label: 'ID de Inscripción' },
-              { value: 'codigoSence', label: 'Código Sence' },
-              { value: 'solicitudCompra', label: 'Solicitud de Compra' },
-              { value: 'ordenCompra', label: 'Orden de Compra' },
-              { value: 'nombreCurso', label: 'Nombre del Curso' },
-            ]}
-          />
-        </div>
-        <div className="flex flex-col gap-1 flex-1 min-w-48 max-w-xs">
-          <span className="text-xs text-muted-foreground">Valor a buscar</span>
-          <Input
+          <Input.Search
+            addonBefore={
+              <Select
+                value={searchType}
+                onChange={(value) => {
+                  setSearchType(value);
+                  setHasSearched(false);
+                  setSearchResults([]);
+                }}
+                style={{ width: 160 }}
+                options={[
+                  { value: 'idSence', label: 'ID Sence' },
+                  { value: 'idInscripcion', label: 'ID de Inscripción' },
+                  { value: 'codigoSence', label: 'Código Sence' },
+                  { value: 'solicitudCompra', label: 'Solicitud de Compra' },
+                  { value: 'ordenCompra', label: 'Orden de Compra' },
+                  { value: 'nombreCurso', label: 'Nombre del Curso' },
+                ]}
+              />
+            }
             placeholder={`Ingrese ${searchTypeLabels[searchType]}...`}
-            prefix={<Search className="w-4 h-4 text-muted-foreground" />}
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
-            onPressEnter={handleSearch}
+            onSearch={handleSearch}
+            enterButton={<><Search className="w-4 h-4 mr-1" />Buscar</>}
           />
         </div>
         <div className="flex flex-col gap-1">
@@ -964,16 +962,13 @@ export const CourseSearchGrid: React.FC = () => {
             ]}
           />
         </div>
-        <div className="flex gap-2">
-          <Button type="primary" icon={<Search className="w-4 h-4" />} onClick={handleSearch}>
-            Buscar
-          </Button>
-          {(hasSearched || hasActiveFilters) && (
+        {(hasSearched || hasActiveFilters) && (
+          <div className="flex items-end">
             <Button onClick={handleClear} icon={<RotateCcw className="w-4 h-4" />}>
               Limpiar
             </Button>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       {/* Active filters tags */}
