@@ -557,27 +557,6 @@ export const ServiceStagesSection: React.FC = () => {
           </div>
         </div>
       )}
-
-      {/* Summary row */}
-      <div className="bg-muted/20 rounded-lg p-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-primary/10 rounded-lg">
-            <Briefcase className="w-5 h-5 text-primary" />
-          </div>
-          <div>
-            <span className="text-2xl font-bold">{totalServices}</span>
-            <span className="text-muted-foreground ml-2">servicios en total</span>
-          </div>
-        </div>
-        <div className="flex items-center gap-6">
-          {serviceStages.map((stage) => (
-            <div key={stage.name} className="text-center">
-              <div className="text-xl font-semibold text-primary">{stage.total}</div>
-              <div className="text-xs text-muted-foreground">{stage.name}</div>
-            </div>
-          ))}
-        </div>
-      </div>
     </Card>
   );
 };
