@@ -38,10 +38,11 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/" element={<Navigate to="/dashboard" replace />} />
-              <Route element={<OTICFilterProvider><AppLayout /></OTICFilterProvider>}>
+            <OTICFilterProvider>
+              <Routes>
+                <Route path="/login" element={<Login />} />
+                <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                <Route element={<AppLayout />}>
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/inscripcion" element={<Inscripcion />} />
                 <Route path="/cursos/inscripcion" element={<Inscripcion />} />
@@ -69,7 +70,8 @@ const App = () => (
                 <Route path="/ayuda/*" element={<PlaceholderPage title="Ayuda y Soporte" />} />
               </Route>
               <Route path="*" element={<NotFound />} />
-            </Routes>
+              </Routes>
+            </OTICFilterProvider>
           </BrowserRouter>
         </TooltipProvider>
       </AuthProvider>
