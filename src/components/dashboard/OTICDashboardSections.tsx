@@ -930,11 +930,8 @@ export const CourseSearchGrid: React.FC = () => {
             onChange={(e) => setSearchValue(e.target.value)}
             onPressEnter={handleSearch}
             className="w-full"
-          />
+        />
         </div>
-        <Button type="primary" icon={<Search className="w-4 h-4" />} onClick={handleSearch}>
-          Buscar
-        </Button>
 
         {/* Divider */}
         <div className="h-8 w-px bg-border hidden sm:block" />
@@ -972,7 +969,10 @@ export const CourseSearchGrid: React.FC = () => {
           />
         </div>
 
-        {/* Clear button */}
+        {/* Action buttons */}
+        <Button type="primary" icon={<Search className="w-4 h-4" />} onClick={handleSearch}>
+          Buscar
+        </Button>
         {(hasSearched || hasActiveFilters) && (
           <Button onClick={handleClear} icon={<RotateCcw className="w-4 h-4" />}>
             Limpiar
