@@ -4,6 +4,7 @@ import { useAuth } from '@/context/AuthContext';
 import { SidebarProvider, useSidebarContext } from '@/context/SidebarContext';
 import { AppSidebar } from './AppSidebar';
 import { AppHeader } from './AppHeader';
+import { DesignNotesPanel } from '@/components/notes/DesignNotesPanel';
 
 const AppLayoutContent: React.FC = () => {
   const { collapsed } = useSidebarContext();
@@ -22,6 +23,8 @@ const AppLayoutContent: React.FC = () => {
           <Outlet />
         </main>
       </div>
+      {/* Global Design Notes Panel */}
+      <DesignNotesPanel />
     </div>
   );
 };
