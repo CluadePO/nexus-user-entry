@@ -569,6 +569,291 @@ export const ServiceStagesSection: React.FC = () => {
   );
 };
 
+// Service Search Grid Component
+type ServiceSearchType = 'ordenCompra' | 'solicitudCompra' | 'nombreServicio' | 'tipoServicio';
+
+export const ServiceSearchGrid: React.FC = () => {
+  const [searchValue, setSearchValue] = useState('');
+  const [searchType, setSearchType] = useState<ServiceSearchType>('ordenCompra');
+  const [hasSearched, setHasSearched] = useState(false);
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [tipoServicioFilter, setTipoServicioFilter] = useState<string | null>(null);
+  const [etapaFilter, setEtapaFilter] = useState<string | null>(null);
+  const { selectedHoldingId, selectedCompanyId } = useOTICFilter();
+
+  const columns = [
+    { title: 'Orden de Compra', dataIndex: 'ordenCompra', key: 'ordenCompra', width: 140, render: (text: string) => <span className="font-mono text-xs">{text}</span> },
+    { title: 'Servicio', dataIndex: 'name', key: 'name', render: (text: string) => <span className="font-medium">{text}</span> },
+    { title: 'Solicitud de Compra', dataIndex: 'solicitudCompra', key: 'solicitudCompra', width: 140, render: (text: string) => <span className="font-mono text-xs">{text}</span> },
+    { 
+      title: 'Tipo de Servicio', 
+      dataIndex: 'tipoServicio', 
+      key: 'tipoServicio',
+      width: 150,
+      render: (tipo: string) => {
+        const colorMap: Record<string, string> = {
+          'Diplomados': 'blue',
+          'Hospedaje': 'green',
+          'Traslados': 'purple',
+          'Alimentación': 'orange',
+          'Consultoría': 'cyan',
+          'Logísticas': 'magenta',
+        };
+        return <Tag color={colorMap[tipo] || 'default'}>{tipo}</Tag>;
+      }
+    },
+    { 
+      title: 'Etapa', 
+      dataIndex: 'etapa', 
+      key: 'etapa',
+      width: 120,
+      render: (etapa: string) => {
+        const colorMap: Record<string, string> = {
+          'Por Emisión OC': 'orange',
+          'Por Facturar': 'blue',
+          'Cerrado': 'green',
+          'Con Anticipo': 'purple',
+        };
+        return <Tag color={colorMap[etapa] || 'default'}>{etapa}</Tag>;
+      }
+    },
+    { title: 'Cliente', dataIndex: 'client', key: 'client' },
+    { title: 'Proveedor', dataIndex: 'provider', key: 'provider' },
+    { 
+      title: 'Monto', 
+      dataIndex: 'amount', 
+      key: 'amount',
+      render: (amount: number) => new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 }).format(amount)
+    },
+    { 
+      title: '', 
+      key: 'action', 
+      render: () => (
+        <Button type="primary" size="small" icon={<Eye className="w-4 h-4" />}>
+          Detalle
+        </Button>
+      )
+    },
+  ];
+
+  // Mock service data
+  const allServices = useMemo(() => {
+    const tiposServicio = ['Diplomados', 'Hospedaje', 'Traslados', 'Alimentación', 'Consultoría', 'Logísticas', 'Conferencias', 'Insumos'];
+    const etapas = ['Por Emisión OC', 'Por Facturar', 'Cerrado', 'Con Anticipo'];
+    const providers = ['ServicePro Chile', 'HotelGroup SA', 'TransLogic', 'CateringPlus', 'ConsultNet', 'LogiServ'];
+    const clients = ['Empresa ABC', 'Industria Tech', 'Minera Norte', 'Comercial Express', 'Retail Plus', 'Distribuidora Sur'];
+    
+    return Array.from({ length: 25 }, (_, index) => ({
+      id: `svc-${index + 1}`,
+      name: `Servicio ${tiposServicio[index % tiposServicio.length]} #${index + 1}`,
+      ordenCompra: `OC-SVC-${String(index + 100).padStart(5, '0')}`,
+      solicitudCompra: `SC-SVC-${2024}-${String(index + 200).padStart(4, '0')}`,
+      tipoServicio: tiposServicio[index % tiposServicio.length],
+      etapa: etapas[index % etapas.length],
+      client: clients[index % clients.length],
+      provider: providers[index % providers.length],
+      amount: 500000 + (index * 75000),
+      holdingId: `h${(index % 3) + 1}`,
+      companyId: `c${(index % 9) + 1}`,
+    }));
+  }, []);
+
+  const filteredBaseServices = useMemo(() => {
+    return filterByHoldingCompany(allServices, selectedHoldingId, selectedCompanyId);
+  }, [allServices, selectedHoldingId, selectedCompanyId]);
+
+  const handleSearch = () => {
+    if (!searchValue.trim() && !tipoServicioFilter && !etapaFilter) {
+      setSearchResults([]);
+      setHasSearched(false);
+      return;
+    }
+
+    let filtered = filteredBaseServices;
+
+    // Apply text search
+    if (searchValue.trim()) {
+      const value = searchValue.toLowerCase();
+      filtered = filtered.filter(service => {
+        switch (searchType) {
+          case 'ordenCompra':
+            return service.ordenCompra.toLowerCase().includes(value);
+          case 'solicitudCompra':
+            return service.solicitudCompra.toLowerCase().includes(value);
+          case 'nombreServicio':
+            return service.name.toLowerCase().includes(value);
+          case 'tipoServicio':
+            return service.tipoServicio.toLowerCase().includes(value);
+          default:
+            return false;
+        }
+      });
+    }
+
+    // Apply filters
+    if (tipoServicioFilter) {
+      filtered = filtered.filter(service => service.tipoServicio === tipoServicioFilter);
+    }
+    if (etapaFilter) {
+      filtered = filtered.filter(service => service.etapa === etapaFilter);
+    }
+
+    setSearchResults(filtered);
+    setHasSearched(true);
+  };
+
+  const handleClear = () => {
+    setSearchValue('');
+    setTipoServicioFilter(null);
+    setEtapaFilter(null);
+    setSearchResults([]);
+    setHasSearched(false);
+  };
+
+  const searchTypeLabels: Record<ServiceSearchType, string> = {
+    ordenCompra: 'Orden de Compra',
+    solicitudCompra: 'Solicitud de Compra',
+    nombreServicio: 'Nombre del Servicio',
+    tipoServicio: 'Tipo de Servicio',
+  };
+
+  const hasActiveFilters = tipoServicioFilter || etapaFilter;
+
+  return (
+    <Card title="Búsqueda de Servicios" className="shadow-sm">
+      {/* Search and Filters - Unified Row */}
+      <div className="flex flex-wrap gap-4 mb-4 p-3 bg-muted/30 rounded-lg border items-end">
+        {/* Search section */}
+        <div className="flex flex-col gap-1">
+          <span className="text-xs text-muted-foreground">Buscar por</span>
+          <Select
+            value={searchType}
+            onChange={(value) => {
+              setSearchType(value);
+              setHasSearched(false);
+              setSearchResults([]);
+            }}
+            className="w-52"
+            options={[
+              { value: 'ordenCompra', label: 'Orden de Compra' },
+              { value: 'solicitudCompra', label: 'Solicitud de Compra' },
+              { value: 'nombreServicio', label: 'Nombre del Servicio' },
+              { value: 'tipoServicio', label: 'Tipo de Servicio' },
+            ]}
+          />
+        </div>
+        <div className="flex flex-col gap-1 flex-1 max-w-md">
+          <span className="text-xs text-muted-foreground">Valor a buscar</span>
+          <Input
+            placeholder={`Ingrese ${searchTypeLabels[searchType]}...`}
+            prefix={<Search className="w-4 h-4 text-muted-foreground" />}
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            onPressEnter={handleSearch}
+            className="w-full"
+          />
+        </div>
+
+        {/* Divider */}
+        <div className="h-8 w-px bg-border hidden sm:block" />
+
+        {/* Filters section */}
+        <div className="flex flex-col gap-1">
+          <span className="text-xs text-muted-foreground">Tipo de Servicio</span>
+          <Select
+            value={tipoServicioFilter}
+            onChange={(value) => setTipoServicioFilter(value)}
+            className="w-40"
+            allowClear
+            placeholder="Todos"
+            options={[
+              { value: 'Diplomados', label: 'Diplomados' },
+              { value: 'Hospedaje', label: 'Hospedaje' },
+              { value: 'Traslados', label: 'Traslados' },
+              { value: 'Alimentación', label: 'Alimentación' },
+              { value: 'Consultoría', label: 'Consultoría' },
+              { value: 'Logísticas', label: 'Logísticas' },
+              { value: 'Conferencias', label: 'Conferencias' },
+              { value: 'Insumos', label: 'Insumos' },
+            ]}
+          />
+        </div>
+        <div className="flex flex-col gap-1">
+          <span className="text-xs text-muted-foreground">Etapa</span>
+          <Select
+            value={etapaFilter}
+            onChange={(value) => setEtapaFilter(value)}
+            className="w-36"
+            allowClear
+            placeholder="Todas"
+            options={[
+              { value: 'Por Emisión OC', label: 'Por Emisión OC' },
+              { value: 'Por Facturar', label: 'Por Facturar' },
+              { value: 'Cerrado', label: 'Cerrado' },
+              { value: 'Con Anticipo', label: 'Con Anticipo' },
+            ]}
+          />
+        </div>
+
+        {/* Action buttons */}
+        <Button type="primary" icon={<Search className="w-4 h-4" />} onClick={handleSearch}>
+          Buscar
+        </Button>
+        {(hasSearched || hasActiveFilters) && (
+          <Button onClick={handleClear} icon={<RotateCcw className="w-4 h-4" />}>
+            Limpiar
+          </Button>
+        )}
+      </div>
+
+      {/* Active filters tags */}
+      {hasActiveFilters && (
+        <div className="flex gap-2 items-center text-xs text-muted-foreground mb-4">
+          <span>Filtros activos:</span>
+          {tipoServicioFilter && <Tag color="blue" closable onClose={() => setTipoServicioFilter(null)}>{tipoServicioFilter}</Tag>}
+          {etapaFilter && <Tag color="cyan" closable onClose={() => setEtapaFilter(null)}>{etapaFilter}</Tag>}
+        </div>
+      )}
+
+      {hasSearched && (
+        <div className="border-t pt-4">
+          {searchResults.length > 0 ? (
+            <>
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-sm text-muted-foreground">
+                  Se encontraron <span className="font-semibold text-foreground">{searchResults.length}</span> resultado(s)
+                </span>
+              </div>
+              <Table 
+                dataSource={searchResults} 
+                columns={columns} 
+                pagination={{ pageSize: 5, showSizeChanger: true, showTotal: (total) => `Total: ${total} servicios` }}
+                size="small"
+                rowKey="id"
+                scroll={{ x: 1200 }}
+              />
+            </>
+          ) : (
+            <div className="text-center py-8 text-muted-foreground">
+              <Search className="w-12 h-12 mx-auto mb-3 opacity-30" />
+              <p>No se encontraron resultados para "{searchValue}"</p>
+              <p className="text-sm">Intente con otro {searchTypeLabels[searchType]} o ajuste los filtros</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {!hasSearched && (
+        <div className="text-center py-8 text-muted-foreground border-t">
+          <Search className="w-12 h-12 mx-auto mb-3 opacity-30" />
+          <p>Ingrese un valor y presione "Buscar" para ver resultados</p>
+          <p className="text-xs mt-1">También puede aplicar filtros de Tipo de Servicio y Etapa</p>
+        </div>
+      )}
+    </Card>
+  );
+};
+
 // Section Components - CourseStagesSection is exported for use in other modules
 export const CourseStagesSection: React.FC = () => {
   const [selectedFilter, setSelectedFilter] = useState<{ stage: string; status: 'normal' | 'medio' | 'critico' } | null>(null);
