@@ -761,10 +761,9 @@ export const CourseSearchGrid: React.FC = () => {
   const [searchType, setSearchType] = useState<SearchType>('idSence');
   const [hasSearched, setHasSearched] = useState(false);
   const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [tipoCursoFilter, setTipoCursoFilter] = useState<string | null>(null);
+  const [modalidadFilter, setModalidadFilter] = useState<string | null>(null);
   const { selectedHoldingId, selectedCompanyId } = useOTICFilter();
-
-  const tiposCurso = ['Franquicia', 'Costo Empresa', 'Curso Interno', 'Cursos Comex'];
-  const modalidades = ['Presencial', 'E-learning', 'Distancia'];
 
   const columns = [
     { title: 'ID Sence', dataIndex: 'idSence', key: 'idSence', width: 130, render: (text: string) => <span className="font-mono text-xs">{text}</span> },
@@ -775,9 +774,7 @@ export const CourseSearchGrid: React.FC = () => {
       title: 'Tipo de Curso', 
       dataIndex: 'tipoCurso', 
       key: 'tipoCurso',
-      width: 140,
-      filters: tiposCurso.map(tipo => ({ text: tipo, value: tipo })),
-      onFilter: (value: React.Key | boolean, record: any) => record.tipoCurso === value,
+      width: 120,
       render: (tipo: string) => {
         const colorMap: Record<string, string> = {
           'Franquicia': 'blue',
@@ -792,9 +789,7 @@ export const CourseSearchGrid: React.FC = () => {
       title: 'Modalidad', 
       dataIndex: 'modalidad', 
       key: 'modalidad',
-      width: 120,
-      filters: modalidades.map(mod => ({ text: mod, value: mod })),
-      onFilter: (value: React.Key | boolean, record: any) => record.modalidad === value,
+      width: 100,
       render: (mod: string) => {
         const colorMap: Record<string, string> = {
           'Presencial': 'cyan',
@@ -824,6 +819,9 @@ export const CourseSearchGrid: React.FC = () => {
     return filterByHoldingCompany(allCourses, selectedHoldingId, selectedCompanyId);
   }, [selectedHoldingId, selectedCompanyId]);
 
+  const tiposCurso = ['Franquicia', 'Costo Empresa', 'Curso Interno', 'Cursos Comex'];
+  const modalidades = ['Presencial', 'E-learning', 'Distancia'];
+
   const coursesWithIds = filteredBaseCourses.map((course, index) => ({
     ...course,
     idSence: `SENCE-${2024}${String(index + 1).padStart(5, '0')}`,
@@ -836,7 +834,7 @@ export const CourseSearchGrid: React.FC = () => {
   }));
 
   const handleSearch = () => {
-    if (!searchValue.trim()) {
+    if (!searchValue.trim() && !tipoCursoFilter && !modalidadFilter) {
       setSearchResults([]);
       setHasSearched(false);
       return;
@@ -845,25 +843,35 @@ export const CourseSearchGrid: React.FC = () => {
     let filtered = coursesWithIds;
 
     // Apply text search
-    const value = searchValue.toLowerCase();
-    filtered = filtered.filter(course => {
-      switch (searchType) {
-        case 'idSence':
-          return course.idSence.toLowerCase().includes(value);
-        case 'idInscripcion':
-          return course.idInscripcion.toLowerCase().includes(value);
-        case 'codigoSence':
-          return course.codigoSence.toLowerCase().includes(value);
-        case 'solicitudCompra':
-          return course.solicitudCompra.toLowerCase().includes(value);
-        case 'ordenCompra':
-          return course.ordenCompra.toLowerCase().includes(value);
-        case 'nombreCurso':
-          return course.name.toLowerCase().includes(value);
-        default:
-          return false;
-      }
-    });
+    if (searchValue.trim()) {
+      const value = searchValue.toLowerCase();
+      filtered = filtered.filter(course => {
+        switch (searchType) {
+          case 'idSence':
+            return course.idSence.toLowerCase().includes(value);
+          case 'idInscripcion':
+            return course.idInscripcion.toLowerCase().includes(value);
+          case 'codigoSence':
+            return course.codigoSence.toLowerCase().includes(value);
+          case 'solicitudCompra':
+            return course.solicitudCompra.toLowerCase().includes(value);
+          case 'ordenCompra':
+            return course.ordenCompra.toLowerCase().includes(value);
+          case 'nombreCurso':
+            return course.name.toLowerCase().includes(value);
+          default:
+            return false;
+        }
+      });
+    }
+
+    // Apply filters
+    if (tipoCursoFilter) {
+      filtered = filtered.filter(course => course.tipoCurso === tipoCursoFilter);
+    }
+    if (modalidadFilter) {
+      filtered = filtered.filter(course => course.modalidad === modalidadFilter);
+    }
 
     setSearchResults(filtered);
     setHasSearched(true);
@@ -871,6 +879,8 @@ export const CourseSearchGrid: React.FC = () => {
 
   const handleClear = () => {
     setSearchValue('');
+    setTipoCursoFilter(null);
+    setModalidadFilter(null);
     setSearchResults([]);
     setHasSearched(false);
   };
@@ -883,6 +893,8 @@ export const CourseSearchGrid: React.FC = () => {
     ordenCompra: 'Orden de Compra',
     nombreCurso: 'Nombre del Curso',
   };
+
+  const hasActiveFilters = tipoCursoFilter || modalidadFilter;
 
   return (
     <Card title="Búsqueda de Cursos" className="shadow-sm">
@@ -922,10 +934,54 @@ export const CourseSearchGrid: React.FC = () => {
         <Button type="primary" icon={<Search className="w-4 h-4" />} onClick={handleSearch}>
           Buscar
         </Button>
-        {hasSearched && (
+        {(hasSearched || hasActiveFilters) && (
           <Button onClick={handleClear} icon={<RotateCcw className="w-4 h-4" />}>
             Limpiar
           </Button>
+        )}
+      </div>
+
+      {/* Filters Row */}
+      <div className="flex flex-wrap gap-4 mb-4 p-3 bg-muted/30 rounded-lg border">
+        <div className="flex flex-col gap-1">
+          <span className="text-xs font-medium text-muted-foreground">Tipo de Curso</span>
+          <Select
+            value={tipoCursoFilter}
+            onChange={(value) => setTipoCursoFilter(value)}
+            className="w-40"
+            allowClear
+            placeholder="Todos"
+            options={[
+              { value: 'Franquicia', label: 'Franquicia' },
+              { value: 'Costo Empresa', label: 'Costo Empresa' },
+              { value: 'Curso Interno', label: 'Curso Interno' },
+              { value: 'Cursos Comex', label: 'Cursos Comex' },
+            ]}
+          />
+        </div>
+        <div className="flex flex-col gap-1">
+          <span className="text-xs font-medium text-muted-foreground">Modalidad</span>
+          <Select
+            value={modalidadFilter}
+            onChange={(value) => setModalidadFilter(value)}
+            className="w-36"
+            allowClear
+            placeholder="Todas"
+            options={[
+              { value: 'Presencial', label: 'Presencial' },
+              { value: 'E-learning', label: 'E-learning' },
+              { value: 'Distancia', label: 'Distancia' },
+            ]}
+          />
+        </div>
+        {hasActiveFilters && (
+          <div className="flex items-end">
+            <div className="flex gap-2 items-center text-xs text-muted-foreground">
+              <span>Filtros activos:</span>
+              {tipoCursoFilter && <Tag color="blue" closable onClose={() => setTipoCursoFilter(null)}>{tipoCursoFilter}</Tag>}
+              {modalidadFilter && <Tag color="cyan" closable onClose={() => setModalidadFilter(null)}>{modalidadFilter}</Tag>}
+            </div>
+          </div>
         )}
       </div>
 
@@ -936,9 +992,6 @@ export const CourseSearchGrid: React.FC = () => {
               <div className="flex items-center justify-between mb-3">
                 <span className="text-sm text-muted-foreground">
                   Se encontraron <span className="font-semibold text-foreground">{searchResults.length}</span> resultado(s)
-                </span>
-                <span className="text-xs text-muted-foreground">
-                  Usa los filtros en las columnas "Tipo de Curso" y "Modalidad" para refinar los resultados
                 </span>
               </div>
               <Table 
@@ -954,7 +1007,7 @@ export const CourseSearchGrid: React.FC = () => {
             <div className="text-center py-8 text-muted-foreground">
               <Search className="w-12 h-12 mx-auto mb-3 opacity-30" />
               <p>No se encontraron resultados para "{searchValue}"</p>
-              <p className="text-sm">Intente con otro {searchTypeLabels[searchType]}</p>
+              <p className="text-sm">Intente con otro {searchTypeLabels[searchType]} o ajuste los filtros</p>
             </div>
           )}
         </div>
@@ -964,7 +1017,7 @@ export const CourseSearchGrid: React.FC = () => {
         <div className="text-center py-8 text-muted-foreground border-t">
           <Search className="w-12 h-12 mx-auto mb-3 opacity-30" />
           <p>Ingrese un valor y presione "Buscar" para ver resultados</p>
-          <p className="text-xs mt-1">Luego podrá filtrar por "Tipo de Curso" y "Modalidad" desde las columnas de la grilla</p>
+          <p className="text-xs mt-1">También puede aplicar filtros de Tipo de Curso y Modalidad</p>
         </div>
       )}
     </Card>
