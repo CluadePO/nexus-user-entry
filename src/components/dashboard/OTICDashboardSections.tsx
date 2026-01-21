@@ -349,8 +349,8 @@ const stageCoursesData: Record<string, { normal: any[]; medio: any[]; critico: a
   },
 };
 
-// Section Components
-const CourseStagesSection: React.FC = () => {
+// Section Components - CourseStagesSection is exported for use in other modules
+export const CourseStagesSection: React.FC = () => {
   const [selectedFilter, setSelectedFilter] = useState<{ stage: string; status: 'normal' | 'medio' | 'critico' } | null>(null);
   const { selectedHoldingId, selectedCompanyId } = useOTICFilter();
   
@@ -1102,8 +1102,7 @@ export const OTICDashboardSections: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Course Stages with Status */}
-      <CourseStagesSection />
+      {/* Course Stages Section removed - now in Cursos y Servicios > Resumen */}
 
       {/* Account Status by Holding */}
       <AccountStatusSection />

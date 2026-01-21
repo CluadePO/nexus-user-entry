@@ -3,6 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/context/AuthContext';
 import { BookOpen, Briefcase } from 'lucide-react';
+import { CourseStagesSection } from '@/components/dashboard/OTICDashboardSections';
 
 const CursosResumen: React.FC = () => {
   const { user } = useAuth();
@@ -51,26 +52,8 @@ const CursosResumen: React.FC = () => {
         </TabsList>
 
         <TabsContent value="cursos" className="mt-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <BookOpen className="w-5 h-5 text-primary" />
-                Gestión de Cursos
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="min-h-[400px]">
-              <div className="flex flex-col items-center justify-center h-[300px] text-center">
-                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                  <span className="text-3xl">📚</span>
-                </div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">Gestión de Cursos</h3>
-                <p className="text-muted-foreground max-w-md">
-                  Administra y supervisa todos los cursos de capacitación. 
-                  Esta sección está en desarrollo.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+          {/* Course Stages Pipeline moved from Dashboard */}
+          <CourseStagesSection />
         </TabsContent>
 
         <TabsContent value="servicios" className="mt-6">
