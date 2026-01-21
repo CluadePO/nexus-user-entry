@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs as AntTabs, Card as AntCard } from 'antd';
 import { useAuth } from '@/context/AuthContext';
 import { BookOpen, Briefcase } from 'lucide-react';
-import { CourseStagesSection, CourseSearchGrid, usePendingManagementTabs } from '@/components/dashboard/OTICDashboardSections';
+import { CourseStagesSection, CourseSearchGrid, usePendingManagementTabs, useEmpresaPendingManagementTabs } from '@/components/dashboard/OTICDashboardSections';
 
 const CursosResumen: React.FC = () => {
   const { user } = useAuth();
@@ -12,9 +12,14 @@ const CursosResumen: React.FC = () => {
 
   // Check if user has access to the tabs (OTIC, EMPRESA, EMPRESA_REPRESENTANTE)
   const hasTabAccess = userRole === 'OTIC' || userRole === 'EMPRESA' || userRole === 'EMPRESA_REPRESENTANTE';
+  const isEmpresaRole = userRole === 'EMPRESA' || userRole === 'EMPRESA_REPRESENTANTE';
 
-  // Get pending management tabs
-  const pendingTabItems = usePendingManagementTabs();
+  // Get pending management tabs based on role
+  const oticPendingTabItems = usePendingManagementTabs();
+  const empresaPendingTabItems = useEmpresaPendingManagementTabs();
+  
+  // Use appropriate tabs based on role
+  const pendingTabItems = isEmpresaRole ? empresaPendingTabItems : oticPendingTabItems;
 
   if (!hasTabAccess) {
     // For other roles, show a simple placeholder
