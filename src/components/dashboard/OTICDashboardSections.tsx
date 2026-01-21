@@ -900,34 +900,39 @@ export const CourseSearchGrid: React.FC = () => {
     <Card title="Búsqueda de Cursos" className="shadow-sm">
       {/* All filters in one row */}
       <div className="flex flex-wrap gap-3 mb-4 items-end p-3 bg-muted/30 rounded-lg border">
-        <div className="flex flex-col gap-1 flex-1 min-w-72 max-w-lg">
+        <div className="flex flex-col gap-1">
           <span className="text-xs text-muted-foreground">Buscar por</span>
-          <Input.Search
-            addonBefore={
-              <Select
-                value={searchType}
-                onChange={(value) => {
-                  setSearchType(value);
-                  setHasSearched(false);
-                  setSearchResults([]);
-                }}
-                style={{ width: 160 }}
-                options={[
-                  { value: 'idSence', label: 'ID Sence' },
-                  { value: 'idInscripcion', label: 'ID de Inscripción' },
-                  { value: 'codigoSence', label: 'Código Sence' },
-                  { value: 'solicitudCompra', label: 'Solicitud de Compra' },
-                  { value: 'ordenCompra', label: 'Orden de Compra' },
-                  { value: 'nombreCurso', label: 'Nombre del Curso' },
-                ]}
-              />
-            }
-            placeholder={`Ingrese ${searchTypeLabels[searchType]}...`}
-            value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
-            onSearch={handleSearch}
-            enterButton={<><Search className="w-4 h-4 mr-1" />Buscar</>}
-          />
+          <div className="flex">
+            <Select
+              value={searchType}
+              onChange={(value) => {
+                setSearchType(value);
+                setHasSearched(false);
+                setSearchResults([]);
+              }}
+              style={{ width: 170 }}
+              className="[&_.ant-select-selector]:!rounded-r-none [&_.ant-select-selector]:!border-r-0"
+              options={[
+                { value: 'idSence', label: 'ID Sence' },
+                { value: 'idInscripcion', label: 'ID de Inscripción' },
+                { value: 'codigoSence', label: 'Código Sence' },
+                { value: 'solicitudCompra', label: 'Solicitud de Compra' },
+                { value: 'ordenCompra', label: 'Orden de Compra' },
+                { value: 'nombreCurso', label: 'Nombre del Curso' },
+              ]}
+            />
+            <Input
+              placeholder={`Ingrese ${searchTypeLabels[searchType]}...`}
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              onPressEnter={handleSearch}
+              style={{ width: 220 }}
+              className="!rounded-none !border-r-0"
+            />
+            <Button type="primary" onClick={handleSearch} className="!rounded-l-none">
+              <Search className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
         <div className="flex flex-col gap-1">
           <span className="text-xs text-muted-foreground">Tipo de Curso</span>
