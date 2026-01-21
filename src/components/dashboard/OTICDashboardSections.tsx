@@ -1249,11 +1249,11 @@ export const usePendingManagementTabs = () => {
 
 // Mock data for EMPRESA pending documentation courses
 const empresaPendingDocsCourses = [
-  { id: '1', senceId: 'SC-2024-001234', name: 'Excel Avanzado', courseType: 'SENCE', sc: 'SC-001', docType: 'Contrato', docStatus: 'Pendiente' },
-  { id: '2', senceId: 'SC-2024-001235', name: 'Liderazgo y Gestión', courseType: 'SENCE', sc: 'SC-002', docType: 'Anexo Técnico', docStatus: 'En Revisión' },
-  { id: '3', senceId: 'NS-2024-000456', name: 'Seguridad Industrial', courseType: 'No SENCE', sc: 'SC-003', docType: 'Certificado Instructor', docStatus: 'Pendiente' },
-  { id: '4', senceId: 'SC-2024-001236', name: 'Python para Negocios', courseType: 'SENCE', sc: 'SC-004', docType: 'Lista Participantes', docStatus: 'Rechazado' },
-  { id: '5', senceId: 'SC-2024-001237', name: 'Atención al Cliente', courseType: 'SENCE', sc: 'SC-005', docType: 'Convenio Marco', docStatus: 'Pendiente' },
+  { id: '1', senceId: 'SC-2024-001234', name: 'Excel Avanzado', modality: 'Presencial', sc: 'SC-001', contractType: 'Precontrato', docType: 'DJP', docStatus: 'Pendiente de Carga' },
+  { id: '2', senceId: 'SC-2024-001235', name: 'Liderazgo y Gestión', modality: 'E-learning', sc: 'SC-002', contractType: 'Postcontrato', docType: 'Contrato de Capacitación', docStatus: 'Pendiente de Carga' },
+  { id: '3', senceId: 'NS-2024-000456', name: 'Seguridad Industrial', modality: 'Distancia', sc: 'SC-003', contractType: 'Precontrato', docType: 'DJP', docStatus: 'Pendiente de Carga' },
+  { id: '4', senceId: 'SC-2024-001236', name: 'Python para Negocios', modality: 'Presencial', sc: 'SC-004', contractType: 'Postcontrato', docType: 'Contrato de Capacitación', docStatus: 'Pendiente de Carga' },
+  { id: '5', senceId: 'SC-2024-001237', name: 'Atención al Cliente', modality: 'E-learning', sc: 'SC-005', contractType: 'Precontrato', docType: 'DJP', docStatus: 'Pendiente de Carga' },
 ];
 
 const empresaPendingContributionCourses = [
@@ -1277,13 +1277,18 @@ const EmpresaPendingDocsTable: React.FC = () => {
       key: 'name',
     },
     {
-      title: 'Tipo de Curso',
-      dataIndex: 'courseType',
-      key: 'courseType',
+      title: 'Tipo de Modalidad',
+      dataIndex: 'modality',
+      key: 'modality',
       width: 120,
-      render: (type: string) => (
-        <Tag color={type === 'SENCE' ? 'blue' : 'default'}>{type}</Tag>
-      ),
+      render: (modality: string) => {
+        const colorMap: Record<string, string> = {
+          'Presencial': 'blue',
+          'E-learning': 'cyan',
+          'Distancia': 'purple',
+        };
+        return <Tag color={colorMap[modality] || 'default'}>{modality}</Tag>;
+      },
     },
     {
       title: 'SC',
@@ -1292,25 +1297,39 @@ const EmpresaPendingDocsTable: React.FC = () => {
       width: 100,
     },
     {
+      title: 'Tipo de Contrato',
+      dataIndex: 'contractType',
+      key: 'contractType',
+      width: 130,
+      render: (type: string) => {
+        const colorMap: Record<string, string> = {
+          'Precontrato': 'orange',
+          'Postcontrato': 'green',
+        };
+        return <Tag color={colorMap[type] || 'default'}>{type}</Tag>;
+      },
+    },
+    {
       title: 'Tipo de Documento',
       dataIndex: 'docType',
       key: 'docType',
-      width: 160,
+      width: 180,
+      render: (docType: string) => {
+        const colorMap: Record<string, string> = {
+          'DJP': 'geekblue',
+          'Contrato de Capacitación': 'volcano',
+        };
+        return <Tag color={colorMap[docType] || 'default'}>{docType}</Tag>;
+      },
     },
     {
       title: 'Estado del Documento',
       dataIndex: 'docStatus',
       key: 'docStatus',
-      width: 150,
-      render: (status: string) => {
-        const colorMap: Record<string, string> = {
-          'Pendiente': 'warning',
-          'En Revisión': 'processing',
-          'Rechazado': 'error',
-          'Aprobado': 'success',
-        };
-        return <Tag color={colorMap[status] || 'default'}>{status}</Tag>;
-      },
+      width: 160,
+      render: (status: string) => (
+        <Tag color="warning">{status}</Tag>
+      ),
     },
     {
       title: 'Acción',
