@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs as AntTabs, Card as AntCard } from 'antd';
 import { useAuth } from '@/context/AuthContext';
 import { BookOpen, Briefcase } from 'lucide-react';
-import { CourseStagesSection, CourseSearchGrid, usePendingManagementTabs, useEmpresaPendingManagementTabs } from '@/components/dashboard/OTICDashboardSections';
+import { CourseStagesSection, CourseSearchGrid, usePendingManagementTabs, useEmpresaPendingManagementTabs, ServiceStagesSection } from '@/components/dashboard/OTICDashboardSections';
 
 const CursosResumen: React.FC = () => {
   const { user } = useAuth();
@@ -73,27 +73,9 @@ const CursosResumen: React.FC = () => {
           </AntCard>
         </TabsContent>
 
-        <TabsContent value="servicios" className="mt-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Briefcase className="w-5 h-5 text-primary" />
-                Gestión de Servicios
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="min-h-[400px]">
-              <div className="flex flex-col items-center justify-center h-[300px] text-center">
-                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                  <span className="text-3xl">🛠️</span>
-                </div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">Gestión de Servicios</h3>
-                <p className="text-muted-foreground max-w-md">
-                  Administra y supervisa todos los servicios complementarios. 
-                  Esta sección está en desarrollo.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+        <TabsContent value="servicios" className="mt-6 space-y-6">
+          {/* Service Stages Pipeline */}
+          <ServiceStagesSection />
         </TabsContent>
       </Tabs>
     </div>

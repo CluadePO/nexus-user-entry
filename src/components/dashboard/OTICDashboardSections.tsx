@@ -349,6 +349,386 @@ const stageCoursesData: Record<string, { normal: any[]; medio: any[]; critico: a
   },
 };
 
+// Service Stages Data for ServiceStagesSection
+const serviceStagesBase = [
+  { name: 'Por Emisión OC', icon: <Receipt className="w-5 h-5" /> },
+  { name: 'Por Facturar', icon: <FileText className="w-5 h-5" /> },
+  { name: 'Cerrado', icon: <CheckCircle className="w-5 h-5" /> },
+  { name: 'Con Anticipo', icon: <DollarSign className="w-5 h-5" /> },
+];
+
+const serviceTypes = [
+  'Diplomados', 'Hospedaje', 'Traslados', 'Acreditación faena', 'Academia Liderazgo',
+  'Alimentación', 'Aprendices', 'Arriendo Plataforma', 'Arriendo de Salones', 
+  'Becas Universitarias', 'Comisión Bancaria', 'Compra de Materiales Mercadishing',
+  'Conferencias', 'Consultoría', 'Cursos', 'Desarrollo de Carreras', 'Inmersivos',
+  'Insumos', 'Logísticas', 'Precontrato', 'Técnicas', 'Otros'
+];
+
+// Mock data for service stages by company
+const serviceStagesByCompany: Record<string, { total: number; normal: number; medio: number; critico: number }[]> = {
+  'c1': [
+    { total: 12, normal: 9, medio: 2, critico: 1 },
+    { total: 8, normal: 6, medio: 1, critico: 1 },
+    { total: 20, normal: 18, medio: 1, critico: 1 },
+    { total: 5, normal: 4, medio: 1, critico: 0 },
+  ],
+  'c2': [
+    { total: 6, normal: 5, medio: 1, critico: 0 },
+    { total: 4, normal: 3, medio: 1, critico: 0 },
+    { total: 15, normal: 14, medio: 1, critico: 0 },
+    { total: 3, normal: 2, medio: 1, critico: 0 },
+  ],
+  'c3': [
+    { total: 8, normal: 6, medio: 1, critico: 1 },
+    { total: 5, normal: 4, medio: 1, critico: 0 },
+    { total: 18, normal: 16, medio: 1, critico: 1 },
+    { total: 4, normal: 3, medio: 1, critico: 0 },
+  ],
+  'c4': [
+    { total: 10, normal: 8, medio: 1, critico: 1 },
+    { total: 6, normal: 5, medio: 1, critico: 0 },
+    { total: 22, normal: 20, medio: 1, critico: 1 },
+    { total: 4, normal: 3, medio: 1, critico: 0 },
+  ],
+  'c5': [
+    { total: 4, normal: 3, medio: 1, critico: 0 },
+    { total: 3, normal: 2, medio: 1, critico: 0 },
+    { total: 10, normal: 9, medio: 1, critico: 0 },
+    { total: 2, normal: 2, medio: 0, critico: 0 },
+  ],
+  'c6': [
+    { total: 6, normal: 4, medio: 1, critico: 1 },
+    { total: 4, normal: 3, medio: 1, critico: 0 },
+    { total: 14, normal: 12, medio: 1, critico: 1 },
+    { total: 3, normal: 2, medio: 1, critico: 0 },
+  ],
+  'c7': [
+    { total: 15, normal: 12, medio: 2, critico: 1 },
+    { total: 10, normal: 8, medio: 1, critico: 1 },
+    { total: 28, normal: 25, medio: 2, critico: 1 },
+    { total: 6, normal: 5, medio: 1, critico: 0 },
+  ],
+  'c8': [
+    { total: 12, normal: 10, medio: 1, critico: 1 },
+    { total: 8, normal: 6, medio: 1, critico: 1 },
+    { total: 24, normal: 22, medio: 1, critico: 1 },
+    { total: 5, normal: 4, medio: 1, critico: 0 },
+  ],
+  'c9': [
+    { total: 5, normal: 4, medio: 1, critico: 0 },
+    { total: 3, normal: 2, medio: 1, critico: 0 },
+    { total: 12, normal: 11, medio: 1, critico: 0 },
+    { total: 2, normal: 2, medio: 0, critico: 0 },
+  ],
+};
+
+// Mock data for filtered services by stage and status
+const stageServicesData: Record<string, { normal: any[]; medio: any[]; critico: any[] }> = {
+  'Por Emisión OC': {
+    normal: [
+      { id: 's1', name: 'Diplomado Gestión Empresarial', client: 'Tech Solutions', tipoServicio: 'Diplomados', date: '2026-01-15', amount: 2500000 },
+      { id: 's2', name: 'Hospedaje Seminario Anual', client: 'Finanzas Corp', tipoServicio: 'Hospedaje', date: '2026-01-14', amount: 1800000 },
+      { id: 's3', name: 'Traslados Equipo Norte', client: 'Minera Norte', tipoServicio: 'Traslados', date: '2026-01-13', amount: 650000 },
+    ],
+    medio: [
+      { id: 's4', name: 'Acreditación Faena Minera', client: 'Industria Tech', tipoServicio: 'Acreditación faena', date: '2026-01-12', amount: 980000 },
+    ],
+    critico: [
+      { id: 's5', name: 'Academia Liderazgo Q1', client: 'Banco Central', tipoServicio: 'Academia Liderazgo', date: '2026-01-11', amount: 3200000 },
+    ],
+  },
+  'Por Facturar': {
+    normal: [
+      { id: 's6', name: 'Alimentación Evento Corporativo', client: 'Retail Plus', tipoServicio: 'Alimentación', date: '2026-01-10', amount: 1200000 },
+      { id: 's7', name: 'Arriendo Plataforma LMS', client: 'Comercial Norte', tipoServicio: 'Arriendo Plataforma', date: '2026-01-09', amount: 890000 },
+    ],
+    medio: [
+      { id: 's8', name: 'Arriendo Salones Capacitación', client: 'Import Export SA', tipoServicio: 'Arriendo de Salones', date: '2026-01-08', amount: 750000 },
+    ],
+    critico: [
+      { id: 's9', name: 'Becas Universitarias 2026', client: 'Medios Chile', tipoServicio: 'Becas Universitarias', date: '2026-01-07', amount: 4500000 },
+    ],
+  },
+  'Cerrado': {
+    normal: [
+      { id: 's10', name: 'Conferencia Innovación Digital', client: 'Tech Solutions', tipoServicio: 'Conferencias', date: '2026-01-06', amount: 1500000 },
+      { id: 's11', name: 'Consultoría Procesos', client: 'Finanzas Corp', tipoServicio: 'Consultoría', date: '2026-01-05', amount: 2800000 },
+      { id: 's12', name: 'Desarrollo Carreras Líderes', client: 'Minera Norte', tipoServicio: 'Desarrollo de Carreras', date: '2026-01-04', amount: 1950000 },
+    ],
+    medio: [
+      { id: 's13', name: 'Experiencias Inmersivas VR', client: 'Industria Tech', tipoServicio: 'Inmersivos', date: '2026-01-03', amount: 2200000 },
+    ],
+    critico: [],
+  },
+  'Con Anticipo': {
+    normal: [
+      { id: 's14', name: 'Insumos Capacitación Q1', client: 'Retail Plus', tipoServicio: 'Insumos', date: '2026-01-15', amount: 450000 },
+      { id: 's15', name: 'Logística Evento Nacional', client: 'Comercial Norte', tipoServicio: 'Logísticas', date: '2026-01-14', amount: 1100000 },
+    ],
+    medio: [
+      { id: 's16', name: 'Precontrato Servicios 2026', client: 'Import Export SA', tipoServicio: 'Precontrato', date: '2026-01-13', amount: 680000 },
+    ],
+    critico: [],
+  },
+};
+
+// Section Components - ServiceStagesSection is exported for use in Gestión de Servicios
+export const ServiceStagesSection: React.FC = () => {
+  const [selectedFilter, setSelectedFilter] = useState<{ stage: string; status: 'normal' | 'medio' | 'critico' } | null>(null);
+  const { selectedHoldingId, selectedCompanyId } = useOTICFilter();
+  
+  // Calculate service stages based on filter
+  const serviceStages = useMemo(() => {
+    let companyIds: string[] = [];
+    
+    if (selectedCompanyId) {
+      companyIds = [selectedCompanyId];
+    } else if (selectedHoldingId) {
+      companyIds = holdingToCompanies[selectedHoldingId] || [];
+    } else {
+      companyIds = Object.values(holdingToCompanies).flat();
+    }
+
+    return serviceStagesBase.map((stage, stageIndex) => {
+      const totals = companyIds.reduce(
+        (acc, companyId) => {
+          const companyData = serviceStagesByCompany[companyId]?.[stageIndex];
+          if (companyData) {
+            acc.total += companyData.total;
+            acc.normal += companyData.normal;
+            acc.medio += companyData.medio;
+            acc.critico += companyData.critico;
+          }
+          return acc;
+        },
+        { total: 0, normal: 0, medio: 0, critico: 0 }
+      );
+      
+      return {
+        ...stage,
+        ...totals,
+      };
+    });
+  }, [selectedHoldingId, selectedCompanyId]);
+
+  const totalServices = serviceStages.reduce((acc, stage) => acc + stage.total, 0);
+  const totalNormal = serviceStages.reduce((acc, stage) => acc + stage.normal, 0);
+  const totalMedio = serviceStages.reduce((acc, stage) => acc + stage.medio, 0);
+  const totalCritico = serviceStages.reduce((acc, stage) => acc + stage.critico, 0);
+
+  const handleBarClick = (stageName: string, status: 'normal' | 'medio' | 'critico') => {
+    if (selectedFilter?.stage === stageName && selectedFilter?.status === status) {
+      setSelectedFilter(null);
+    } else {
+      setSelectedFilter({ stage: stageName, status });
+    }
+  };
+
+  const getFilteredServices = () => {
+    if (!selectedFilter) return [];
+    const stageData = stageServicesData[selectedFilter.stage];
+    if (!stageData) return [];
+    return stageData[selectedFilter.status] || [];
+  };
+
+  const filteredServices = getFilteredServices();
+
+  const detailColumns = [
+    { title: 'Servicio', dataIndex: 'name', key: 'name', render: (text: string) => <span className="font-medium">{text}</span> },
+    { title: 'Cliente', dataIndex: 'client', key: 'client' },
+    { title: 'Tipo de Servicio', dataIndex: 'tipoServicio', key: 'tipoServicio', render: (tipo: string) => <Tag color="blue">{tipo}</Tag> },
+    { title: 'Fecha', dataIndex: 'date', key: 'date' },
+    { 
+      title: 'Monto', 
+      dataIndex: 'amount', 
+      key: 'amount',
+      render: (amount: number) => new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 }).format(amount)
+    },
+    { 
+      title: '', 
+      key: 'action', 
+      render: () => (
+        <Button type="primary" size="small" icon={<Eye className="w-4 h-4" />}>
+          Detalle
+        </Button>
+      )
+    },
+  ];
+
+  const statusLabels = {
+    normal: { label: 'Normal', color: 'text-green-600', bg: 'bg-green-500' },
+    medio: { label: 'Medio', color: 'text-amber-600', bg: 'bg-amber-500' },
+    critico: { label: 'Crítico', color: 'text-red-600', bg: 'bg-red-500' },
+  };
+
+  return (
+    <Card 
+      title={
+        <div className="flex items-center justify-between w-full">
+          <span>Estado de Servicios por Etapa</span>
+          <div className="flex items-center gap-4 text-sm font-normal">
+            <span className="flex items-center gap-1.5">
+              <span className="w-3 h-3 rounded-full bg-green-500"></span>
+              Normal: {totalNormal}
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-3 h-3 rounded-full bg-amber-500"></span>
+              Medio: {totalMedio}
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-3 h-3 rounded-full bg-red-500"></span>
+              Crítico: {totalCritico}
+            </span>
+          </div>
+        </div>
+      } 
+      className="shadow-sm"
+    >
+      {/* Pipeline visual */}
+      <div className="flex items-stretch gap-1 mb-6">
+        {serviceStages.map((stage, index) => (
+          <div 
+            key={stage.name}
+            className="flex-1 relative group"
+          >
+            {/* Stage card */}
+            <div className={`bg-gradient-to-b from-muted/50 to-muted/30 rounded-lg p-4 border transition-all h-full ${
+              selectedFilter?.stage === stage.name 
+                ? 'border-primary shadow-md ring-2 ring-primary/20' 
+                : 'border-muted hover:border-primary/30 hover:shadow-md'
+            }`}>
+              {/* Header */}
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <div className="p-2.5 bg-primary/10 rounded-lg text-primary">
+                  {stage.icon}
+                </div>
+              </div>
+              <h4 className="text-center font-medium text-sm mb-2 text-foreground">{stage.name}</h4>
+              
+              {/* Total */}
+              <div className="text-center mb-4">
+                <span className="text-3xl font-bold text-primary">{stage.total}</span>
+                <span className="text-xs text-muted-foreground block mt-1">servicios</span>
+              </div>
+
+              {/* Status breakdown - stacked bars with tooltips and click */}
+              {stage.total > 0 && (
+                <div className="h-3 bg-muted rounded-full overflow-hidden flex">
+                  <Tooltip title={`Normal: ${stage.normal} servicios - Clic para ver detalle`} placement="top">
+                    <div 
+                      className={`bg-green-500 h-full transition-all cursor-pointer ${
+                        selectedFilter?.stage === stage.name && selectedFilter?.status === 'normal'
+                          ? 'ring-2 ring-green-700 ring-offset-1'
+                          : 'hover:opacity-80'
+                      }`}
+                      style={{ width: `${(stage.normal / stage.total) * 100}%` }}
+                      onClick={() => handleBarClick(stage.name, 'normal')}
+                    />
+                  </Tooltip>
+                  <Tooltip title={`Medio: ${stage.medio} servicios - Clic para ver detalle`} placement="top">
+                    <div 
+                      className={`bg-amber-500 h-full transition-all cursor-pointer ${
+                        selectedFilter?.stage === stage.name && selectedFilter?.status === 'medio'
+                          ? 'ring-2 ring-amber-700 ring-offset-1'
+                          : 'hover:opacity-80'
+                      }`}
+                      style={{ width: `${(stage.medio / stage.total) * 100}%` }}
+                      onClick={() => handleBarClick(stage.name, 'medio')}
+                    />
+                  </Tooltip>
+                  <Tooltip title={`Crítico: ${stage.critico} servicios - Clic para ver detalle`} placement="top">
+                    <div 
+                      className={`bg-red-500 h-full transition-all cursor-pointer ${
+                        selectedFilter?.stage === stage.name && selectedFilter?.status === 'critico'
+                          ? 'ring-2 ring-red-700 ring-offset-1'
+                          : 'hover:opacity-80'
+                      }`}
+                      style={{ width: `${(stage.critico / stage.total) * 100}%` }}
+                      onClick={() => handleBarClick(stage.name, 'critico')}
+                    />
+                  </Tooltip>
+                </div>
+              )}
+            </div>
+
+            {/* Arrow connector */}
+            {index < serviceStages.length - 1 && (
+              <div className="absolute top-1/2 -right-2 transform -translate-y-1/2 z-10 text-muted-foreground/40">
+                <svg width="12" height="24" viewBox="0 0 12 24" fill="currentColor">
+                  <path d="M0 0 L12 12 L0 24 Z" />
+                </svg>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Dynamic detail grid */}
+      {selectedFilter && (
+        <div className="mb-6 animate-in slide-in-from-top-2 duration-300">
+          <div className="bg-muted/30 rounded-lg p-4 border border-muted">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <span className={`w-3 h-3 rounded-full ${statusLabels[selectedFilter.status].bg}`}></span>
+                <h4 className="font-semibold">
+                  {selectedFilter.stage} - <span className={statusLabels[selectedFilter.status].color}>{statusLabels[selectedFilter.status].label}</span>
+                </h4>
+                <Tag color={selectedFilter.status === 'normal' ? 'success' : selectedFilter.status === 'medio' ? 'warning' : 'error'}>
+                  {filteredServices.length} servicios
+                </Tag>
+              </div>
+              <Button 
+                type="text" 
+                size="small" 
+                onClick={() => setSelectedFilter(null)}
+                icon={<AlertCircle className="w-4 h-4 rotate-45" />}
+              >
+                Cerrar
+              </Button>
+            </div>
+            <Table 
+              dataSource={filteredServices}
+              columns={detailColumns}
+              pagination={false}
+              size="small"
+              rowKey="id"
+              locale={{ emptyText: 'No hay servicios en esta categoría' }}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Summary row */}
+      <div className="bg-muted/20 rounded-lg p-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-primary/10 rounded-lg">
+            <Briefcase className="w-5 h-5 text-primary" />
+          </div>
+          <div>
+            <span className="text-2xl font-bold">{totalServices}</span>
+            <span className="text-muted-foreground ml-2">servicios en total</span>
+          </div>
+        </div>
+        <div className="flex items-center gap-6">
+          <div className="text-center">
+            <div className="text-xl font-semibold text-green-600">{totalServices > 0 ? Math.round((totalNormal / totalServices) * 100) : 0}%</div>
+            <div className="text-xs text-muted-foreground">Sin alertas</div>
+          </div>
+          <div className="text-center">
+            <div className="text-xl font-semibold text-amber-600">{totalServices > 0 ? Math.round((totalMedio / totalServices) * 100) : 0}%</div>
+            <div className="text-xs text-muted-foreground">Atención media</div>
+          </div>
+          <div className="text-center">
+            <div className="text-xl font-semibold text-red-600">{totalServices > 0 ? Math.round((totalCritico / totalServices) * 100) : 0}%</div>
+            <div className="text-xs text-muted-foreground">Requieren acción</div>
+          </div>
+        </div>
+      </div>
+    </Card>
+  );
+};
+
 // Section Components - CourseStagesSection is exported for use in other modules
 export const CourseStagesSection: React.FC = () => {
   const [selectedFilter, setSelectedFilter] = useState<{ stage: string; status: 'normal' | 'medio' | 'critico' } | null>(null);
