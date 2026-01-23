@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MessageSquarePlus, X, ChevronDown, ChevronUp, Trash2, Clock, StickyNote } from 'lucide-react';
+import { MessageSquarePlus, X, ChevronDown, ChevronUp, Clock, StickyNote, Archive } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
@@ -75,9 +75,8 @@ export const DesignNotesPanel: React.FC = () => {
     ));
   };
 
-  const deleteNote = (id: string) => {
-    setNotes(prev => prev.filter(note => note.id !== id));
-  };
+  // Notes are permanent and cannot be deleted - only status can change
+  const completedCount = notes.filter(n => n.status === 'completado').length;
 
   const filteredNotes = filter === 'all' 
     ? notes 
@@ -125,11 +124,10 @@ export const DesignNotesPanel: React.FC = () => {
         <div className="flex items-center gap-2">
           <StickyNote className="h-5 w-5 text-primary" />
           <span className="font-semibold text-sm">Notas de Diseño</span>
-          {pendingCount > 0 && (
-            <Badge variant="destructive" className="text-xs px-1.5 py-0">
-              {pendingCount} pendientes
-            </Badge>
-          )}
+          <Badge variant="outline" className="text-xs px-1.5 py-0 gap-1">
+            <Archive className="h-3 w-3" />
+            Histórico
+          </Badge>
         </div>
         <div className="flex items-center gap-1">
           <Button 
@@ -204,18 +202,16 @@ export const DesignNotesPanel: React.FC = () => {
                 filteredNotes.map((note) => (
                   <div 
                     key={note.id} 
-                    className="p-3 rounded-lg border bg-card hover:shadow-sm transition-shadow"
+                    className={cn(
+                      "p-3 rounded-lg border bg-card hover:shadow-sm transition-shadow",
+                      note.status === 'completado' && "opacity-70"
+                    )}
                   >
                     <div className="flex items-start justify-between gap-2 mb-2">
                       <h4 className="font-medium text-sm leading-tight">{note.title}</h4>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-6 w-6 shrink-0 text-muted-foreground hover:text-destructive"
-                        onClick={() => deleteNote(note.id)}
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </Button>
+                      <Badge variant="outline" className="text-[10px] px-1 py-0 shrink-0">
+                        #{note.id.split('_')[1]?.slice(-4)}
+                      </Badge>
                     </div>
                     <p className="text-xs text-muted-foreground mb-2 whitespace-pre-wrap">
                       {note.content}
@@ -246,7 +242,7 @@ export const DesignNotesPanel: React.FC = () => {
 
           {/* Footer with stats */}
           <div className="p-2 border-t bg-muted/30 text-xs text-muted-foreground text-center">
-            Total: {notes.length} notas • Pendientes: {pendingCount}
+            📁 Histórico permanente: {notes.length} notas • Pendientes: {pendingCount} • Completadas: {completedCount}
           </div>
         </>
       )}
