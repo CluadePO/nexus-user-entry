@@ -27,27 +27,36 @@ const statusConfig = {
 export const DesignNotesPanel: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
-  const [notes, setNotes] = useState<DesignNote[]>([]);
+  const [notes, setNotes] = useState<DesignNote[]>(() => {
+    // Initialize from localStorage synchronously to prevent data loss
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        try {
+          return JSON.parse(stored);
+        } catch (e) {
+          console.error('Error loading notes:', e);
+        }
+      }
+    }
+    return [];
+  });
   const [newTitle, setNewTitle] = useState('');
   const [newContent, setNewContent] = useState('');
   const [filter, setFilter] = useState<'all' | 'pendiente' | 'en_progreso' | 'completado'>('all');
+  const [isInitialized, setIsInitialized] = useState(false);
 
-  // Load notes from localStorage on mount
+  // Mark as initialized after first render
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
-        setNotes(JSON.parse(stored));
-      } catch (e) {
-        console.error('Error loading notes:', e);
-      }
-    }
+    setIsInitialized(true);
   }, []);
 
-  // Save notes to localStorage when they change
+  // Save notes to localStorage only after initialization
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
-  }, [notes]);
+    if (isInitialized) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+    }
+  }, [notes, isInitialized]);
 
   const addNote = () => {
     if (!newTitle.trim() || !newContent.trim()) return;
