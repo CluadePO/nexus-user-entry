@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { MessageSquarePlus, X, ChevronDown, ChevronUp, Clock, StickyNote, Archive } from 'lucide-react';
+import { MessageSquarePlus, X, ChevronDown, ChevronUp, Clock, StickyNote, Archive, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 interface DesignNote {
   id: string;
   title: string;
   content: string;
   status: 'pendiente' | 'en_progreso' | 'completado';
-  createdAt: string;
-  updatedAt: string;
+  created_at: string;
+  updated_at: string;
 }
-
-const STORAGE_KEY = 'design_notes_history';
 
 const statusConfig = {
   pendiente: { label: 'Pendiente', color: 'bg-yellow-100 text-yellow-800 border-yellow-300' },
@@ -27,65 +27,105 @@ const statusConfig = {
 export const DesignNotesPanel: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
-  const [notes, setNotes] = useState<DesignNote[]>(() => {
-    // Initialize from localStorage synchronously to prevent data loss
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        try {
-          return JSON.parse(stored);
-        } catch (e) {
-          console.error('Error loading notes:', e);
-        }
-      }
-    }
-    return [];
-  });
+  const [notes, setNotes] = useState<DesignNote[]>([]);
   const [newTitle, setNewTitle] = useState('');
   const [newContent, setNewContent] = useState('');
   const [filter, setFilter] = useState<'all' | 'pendiente' | 'en_progreso' | 'completado'>('all');
-  const [isInitialized, setIsInitialized] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const { toast } = useToast();
 
-  // Mark as initialized after first render
+  // Load notes from database on mount
   useEffect(() => {
-    setIsInitialized(true);
+    fetchNotes();
   }, []);
 
-  // Save notes to localStorage only after initialization
-  useEffect(() => {
-    if (isInitialized) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
-    }
-  }, [notes, isInitialized]);
+  const fetchNotes = async () => {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('design_notes')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-  const addNote = () => {
+      if (error) throw error;
+      
+      setNotes((data || []) as DesignNote[]);
+    } catch (error) {
+      console.error('Error loading notes:', error);
+      toast({
+        title: 'Error',
+        description: 'No se pudieron cargar las notas',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const addNote = async () => {
     if (!newTitle.trim() || !newContent.trim()) return;
     
-    const now = new Date().toISOString();
-    const note: DesignNote = {
-      id: `note_${Date.now()}`,
-      title: newTitle.trim(),
-      content: newContent.trim(),
-      status: 'pendiente',
-      createdAt: now,
-      updatedAt: now,
-    };
-    
-    setNotes(prev => [note, ...prev]);
-    setNewTitle('');
-    setNewContent('');
+    setIsSaving(true);
+    try {
+      const { data, error } = await supabase
+        .from('design_notes')
+        .insert({
+          title: newTitle.trim(),
+          content: newContent.trim(),
+          status: 'pendiente',
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      
+      setNotes(prev => [data as DesignNote, ...prev]);
+      setNewTitle('');
+      setNewContent('');
+      
+      toast({
+        title: 'Nota agregada',
+        description: 'La nota se guardó permanentemente',
+      });
+    } catch (error) {
+      console.error('Error adding note:', error);
+      toast({
+        title: 'Error',
+        description: 'No se pudo guardar la nota',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  const updateStatus = (id: string, status: DesignNote['status']) => {
-    setNotes(prev => prev.map(note => 
-      note.id === id 
-        ? { ...note, status, updatedAt: new Date().toISOString() }
-        : note
-    ));
+  const updateStatus = async (id: string, status: DesignNote['status']) => {
+    try {
+      const { error } = await supabase
+        .from('design_notes')
+        .update({ status })
+        .eq('id', id);
+
+      if (error) throw error;
+      
+      setNotes(prev => prev.map(note => 
+        note.id === id 
+          ? { ...note, status, updated_at: new Date().toISOString() }
+          : note
+      ));
+    } catch (error) {
+      console.error('Error updating note:', error);
+      toast({
+        title: 'Error',
+        description: 'No se pudo actualizar el estado',
+        variant: 'destructive',
+      });
+    }
   };
 
-  // Notes are permanent and cannot be deleted - only status can change
   const completedCount = notes.filter(n => n.status === 'completado').length;
+  const pendingCount = notes.filter(n => n.status === 'pendiente').length;
 
   const filteredNotes = filter === 'all' 
     ? notes 
@@ -101,8 +141,6 @@ export const DesignNotesPanel: React.FC = () => {
       minute: '2-digit'
     });
   };
-
-  const pendingCount = notes.filter(n => n.status === 'pendiente').length;
 
   if (!isOpen) {
     return (
@@ -135,7 +173,7 @@ export const DesignNotesPanel: React.FC = () => {
           <span className="font-semibold text-sm">Notas de Diseño</span>
           <Badge variant="outline" className="text-xs px-1.5 py-0 gap-1">
             <Archive className="h-3 w-3" />
-            Histórico
+            Cloud
           </Badge>
         </div>
         <div className="flex items-center gap-1">
@@ -178,9 +216,13 @@ export const DesignNotesPanel: React.FC = () => {
               onClick={addNote} 
               size="sm" 
               className="w-full"
-              disabled={!newTitle.trim() || !newContent.trim()}
+              disabled={!newTitle.trim() || !newContent.trim() || isSaving}
             >
-              <MessageSquarePlus className="h-4 w-4 mr-2" />
+              {isSaving ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <MessageSquarePlus className="h-4 w-4 mr-2" />
+              )}
               Agregar Nota
             </Button>
           </div>
@@ -203,7 +245,11 @@ export const DesignNotesPanel: React.FC = () => {
           {/* Notes list */}
           <ScrollArea className="h-64">
             <div className="p-2 space-y-2">
-              {filteredNotes.length === 0 ? (
+              {isLoading ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                </div>
+              ) : filteredNotes.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground text-sm">
                   No hay notas {filter !== 'all' && `con estado "${statusConfig[filter as keyof typeof statusConfig]?.label}"`}
                 </div>
@@ -219,7 +265,7 @@ export const DesignNotesPanel: React.FC = () => {
                     <div className="flex items-start justify-between gap-2 mb-2">
                       <h4 className="font-medium text-sm leading-tight">{note.title}</h4>
                       <Badge variant="outline" className="text-[10px] px-1 py-0 shrink-0">
-                        #{note.id.split('_')[1]?.slice(-4)}
+                        #{note.id.slice(-4)}
                       </Badge>
                     </div>
                     <p className="text-xs text-muted-foreground mb-2 whitespace-pre-wrap">
@@ -240,7 +286,7 @@ export const DesignNotesPanel: React.FC = () => {
                       </select>
                       <div className="flex items-center gap-1 text-xs text-muted-foreground">
                         <Clock className="h-3 w-3" />
-                        {formatDate(note.createdAt)}
+                        {formatDate(note.created_at)}
                       </div>
                     </div>
                   </div>
@@ -251,7 +297,7 @@ export const DesignNotesPanel: React.FC = () => {
 
           {/* Footer with stats */}
           <div className="p-2 border-t bg-muted/30 text-xs text-muted-foreground text-center">
-            📁 Histórico permanente: {notes.length} notas • Pendientes: {pendingCount} • Completadas: {completedCount}
+            ☁️ Guardado en la nube: {notes.length} notas • Pendientes: {pendingCount} • Completadas: {completedCount}
           </div>
         </>
       )}
