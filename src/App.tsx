@@ -17,6 +17,7 @@ import MiRecomendador from "./pages/MiRecomendador";
 import CourseDetail from "./pages/CourseDetail";
 import Encuestas from "./pages/Encuestas";
 import CursosResumen from "./pages/CursosResumen";
+import AdminUsuarios from "./pages/AdminUsuarios";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -68,6 +69,7 @@ const App = () => (
                 <Route path="/facturacion/*" element={<PlaceholderPage title="Facturación" />} />
                 <Route path="/formacion/*" element={<PlaceholderPage title="Formación" />} />
                 <Route path="/encuestas" element={<Encuestas />} />
+                <Route path="/admin/usuarios" element={<AdminUsuarios />} />
                 <Route path="/admin/*" element={<PlaceholderPage title="Administración" />} />
                 <Route path="/ayuda/*" element={<PlaceholderPage title="Ayuda y Soporte" />} />
               </Route>

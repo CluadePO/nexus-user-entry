@@ -41,6 +41,63 @@ export type Database = {
         }
         Relationships: []
       }
+      system_users: {
+        Row: {
+          analista_comercial: string | null
+          analista_op: string | null
+          apellido: string
+          cargo: string | null
+          celula: string | null
+          created_at: string
+          email: string
+          empresa: string | null
+          holding: string | null
+          id: string
+          jefe_comercial: string | null
+          lider_servicio_edc: string | null
+          lider_servicio_op: string | null
+          nombre: string
+          rut: string
+          updated_at: string
+        }
+        Insert: {
+          analista_comercial?: string | null
+          analista_op?: string | null
+          apellido: string
+          cargo?: string | null
+          celula?: string | null
+          created_at?: string
+          email: string
+          empresa?: string | null
+          holding?: string | null
+          id?: string
+          jefe_comercial?: string | null
+          lider_servicio_edc?: string | null
+          lider_servicio_op?: string | null
+          nombre: string
+          rut: string
+          updated_at?: string
+        }
+        Update: {
+          analista_comercial?: string | null
+          analista_op?: string | null
+          apellido?: string
+          cargo?: string | null
+          celula?: string | null
+          created_at?: string
+          email?: string
+          empresa?: string | null
+          holding?: string | null
+          id?: string
+          jefe_comercial?: string | null
+          lider_servicio_edc?: string | null
+          lider_servicio_op?: string | null
+          nombre?: string
+          rut?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
