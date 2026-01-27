@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Users } from 'lucide-react';
+import CreateUserModal from '@/components/admin/CreateUserModal';
 
 interface SystemUser {
   id: string;
@@ -28,6 +29,7 @@ const AdminUsuarios: React.FC = () => {
   const [users, setUsers] = useState<SystemUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchText, setSearchText] = useState('');
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const { toast } = useToast();
 
   const fetchUsers = async () => {
@@ -186,7 +188,12 @@ const AdminUsuarios: React.FC = () => {
             </p>
           </div>
         </div>
-        <Button type="primary" icon={<UserAddOutlined />} size="large">
+        <Button 
+          type="primary" 
+          icon={<UserAddOutlined />} 
+          size="large"
+          onClick={() => setIsCreateModalOpen(true)}
+        >
           Nuevo Usuario
         </Button>
       </div>
@@ -238,6 +245,12 @@ const AdminUsuarios: React.FC = () => {
           </Spin>
         </CardContent>
       </Card>
+
+      <CreateUserModal
+        open={isCreateModalOpen}
+        onOpenChange={setIsCreateModalOpen}
+        onSuccess={fetchUsers}
+      />
     </div>
   );
 };
