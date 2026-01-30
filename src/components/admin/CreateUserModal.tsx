@@ -135,7 +135,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
     );
   };
 
-  const isStep1Valid = nombres && apellidos && rut && email && userType && userProfile && cargo;
+  const isStep1Valid = nombres && apellidos && rut && email && userType && userProfile && (userType !== 'OTIC' || cargo);
   const isStep2Valid = selectedCompany && selectedHolding;
 
   const handleNext = () => {
@@ -335,15 +335,17 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="cargo">Cargo *</Label>
-                <Input
-                  id="cargo"
-                  placeholder="Ingrese cargo"
-                  value={cargo}
-                  onChange={(e) => setCargo(e.target.value)}
-                />
-              </div>
+              {userType === 'OTIC' && (
+                <div className="space-y-2">
+                  <Label htmlFor="cargo">Cargo *</Label>
+                  <Input
+                    id="cargo"
+                    placeholder="Ingrese cargo"
+                    value={cargo}
+                    onChange={(e) => setCargo(e.target.value)}
+                  />
+                </div>
+              )}
             </div>
           )}
 
