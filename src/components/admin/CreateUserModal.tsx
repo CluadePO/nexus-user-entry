@@ -52,8 +52,8 @@ const mockProfiles = ['Administrador', 'Usuario Estándar', 'Supervisor', 'Anali
 const mockUserTypes = ['OTEC', 'OTIC', 'EMPRESA'];
 
 const steps = [
-  { id: 1, title: 'Empresa', icon: Building2 },
-  { id: 2, title: 'Usuario', icon: User },
+  { id: 1, title: 'Usuario', icon: User },
+  { id: 2, title: 'Empresa', icon: Building2 },
   { id: 3, title: 'Confirmar', icon: FileCheck },
 ];
 
@@ -135,8 +135,8 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
     );
   };
 
-  const isStep1Valid = selectedCompany && selectedHolding;
-  const isStep2Valid = userProfile && rut && nombres && apellidos && email && userType;
+  const isStep1Valid = userProfile && rut && nombres && apellidos && email && userType;
+  const isStep2Valid = selectedCompany && selectedHolding;
 
   const handleNext = () => {
     if (currentStep < 3) {
@@ -256,8 +256,99 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
         </div>
 
         <ScrollArea className="max-h-[50vh] pr-4">
-          {/* Step 1: Company Selection */}
+          {/* Step 1: User Information */}
           {currentStep === 1 && (
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="profile">Perfil del Usuario *</Label>
+                <Select value={userProfile} onValueChange={setUserProfile}>
+                  <SelectTrigger id="profile">
+                    <SelectValue placeholder="Seleccione un perfil" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {mockProfiles.map((profile) => (
+                      <SelectItem key={profile} value={profile}>
+                        {profile}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="rut">RUT *</Label>
+                  <Input
+                    id="rut"
+                    placeholder="12.345.678-9"
+                    value={rut}
+                    onChange={(e) => setRut(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email *</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="usuario@email.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="nombres">Nombres *</Label>
+                  <Input
+                    id="nombres"
+                    placeholder="Ingrese nombres"
+                    value={nombres}
+                    onChange={(e) => setNombres(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="apellidos">Apellidos *</Label>
+                  <Input
+                    id="apellidos"
+                    placeholder="Ingrese apellidos"
+                    value={apellidos}
+                    onChange={(e) => setApellidos(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="userType">Tipo de Usuario *</Label>
+                  <Select value={userType} onValueChange={setUserType}>
+                    <SelectTrigger id="userType">
+                      <SelectValue placeholder="Seleccione tipo" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {mockUserTypes.map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {type}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="cargo">Cargo</Label>
+                  <Input
+                    id="cargo"
+                    placeholder="Ingrese cargo"
+                    value={cargo}
+                    onChange={(e) => setCargo(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Step 2: Company Selection */}
+          {currentStep === 2 && (
             <div className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="empresa">Empresa Principal *</Label>
@@ -348,97 +439,6 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                   </div>
                 </div>
               )}
-            </div>
-          )}
-
-          {/* Step 2: User Information */}
-          {currentStep === 2 && (
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="profile">Perfil del Usuario *</Label>
-                <Select value={userProfile} onValueChange={setUserProfile}>
-                  <SelectTrigger id="profile">
-                    <SelectValue placeholder="Seleccione un perfil" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {mockProfiles.map((profile) => (
-                      <SelectItem key={profile} value={profile}>
-                        {profile}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="rut">RUT *</Label>
-                  <Input
-                    id="rut"
-                    placeholder="12.345.678-9"
-                    value={rut}
-                    onChange={(e) => setRut(e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email *</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="usuario@email.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="nombres">Nombres *</Label>
-                  <Input
-                    id="nombres"
-                    placeholder="Ingrese nombres"
-                    value={nombres}
-                    onChange={(e) => setNombres(e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="apellidos">Apellidos *</Label>
-                  <Input
-                    id="apellidos"
-                    placeholder="Ingrese apellidos"
-                    value={apellidos}
-                    onChange={(e) => setApellidos(e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="userType">Tipo de Usuario *</Label>
-                  <Select value={userType} onValueChange={setUserType}>
-                    <SelectTrigger id="userType">
-                      <SelectValue placeholder="Seleccione tipo" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {mockUserTypes.map((type) => (
-                        <SelectItem key={type} value={type}>
-                          {type}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="cargo">Cargo</Label>
-                  <Input
-                    id="cargo"
-                    placeholder="Ingrese cargo"
-                    value={cargo}
-                    onChange={(e) => setCargo(e.target.value)}
-                  />
-                </div>
-              </div>
             </div>
           )}
 
