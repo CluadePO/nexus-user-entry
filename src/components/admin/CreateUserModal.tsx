@@ -51,6 +51,11 @@ const mockHoldings = ['Holding A', 'Holding B', 'Holding C'];
 const mockProfiles = ['Administrador', 'Usuario Estándar', 'Supervisor', 'Analista'];
 const mockUserTypes = ['OTEC', 'OTIC', 'EMPRESA'];
 
+// Mock data for OTIC specific fields
+const mockCelulas = ['Célula Norte', 'Célula Sur', 'Célula Centro', 'Célula Oriente', 'Célula Poniente'];
+const mockJefesComerciales = ['Juan Pérez', 'María García', 'Carlos López', 'Ana Martínez', 'Pedro Sánchez'];
+const mockPersonasAsignables = ['Por asignar', 'No aplica', 'Roberto Silva', 'Carmen Díaz', 'Fernando Rojas', 'Patricia Muñoz', 'Diego Fernández'];
+
 const steps = [
   { id: 1, title: 'Usuario', icon: User },
   { id: 2, title: 'Empresa', icon: Building2 },
@@ -66,7 +71,16 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
-  // Step 1: Company Selection
+  // Step 1: User Information
+  const [userProfile, setUserProfile] = useState<string>('');
+  const [rut, setRut] = useState('');
+  const [nombres, setNombres] = useState('');
+  const [apellidos, setApellidos] = useState('');
+  const [email, setEmail] = useState('');
+  const [userType, setUserType] = useState<string>('');
+  const [cargo, setCargo] = useState('');
+
+  // Step 2: Company Selection (for OTEC/EMPRESA)
   const [selectedCompany, setSelectedCompany] = useState<string>('');
   const [selectedHolding, setSelectedHolding] = useState<string>('');
   const [assignedCompanies, setAssignedCompanies] = useState<string[]>([]);
@@ -76,14 +90,14 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
     celulaOperacional: '',
   });
 
-  // Step 2: User Information
-  const [userProfile, setUserProfile] = useState<string>('');
-  const [rut, setRut] = useState('');
-  const [nombres, setNombres] = useState('');
-  const [apellidos, setApellidos] = useState('');
-  const [email, setEmail] = useState('');
-  const [userType, setUserType] = useState<string>('');
-  const [cargo, setCargo] = useState('');
+  // Step 2: OTIC specific fields
+  const [oticEmpresa, setOticEmpresa] = useState<string>('');
+  const [oticCelula, setOticCelula] = useState<string>('');
+  const [oticJefeComercial, setOticJefeComercial] = useState<string>('');
+  const [oticAnalistaComercial, setOticAnalistaComercial] = useState<string>('');
+  const [oticAnalistaOperacional, setOticAnalistaOperacional] = useState<string>('');
+  const [oticLiderServicioEDC, setOticLiderServicioEDC] = useState<string>('');
+  const [oticLiderServicioOperacional, setOticLiderServicioOperacional] = useState<string>('');
 
   // Reset form when modal closes
   useEffect(() => {
@@ -100,6 +114,14 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
       setEmail('');
       setUserType('');
       setCargo('');
+      // Reset OTIC fields
+      setOticEmpresa('');
+      setOticCelula('');
+      setOticJefeComercial('');
+      setOticAnalistaComercial('');
+      setOticAnalistaOperacional('');
+      setOticLiderServicioEDC('');
+      setOticLiderServicioOperacional('');
     }
   }, [open]);
 
@@ -136,7 +158,11 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
   };
 
   const isStep1Valid = nombres && apellidos && rut && email && userType && userProfile && (userType !== 'OTIC' || cargo);
-  const isStep2Valid = selectedCompany && selectedHolding;
+  
+  // Step 2 validation depends on user type
+  const isStep2ValidOTIC = oticEmpresa && oticCelula && oticJefeComercial && oticAnalistaComercial && oticAnalistaOperacional && oticLiderServicioEDC && oticLiderServicioOperacional;
+  const isStep2ValidOther = selectedCompany && selectedHolding;
+  const isStep2Valid = userType === 'OTIC' ? isStep2ValidOTIC : isStep2ValidOther;
 
   const handleNext = () => {
     if (currentStep < 3) {
@@ -155,17 +181,30 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
     try {
       const selectedCompanyData = mockCompanies.find((c) => c.id === selectedCompany);
       
-      const { error } = await supabase.from('system_users').insert({
+      const insertData: any = {
         rut,
         email,
         nombre: nombres,
         apellido: apellidos,
         cargo: cargo || null,
-        holding: selectedHolding,
-        empresa: selectedCompanyData?.name || null,
-        celula: autoFilledData.celulaOperacional || null,
-        jefe_comercial: autoFilledData.jefeComercial || null,
-      });
+      };
+
+      if (userType === 'OTIC') {
+        insertData.empresa = oticEmpresa || null;
+        insertData.celula = oticCelula || null;
+        insertData.jefe_comercial = oticJefeComercial || null;
+        insertData.analista_comercial = oticAnalistaComercial || null;
+        insertData.analista_op = oticAnalistaOperacional || null;
+        insertData.lider_servicio_edc = oticLiderServicioEDC || null;
+        insertData.lider_servicio_op = oticLiderServicioOperacional || null;
+      } else {
+        insertData.holding = selectedHolding;
+        insertData.empresa = selectedCompanyData?.name || null;
+        insertData.celula = autoFilledData.celulaOperacional || null;
+        insertData.jefe_comercial = autoFilledData.jefeComercial || null;
+      }
+
+      const { error } = await supabase.from('system_users').insert(insertData);
 
       if (error) throw error;
 
@@ -352,94 +391,220 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
           {/* Step 2: Company Selection */}
           {currentStep === 2 && (
             <div className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="empresa">Empresa Principal *</Label>
-                <Select value={selectedCompany} onValueChange={setSelectedCompany}>
-                  <SelectTrigger id="empresa">
-                    <SelectValue placeholder="Seleccione una empresa" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {mockCompanies.map((company) => (
-                      <SelectItem key={company.id} value={company.id}>
-                        {company.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+              {userType === 'OTIC' ? (
+                // OTIC specific fields
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="oticEmpresa">Empresa a la que pertenece *</Label>
+                    <Select value={oticEmpresa} onValueChange={setOticEmpresa}>
+                      <SelectTrigger id="oticEmpresa">
+                        <SelectValue placeholder="Seleccione una empresa" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {mockCompanies.map((company) => (
+                          <SelectItem key={company.id} value={company.name}>
+                            {company.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="holding">Holding *</Label>
-                <Select value={selectedHolding} onValueChange={setSelectedHolding}>
-                  <SelectTrigger id="holding">
-                    <SelectValue placeholder="Seleccione un holding" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {mockHoldings.map((holding) => (
-                      <SelectItem key={holding} value={holding}>
-                        {holding}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="oticCelula">Célula *</Label>
+                      <Select value={oticCelula} onValueChange={setOticCelula}>
+                        <SelectTrigger id="oticCelula">
+                          <SelectValue placeholder="Seleccione una célula" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {mockCelulas.map((celula) => (
+                            <SelectItem key={celula} value={celula}>
+                              {celula}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label>Asignar Empresas</Label>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={handleSelectAllCompanies}
-                  >
-                    {assignedCompanies.length === mockCompanies.length
-                      ? 'Deseleccionar Todas'
-                      : 'Seleccionar Todas'}
-                  </Button>
-                </div>
-                <div className="border rounded-md p-3 space-y-2 max-h-40 overflow-y-auto">
-                  {mockCompanies.map((company) => (
-                    <div key={company.id} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`company-${company.id}`}
-                        checked={assignedCompanies.includes(company.id)}
-                        onCheckedChange={() => toggleCompanyAssignment(company.id)}
-                      />
-                      <label
-                        htmlFor={`company-${company.id}`}
-                        className="text-sm cursor-pointer"
-                      >
-                        {company.name}
-                      </label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Auto-filled data */}
-              {selectedCompany && (
-                <div className="bg-muted/50 rounded-lg p-4 space-y-3">
-                  <h4 className="font-medium text-sm text-muted-foreground">
-                    Información de la empresa seleccionada
-                  </h4>
-                  <div className="grid grid-cols-3 gap-4">
-                    <div>
-                      <Label className="text-xs text-muted-foreground">Segmento</Label>
-                      <Badge variant="secondary" className="mt-1">
-                        {autoFilledData.segmento}
-                      </Badge>
-                    </div>
-                    <div>
-                      <Label className="text-xs text-muted-foreground">Jefe Comercial</Label>
-                      <p className="text-sm font-medium mt-1">{autoFilledData.jefeComercial}</p>
-                    </div>
-                    <div>
-                      <Label className="text-xs text-muted-foreground">Célula Operacional</Label>
-                      <p className="text-sm font-medium mt-1">{autoFilledData.celulaOperacional}</p>
+                    <div className="space-y-2">
+                      <Label htmlFor="oticJefeComercial">Jefe Comercial *</Label>
+                      <Select value={oticJefeComercial} onValueChange={setOticJefeComercial}>
+                        <SelectTrigger id="oticJefeComercial">
+                          <SelectValue placeholder="Seleccione jefe comercial" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {mockJefesComerciales.map((jefe) => (
+                            <SelectItem key={jefe} value={jefe}>
+                              {jefe}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
-                </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="oticAnalistaComercial">Analista Comercial *</Label>
+                      <Select value={oticAnalistaComercial} onValueChange={setOticAnalistaComercial}>
+                        <SelectTrigger id="oticAnalistaComercial">
+                          <SelectValue placeholder="Seleccione analista" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {mockPersonasAsignables.map((persona) => (
+                            <SelectItem key={persona} value={persona}>
+                              {persona}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="oticAnalistaOperacional">Analista Operacional *</Label>
+                      <Select value={oticAnalistaOperacional} onValueChange={setOticAnalistaOperacional}>
+                        <SelectTrigger id="oticAnalistaOperacional">
+                          <SelectValue placeholder="Seleccione analista" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {mockPersonasAsignables.map((persona) => (
+                            <SelectItem key={persona} value={persona}>
+                              {persona}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="oticLiderServicioEDC">Líder Servicio EDC *</Label>
+                      <Select value={oticLiderServicioEDC} onValueChange={setOticLiderServicioEDC}>
+                        <SelectTrigger id="oticLiderServicioEDC">
+                          <SelectValue placeholder="Seleccione líder" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {mockPersonasAsignables.map((persona) => (
+                            <SelectItem key={persona} value={persona}>
+                              {persona}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="oticLiderServicioOperacional">Líder Servicio Operacional *</Label>
+                      <Select value={oticLiderServicioOperacional} onValueChange={setOticLiderServicioOperacional}>
+                        <SelectTrigger id="oticLiderServicioOperacional">
+                          <SelectValue placeholder="Seleccione líder" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {mockPersonasAsignables.map((persona) => (
+                            <SelectItem key={persona} value={persona}>
+                              {persona}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                // OTEC/EMPRESA fields
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="empresa">Empresa Principal *</Label>
+                    <Select value={selectedCompany} onValueChange={setSelectedCompany}>
+                      <SelectTrigger id="empresa">
+                        <SelectValue placeholder="Seleccione una empresa" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {mockCompanies.map((company) => (
+                          <SelectItem key={company.id} value={company.id}>
+                            {company.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="holding">Holding *</Label>
+                    <Select value={selectedHolding} onValueChange={setSelectedHolding}>
+                      <SelectTrigger id="holding">
+                        <SelectValue placeholder="Seleccione un holding" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {mockHoldings.map((holding) => (
+                          <SelectItem key={holding} value={holding}>
+                            {holding}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label>Asignar Empresas</Label>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={handleSelectAllCompanies}
+                      >
+                        {assignedCompanies.length === mockCompanies.length
+                          ? 'Deseleccionar Todas'
+                          : 'Seleccionar Todas'}
+                      </Button>
+                    </div>
+                    <div className="border rounded-md p-3 space-y-2 max-h-40 overflow-y-auto">
+                      {mockCompanies.map((company) => (
+                        <div key={company.id} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={`company-${company.id}`}
+                            checked={assignedCompanies.includes(company.id)}
+                            onCheckedChange={() => toggleCompanyAssignment(company.id)}
+                          />
+                          <label
+                            htmlFor={`company-${company.id}`}
+                            className="text-sm cursor-pointer"
+                          >
+                            {company.name}
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Auto-filled data */}
+                  {selectedCompany && (
+                    <div className="bg-muted/50 rounded-lg p-4 space-y-3">
+                      <h4 className="font-medium text-sm text-muted-foreground">
+                        Información de la empresa seleccionada
+                      </h4>
+                      <div className="grid grid-cols-3 gap-4">
+                        <div>
+                          <Label className="text-xs text-muted-foreground">Segmento</Label>
+                          <Badge variant="secondary" className="mt-1">
+                            {autoFilledData.segmento}
+                          </Badge>
+                        </div>
+                        <div>
+                          <Label className="text-xs text-muted-foreground">Jefe Comercial</Label>
+                          <p className="text-sm font-medium mt-1">{autoFilledData.jefeComercial}</p>
+                        </div>
+                        <div>
+                          <Label className="text-xs text-muted-foreground">Célula Operacional</Label>
+                          <p className="text-sm font-medium mt-1">{autoFilledData.celulaOperacional}</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           )}
@@ -452,40 +617,73 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                   <Building2 className="h-4 w-4" />
                   Información de Empresa
                 </h4>
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <span className="text-muted-foreground">Empresa Principal:</span>
-                    <p className="font-medium">{getSelectedCompanyName()}</p>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">Holding:</span>
-                    <p className="font-medium">{selectedHolding}</p>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">Segmento:</span>
-                    <Badge variant="secondary">{autoFilledData.segmento}</Badge>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">Jefe Comercial:</span>
-                    <p className="font-medium">{autoFilledData.jefeComercial}</p>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">Célula Operacional:</span>
-                    <p className="font-medium">{autoFilledData.celulaOperacional}</p>
-                  </div>
-                  {assignedCompanies.length > 0 && (
-                    <div className="col-span-2">
-                      <span className="text-muted-foreground">Empresas Asignadas:</span>
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {getAssignedCompanyNames().map((name) => (
-                          <Badge key={name} variant="outline" className="text-xs">
-                            {name}
-                          </Badge>
-                        ))}
-                      </div>
+                {userType === 'OTIC' ? (
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="text-muted-foreground">Empresa:</span>
+                      <p className="font-medium">{oticEmpresa}</p>
                     </div>
-                  )}
-                </div>
+                    <div>
+                      <span className="text-muted-foreground">Célula:</span>
+                      <p className="font-medium">{oticCelula}</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Jefe Comercial:</span>
+                      <p className="font-medium">{oticJefeComercial}</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Analista Comercial:</span>
+                      <p className="font-medium">{oticAnalistaComercial}</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Analista Operacional:</span>
+                      <p className="font-medium">{oticAnalistaOperacional}</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Líder Servicio EDC:</span>
+                      <p className="font-medium">{oticLiderServicioEDC}</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Líder Servicio Operacional:</span>
+                      <p className="font-medium">{oticLiderServicioOperacional}</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="text-muted-foreground">Empresa Principal:</span>
+                      <p className="font-medium">{getSelectedCompanyName()}</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Holding:</span>
+                      <p className="font-medium">{selectedHolding}</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Segmento:</span>
+                      <Badge variant="secondary">{autoFilledData.segmento}</Badge>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Jefe Comercial:</span>
+                      <p className="font-medium">{autoFilledData.jefeComercial}</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Célula Operacional:</span>
+                      <p className="font-medium">{autoFilledData.celulaOperacional}</p>
+                    </div>
+                    {assignedCompanies.length > 0 && (
+                      <div className="col-span-2">
+                        <span className="text-muted-foreground">Empresas Asignadas:</span>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {getAssignedCompanyNames().map((name) => (
+                            <Badge key={name} variant="outline" className="text-xs">
+                              {name}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className="bg-muted/30 rounded-lg p-4 space-y-4">
