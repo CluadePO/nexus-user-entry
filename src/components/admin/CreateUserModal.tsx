@@ -20,8 +20,21 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Check, ChevronLeft, ChevronRight, Building2, User, FileCheck } from 'lucide-react';
+import { Check, ChevronLeft, ChevronRight, Building2, User, FileCheck, Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 
 interface CreateUserModalProps {
   open: boolean;
@@ -99,6 +112,12 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
   const [oticLiderServicioEDC, setOticLiderServicioEDC] = useState<string>('');
   const [oticLiderServicioOperacional, setOticLiderServicioOperacional] = useState<string>('');
 
+  // OTIC Holding and assigned companies
+  const [oticSelectedHolding, setOticSelectedHolding] = useState<string>('');
+  const [oticAssignedCompanies, setOticAssignedCompanies] = useState<string[]>([]);
+  const [companySearchQuery, setCompanySearchQuery] = useState('');
+  const [companySearchOpen, setCompanySearchOpen] = useState(false);
+
   // Reset form when modal closes
   useEffect(() => {
     if (!open) {
@@ -122,6 +141,9 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
       setOticAnalistaOperacional('');
       setOticLiderServicioEDC('');
       setOticLiderServicioOperacional('');
+      setOticSelectedHolding('');
+      setOticAssignedCompanies([]);
+      setCompanySearchQuery('');
     }
   }, [open]);
 
@@ -155,6 +177,47 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
         ? prev.filter((id) => id !== companyId)
         : [...prev, companyId]
     );
+  };
+
+  // OTIC companies filtered by holding
+  const oticFilteredCompanies = oticSelectedHolding
+    ? mockCompanies.filter((c) => c.holding === oticSelectedHolding)
+    : mockCompanies;
+
+  // Search filter for companies
+  const searchedCompanies = oticFilteredCompanies.filter((c) =>
+    c.name.toLowerCase().includes(companySearchQuery.toLowerCase())
+  );
+
+  const handleOticSelectAllCompanies = () => {
+    const filteredIds = oticFilteredCompanies.map((c) => c.id);
+    if (filteredIds.every((id) => oticAssignedCompanies.includes(id))) {
+      setOticAssignedCompanies((prev) => prev.filter((id) => !filteredIds.includes(id)));
+    } else {
+      setOticAssignedCompanies((prev) => [...new Set([...prev, ...filteredIds])]);
+    }
+  };
+
+  const toggleOticCompanyAssignment = (companyId: string) => {
+    setOticAssignedCompanies((prev) =>
+      prev.includes(companyId)
+        ? prev.filter((id) => id !== companyId)
+        : [...prev, companyId]
+    );
+  };
+
+  const handleAddCompanyFromSearch = (companyId: string) => {
+    if (!oticAssignedCompanies.includes(companyId)) {
+      setOticAssignedCompanies((prev) => [...prev, companyId]);
+    }
+    setCompanySearchOpen(false);
+    setCompanySearchQuery('');
+  };
+
+  const getOticAssignedCompanyNames = () => {
+    return oticAssignedCompanies
+      .map((id) => mockCompanies.find((c) => c.id === id)?.name)
+      .filter(Boolean);
   };
 
   const isStep1Valid = nombres && apellidos && rut && email && userType && userProfile && (userType !== 'OTIC' || cargo);
@@ -511,6 +574,127 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                       </Select>
                     </div>
                   </div>
+
+                  {/* Holding and Company Assignment for OTIC */}
+                  <div className="border-t pt-4 mt-4">
+                    <h4 className="font-medium text-sm mb-4">Asignación de Holdings y Empresas</h4>
+                    
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="oticHolding">Holding</Label>
+                        <Select value={oticSelectedHolding} onValueChange={(value) => {
+                          setOticSelectedHolding(value);
+                        }}>
+                          <SelectTrigger id="oticHolding">
+                            <SelectValue placeholder="Seleccione un holding" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">Todos los Holdings</SelectItem>
+                            {mockHoldings.map((holding) => (
+                              <SelectItem key={holding} value={holding}>
+                                {holding}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      {/* Company Search */}
+                      <div className="space-y-2">
+                        <Label>Buscar Empresa</Label>
+                        <Popover open={companySearchOpen} onOpenChange={setCompanySearchOpen}>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              aria-expanded={companySearchOpen}
+                              className="w-full justify-between"
+                            >
+                              <span className="flex items-center gap-2">
+                                <Search className="h-4 w-4 text-muted-foreground" />
+                                Buscar y agregar empresa...
+                              </span>
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-full p-0" align="start">
+                            <Command>
+                              <CommandInput 
+                                placeholder="Buscar empresa..." 
+                                value={companySearchQuery}
+                                onValueChange={setCompanySearchQuery}
+                              />
+                              <CommandList>
+                                <CommandEmpty>No se encontraron empresas.</CommandEmpty>
+                                <CommandGroup>
+                                  {searchedCompanies.map((company) => (
+                                    <CommandItem
+                                      key={company.id}
+                                      value={company.name}
+                                      onSelect={() => handleAddCompanyFromSearch(company.id)}
+                                      className="cursor-pointer"
+                                    >
+                                      <Check
+                                        className={cn(
+                                          "mr-2 h-4 w-4",
+                                          oticAssignedCompanies.includes(company.id)
+                                            ? "opacity-100"
+                                            : "opacity-0"
+                                        )}
+                                      />
+                                      <div className="flex flex-col">
+                                        <span>{company.name}</span>
+                                        <span className="text-xs text-muted-foreground">{company.holding}</span>
+                                      </div>
+                                    </CommandItem>
+                                  ))}
+                                </CommandGroup>
+                              </CommandList>
+                            </Command>
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+
+                      {/* Companies list with checkboxes */}
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <Label>Empresas Asignadas</Label>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={handleOticSelectAllCompanies}
+                          >
+                            {oticFilteredCompanies.every((c) => oticAssignedCompanies.includes(c.id))
+                              ? 'Deseleccionar Todas'
+                              : 'Seleccionar Todas'}
+                          </Button>
+                        </div>
+                        <div className="border rounded-md p-3 space-y-2 max-h-40 overflow-y-auto">
+                          {oticFilteredCompanies.map((company) => (
+                            <div key={company.id} className="flex items-center space-x-2">
+                              <Checkbox
+                                id={`otic-company-${company.id}`}
+                                checked={oticAssignedCompanies.includes(company.id)}
+                                onCheckedChange={() => toggleOticCompanyAssignment(company.id)}
+                              />
+                              <label
+                                htmlFor={`otic-company-${company.id}`}
+                                className="text-sm cursor-pointer flex-1"
+                              >
+                                {company.name}
+                                <span className="text-xs text-muted-foreground ml-2">({company.holding})</span>
+                              </label>
+                            </div>
+                          ))}
+                        </div>
+                        {oticAssignedCompanies.length > 0 && (
+                          <p className="text-xs text-muted-foreground">
+                            {oticAssignedCompanies.length} empresa(s) seleccionada(s)
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </>
               ) : (
                 // OTEC/EMPRESA fields
@@ -647,6 +831,24 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                       <span className="text-muted-foreground">Líder Servicio Operacional:</span>
                       <p className="font-medium">{oticLiderServicioOperacional}</p>
                     </div>
+                    {oticSelectedHolding && (
+                      <div>
+                        <span className="text-muted-foreground">Holding:</span>
+                        <p className="font-medium">{oticSelectedHolding === 'all' ? 'Todos' : oticSelectedHolding}</p>
+                      </div>
+                    )}
+                    {oticAssignedCompanies.length > 0 && (
+                      <div className="col-span-2">
+                        <span className="text-muted-foreground">Empresas Asignadas:</span>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {getOticAssignedCompanyNames().map((name) => (
+                            <Badge key={name} variant="outline" className="text-xs">
+                              {name}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="grid grid-cols-2 gap-4 text-sm">
