@@ -117,6 +117,9 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
   const [oticAssignedCompanies, setOticAssignedCompanies] = useState<string[]>([]);
   const [companySearchQuery, setCompanySearchQuery] = useState('');
   const [companySearchOpen, setCompanySearchOpen] = useState(false);
+  
+  // Checkbox to enable OTIC role fields
+  const [oticRoleFieldsEnabled, setOticRoleFieldsEnabled] = useState(false);
 
   // Reset form when modal closes
   useEffect(() => {
@@ -144,6 +147,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
       setOticSelectedHolding('');
       setOticAssignedCompanies([]);
       setCompanySearchQuery('');
+      setOticRoleFieldsEnabled(false);
     }
   }, [open]);
 
@@ -223,7 +227,8 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
   const isStep1Valid = nombres && apellidos && rut && email && userType && userProfile && (userType !== 'OTIC' || cargo);
   
   // Step 2 validation depends on user type
-  const isStep2ValidOTIC = oticEmpresa && oticCelula && oticJefeComercial && oticAnalistaComercial && oticAnalistaOperacional && oticLiderServicioEDC && oticLiderServicioOperacional;
+  // If role fields are enabled, they must be filled; if disabled, only empresa is required
+  const isStep2ValidOTIC = oticEmpresa && (!oticRoleFieldsEnabled || (oticCelula && oticJefeComercial && oticAnalistaComercial && oticAnalistaOperacional && oticLiderServicioEDC && oticLiderServicioOperacional));
   const isStep2ValidOther = selectedCompany && selectedHolding;
   const isStep2Valid = userType === 'OTIC' ? isStep2ValidOTIC : isStep2ValidOther;
 
@@ -473,11 +478,43 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                     </Select>
                   </div>
 
+                  {/* Checkbox to enable role fields */}
+                  <div className="flex items-center space-x-2 py-2">
+                    <Checkbox
+                      id="enableRoleFields"
+                      checked={oticRoleFieldsEnabled}
+                      onCheckedChange={(checked) => {
+                        setOticRoleFieldsEnabled(checked === true);
+                        // Clear role fields when disabled
+                        if (!checked) {
+                          setOticCelula('');
+                          setOticJefeComercial('');
+                          setOticAnalistaComercial('');
+                          setOticAnalistaOperacional('');
+                          setOticLiderServicioEDC('');
+                          setOticLiderServicioOperacional('');
+                        }
+                      }}
+                    />
+                    <Label 
+                      htmlFor="enableRoleFields" 
+                      className="text-sm font-medium leading-none cursor-pointer"
+                    >
+                      Habilitar asignación de roles
+                    </Label>
+                  </div>
+
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="oticCelula">Célula *</Label>
-                      <Select value={oticCelula} onValueChange={setOticCelula}>
-                        <SelectTrigger id="oticCelula">
+                      <Label htmlFor="oticCelula" className={!oticRoleFieldsEnabled ? 'text-muted-foreground' : ''}>
+                        Célula {oticRoleFieldsEnabled && '*'}
+                      </Label>
+                      <Select 
+                        value={oticCelula} 
+                        onValueChange={setOticCelula}
+                        disabled={!oticRoleFieldsEnabled}
+                      >
+                        <SelectTrigger id="oticCelula" className={!oticRoleFieldsEnabled ? 'opacity-50' : ''}>
                           <SelectValue placeholder="Seleccione una célula" />
                         </SelectTrigger>
                         <SelectContent>
@@ -491,9 +528,15 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="oticJefeComercial">Jefe Comercial *</Label>
-                      <Select value={oticJefeComercial} onValueChange={setOticJefeComercial}>
-                        <SelectTrigger id="oticJefeComercial">
+                      <Label htmlFor="oticJefeComercial" className={!oticRoleFieldsEnabled ? 'text-muted-foreground' : ''}>
+                        Jefe Comercial {oticRoleFieldsEnabled && '*'}
+                      </Label>
+                      <Select 
+                        value={oticJefeComercial} 
+                        onValueChange={setOticJefeComercial}
+                        disabled={!oticRoleFieldsEnabled}
+                      >
+                        <SelectTrigger id="oticJefeComercial" className={!oticRoleFieldsEnabled ? 'opacity-50' : ''}>
                           <SelectValue placeholder="Seleccione jefe comercial" />
                         </SelectTrigger>
                         <SelectContent>
@@ -509,9 +552,15 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="oticAnalistaComercial">Analista Comercial *</Label>
-                      <Select value={oticAnalistaComercial} onValueChange={setOticAnalistaComercial}>
-                        <SelectTrigger id="oticAnalistaComercial">
+                      <Label htmlFor="oticAnalistaComercial" className={!oticRoleFieldsEnabled ? 'text-muted-foreground' : ''}>
+                        Analista Comercial {oticRoleFieldsEnabled && '*'}
+                      </Label>
+                      <Select 
+                        value={oticAnalistaComercial} 
+                        onValueChange={setOticAnalistaComercial}
+                        disabled={!oticRoleFieldsEnabled}
+                      >
+                        <SelectTrigger id="oticAnalistaComercial" className={!oticRoleFieldsEnabled ? 'opacity-50' : ''}>
                           <SelectValue placeholder="Seleccione analista" />
                         </SelectTrigger>
                         <SelectContent>
@@ -525,9 +574,15 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="oticAnalistaOperacional">Analista Operacional *</Label>
-                      <Select value={oticAnalistaOperacional} onValueChange={setOticAnalistaOperacional}>
-                        <SelectTrigger id="oticAnalistaOperacional">
+                      <Label htmlFor="oticAnalistaOperacional" className={!oticRoleFieldsEnabled ? 'text-muted-foreground' : ''}>
+                        Analista Operacional {oticRoleFieldsEnabled && '*'}
+                      </Label>
+                      <Select 
+                        value={oticAnalistaOperacional} 
+                        onValueChange={setOticAnalistaOperacional}
+                        disabled={!oticRoleFieldsEnabled}
+                      >
+                        <SelectTrigger id="oticAnalistaOperacional" className={!oticRoleFieldsEnabled ? 'opacity-50' : ''}>
                           <SelectValue placeholder="Seleccione analista" />
                         </SelectTrigger>
                         <SelectContent>
@@ -543,9 +598,15 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="oticLiderServicioEDC">Líder Servicio EDC *</Label>
-                      <Select value={oticLiderServicioEDC} onValueChange={setOticLiderServicioEDC}>
-                        <SelectTrigger id="oticLiderServicioEDC">
+                      <Label htmlFor="oticLiderServicioEDC" className={!oticRoleFieldsEnabled ? 'text-muted-foreground' : ''}>
+                        Líder Servicio EDC {oticRoleFieldsEnabled && '*'}
+                      </Label>
+                      <Select 
+                        value={oticLiderServicioEDC} 
+                        onValueChange={setOticLiderServicioEDC}
+                        disabled={!oticRoleFieldsEnabled}
+                      >
+                        <SelectTrigger id="oticLiderServicioEDC" className={!oticRoleFieldsEnabled ? 'opacity-50' : ''}>
                           <SelectValue placeholder="Seleccione líder" />
                         </SelectTrigger>
                         <SelectContent>
@@ -559,9 +620,15 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="oticLiderServicioOperacional">Líder Servicio Operacional *</Label>
-                      <Select value={oticLiderServicioOperacional} onValueChange={setOticLiderServicioOperacional}>
-                        <SelectTrigger id="oticLiderServicioOperacional">
+                      <Label htmlFor="oticLiderServicioOperacional" className={!oticRoleFieldsEnabled ? 'text-muted-foreground' : ''}>
+                        Líder Servicio Operacional {oticRoleFieldsEnabled && '*'}
+                      </Label>
+                      <Select 
+                        value={oticLiderServicioOperacional} 
+                        onValueChange={setOticLiderServicioOperacional}
+                        disabled={!oticRoleFieldsEnabled}
+                      >
+                        <SelectTrigger id="oticLiderServicioOperacional" className={!oticRoleFieldsEnabled ? 'opacity-50' : ''}>
                           <SelectValue placeholder="Seleccione líder" />
                         </SelectTrigger>
                         <SelectContent>
