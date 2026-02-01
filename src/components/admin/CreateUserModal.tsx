@@ -116,8 +116,8 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
   const [oticSelectedHoldings, setOticSelectedHoldings] = useState<string[]>([]);
   const [oticAssignedCompanies, setOticAssignedCompanies] = useState<string[]>([]);
   const [companySearchQuery, setCompanySearchQuery] = useState('');
-  const [companySearchOpen, setCompanySearchOpen] = useState(false);
   const [holdingSearchQuery, setHoldingSearchQuery] = useState('');
+  const [oticCompanySearchQuery, setOticCompanySearchQuery] = useState('');
   
   // Checkbox to enable OTIC role fields
   const [oticRoleFieldsEnabled, setOticRoleFieldsEnabled] = useState(false);
@@ -149,6 +149,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
       setOticAssignedCompanies([]);
       setCompanySearchQuery('');
       setHoldingSearchQuery('');
+      setOticCompanySearchQuery('');
       setOticRoleFieldsEnabled(false);
     }
   }, [open]);
@@ -216,7 +217,6 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
     if (!oticAssignedCompanies.includes(companyId)) {
       setOticAssignedCompanies((prev) => [...prev, companyId]);
     }
-    setCompanySearchOpen(false);
     setCompanySearchQuery('');
   };
 
@@ -701,23 +701,49 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                               : 'Seleccionar Todas'}
                           </Button>
                         </div>
-                        <div className="border rounded-md p-3 space-y-2 max-h-40 overflow-y-auto">
-                          {oticFilteredCompanies.map((company) => (
-                            <div key={company.id} className="flex items-center space-x-2">
-                              <Checkbox
-                                id={`otic-company-${company.id}`}
-                                checked={oticAssignedCompanies.includes(company.id)}
-                                onCheckedChange={() => toggleOticCompanyAssignment(company.id)}
+                        <div className="border rounded-md bg-background">
+                          {/* Search input */}
+                          <div className="p-2 border-b">
+                            <div className="relative">
+                              <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                              <Input
+                                placeholder="Buscar empresa..."
+                                value={oticCompanySearchQuery}
+                                onChange={(e) => setOticCompanySearchQuery(e.target.value)}
+                                className="pl-8 h-8 text-sm"
                               />
-                              <label
-                                htmlFor={`otic-company-${company.id}`}
-                                className="text-sm cursor-pointer flex-1"
-                              >
-                                {company.name}
-                                <span className="text-xs text-muted-foreground ml-2">({company.holding})</span>
-                              </label>
                             </div>
-                          ))}
+                          </div>
+                          {/* Companies list with scroll */}
+                          <div className="p-2 max-h-48 overflow-y-auto space-y-1">
+                            {oticFilteredCompanies
+                              .filter((company) =>
+                                company.name.toLowerCase().includes(oticCompanySearchQuery.toLowerCase())
+                              )
+                              .map((company) => (
+                                <div key={company.id} className="flex items-center space-x-2 py-1">
+                                  <Checkbox
+                                    id={`otic-company-${company.id}`}
+                                    checked={oticAssignedCompanies.includes(company.id)}
+                                    onCheckedChange={() => toggleOticCompanyAssignment(company.id)}
+                                  />
+                                  <label
+                                    htmlFor={`otic-company-${company.id}`}
+                                    className="text-sm cursor-pointer flex-1"
+                                  >
+                                    {company.name}
+                                    <span className="text-xs text-muted-foreground ml-2">({company.holding})</span>
+                                  </label>
+                                </div>
+                              ))}
+                            {oticFilteredCompanies.filter((c) =>
+                              c.name.toLowerCase().includes(oticCompanySearchQuery.toLowerCase())
+                            ).length === 0 && (
+                              <p className="text-sm text-muted-foreground text-center py-2">
+                                No se encontraron empresas
+                              </p>
+                            )}
+                          </div>
                         </div>
                         {oticAssignedCompanies.length > 0 && (
                           <p className="text-xs text-muted-foreground">
