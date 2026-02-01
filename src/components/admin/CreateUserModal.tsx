@@ -119,6 +119,10 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
   const [holdingSearchQuery, setHoldingSearchQuery] = useState('');
   const [oticCompanySearchQuery, setOticCompanySearchQuery] = useState('');
   
+  // Search queries for OTEC/EMPRESA
+  const [otecHoldingSearchQuery, setOtecHoldingSearchQuery] = useState('');
+  const [otecCompanySearchQuery, setOtecCompanySearchQuery] = useState('');
+  
   // Checkbox to enable OTIC role fields
   const [oticRoleFieldsEnabled, setOticRoleFieldsEnabled] = useState(false);
 
@@ -150,6 +154,8 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
       setCompanySearchQuery('');
       setHoldingSearchQuery('');
       setOticCompanySearchQuery('');
+      setOtecHoldingSearchQuery('');
+      setOtecCompanySearchQuery('');
       setOticRoleFieldsEnabled(false);
     }
   }, [open]);
@@ -231,7 +237,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
   // Step 2 validation depends on user type
   // If role fields are enabled, they must be filled; if disabled, only empresa is required
   const isStep2ValidOTIC = oticEmpresa && (!oticRoleFieldsEnabled || (oticCelula && oticJefeComercial && oticAnalistaComercial && oticAnalistaOperacional && oticLiderServicioEDC && oticLiderServicioOperacional));
-  const isStep2ValidOther = selectedCompany && selectedHolding;
+  const isStep2ValidOther = selectedHolding && assignedCompanies.length > 0 && selectedCompany;
   const isStep2Valid = userType === 'OTIC' ? isStep2ValidOTIC : isStep2ValidOther;
 
   const handleNext = () => {
@@ -755,76 +761,161 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                   </div>
                 </>
               ) : (
-                // OTEC/EMPRESA fields
+                // OTEC/EMPRESA fields - homologated with OTIC pattern
                 <>
-                  <div className="space-y-2">
-                    <Label htmlFor="empresa">Empresa Principal *</Label>
-                    <Select value={selectedCompany} onValueChange={setSelectedCompany}>
-                      <SelectTrigger id="empresa">
-                        <SelectValue placeholder="Seleccione una empresa" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {mockCompanies.map((company) => (
-                          <SelectItem key={company.id} value={company.id}>
-                            {company.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="holding">Holding *</Label>
-                    <Select value={selectedHolding} onValueChange={setSelectedHolding}>
-                      <SelectTrigger id="holding">
-                        <SelectValue placeholder="Seleccione un holding" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {mockHoldings.map((holding) => (
-                          <SelectItem key={holding} value={holding}>
-                            {holding}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <Label>Asignar Empresas</Label>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={handleSelectAllCompanies}
-                      >
-                        {assignedCompanies.length === mockCompanies.length
-                          ? 'Deseleccionar Todas'
-                          : 'Seleccionar Todas'}
-                      </Button>
-                    </div>
-                    <div className="border rounded-md p-3 space-y-2 max-h-40 overflow-y-auto">
-                      {mockCompanies.map((company) => (
-                        <div key={company.id} className="flex items-center space-x-2">
-                          <Checkbox
-                            id={`company-${company.id}`}
-                            checked={assignedCompanies.includes(company.id)}
-                            onCheckedChange={() => toggleCompanyAssignment(company.id)}
-                          />
-                          <label
-                            htmlFor={`company-${company.id}`}
-                            className="text-sm cursor-pointer"
-                          >
-                            {company.name}
-                          </label>
+                  <div className="space-y-4">
+                    {/* Holding multi-select with search */}
+                    <div className="space-y-2">
+                      <Label>Holding *</Label>
+                      <div className="border rounded-md bg-background">
+                        {/* Search input */}
+                        <div className="p-2 border-b">
+                          <div className="relative">
+                            <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            <Input
+                              placeholder="Buscar holding..."
+                              value={otecHoldingSearchQuery}
+                              onChange={(e) => setOtecHoldingSearchQuery(e.target.value)}
+                              className="pl-8 h-8 text-sm"
+                            />
+                          </div>
                         </div>
-                      ))}
+                        {/* Holdings list with scroll */}
+                        <div className="p-2 max-h-48 overflow-y-auto">
+                          {mockHoldings
+                            .filter((holding) => 
+                              holding.toLowerCase().includes(otecHoldingSearchQuery.toLowerCase())
+                            )
+                            .map((holding) => (
+                              <div key={holding} className="flex items-center space-x-2 py-1">
+                                <Checkbox
+                                  id={`otec-holding-${holding}`}
+                                  checked={selectedHolding === holding}
+                                  onCheckedChange={(checked) => {
+                                    if (checked) {
+                                      setSelectedHolding(holding);
+                                    } else {
+                                      setSelectedHolding('');
+                                    }
+                                  }}
+                                />
+                                <label
+                                  htmlFor={`otec-holding-${holding}`}
+                                  className="text-sm cursor-pointer flex-1"
+                                >
+                                  {holding}
+                                </label>
+                              </div>
+                            ))}
+                          {mockHoldings.filter((h) => 
+                            h.toLowerCase().includes(otecHoldingSearchQuery.toLowerCase())
+                          ).length === 0 && (
+                            <p className="text-sm text-muted-foreground text-center py-2">
+                              No se encontraron holdings
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      {selectedHolding && (
+                        <div className="flex flex-wrap gap-1 mt-2">
+                          <Badge variant="secondary" className="text-xs">
+                            {selectedHolding}
+                          </Badge>
+                        </div>
+                      )}
                     </div>
+
+                    {/* Empresas Asignadas multi-select with search */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <Label>Empresas Asignadas</Label>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={handleSelectAllCompanies}
+                        >
+                          {assignedCompanies.length === mockCompanies.length
+                            ? 'Deseleccionar Todas'
+                            : 'Seleccionar Todas'}
+                        </Button>
+                      </div>
+                      <div className="border rounded-md bg-background">
+                        {/* Search input */}
+                        <div className="p-2 border-b">
+                          <div className="relative">
+                            <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            <Input
+                              placeholder="Buscar empresa..."
+                              value={otecCompanySearchQuery}
+                              onChange={(e) => setOtecCompanySearchQuery(e.target.value)}
+                              className="pl-8 h-8 text-sm"
+                            />
+                          </div>
+                        </div>
+                        {/* Companies list with scroll */}
+                        <div className="p-2 max-h-48 overflow-y-auto space-y-1">
+                          {mockCompanies
+                            .filter((company) =>
+                              company.name.toLowerCase().includes(otecCompanySearchQuery.toLowerCase())
+                            )
+                            .map((company) => (
+                              <div key={company.id} className="flex items-center space-x-2 py-1">
+                                <Checkbox
+                                  id={`otec-company-${company.id}`}
+                                  checked={assignedCompanies.includes(company.id)}
+                                  onCheckedChange={() => toggleCompanyAssignment(company.id)}
+                                />
+                                <label
+                                  htmlFor={`otec-company-${company.id}`}
+                                  className="text-sm cursor-pointer flex-1"
+                                >
+                                  {company.name}
+                                  <span className="text-xs text-muted-foreground ml-2">({company.holding})</span>
+                                </label>
+                              </div>
+                            ))}
+                          {mockCompanies.filter((c) =>
+                            c.name.toLowerCase().includes(otecCompanySearchQuery.toLowerCase())
+                          ).length === 0 && (
+                            <p className="text-sm text-muted-foreground text-center py-2">
+                              No se encontraron empresas
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      {assignedCompanies.length > 0 && (
+                        <p className="text-xs text-muted-foreground">
+                          {assignedCompanies.length} empresa(s) seleccionada(s)
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Empresa Principal - now as single-select from assigned companies */}
+                    {assignedCompanies.length > 0 && (
+                      <div className="space-y-2">
+                        <Label htmlFor="empresa">Empresa Principal *</Label>
+                        <Select value={selectedCompany} onValueChange={setSelectedCompany}>
+                          <SelectTrigger id="empresa">
+                            <SelectValue placeholder="Seleccione la empresa principal" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {mockCompanies
+                              .filter((c) => assignedCompanies.includes(c.id))
+                              .map((company) => (
+                                <SelectItem key={company.id} value={company.id}>
+                                  {company.name}
+                                </SelectItem>
+                              ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
                   </div>
 
                   {/* Auto-filled data */}
                   {selectedCompany && (
-                    <div className="bg-muted/50 rounded-lg p-4 space-y-3">
+                    <div className="bg-muted/50 rounded-lg p-4 space-y-3 mt-4">
                       <h4 className="font-medium text-sm text-muted-foreground">
                         Información de la empresa seleccionada
                       </h4>
