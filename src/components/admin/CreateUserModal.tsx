@@ -901,33 +901,37 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                 {userType === 'OTIC' ? (
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                      <span className="text-muted-foreground">Empresa:</span>
+                      <span className="text-muted-foreground">Empresa a la que pertenece:</span>
                       <p className="font-medium">{oticEmpresa}</p>
                     </div>
-                    <div>
-                      <span className="text-muted-foreground">Célula:</span>
-                      <p className="font-medium">{oticCelula}</p>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">Jefe Comercial:</span>
-                      <p className="font-medium">{oticJefeComercial}</p>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">Analista Comercial:</span>
-                      <p className="font-medium">{oticAnalistaComercial}</p>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">Analista Operacional:</span>
-                      <p className="font-medium">{oticAnalistaOperacional}</p>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">Líder Servicio EDC:</span>
-                      <p className="font-medium">{oticLiderServicioEDC}</p>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">Líder Servicio Operacional:</span>
-                      <p className="font-medium">{oticLiderServicioOperacional}</p>
-                    </div>
+                    {oticRoleFieldsEnabled && (
+                      <>
+                        <div>
+                          <span className="text-muted-foreground">Célula:</span>
+                          <p className="font-medium">{oticCelula}</p>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Jefe Comercial:</span>
+                          <p className="font-medium">{oticJefeComercial}</p>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Analista Comercial:</span>
+                          <p className="font-medium">{oticAnalistaComercial}</p>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Analista Operacional:</span>
+                          <p className="font-medium">{oticAnalistaOperacional}</p>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Líder Servicio EDC:</span>
+                          <p className="font-medium">{oticLiderServicioEDC}</p>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Líder Servicio Operacional:</span>
+                          <p className="font-medium">{oticLiderServicioOperacional}</p>
+                        </div>
+                      </>
+                    )}
                     {oticSelectedHoldings.length > 0 && (
                       <div className="col-span-2">
                         <span className="text-muted-foreground">Holdings:</span>
