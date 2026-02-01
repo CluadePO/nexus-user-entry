@@ -500,147 +500,115 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                       htmlFor="enableRoleFields" 
                       className="text-sm font-medium leading-none cursor-pointer"
                     >
-                      Habilitar asignación de roles
+                      Asignación Operacional
                     </Label>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="oticCelula" className={!oticRoleFieldsEnabled ? 'text-muted-foreground' : ''}>
-                        Célula {oticRoleFieldsEnabled && '*'}
-                      </Label>
-                      <Select 
-                        value={oticCelula} 
-                        onValueChange={setOticCelula}
-                        disabled={!oticRoleFieldsEnabled}
-                      >
-                        <SelectTrigger id="oticCelula" className={!oticRoleFieldsEnabled ? 'opacity-50' : ''}>
-                          <SelectValue placeholder="Seleccione una célula" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {mockCelulas.map((celula) => (
-                            <SelectItem key={celula} value={celula}>
-                              {celula}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+                  {oticRoleFieldsEnabled && (
+                    <>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="oticCelula">Célula *</Label>
+                          <Select value={oticCelula} onValueChange={setOticCelula}>
+                            <SelectTrigger id="oticCelula">
+                              <SelectValue placeholder="Seleccione una célula" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {mockCelulas.map((celula) => (
+                                <SelectItem key={celula} value={celula}>
+                                  {celula}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="oticJefeComercial" className={!oticRoleFieldsEnabled ? 'text-muted-foreground' : ''}>
-                        Jefe Comercial {oticRoleFieldsEnabled && '*'}
-                      </Label>
-                      <Select 
-                        value={oticJefeComercial} 
-                        onValueChange={setOticJefeComercial}
-                        disabled={!oticRoleFieldsEnabled}
-                      >
-                        <SelectTrigger id="oticJefeComercial" className={!oticRoleFieldsEnabled ? 'opacity-50' : ''}>
-                          <SelectValue placeholder="Seleccione jefe comercial" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {mockJefesComerciales.map((jefe) => (
-                            <SelectItem key={jefe} value={jefe}>
-                              {jefe}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="oticJefeComercial">Jefe Comercial *</Label>
+                          <Select value={oticJefeComercial} onValueChange={setOticJefeComercial}>
+                            <SelectTrigger id="oticJefeComercial">
+                              <SelectValue placeholder="Seleccione jefe comercial" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {mockJefesComerciales.map((jefe) => (
+                                <SelectItem key={jefe} value={jefe}>
+                                  {jefe}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="oticAnalistaComercial" className={!oticRoleFieldsEnabled ? 'text-muted-foreground' : ''}>
-                        Analista Comercial {oticRoleFieldsEnabled && '*'}
-                      </Label>
-                      <Select 
-                        value={oticAnalistaComercial} 
-                        onValueChange={setOticAnalistaComercial}
-                        disabled={!oticRoleFieldsEnabled}
-                      >
-                        <SelectTrigger id="oticAnalistaComercial" className={!oticRoleFieldsEnabled ? 'opacity-50' : ''}>
-                          <SelectValue placeholder="Seleccione analista" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {mockPersonasAsignables.map((persona) => (
-                            <SelectItem key={persona} value={persona}>
-                              {persona}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="oticAnalistaComercial">Analista Comercial *</Label>
+                          <Select value={oticAnalistaComercial} onValueChange={setOticAnalistaComercial}>
+                            <SelectTrigger id="oticAnalistaComercial">
+                              <SelectValue placeholder="Seleccione analista" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {mockPersonasAsignables.map((persona) => (
+                                <SelectItem key={persona} value={persona}>
+                                  {persona}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="oticAnalistaOperacional" className={!oticRoleFieldsEnabled ? 'text-muted-foreground' : ''}>
-                        Analista Operacional {oticRoleFieldsEnabled && '*'}
-                      </Label>
-                      <Select 
-                        value={oticAnalistaOperacional} 
-                        onValueChange={setOticAnalistaOperacional}
-                        disabled={!oticRoleFieldsEnabled}
-                      >
-                        <SelectTrigger id="oticAnalistaOperacional" className={!oticRoleFieldsEnabled ? 'opacity-50' : ''}>
-                          <SelectValue placeholder="Seleccione analista" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {mockPersonasAsignables.map((persona) => (
-                            <SelectItem key={persona} value={persona}>
-                              {persona}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="oticAnalistaOperacional">Analista Operacional *</Label>
+                          <Select value={oticAnalistaOperacional} onValueChange={setOticAnalistaOperacional}>
+                            <SelectTrigger id="oticAnalistaOperacional">
+                              <SelectValue placeholder="Seleccione analista" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {mockPersonasAsignables.map((persona) => (
+                                <SelectItem key={persona} value={persona}>
+                                  {persona}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="oticLiderServicioEDC" className={!oticRoleFieldsEnabled ? 'text-muted-foreground' : ''}>
-                        Líder Servicio EDC {oticRoleFieldsEnabled && '*'}
-                      </Label>
-                      <Select 
-                        value={oticLiderServicioEDC} 
-                        onValueChange={setOticLiderServicioEDC}
-                        disabled={!oticRoleFieldsEnabled}
-                      >
-                        <SelectTrigger id="oticLiderServicioEDC" className={!oticRoleFieldsEnabled ? 'opacity-50' : ''}>
-                          <SelectValue placeholder="Seleccione líder" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {mockPersonasAsignables.map((persona) => (
-                            <SelectItem key={persona} value={persona}>
-                              {persona}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="oticLiderServicioEDC">Líder Servicio EDC *</Label>
+                          <Select value={oticLiderServicioEDC} onValueChange={setOticLiderServicioEDC}>
+                            <SelectTrigger id="oticLiderServicioEDC">
+                              <SelectValue placeholder="Seleccione líder" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {mockPersonasAsignables.map((persona) => (
+                                <SelectItem key={persona} value={persona}>
+                                  {persona}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="oticLiderServicioOperacional" className={!oticRoleFieldsEnabled ? 'text-muted-foreground' : ''}>
-                        Líder Servicio Operacional {oticRoleFieldsEnabled && '*'}
-                      </Label>
-                      <Select 
-                        value={oticLiderServicioOperacional} 
-                        onValueChange={setOticLiderServicioOperacional}
-                        disabled={!oticRoleFieldsEnabled}
-                      >
-                        <SelectTrigger id="oticLiderServicioOperacional" className={!oticRoleFieldsEnabled ? 'opacity-50' : ''}>
-                          <SelectValue placeholder="Seleccione líder" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {mockPersonasAsignables.map((persona) => (
-                            <SelectItem key={persona} value={persona}>
-                              {persona}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="oticLiderServicioOperacional">Líder Servicio Operacional *</Label>
+                          <Select value={oticLiderServicioOperacional} onValueChange={setOticLiderServicioOperacional}>
+                            <SelectTrigger id="oticLiderServicioOperacional">
+                              <SelectValue placeholder="Seleccione líder" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {mockPersonasAsignables.map((persona) => (
+                                <SelectItem key={persona} value={persona}>
+                                  {persona}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                    </>
+                  )}
 
                   {/* Holding and Company Assignment for OTIC */}
                   <div className="border-t pt-4 mt-4">
