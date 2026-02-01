@@ -1057,18 +1057,6 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                       <span className="text-muted-foreground">Holding:</span>
                       <p className="font-medium">{selectedHolding}</p>
                     </div>
-                    <div>
-                      <span className="text-muted-foreground">Segmento:</span>
-                      <Badge variant="secondary">{autoFilledData.segmento}</Badge>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">Jefe Comercial:</span>
-                      <p className="font-medium">{autoFilledData.jefeComercial}</p>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">Célula Operacional:</span>
-                      <p className="font-medium">{autoFilledData.celulaOperacional}</p>
-                    </div>
                     {assignedCompanies.length > 0 && (
                       <div className="col-span-2">
                         <span className="text-muted-foreground">Empresas Asignadas:</span>
