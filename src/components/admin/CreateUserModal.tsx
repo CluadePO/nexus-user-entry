@@ -634,61 +634,6 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                         </Select>
                       </div>
 
-                      {/* Company Search */}
-                      <div className="space-y-2">
-                        <Label>Buscar Empresa</Label>
-                        <Popover open={companySearchOpen} onOpenChange={setCompanySearchOpen}>
-                          <PopoverTrigger asChild>
-                            <Button
-                              variant="outline"
-                              role="combobox"
-                              aria-expanded={companySearchOpen}
-                              className="w-full justify-between"
-                            >
-                              <span className="flex items-center gap-2">
-                                <Search className="h-4 w-4 text-muted-foreground" />
-                                Buscar y agregar empresa...
-                              </span>
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-full p-0" align="start">
-                            <Command>
-                              <CommandInput 
-                                placeholder="Buscar empresa..." 
-                                value={companySearchQuery}
-                                onValueChange={setCompanySearchQuery}
-                              />
-                              <CommandList>
-                                <CommandEmpty>No se encontraron empresas.</CommandEmpty>
-                                <CommandGroup>
-                                  {searchedCompanies.map((company) => (
-                                    <CommandItem
-                                      key={company.id}
-                                      value={company.name}
-                                      onSelect={() => handleAddCompanyFromSearch(company.id)}
-                                      className="cursor-pointer"
-                                    >
-                                      <Check
-                                        className={cn(
-                                          "mr-2 h-4 w-4",
-                                          oticAssignedCompanies.includes(company.id)
-                                            ? "opacity-100"
-                                            : "opacity-0"
-                                        )}
-                                      />
-                                      <div className="flex flex-col">
-                                        <span>{company.name}</span>
-                                        <span className="text-xs text-muted-foreground">{company.holding}</span>
-                                      </div>
-                                    </CommandItem>
-                                  ))}
-                                </CommandGroup>
-                              </CommandList>
-                            </Command>
-                          </PopoverContent>
-                        </Popover>
-                      </div>
-
                       {/* Companies list with checkboxes */}
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
