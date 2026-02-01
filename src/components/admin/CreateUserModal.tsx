@@ -856,6 +856,45 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
             <div className="space-y-6">
               <div className="bg-muted/30 rounded-lg p-4 space-y-4">
                 <h4 className="font-semibold text-base flex items-center gap-2">
+                  <User className="h-4 w-4" />
+                  Información del Usuario
+                </h4>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-muted-foreground">Perfil:</span>
+                    <p className="font-medium">{userProfile}</p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">RUT:</span>
+                    <p className="font-medium font-mono">{rut}</p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Nombres:</span>
+                    <p className="font-medium">{nombres}</p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Apellidos:</span>
+                    <p className="font-medium">{apellidos}</p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Email:</span>
+                    <p className="font-medium">{email}</p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Tipo de Usuario:</span>
+                    <Badge>{userType}</Badge>
+                  </div>
+                  {cargo && (
+                    <div>
+                      <span className="text-muted-foreground">Cargo:</span>
+                      <p className="font-medium">{cargo}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="bg-muted/30 rounded-lg p-4 space-y-4">
+                <h4 className="font-semibold text-base flex items-center gap-2">
                   <Building2 className="h-4 w-4" />
                   Información de Empresa
                 </h4>
@@ -950,45 +989,6 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                     )}
                   </div>
                 )}
-              </div>
-
-              <div className="bg-muted/30 rounded-lg p-4 space-y-4">
-                <h4 className="font-semibold text-base flex items-center gap-2">
-                  <User className="h-4 w-4" />
-                  Información del Usuario
-                </h4>
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <span className="text-muted-foreground">Perfil:</span>
-                    <p className="font-medium">{userProfile}</p>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">RUT:</span>
-                    <p className="font-medium font-mono">{rut}</p>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">Nombres:</span>
-                    <p className="font-medium">{nombres}</p>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">Apellidos:</span>
-                    <p className="font-medium">{apellidos}</p>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">Email:</span>
-                    <p className="font-medium">{email}</p>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground">Tipo de Usuario:</span>
-                    <Badge>{userType}</Badge>
-                  </div>
-                  {cargo && (
-                    <div>
-                      <span className="text-muted-foreground">Cargo:</span>
-                      <p className="font-medium">{cargo}</p>
-                    </div>
-                  )}
-                </div>
               </div>
             </div>
           )}
