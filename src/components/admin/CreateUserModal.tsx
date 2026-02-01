@@ -113,7 +113,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
   const [oticLiderServicioOperacional, setOticLiderServicioOperacional] = useState<string>('');
 
   // OTIC Holding and assigned companies
-  const [oticSelectedHolding, setOticSelectedHolding] = useState<string>('');
+  const [oticSelectedHoldings, setOticSelectedHoldings] = useState<string[]>([]);
   const [oticAssignedCompanies, setOticAssignedCompanies] = useState<string[]>([]);
   const [companySearchQuery, setCompanySearchQuery] = useState('');
   const [companySearchOpen, setCompanySearchOpen] = useState(false);
@@ -144,7 +144,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
       setOticAnalistaOperacional('');
       setOticLiderServicioEDC('');
       setOticLiderServicioOperacional('');
-      setOticSelectedHolding('');
+      setOticSelectedHoldings([]);
       setOticAssignedCompanies([]);
       setCompanySearchQuery('');
       setOticRoleFieldsEnabled(false);
@@ -183,9 +183,9 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
     );
   };
 
-  // OTIC companies filtered by holding
-  const oticFilteredCompanies = oticSelectedHolding
-    ? mockCompanies.filter((c) => c.holding === oticSelectedHolding)
+  // OTIC companies filtered by selected holdings
+  const oticFilteredCompanies = oticSelectedHoldings.length > 0
+    ? mockCompanies.filter((c) => oticSelectedHoldings.includes(c.holding))
     : mockCompanies;
 
   // Search filter for companies
@@ -616,22 +616,46 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                     
                     <div className="space-y-4">
                       <div className="space-y-2">
-                        <Label htmlFor="oticHolding">Holding</Label>
-                        <Select value={oticSelectedHolding} onValueChange={(value) => {
-                          setOticSelectedHolding(value);
-                        }}>
-                          <SelectTrigger id="oticHolding">
-                            <SelectValue placeholder="Seleccione un holding" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all">Todos los Holdings</SelectItem>
-                            {mockHoldings.map((holding) => (
-                              <SelectItem key={holding} value={holding}>
+                        <Label>Holding</Label>
+                        <div className="border rounded-md p-3 space-y-2 max-h-32 overflow-y-auto bg-background">
+                          {mockHoldings.map((holding) => (
+                            <div key={holding} className="flex items-center space-x-2">
+                              <Checkbox
+                                id={`otic-holding-${holding}`}
+                                checked={oticSelectedHoldings.includes(holding)}
+                                onCheckedChange={(checked) => {
+                                  if (checked) {
+                                    setOticSelectedHoldings((prev) => [...prev, holding]);
+                                  } else {
+                                    setOticSelectedHoldings((prev) => prev.filter((h) => h !== holding));
+                                    // Also remove companies from the unselected holding
+                                    const companiesFromHolding = mockCompanies
+                                      .filter((c) => c.holding === holding)
+                                      .map((c) => c.id);
+                                    setOticAssignedCompanies((prev) => 
+                                      prev.filter((id) => !companiesFromHolding.includes(id))
+                                    );
+                                  }
+                                }}
+                              />
+                              <label
+                                htmlFor={`otic-holding-${holding}`}
+                                className="text-sm cursor-pointer flex-1"
+                              >
                                 {holding}
-                              </SelectItem>
+                              </label>
+                            </div>
+                          ))}
+                        </div>
+                        {oticSelectedHoldings.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mt-2">
+                            {oticSelectedHoldings.map((holding) => (
+                              <Badge key={holding} variant="secondary" className="text-xs">
+                                {holding}
+                              </Badge>
                             ))}
-                          </SelectContent>
-                        </Select>
+                          </div>
+                        )}
                       </div>
 
                       {/* Companies list with checkboxes */}
@@ -811,10 +835,16 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                       <span className="text-muted-foreground">Líder Servicio Operacional:</span>
                       <p className="font-medium">{oticLiderServicioOperacional}</p>
                     </div>
-                    {oticSelectedHolding && (
-                      <div>
-                        <span className="text-muted-foreground">Holding:</span>
-                        <p className="font-medium">{oticSelectedHolding === 'all' ? 'Todos' : oticSelectedHolding}</p>
+                    {oticSelectedHoldings.length > 0 && (
+                      <div className="col-span-2">
+                        <span className="text-muted-foreground">Holdings:</span>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {oticSelectedHoldings.map((holding) => (
+                            <Badge key={holding} variant="outline" className="text-xs">
+                              {holding}
+                            </Badge>
+                          ))}
+                        </div>
                       </div>
                     )}
                     {oticAssignedCompanies.length > 0 && (
