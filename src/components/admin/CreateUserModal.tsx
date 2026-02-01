@@ -117,6 +117,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
   const [oticAssignedCompanies, setOticAssignedCompanies] = useState<string[]>([]);
   const [companySearchQuery, setCompanySearchQuery] = useState('');
   const [companySearchOpen, setCompanySearchOpen] = useState(false);
+  const [holdingSearchQuery, setHoldingSearchQuery] = useState('');
   
   // Checkbox to enable OTIC role fields
   const [oticRoleFieldsEnabled, setOticRoleFieldsEnabled] = useState(false);
@@ -147,6 +148,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
       setOticSelectedHoldings([]);
       setOticAssignedCompanies([]);
       setCompanySearchQuery('');
+      setHoldingSearchQuery('');
       setOticRoleFieldsEnabled(false);
     }
   }, [open]);
@@ -617,35 +619,61 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                     <div className="space-y-4">
                       <div className="space-y-2">
                         <Label>Holding</Label>
-                        <div className="border rounded-md p-3 space-y-2 max-h-32 overflow-y-auto bg-background">
-                          {mockHoldings.map((holding) => (
-                            <div key={holding} className="flex items-center space-x-2">
-                              <Checkbox
-                                id={`otic-holding-${holding}`}
-                                checked={oticSelectedHoldings.includes(holding)}
-                                onCheckedChange={(checked) => {
-                                  if (checked) {
-                                    setOticSelectedHoldings((prev) => [...prev, holding]);
-                                  } else {
-                                    setOticSelectedHoldings((prev) => prev.filter((h) => h !== holding));
-                                    // Also remove companies from the unselected holding
-                                    const companiesFromHolding = mockCompanies
-                                      .filter((c) => c.holding === holding)
-                                      .map((c) => c.id);
-                                    setOticAssignedCompanies((prev) => 
-                                      prev.filter((id) => !companiesFromHolding.includes(id))
-                                    );
-                                  }
-                                }}
+                        <div className="border rounded-md bg-background">
+                          {/* Search input */}
+                          <div className="p-2 border-b">
+                            <div className="relative">
+                              <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                              <Input
+                                placeholder="Buscar holding..."
+                                value={holdingSearchQuery}
+                                onChange={(e) => setHoldingSearchQuery(e.target.value)}
+                                className="pl-8 h-8 text-sm"
                               />
-                              <label
-                                htmlFor={`otic-holding-${holding}`}
-                                className="text-sm cursor-pointer flex-1"
-                              >
-                                {holding}
-                              </label>
                             </div>
-                          ))}
+                          </div>
+                          {/* Holdings list with scroll */}
+                          <div className="p-2 max-h-48 overflow-y-auto">
+                            {mockHoldings
+                              .filter((holding) => 
+                                holding.toLowerCase().includes(holdingSearchQuery.toLowerCase())
+                              )
+                              .map((holding) => (
+                                <div key={holding} className="flex items-center space-x-2 py-1">
+                                  <Checkbox
+                                    id={`otic-holding-${holding}`}
+                                    checked={oticSelectedHoldings.includes(holding)}
+                                    onCheckedChange={(checked) => {
+                                      if (checked) {
+                                        setOticSelectedHoldings((prev) => [...prev, holding]);
+                                      } else {
+                                        setOticSelectedHoldings((prev) => prev.filter((h) => h !== holding));
+                                        // Also remove companies from the unselected holding
+                                        const companiesFromHolding = mockCompanies
+                                          .filter((c) => c.holding === holding)
+                                          .map((c) => c.id);
+                                        setOticAssignedCompanies((prev) => 
+                                          prev.filter((id) => !companiesFromHolding.includes(id))
+                                        );
+                                      }
+                                    }}
+                                  />
+                                  <label
+                                    htmlFor={`otic-holding-${holding}`}
+                                    className="text-sm cursor-pointer flex-1"
+                                  >
+                                    {holding}
+                                  </label>
+                                </div>
+                              ))}
+                            {mockHoldings.filter((h) => 
+                              h.toLowerCase().includes(holdingSearchQuery.toLowerCase())
+                            ).length === 0 && (
+                              <p className="text-sm text-muted-foreground text-center py-2">
+                                No se encontraron holdings
+                              </p>
+                            )}
+                          </div>
                         </div>
                         {oticSelectedHoldings.length > 0 && (
                           <div className="flex flex-wrap gap-1 mt-2">
