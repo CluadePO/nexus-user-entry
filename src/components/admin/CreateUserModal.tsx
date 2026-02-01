@@ -239,7 +239,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
   // Step 2 validation depends on user type
   // If role fields are enabled, they must be filled; if disabled, only empresa is required
   const isStep2ValidOTIC = oticEmpresa && (!oticRoleFieldsEnabled || (oticCelula && oticJefeComercial && oticAnalistaComercial && oticAnalistaOperacional && oticLiderServicioEDC && oticLiderServicioOperacional));
-  const isStep2ValidOther = empresaPertenece && selectedHolding && assignedCompanies.length > 0 && selectedCompany;
+  const isStep2ValidOther = empresaPertenece && selectedHolding && assignedCompanies.length > 0;
   const isStep2Valid = userType === 'OTIC' ? isStep2ValidOTIC : isStep2ValidOther;
 
   const handleNext = () => {
@@ -910,26 +910,6 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                       )}
                     </div>
 
-                    {/* Empresa Principal - now as single-select from assigned companies */}
-                    {assignedCompanies.length > 0 && (
-                      <div className="space-y-2">
-                        <Label htmlFor="empresa">Empresa Principal *</Label>
-                        <Select value={selectedCompany} onValueChange={setSelectedCompany}>
-                          <SelectTrigger id="empresa">
-                            <SelectValue placeholder="Seleccione la empresa principal" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {mockCompanies
-                              .filter((c) => assignedCompanies.includes(c.id))
-                              .map((company) => (
-                                <SelectItem key={company.id} value={company.id}>
-                                  {company.name}
-                                </SelectItem>
-                              ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    )}
                   </div>
 
                   {/* Auto-filled data */}
@@ -1076,10 +1056,6 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                     <div>
                       <span className="text-muted-foreground">Holding:</span>
                       <p className="font-medium">{selectedHolding}</p>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">Empresa Principal:</span>
-                      <p className="font-medium">{getSelectedCompanyName()}</p>
                     </div>
                     <div>
                       <span className="text-muted-foreground">Segmento:</span>
