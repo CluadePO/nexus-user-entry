@@ -97,6 +97,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
   const [selectedCompany, setSelectedCompany] = useState<string>('');
   const [selectedHolding, setSelectedHolding] = useState<string>('');
   const [assignedCompanies, setAssignedCompanies] = useState<string[]>([]);
+  const [empresaPertenece, setEmpresaPertenece] = useState<string>(''); // Empresa a la que pertenece for OTEC/EMPRESA
   const [autoFilledData, setAutoFilledData] = useState({
     segmento: '',
     jefeComercial: '',
@@ -133,6 +134,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
       setSelectedCompany('');
       setSelectedHolding('');
       setAssignedCompanies([]);
+      setEmpresaPertenece('');
       setAutoFilledData({ segmento: '', jefeComercial: '', celulaOperacional: '' });
       setUserProfile('');
       setRut('');
@@ -237,7 +239,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
   // Step 2 validation depends on user type
   // If role fields are enabled, they must be filled; if disabled, only empresa is required
   const isStep2ValidOTIC = oticEmpresa && (!oticRoleFieldsEnabled || (oticCelula && oticJefeComercial && oticAnalistaComercial && oticAnalistaOperacional && oticLiderServicioEDC && oticLiderServicioOperacional));
-  const isStep2ValidOther = selectedHolding && assignedCompanies.length > 0 && selectedCompany;
+  const isStep2ValidOther = empresaPertenece && selectedHolding && assignedCompanies.length > 0 && selectedCompany;
   const isStep2Valid = userType === 'OTIC' ? isStep2ValidOTIC : isStep2ValidOther;
 
   const handleNext = () => {
@@ -764,6 +766,23 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                 // OTEC/EMPRESA fields - homologated with OTIC pattern
                 <>
                   <div className="space-y-4">
+                    {/* Empresa a la que pertenece */}
+                    <div className="space-y-2">
+                      <Label htmlFor="empresaPertenece">Empresa a la que pertenece *</Label>
+                      <Select value={empresaPertenece} onValueChange={setEmpresaPertenece}>
+                        <SelectTrigger id="empresaPertenece">
+                          <SelectValue placeholder="Seleccione una empresa" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {mockCompanies.map((company) => (
+                            <SelectItem key={company.id} value={company.name}>
+                              {company.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
                     {/* Holding multi-select with search */}
                     <div className="space-y-2">
                       <Label>Holding *</Label>
@@ -1051,12 +1070,16 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                 ) : (
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                      <span className="text-muted-foreground">Empresa Principal:</span>
-                      <p className="font-medium">{getSelectedCompanyName()}</p>
+                      <span className="text-muted-foreground">Empresa a la que pertenece:</span>
+                      <p className="font-medium">{empresaPertenece}</p>
                     </div>
                     <div>
                       <span className="text-muted-foreground">Holding:</span>
                       <p className="font-medium">{selectedHolding}</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Empresa Principal:</span>
+                      <p className="font-medium">{getSelectedCompanyName()}</p>
                     </div>
                     <div>
                       <span className="text-muted-foreground">Segmento:</span>
