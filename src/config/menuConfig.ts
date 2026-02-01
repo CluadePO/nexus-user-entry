@@ -283,6 +283,7 @@ export const menuByRole: Record<UserRole, MenuItem[]> = {
       icon: 'Settings',
       children: [
         { key: 'admin-usuarios', label: 'Usuarios', url: '/admin/usuarios' },
+        { key: 'admin-carteras', label: 'Asignación de Carteras Comerciales', url: '/admin/carteras' },
         { key: 'admin-perfiles', label: 'Perfiles', url: '/admin/perfiles' },
         { key: 'admin-sistemas', label: 'Sistemas', url: '/admin/sistemas' },
         { key: 'admin-reglas', label: 'Reglas de Negocio', url: '/admin/reglas' },

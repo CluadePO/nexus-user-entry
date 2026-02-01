@@ -41,6 +41,69 @@ export type Database = {
         }
         Relationships: []
       }
+      portfolio_assignments: {
+        Row: {
+          activo: boolean
+          analista_comercial: string | null
+          analista_op: string | null
+          celula: string | null
+          created_at: string
+          created_by: string | null
+          fecha_fin: string
+          fecha_inicio: string
+          id: string
+          jefe_comercial: string | null
+          lider_servicio_edc: string | null
+          lider_servicio_op: string | null
+          notas: string | null
+          updated_at: string
+          user_email: string
+          user_id: string
+          user_name: string
+          user_rut: string
+        }
+        Insert: {
+          activo?: boolean
+          analista_comercial?: string | null
+          analista_op?: string | null
+          celula?: string | null
+          created_at?: string
+          created_by?: string | null
+          fecha_fin: string
+          fecha_inicio: string
+          id?: string
+          jefe_comercial?: string | null
+          lider_servicio_edc?: string | null
+          lider_servicio_op?: string | null
+          notas?: string | null
+          updated_at?: string
+          user_email: string
+          user_id: string
+          user_name: string
+          user_rut: string
+        }
+        Update: {
+          activo?: boolean
+          analista_comercial?: string | null
+          analista_op?: string | null
+          celula?: string | null
+          created_at?: string
+          created_by?: string | null
+          fecha_fin?: string
+          fecha_inicio?: string
+          id?: string
+          jefe_comercial?: string | null
+          lider_servicio_edc?: string | null
+          lider_servicio_op?: string | null
+          notas?: string | null
+          updated_at?: string
+          user_email?: string
+          user_id?: string
+          user_name?: string
+          user_rut?: string
+        }
+        Relationships: []
+      }
       system_users: {
         Row: {
           analista_comercial: string | null
