@@ -19,6 +19,7 @@ import Encuestas from "./pages/Encuestas";
 import CursosResumen from "./pages/CursosResumen";
 import AdminUsuarios from "./pages/AdminUsuarios";
 import AdminCarterasComerciales from "./pages/AdminCarterasComerciales";
+import CentroAyuda from "./pages/CentroAyuda";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -73,6 +74,7 @@ const App = () => (
                 <Route path="/admin/usuarios" element={<AdminUsuarios />} />
                 <Route path="/admin/carteras" element={<AdminCarterasComerciales />} />
                 <Route path="/admin/*" element={<PlaceholderPage title="Administración" />} />
+                <Route path="/ayuda/centro" element={<CentroAyuda />} />
                 <Route path="/ayuda/*" element={<PlaceholderPage title="Ayuda y Soporte" />} />
               </Route>
               <Route path="*" element={<NotFound />} />

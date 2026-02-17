@@ -398,7 +398,7 @@ const MiBuscador: React.FC = () => {
           {canUploadCourses && (
             <>
               <TabsTrigger value="carga" className="px-4">Carga de Cursos</TabsTrigger>
-              <TabsTrigger value="cotizaciones" className="px-4"><TabsTrigger value="cotizaciones" className="px-4">Información del Proveedor</TabsTrigger></TabsTrigger>
+              <TabsTrigger value="cotizaciones" className="px-4">Información del Proveedor</TabsTrigger>
             </>
           )}
         </TabsList>
