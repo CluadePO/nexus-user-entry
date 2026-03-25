@@ -377,6 +377,21 @@ const FranchiseCalculator: React.FC<FranchiseCalculatorProps> = ({
               </p>
             </div>
 
+            {/* Quote Button */}
+            {totalParticipants > 0 && (
+              <Button
+                className="w-full gap-2"
+                size="lg"
+                onClick={() => {
+                  setIsExpanded(false);
+                  onQuoteRequest();
+                }}
+              >
+                <FileText className="h-4 w-4" />
+                Cotizar con {totalParticipants} participante{totalParticipants > 1 ? 's' : ''}
+              </Button>
+            )}
+
             {/* Footer inside scroll area */}
             <div className="pt-4 mt-2 border-t">
               <p className="text-xs text-muted-foreground text-center">
