@@ -22,7 +22,8 @@ import {
   Star,
   Share2,
   Heart,
-  Award
+  Award,
+  Download
 } from 'lucide-react';
 import QuoteRequestModal from '@/components/buscador/QuoteRequestModal';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
