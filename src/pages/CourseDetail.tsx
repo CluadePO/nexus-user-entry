@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -22,7 +22,8 @@ import {
   Star,
   Share2,
   Heart,
-  Award
+  Award,
+  Download
 } from 'lucide-react';
 import QuoteRequestModal from '@/components/buscador/QuoteRequestModal';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -425,6 +426,146 @@ const CourseDetail: React.FC = () => {
     }).format(price);
   };
 
+  const generateBrochure = useCallback(async () => {
+    const { jsPDF } = await import('jspdf');
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    const pageWidth = 210;
+    const margin = 20;
+    const contentWidth = pageWidth - margin * 2;
+    let y = 20;
+
+    // Header bar
+    doc.setFillColor(30, 64, 175); // primary blue
+    doc.rect(0, 0, pageWidth, 40, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(22);
+    doc.setFont('helvetica', 'bold');
+    doc.text(course.name, margin, 18, { maxWidth: contentWidth });
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    doc.text(course.provider.name, margin, 32);
+
+    y = 50;
+    doc.setTextColor(60, 60, 60);
+
+    // Badge line
+    doc.setFontSize(10);
+    doc.setFillColor(230, 240, 255);
+    doc.roundedRect(margin, y, 30, 7, 2, 2, 'F');
+    doc.setTextColor(30, 64, 175);
+    doc.text(course.type, margin + 4, y + 5);
+    doc.roundedRect(margin + 35, y, 30, 7, 2, 2, 'F');
+    doc.text(course.modality, margin + 39, y + 5);
+    y += 15;
+
+    // Section helper
+    const addSection = (title: string, yPos: number) => {
+      doc.setFontSize(13);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(30, 64, 175);
+      doc.text(title, margin, yPos);
+      doc.setDrawColor(30, 64, 175);
+      doc.setLineWidth(0.5);
+      doc.line(margin, yPos + 2, margin + contentWidth, yPos + 2);
+      return yPos + 8;
+    };
+
+    // Course Info
+    y = addSection('Información del Curso', y);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(60, 60, 60);
+
+    const info = [
+      ['Código SENCE', course.senceCode],
+      ['Horas', `${course.hours} horas`],
+      ['Área', course.area],
+      ['Especialidad', course.specialty],
+      ['Modalidad', course.modality],
+      ['Ubicación', course.location],
+    ];
+    info.forEach(([label, value]) => {
+      doc.setFont('helvetica', 'bold');
+      doc.text(`${label}:`, margin, y);
+      doc.setFont('helvetica', 'normal');
+      doc.text(value, margin + 35, y);
+      y += 6;
+    });
+    y += 4;
+
+    // Objective
+    y = addSection('Objetivo', y);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(60, 60, 60);
+    const objLines = doc.splitTextToSize(course.objective, contentWidth);
+    doc.text(objLines, margin, y);
+    y += objLines.length * 5 + 6;
+
+    // Target Audience
+    y = addSection('Dirigido a', y);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(60, 60, 60);
+    const targetLines = doc.splitTextToSize(course.targetAudience, contentWidth);
+    doc.text(targetLines, margin, y);
+    y += targetLines.length * 5 + 6;
+
+    // Description
+    y = addSection('Descripción', y);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(60, 60, 60);
+    const descLines = doc.splitTextToSize(course.description, contentWidth);
+    doc.text(descLines, margin, y);
+    y += descLines.length * 5 + 6;
+
+    // Learnings
+    if (y > 240) { doc.addPage(); y = 20; }
+    y = addSection('Lo que aprenderás', y);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(60, 60, 60);
+    course.learnings.forEach((item) => {
+      if (y > 275) { doc.addPage(); y = 20; }
+      doc.text(`•  ${item}`, margin + 2, y);
+      y += 6;
+    });
+    y += 4;
+
+    // Pricing
+    if (y > 240) { doc.addPage(); y = 20; }
+    y = addSection('Valores', y);
+    doc.setFontSize(10);
+
+    const prices = [
+      ['Valor del curso', formatPrice(course.price)],
+      ['Valor efectivo por participante', formatPrice(course.effectiveValuePerParticipant)],
+      ['Valor máximo imputable', formatPrice(course.maxImputableValue)],
+    ];
+    prices.forEach(([label, value]) => {
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(60, 60, 60);
+      doc.text(label, margin, y);
+      doc.setFont('helvetica', 'bold');
+      doc.text(value, margin + contentWidth, y, { align: 'right' });
+      y += 7;
+    });
+
+    // Footer
+    const footerY = 285;
+    doc.setDrawColor(200, 200, 200);
+    doc.setLineWidth(0.3);
+    doc.line(margin, footerY - 5, margin + contentWidth, footerY - 5);
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(150, 150, 150);
+    doc.text('Documento generado automáticamente. Los valores son informativos y pueden variar.', margin, footerY);
+    doc.text(new Date().toLocaleDateString('es-CL'), margin + contentWidth, footerY, { align: 'right' });
+
+    doc.save(`Brochure_${course.name.replace(/\s+/g, '_').substring(0, 30)}.pdf`);
+  }, [course, formatPrice]);
+
   const getModalityColor = (modality: string) => {
     switch (modality) {
       case 'Presencial': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300';
@@ -634,15 +775,24 @@ const CourseDetail: React.FC = () => {
                 </div>
               </div>
 
-              {/* Quote Button */}
-              <div className="mt-6">
+              {/* Action Buttons */}
+              <div className="mt-6 flex flex-col sm:flex-row gap-3">
                 <Button 
-                  className="w-full gap-2" 
+                  className="flex-1 gap-2" 
                   size="lg"
                   onClick={() => setQuoteModalOpen(true)}
                 >
                   <FileText className="h-5 w-5" />
                   Cotizar el curso
+                </Button>
+                <Button
+                  variant="outline"
+                  className="flex-1 gap-2"
+                  size="lg"
+                  onClick={generateBrochure}
+                >
+                  <Download className="h-5 w-5" />
+                  Descargar Brochure
                 </Button>
               </div>
             </CardContent>
