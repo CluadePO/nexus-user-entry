@@ -290,70 +290,56 @@ const FranchiseCalculator: React.FC<FranchiseCalculatorProps> = ({
 
           {/* Calculator Content */}
           <div className="flex-1 p-4 space-y-4 overflow-y-auto min-h-0">
-            {/* Participants Input */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground">
-                Número de participantes
-              </label>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-10 w-10"
-                  onClick={() => setParticipants(Math.max(0, participants - 1))}
-                >
-                  -
-                </Button>
-                <input
-                  type="number"
-                  min="0"
-                  value={participants}
-                  onChange={handleParticipantsChange}
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-center text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                />
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-10 w-10"
-                  onClick={() => setParticipants(participants + 1)}
-                >
-                  +
-                </Button>
-              </div>
-            </div>
-
-            <Separator />
-
-            {/* Coverage Options */}
+            {/* Coverage Options with per-tier participants */}
             <div className="space-y-3">
-              <p className="text-sm font-medium text-foreground">Cobertura de Franquicia</p>
-              <div className="space-y-2">
+              <p className="text-sm font-medium text-foreground">Ingresa participantes por tramo</p>
+              <div className="space-y-3">
                 {coverageOptions.map((option) => {
                   const coverage = calculateCoverage(option.percentage);
+                  const colorClasses = option.color === 'emerald'
+                    ? { dot: 'bg-emerald-500', text: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800' }
+                    : option.color === 'amber'
+                      ? { dot: 'bg-amber-500', text: 'text-amber-600 dark:text-amber-400', bg: 'bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800' }
+                      : { dot: 'bg-blue-500', text: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800' };
                   return (
                     <div
                       key={option.percentage}
-                      className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
+                      className={`p-3 rounded-lg border ${colorClasses.bg} space-y-2`}
                     >
-                      <div className="flex items-center gap-2">
-                        <div className={`w-3 h-3 rounded-full ${
-                          option.percentage === 100 
-                            ? 'bg-emerald-500' 
-                            : option.percentage === 50 
-                              ? 'bg-amber-500' 
-                              : 'bg-blue-500'
-                        }`} />
-                        <span className="text-sm font-medium">{option.label}</span>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <div className={`w-3 h-3 rounded-full ${colorClasses.dot}`} />
+                          <span className="text-sm font-semibold">Tramo {option.label}</span>
+                        </div>
+                        <span className={`font-bold text-sm ${colorClasses.text}`}>
+                          {formatPrice(coverage)}
+                        </span>
                       </div>
-                      <span className={`font-bold ${
-                        option.percentage === 100 
-                          ? 'text-emerald-600 dark:text-emerald-400' 
-                          : option.percentage === 50 
-                            ? 'text-amber-600 dark:text-amber-400' 
-                            : 'text-blue-600 dark:text-blue-400'
-                      }`}>
-                        {formatPrice(coverage)}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-8 w-8 shrink-0"
+                          onClick={() => handleTierParticipantsChange(option.percentage, tierParticipants[option.percentage] - 1)}
+                        >
+                          -
+                        </Button>
+                        <input
+                          type="number"
+                          min="0"
+                          value={tierParticipants[option.percentage]}
+                          onChange={(e) => handleTierParticipantsChange(option.percentage, parseInt(e.target.value) || 0)}
+                          className="flex h-8 w-full rounded-md border border-input bg-background px-3 py-1 text-center text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                        />
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-8 w-8 shrink-0"
+                          onClick={() => handleTierParticipantsChange(option.percentage, tierParticipants[option.percentage] + 1)}
+                        >
+                          +
+                        </Button>
+                      </div>
                     </div>
                   );
                 })}
@@ -365,12 +351,21 @@ const FranchiseCalculator: React.FC<FranchiseCalculatorProps> = ({
             {/* Total Summary */}
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Total participantes</span>
+                <span className="font-medium">{totalParticipants}</span>
+              </div>
+              <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Valor efectivo total</span>
                 <span className="font-medium">{formatPrice(totalEffectiveValue)}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Base cálculo franquicia</span>
-                <span className="font-medium text-primary">{formatPrice(baseValuePerParticipant * participants)}</span>
+                <span className="text-muted-foreground">Total franquicia</span>
+                <span className="font-medium text-primary">{formatPrice(totalFranchiseValue)}</span>
+              </div>
+              <Separator />
+              <div className="flex justify-between text-sm font-semibold">
+                <span className="text-foreground">Costo empresa</span>
+                <span className="text-destructive">{formatPrice(Math.max(0, totalCompanyCost))}</span>
               </div>
             </div>
 
