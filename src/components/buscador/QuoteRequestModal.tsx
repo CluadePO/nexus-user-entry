@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -20,7 +20,7 @@ import {
   Briefcase,
   DollarSign,
   BookOpen,
-  CheckCircle
+  Users
 } from 'lucide-react';
 
 interface CourseInfo {
@@ -42,6 +42,12 @@ interface QuoteRequestModalProps {
   formatPrice: (price: number) => string;
 }
 
+const franchiseTiers = [
+  { percentage: 15, label: '15%', color: 'blue' },
+  { percentage: 50, label: '50%', color: 'amber' },
+  { percentage: 100, label: '100%', color: 'emerald' },
+];
+
 const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
   open,
   onOpenChange,
@@ -53,36 +59,44 @@ const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
     name: '',
     email: '',
     company: '',
-    participants: 1,
     message: '',
   });
+  const [tierParticipants, setTierParticipants] = useState<Record<number, number>>({
+    15: 0,
+    50: 0,
+    100: 0,
+  });
 
-  const participantOptions = [1, 2, 3, 4, 5, 6, 7, '8+'];
+  const baseValuePerParticipant = Math.min(courseInfo.effectiveValuePerParticipant, courseInfo.maxImputableValue);
+  
+  const calculations = useMemo(() => {
+    const totalParticipants = Object.values(tierParticipants).reduce((a, b) => a + b, 0);
+    const totalEffective = courseInfo.effectiveValuePerParticipant * totalParticipants;
+    const totalFranchise = franchiseTiers.reduce((sum, tier) => {
+      return sum + ((baseValuePerParticipant * tier.percentage) / 100) * tierParticipants[tier.percentage];
+    }, 0);
+    const companyCost = Math.max(0, totalEffective - totalFranchise);
+    return { totalParticipants, totalEffective, totalFranchise, companyCost };
+  }, [tierParticipants, courseInfo.effectiveValuePerParticipant, baseValuePerParticipant]);
 
-  const handleInputChange = (field: string, value: string | number) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+  const handleInputChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleTierChange = (percentage: number, value: number) => {
+    setTierParticipants((prev) => ({ ...prev, [percentage]: Math.max(0, value) }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Quote request submitted:', formData);
-    
-    // Reset form
-    setFormData({
-      name: '',
-      email: '',
-      company: '',
-      participants: 1,
-      message: '',
-    });
-    
-    // Close modal
+    if (calculations.totalParticipants === 0) {
+      toast({ title: "Debes ingresar al menos 1 participante", variant: "destructive" });
+      return;
+    }
+    console.log('Quote request submitted:', { ...formData, tierParticipants, ...calculations });
+    setFormData({ name: '', email: '', company: '', message: '' });
+    setTierParticipants({ 15: 0, 50: 0, 100: 0 });
     onOpenChange(false);
-    
-    // Show success toast
     toast({
       title: "¡Solicitud enviada con éxito!",
       description: "El proveedor se pondrá en contacto contigo pronto para darte más información sobre el curso.",
@@ -99,11 +113,16 @@ const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
     { icon: Briefcase, label: 'Especialidad', value: courseInfo.specialty },
   ];
 
+  const getColorClasses = (color: string) => {
+    if (color === 'emerald') return { dot: 'bg-emerald-500', text: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800' };
+    if (color === 'amber') return { dot: 'bg-amber-500', text: 'text-amber-600 dark:text-amber-400', bg: 'bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800' };
+    return { dot: 'bg-blue-500', text: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800' };
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl p-0 overflow-hidden max-h-[90vh] overflow-y-auto">
         <div className="p-6 lg:p-8">
-          {/* Header */}
           <DialogHeader className="mb-6">
             <DialogTitle className="text-2xl font-bold text-foreground">
               Solicitud de Cotización
@@ -129,10 +148,9 @@ const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
             {/* Left Side - Form */}
             <div className="lg:col-span-3 space-y-5">
-              <h3 className="font-semibold text-foreground">Tus datos de contacto</h3>
-              
               <form onSubmit={handleSubmit} className="space-y-4">
-                {/* Nombre */}
+                <h3 className="font-semibold text-foreground">Tus datos de contacto</h3>
+
                 <div className="space-y-2">
                   <Label htmlFor="name" className="text-sm font-medium">
                     Nombre <span className="text-destructive">*</span>
@@ -153,7 +171,6 @@ const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
                   </div>
                 </div>
 
-                {/* Correo electrónico */}
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-sm font-medium">
                     Correo electrónico <span className="text-destructive">*</span>
@@ -168,7 +185,6 @@ const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
                   />
                 </div>
 
-                {/* Nombre de la empresa */}
                 <div className="space-y-2">
                   <Label htmlFor="company" className="text-sm font-medium">
                     Empresa <span className="text-destructive">*</span>
@@ -189,31 +205,93 @@ const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
                   </div>
                 </div>
 
-                {/* Número de participantes */}
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium">
-                    Participantes <span className="text-destructive">*</span>
-                  </Label>
-                  <div className="flex gap-2 flex-wrap">
-                    {participantOptions.map((option) => (
-                      <Button
-                        key={option}
-                        type="button"
-                        variant={formData.participants === option ? 'default' : 'outline'}
-                        size="sm"
-                        className="w-11 h-11 text-sm font-medium"
-                        onClick={() => handleInputChange('participants', option)}
-                      >
-                        {option}
-                      </Button>
-                    ))}
+                <Separator />
+
+                {/* Franchise Tier Participants */}
+                <div className="space-y-3">
+                  <h3 className="font-semibold text-foreground flex items-center gap-2">
+                    <Users className="h-4 w-4 text-primary" />
+                    Participantes por tramo de franquicia
+                  </h3>
+                  <p className="text-xs text-muted-foreground">
+                    Ingresa la cantidad de participantes según el tramo de franquicia tributaria que aplique.
+                  </p>
+                  <div className="space-y-3">
+                    {franchiseTiers.map((tier) => {
+                      const colors = getColorClasses(tier.color);
+                      const tierCoverage = ((baseValuePerParticipant * tier.percentage) / 100) * tierParticipants[tier.percentage];
+                      return (
+                        <div key={tier.percentage} className={`p-3 rounded-lg border ${colors.bg} space-y-2`}>
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <div className={`w-3 h-3 rounded-full ${colors.dot}`} />
+                              <span className="text-sm font-semibold">Tramo {tier.label}</span>
+                            </div>
+                            <span className={`font-bold text-sm ${colors.text}`}>
+                              {formatPrice(tierCoverage)}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="icon"
+                              className="h-8 w-8 shrink-0"
+                              onClick={() => handleTierChange(tier.percentage, tierParticipants[tier.percentage] - 1)}
+                            >
+                              -
+                            </Button>
+                            <input
+                              type="number"
+                              min="0"
+                              value={tierParticipants[tier.percentage]}
+                              onChange={(e) => handleTierChange(tier.percentage, parseInt(e.target.value) || 0)}
+                              className="flex h-8 w-full rounded-md border border-input bg-background px-3 py-1 text-center text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                            />
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="icon"
+                              className="h-8 w-8 shrink-0"
+                              onClick={() => handleTierChange(tier.percentage, tierParticipants[tier.percentage] + 1)}
+                            >
+                              +
+                            </Button>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
 
-                {/* Mensaje */}
+                {/* Calculated Totals */}
+                {calculations.totalParticipants > 0 && (
+                  <div className="p-4 rounded-lg bg-muted/50 border space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Total participantes</span>
+                      <span className="font-medium">{calculations.totalParticipants}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Valor efectivo total</span>
+                      <span className="font-medium">{formatPrice(calculations.totalEffective)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Total franquicia</span>
+                      <span className="font-medium text-primary">{formatPrice(calculations.totalFranchise)}</span>
+                    </div>
+                    <Separator />
+                    <div className="flex justify-between text-sm font-semibold">
+                      <span className="text-foreground">Costo empresa</span>
+                      <span className="text-destructive">{formatPrice(calculations.companyCost)}</span>
+                    </div>
+                  </div>
+                )}
+
+                <Separator />
+
                 <div className="space-y-2">
                   <Label htmlFor="message" className="text-sm font-medium">
-                    Mensaje <span className="text-destructive">*</span>
+                    Mensaje
                   </Label>
                   <Textarea
                     id="message"
@@ -221,7 +299,6 @@ const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
                     value={formData.message}
                     onChange={(e) => handleInputChange('message', e.target.value)}
                     rows={3}
-                    required
                   />
                 </div>
 
