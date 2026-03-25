@@ -780,23 +780,14 @@ const CourseDetail: React.FC = () => {
               </div>
 
               {/* Action Buttons */}
-              <div className="mt-6 flex flex-col sm:flex-row gap-3">
+              <div className="mt-6">
                 <Button 
-                  className="flex-1 gap-2" 
+                  className="w-full sm:w-auto gap-2" 
                   size="lg"
                   onClick={() => setQuoteModalOpen(true)}
                 >
                   <FileText className="h-5 w-5" />
                   Cotizar el curso
-                </Button>
-                <Button
-                  variant="outline"
-                  className="flex-1 gap-2"
-                  size="lg"
-                  onClick={generateBrochure}
-                >
-                  <Download className="h-5 w-5" />
-                  Descargar Brochure
                 </Button>
               </div>
             </CardContent>
