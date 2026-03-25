@@ -203,26 +203,34 @@ const FranchiseCalculator: React.FC<FranchiseCalculatorProps> = ({
   maxImputableValue,
   formatPrice,
 }) => {
-  const [participants, setParticipants] = useState<number>(1);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [tierParticipants, setTierParticipants] = useState<Record<number, number>>({
+    15: 0,
+    50: 0,
+    100: 0,
+  });
 
   const coverageOptions = [
-    { percentage: 15, label: '15%' },
-    { percentage: 50, label: '50%' },
-    { percentage: 100, label: '100%' },
+    { percentage: 15, label: '15%', color: 'blue' },
+    { percentage: 50, label: '50%', color: 'amber' },
+    { percentage: 100, label: '100%', color: 'emerald' },
   ];
 
   const baseValuePerParticipant = Math.min(effectiveValuePerParticipant, maxImputableValue);
-  const totalEffectiveValue = effectiveValuePerParticipant * participants;
+
+  const totalParticipants = Object.values(tierParticipants).reduce((a, b) => a + b, 0);
+  const totalEffectiveValue = effectiveValuePerParticipant * totalParticipants;
 
   const calculateCoverage = (percentage: number) => {
     const coveragePerParticipant = (baseValuePerParticipant * percentage) / 100;
-    return coveragePerParticipant * participants;
+    return coveragePerParticipant * tierParticipants[percentage];
   };
 
-  const handleParticipantsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value) || 0;
-    setParticipants(Math.max(0, value));
+  const totalFranchiseValue = coverageOptions.reduce((sum, opt) => sum + calculateCoverage(opt.percentage), 0);
+  const totalCompanyCost = totalEffectiveValue - totalFranchiseValue;
+
+  const handleTierParticipantsChange = (percentage: number, value: number) => {
+    setTierParticipants(prev => ({ ...prev, [percentage]: Math.max(0, value) }));
   };
 
   return (
