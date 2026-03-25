@@ -749,6 +749,9 @@ const CourseDetail: React.FC = () => {
         effectiveValuePerParticipant={course.effectiveValuePerParticipant}
         maxImputableValue={course.maxImputableValue}
         formatPrice={formatPrice}
+        tierParticipants={tierParticipants}
+        onTierParticipantsChange={setTierParticipants}
+        onQuoteRequest={() => setQuoteModalOpen(true)}
       />
 
       {/* Quote Request Modal */}
@@ -767,6 +770,7 @@ const CourseDetail: React.FC = () => {
           maxImputableValue: course.maxImputableValue,
         }}
         formatPrice={formatPrice}
+        initialTierParticipants={tierParticipants}
       />
     </div>
   );
