@@ -701,11 +701,15 @@ const CourseDetail: React.FC = () => {
 
           {/* Course Information */}
           <Card>
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="flex items-center gap-2">
                 <BookOpen className="h-5 w-5 text-primary" />
                 Información del Curso
               </CardTitle>
+              <Button variant="link" className="gap-2" onClick={generateBrochure}>
+                <Download className="h-4 w-4" />
+                Descargar Brochure
+              </Button>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
