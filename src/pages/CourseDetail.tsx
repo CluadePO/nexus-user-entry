@@ -196,19 +196,20 @@ interface FranchiseCalculatorProps {
   effectiveValuePerParticipant: number;
   maxImputableValue: number;
   formatPrice: (price: number) => string;
+  tierParticipants: Record<number, number>;
+  onTierParticipantsChange: (tierParticipants: Record<number, number>) => void;
+  onQuoteRequest: () => void;
 }
 
 const FranchiseCalculator: React.FC<FranchiseCalculatorProps> = ({
   effectiveValuePerParticipant,
   maxImputableValue,
   formatPrice,
+  tierParticipants,
+  onTierParticipantsChange,
+  onQuoteRequest,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [tierParticipants, setTierParticipants] = useState<Record<number, number>>({
-    15: 0,
-    50: 0,
-    100: 0,
-  });
 
   const coverageOptions = [
     { percentage: 15, label: '15%', color: 'blue' },
@@ -230,7 +231,7 @@ const FranchiseCalculator: React.FC<FranchiseCalculatorProps> = ({
   const totalCompanyCost = totalEffectiveValue - totalFranchiseValue;
 
   const handleTierParticipantsChange = (percentage: number, value: number) => {
-    setTierParticipants(prev => ({ ...prev, [percentage]: Math.max(0, value) }));
+    onTierParticipantsChange({ ...tierParticipants, [percentage]: Math.max(0, value) });
   };
 
   return (
