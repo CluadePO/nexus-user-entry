@@ -409,6 +409,11 @@ const CourseDetail: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
   const [quoteModalOpen, setQuoteModalOpen] = useState(false);
+  const [tierParticipants, setTierParticipants] = useState<Record<number, number>>({
+    15: 0,
+    50: 0,
+    100: 0,
+  });
 
   const course = mockCourseDetails[courseId as keyof typeof mockCourseDetails] || { ...defaultCourse, id: courseId };
 
