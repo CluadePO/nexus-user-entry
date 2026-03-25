@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -40,6 +40,7 @@ interface QuoteRequestModalProps {
   onOpenChange: (open: boolean) => void;
   courseInfo: CourseInfo;
   formatPrice: (price: number) => string;
+  initialTierParticipants?: Record<number, number>;
 }
 
 const franchiseTiers = [
@@ -53,6 +54,7 @@ const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
   onOpenChange,
   courseInfo,
   formatPrice,
+  initialTierParticipants,
 }) => {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
@@ -66,6 +68,13 @@ const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
     50: 0,
     100: 0,
   });
+
+  // Sync from calculator when modal opens
+  useEffect(() => {
+    if (open && initialTierParticipants) {
+      setTierParticipants(initialTierParticipants);
+    }
+  }, [open, initialTierParticipants]);
 
   const baseValuePerParticipant = Math.min(courseInfo.effectiveValuePerParticipant, courseInfo.maxImputableValue);
   

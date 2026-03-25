@@ -196,19 +196,20 @@ interface FranchiseCalculatorProps {
   effectiveValuePerParticipant: number;
   maxImputableValue: number;
   formatPrice: (price: number) => string;
+  tierParticipants: Record<number, number>;
+  onTierParticipantsChange: (tierParticipants: Record<number, number>) => void;
+  onQuoteRequest: () => void;
 }
 
 const FranchiseCalculator: React.FC<FranchiseCalculatorProps> = ({
   effectiveValuePerParticipant,
   maxImputableValue,
   formatPrice,
+  tierParticipants,
+  onTierParticipantsChange,
+  onQuoteRequest,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [tierParticipants, setTierParticipants] = useState<Record<number, number>>({
-    15: 0,
-    50: 0,
-    100: 0,
-  });
 
   const coverageOptions = [
     { percentage: 15, label: '15%', color: 'blue' },
@@ -230,7 +231,7 @@ const FranchiseCalculator: React.FC<FranchiseCalculatorProps> = ({
   const totalCompanyCost = totalEffectiveValue - totalFranchiseValue;
 
   const handleTierParticipantsChange = (percentage: number, value: number) => {
-    setTierParticipants(prev => ({ ...prev, [percentage]: Math.max(0, value) }));
+    onTierParticipantsChange({ ...tierParticipants, [percentage]: Math.max(0, value) });
   };
 
   return (
@@ -376,6 +377,21 @@ const FranchiseCalculator: React.FC<FranchiseCalculatorProps> = ({
               </p>
             </div>
 
+            {/* Quote Button */}
+            {totalParticipants > 0 && (
+              <Button
+                className="w-full gap-2"
+                size="lg"
+                onClick={() => {
+                  setIsExpanded(false);
+                  onQuoteRequest();
+                }}
+              >
+                <FileText className="h-4 w-4" />
+                Cotizar con {totalParticipants} participante{totalParticipants > 1 ? 's' : ''}
+              </Button>
+            )}
+
             {/* Footer inside scroll area */}
             <div className="pt-4 mt-2 border-t">
               <p className="text-xs text-muted-foreground text-center">
@@ -393,6 +409,11 @@ const CourseDetail: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const navigate = useNavigate();
   const [quoteModalOpen, setQuoteModalOpen] = useState(false);
+  const [tierParticipants, setTierParticipants] = useState<Record<number, number>>({
+    15: 0,
+    50: 0,
+    100: 0,
+  });
 
   const course = mockCourseDetails[courseId as keyof typeof mockCourseDetails] || { ...defaultCourse, id: courseId };
 
@@ -728,6 +749,9 @@ const CourseDetail: React.FC = () => {
         effectiveValuePerParticipant={course.effectiveValuePerParticipant}
         maxImputableValue={course.maxImputableValue}
         formatPrice={formatPrice}
+        tierParticipants={tierParticipants}
+        onTierParticipantsChange={setTierParticipants}
+        onQuoteRequest={() => setQuoteModalOpen(true)}
       />
 
       {/* Quote Request Modal */}
@@ -746,6 +770,7 @@ const CourseDetail: React.FC = () => {
           maxImputableValue: course.maxImputableValue,
         }}
         formatPrice={formatPrice}
+        initialTierParticipants={tierParticipants}
       />
     </div>
   );
