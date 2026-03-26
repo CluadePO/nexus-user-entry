@@ -296,10 +296,7 @@ const MiBuscador: React.FC = () => {
     } else if (selectedCourses.length < 3) {
       const newSelected = [...selectedCourses, courseId];
       setSelectedCourses(newSelected);
-      // Auto-open modal when 2 courses are selected
-      if (newSelected.length === 2) {
-        setIsComparisonModalOpen(true);
-      }
+      // Modal will only open when user clicks the comparison button
     }
   };
 
