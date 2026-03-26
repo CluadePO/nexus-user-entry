@@ -237,6 +237,10 @@ export const CourseComparisonModal: React.FC<CourseComparisonModalProps> = ({
                     <Badge className={`${getModalityColor(course.modality)} text-xs mt-2`}>
                       {course.modality}
                     </Badge>
+                    <Button variant="link" size="sm" className="px-0 mt-2 gap-1 text-xs">
+                      <Sparkles className="h-3 w-3" />
+                      Solicitar cotización
+                    </Button>
                   </div>
                 </div>
               ))}
