@@ -465,9 +465,9 @@ const AdminUsuarios: React.FC = () => {
             </div>
 
             {/* Operational Assignment Section */}
-            {(selectedUser.celula || selectedUser.jefe_comercial || selectedUser.analista_comercial) && (
-              <div className="bg-muted/30 rounded-lg p-4">
-                <h4 className="font-semibold text-sm text-muted-foreground mb-3">Asignación Operacional</h4>
+            <div className="bg-muted/30 rounded-lg p-4">
+              <h4 className="font-semibold text-sm text-muted-foreground mb-3">Asignación Operacional</h4>
+              {(selectedUser.celula || selectedUser.jefe_comercial || selectedUser.analista_comercial || selectedUser.analista_op || selectedUser.lider_servicio_edc || selectedUser.lider_servicio_op) ? (
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <span className="text-muted-foreground">Célula:</span>
@@ -494,8 +494,10 @@ const AdminUsuarios: React.FC = () => {
                     <p className="font-medium">{selectedUser.lider_servicio_op || '-'}</p>
                   </div>
                 </div>
-              </div>
-            )}
+              ) : (
+                <p className="text-sm text-muted-foreground italic">Este usuario no tiene asignación operacional configurada</p>
+              )}
+            </div>
 
             {/* Portfolio Assignments Section */}
             {getUserPortfolioAssignments(selectedUser.id).length > 0 && (
