@@ -59,7 +59,6 @@ const FavoritesSidebar: React.FC<FavoritesSidebarProps> = ({
         <button
           onClick={() => {
             onShowFavorites();
-            setIsExpanded(true);
           }}
           className="flex flex-col items-center gap-2 bg-primary text-primary-foreground px-3 py-4 rounded-l-lg shadow-lg hover:bg-primary/90 transition-colors"
         >
