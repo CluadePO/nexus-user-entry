@@ -256,8 +256,7 @@ const MiBuscador: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [courses, setCourses] = useState<Course[]>(mockCourses);
   const [selectedCourses, setSelectedCourses] = useState<string[]>([]);
-  const [modalityFilter, setModalityFilter] = useState<string>('all');
-  const [typeFilter, setTypeFilter] = useState<string>('all');
+  const [sortOrder, setSortOrder] = useState<string>('default');
   const [areaFilter, setAreaFilter] = useState<string>('all');
   const [regionFilter, setRegionFilter] = useState<string>('all');
   const [isComparisonModalOpen, setIsComparisonModalOpen] = useState(false);
@@ -325,16 +324,30 @@ const MiBuscador: React.FC = () => {
 
   const activeAdvancedFilters = (areaFilter !== 'all' ? 1 : 0) + (regionFilter !== 'all' ? 1 : 0);
 
-  const filteredCourses = courses.filter(course => {
-    const matchesSearch = course.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          course.provider.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          course.category.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesModality = modalityFilter === 'all' || course.modality === modalityFilter;
-    const matchesType = typeFilter === 'all' || course.type === typeFilter;
-    const matchesArea = areaFilter === 'all' || course.area === areaFilter;
-    const matchesRegion = regionFilter === 'all' || course.region === regionFilter;
-    return matchesSearch && matchesModality && matchesType && matchesArea && matchesRegion;
-  });
+  const filteredCourses = [...courses]
+    .filter(course => {
+      const matchesSearch = course.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                            course.provider.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                            course.category.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesArea = areaFilter === 'all' || course.area === areaFilter;
+      const matchesRegion = regionFilter === 'all' || course.region === regionFilter;
+      return matchesSearch && matchesArea && matchesRegion;
+    })
+    .sort((a, b) => {
+      switch (sortOrder) {
+        case 'price-asc':
+          return a.price - b.price;
+        case 'price-desc':
+          return b.price - a.price;
+        case 'duration-asc':
+          return a.hours - b.hours;
+        case 'duration-desc':
+          return b.hours - a.hours;
+        case 'default':
+        default:
+          return 0;
+      }
+    });
 
   const getModalityColor = (modality: string) => {
     switch (modality) {
@@ -691,25 +704,16 @@ const MiBuscador: React.FC = () => {
                   />
                 </div>
                 <div className="flex gap-2">
-                  <Select value={typeFilter} onValueChange={setTypeFilter}>
-                    <SelectTrigger className="w-[140px] h-12">
-                      <SelectValue placeholder="Tipo" />
+                  <Select value={sortOrder} onValueChange={setSortOrder}>
+                    <SelectTrigger className="w-[220px] h-12">
+                      <SelectValue placeholder="Ordenar por" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">Todos</SelectItem>
-                      <SelectItem value="Sence">Sence</SelectItem>
-                      <SelectItem value="No Sence">No Sence</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Select value={modalityFilter} onValueChange={setModalityFilter}>
-                    <SelectTrigger className="w-[160px] h-12">
-                      <SelectValue placeholder="Modalidad" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Todas</SelectItem>
-                      <SelectItem value="Presencial">Presencial</SelectItem>
-                      <SelectItem value="Distancia">Distancia</SelectItem>
-                      <SelectItem value="E-learning">E-learning</SelectItem>
+                      <SelectItem value="price-asc">Valor menor a mayor</SelectItem>
+                      <SelectItem value="price-desc">Valor mayor a menor</SelectItem>
+                      <SelectItem value="duration-asc">Menor duración</SelectItem>
+                      <SelectItem value="duration-desc">Mayor duración</SelectItem>
+                      <SelectItem value="default">Orden por defecto</SelectItem>
                     </SelectContent>
                   </Select>
                   
@@ -718,7 +722,7 @@ const MiBuscador: React.FC = () => {
                     <SheetTrigger asChild>
                       <Button variant="outline" className="h-12 relative">
                         <SlidersHorizontal className="h-4 w-4 mr-2" />
-                        Más filtros
+                        Filtros avanzados
                         {activeAdvancedFilters > 0 && (
                           <Badge className="absolute -top-2 -right-2 h-5 w-5 p-0 flex items-center justify-center text-xs">
                             {activeAdvancedFilters}
@@ -853,18 +857,6 @@ const MiBuscador: React.FC = () => {
             <p className="text-sm text-muted-foreground">
               Mostrando <span className="font-medium text-foreground">{filteredCourses.length}</span> cursos
             </p>
-            <Select defaultValue="relevance">
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Ordenar por" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="relevance">Relevancia</SelectItem>
-                <SelectItem value="price-asc">Precio: menor a mayor</SelectItem>
-                <SelectItem value="price-desc">Precio: mayor a menor</SelectItem>
-                <SelectItem value="rating">Mejor valorados</SelectItem>
-                <SelectItem value="hours">Duración</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
 
           {/* Course Grid */}
