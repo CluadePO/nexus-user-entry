@@ -276,10 +276,8 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
         insertData.lider_servicio_edc = oticLiderServicioEDC || null;
         insertData.lider_servicio_op = oticLiderServicioOperacional || null;
       } else {
-        insertData.holding = selectedHolding;
-        insertData.empresa = selectedCompanyData?.name || null;
-        insertData.celula = autoFilledData.celulaOperacional || null;
-        insertData.jefe_comercial = autoFilledData.jefeComercial || null;
+        insertData.empresa = empresaPertenece || null;
+        insertData.holding = selectedHolding || null;
       }
 
       const { error } = await supabase.from('system_users').insert(insertData);
