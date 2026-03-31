@@ -26,12 +26,18 @@ interface FavoritesSidebarProps {
   favoriteCourses: Course[];
   onRemoveFavorite: (courseId: string) => void;
   formatPrice: (price: number) => string;
+  isFavoritesViewActive: boolean;
+  onShowFavorites: () => void;
+  onShowAllCourses: () => void;
 }
 
 const FavoritesSidebar: React.FC<FavoritesSidebarProps> = ({
   favoriteCourses,
   onRemoveFavorite,
   formatPrice,
+  isFavoritesViewActive,
+  onShowFavorites,
+  onShowAllCourses,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const navigate = useNavigate();
@@ -51,7 +57,10 @@ const FavoritesSidebar: React.FC<FavoritesSidebarProps> = ({
         }`}
       >
         <button
-          onClick={() => setIsExpanded(true)}
+          onClick={() => {
+            onShowFavorites();
+            setIsExpanded(true);
+          }}
           className="flex flex-col items-center gap-2 bg-primary text-primary-foreground px-3 py-4 rounded-l-lg shadow-lg hover:bg-primary/90 transition-colors"
         >
           <Heart className="h-5 w-5 fill-current" />
@@ -94,14 +103,26 @@ const FavoritesSidebar: React.FC<FavoritesSidebarProps> = ({
                   {favoriteCourses.length}
                 </Badge>
               </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsExpanded(false)}
-                className="h-8 w-8"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
+              <div className="flex items-center gap-1">
+                {isFavoritesViewActive && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={onShowAllCourses}
+                    className="h-8 px-2 text-xs"
+                  >
+                    Ver todos
+                  </Button>
+                )}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setIsExpanded(false)}
+                  className="h-8 w-8"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </div>
 
