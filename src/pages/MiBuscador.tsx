@@ -31,6 +31,16 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   Breadcrumb,
@@ -260,6 +270,7 @@ const MiBuscador: React.FC = () => {
   const [selectedFavoriteCourses, setSelectedFavoriteCourses] = useState<string[]>([]);
   const [sortOrder, setSortOrder] = useState<string>('default');
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  const [isDeleteFavoritesDialogOpen, setIsDeleteFavoritesDialogOpen] = useState(false);
   const [providerFilter, setProviderFilter] = useState('');
   const [modalityFilters, setModalityFilters] = useState<string[]>([]);
   const [courseTypeFilters, setCourseTypeFilters] = useState<string[]>([]);
@@ -318,7 +329,17 @@ const MiBuscador: React.FC = () => {
           : course
       )
     );
+
+    const remainingFavorites = courses.filter(
+      course => course.isFavorite && !selectedFavoriteCourses.includes(course.id)
+    );
+
+    if (remainingFavorites.length === 0) {
+      setShowFavoritesOnly(false);
+    }
+
     setSelectedFavoriteCourses([]);
+    setIsDeleteFavoritesDialogOpen(false);
   };
 
   const toggleCompare = (courseId: string) => {
@@ -972,7 +993,7 @@ const MiBuscador: React.FC = () => {
                   {allVisibleFavoritesSelected ? 'Quitar selección' : 'Seleccionar todo'}
                 </Button>
                 {selectedFavoriteCourses.length > 0 && (
-                  <Button variant="destructive" size="sm" onClick={removeSelectedFavorites}>
+                  <Button variant="destructive" size="sm" onClick={() => setIsDeleteFavoritesDialogOpen(true)}>
                     Eliminar selección
                   </Button>
                 )}
@@ -1136,6 +1157,23 @@ const MiBuscador: React.FC = () => {
         onRemoveCourse={handleRemoveCourseFromComparison}
         onSwapCourse={handleSwapCourse}
       />
+
+      <AlertDialog open={isDeleteFavoritesDialogOpen} onOpenChange={setIsDeleteFavoritesDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Eliminar cursos de favoritos</AlertDialogTitle>
+            <AlertDialogDescription>
+              ¿Estás seguro de eliminar {selectedFavoriteCourses.length} curso{selectedFavoriteCourses.length !== 1 ? 's' : ''} de tus favoritos? Esta acción actualizará tu vista actual.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={removeSelectedFavorites}>
+              Confirmar eliminación
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* FAQ Sticky Panel */}
       <FAQStickyPanel />
