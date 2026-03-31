@@ -50,6 +50,7 @@ import {
   SheetClose,
 } from '@/components/ui/sheet';
 import { Label } from '@/components/ui/label';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { ChileRegionsMap } from '@/components/dashboard/ChileRegionsMap';
 import { OTECBuscadorDashboard } from '@/components/dashboard/OTECBuscadorDashboard';
 import { CourseComparisonModal } from '@/components/dashboard/CourseComparisonModal';
@@ -257,6 +258,9 @@ const MiBuscador: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>(mockCourses);
   const [selectedCourses, setSelectedCourses] = useState<string[]>([]);
   const [sortOrder, setSortOrder] = useState<string>('default');
+  const [providerFilter, setProviderFilter] = useState('');
+  const [modalityFilters, setModalityFilters] = useState<string[]>([]);
+  const [courseTypeFilters, setCourseTypeFilters] = useState<string[]>([]);
   const [areaFilter, setAreaFilter] = useState<string>('all');
   const [regionFilter, setRegionFilter] = useState<string>('all');
   const [isComparisonModalOpen, setIsComparisonModalOpen] = useState(false);
@@ -318,20 +322,31 @@ const MiBuscador: React.FC = () => {
   };
 
   const clearAdvancedFilters = () => {
+    setProviderFilter('');
+    setModalityFilters([]);
+    setCourseTypeFilters([]);
     setAreaFilter('all');
     setRegionFilter('all');
   };
 
-  const activeAdvancedFilters = (areaFilter !== 'all' ? 1 : 0) + (regionFilter !== 'all' ? 1 : 0);
+  const activeAdvancedFilters =
+    (providerFilter.trim() ? 1 : 0) +
+    modalityFilters.length +
+    courseTypeFilters.length +
+    (areaFilter !== 'all' ? 1 : 0) +
+    (regionFilter !== 'all' ? 1 : 0);
 
   const filteredCourses = [...courses]
     .filter(course => {
       const matchesSearch = course.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                             course.provider.toLowerCase().includes(searchTerm.toLowerCase()) ||
                             course.category.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesProvider = providerFilter.trim() === '' || course.provider.toLowerCase().includes(providerFilter.toLowerCase());
+      const matchesModality = modalityFilters.length === 0 || modalityFilters.includes(course.modality);
+      const matchesCourseType = courseTypeFilters.length === 0 || courseTypeFilters.includes(course.type);
       const matchesArea = areaFilter === 'all' || course.area === areaFilter;
       const matchesRegion = regionFilter === 'all' || course.region === regionFilter;
-      return matchesSearch && matchesArea && matchesRegion;
+      return matchesSearch && matchesProvider && matchesModality && matchesCourseType && matchesArea && matchesRegion;
     })
     .sort((a, b) => {
       switch (sortOrder) {
@@ -741,6 +756,56 @@ const MiBuscador: React.FC = () => {
                         </SheetDescription>
                       </SheetHeader>
                       <div className="space-y-6 py-6">
+                        <div className="space-y-3">
+                          <Label className="text-sm font-medium">Proveedor</Label>
+                          <div className="relative">
+                            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            <Input
+                              value={providerFilter}
+                              onChange={(e) => setProviderFilter(e.target.value)}
+                              placeholder="Buscar por nombre del proveedor"
+                              className="pl-9"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="space-y-3">
+                          <Label className="text-sm font-medium">Modalidad</Label>
+                          <ToggleGroup
+                            type="multiple"
+                            value={modalityFilters}
+                            onValueChange={setModalityFilters}
+                            className="flex flex-wrap justify-start gap-2"
+                          >
+                            <ToggleGroupItem value="Presencial" aria-label="Filtrar por Presencial">
+                              Presencial
+                            </ToggleGroupItem>
+                            <ToggleGroupItem value="E-learning" aria-label="Filtrar por E-learning">
+                              E-learning
+                            </ToggleGroupItem>
+                            <ToggleGroupItem value="Distancia" aria-label="Filtrar por Distancia">
+                              Distancia
+                            </ToggleGroupItem>
+                          </ToggleGroup>
+                        </div>
+
+                        <div className="space-y-3">
+                          <Label className="text-sm font-medium">Tipo de Curso</Label>
+                          <ToggleGroup
+                            type="multiple"
+                            value={courseTypeFilters}
+                            onValueChange={setCourseTypeFilters}
+                            className="flex flex-wrap justify-start gap-2"
+                          >
+                            <ToggleGroupItem value="Sence" aria-label="Filtrar por Curso Sence">
+                              Curso Sence
+                            </ToggleGroupItem>
+                            <ToggleGroupItem value="No Sence" aria-label="Filtrar por Curso No Sence">
+                              Curso No Sence
+                            </ToggleGroupItem>
+                          </ToggleGroup>
+                        </div>
+
                         <div className="space-y-3">
                           <Label className="text-sm font-medium">Área de Curso</Label>
                           <Select value={areaFilter} onValueChange={setAreaFilter}>
