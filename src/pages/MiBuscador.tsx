@@ -257,6 +257,7 @@ const MiBuscador: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [courses, setCourses] = useState<Course[]>(mockCourses);
   const [selectedCourses, setSelectedCourses] = useState<string[]>([]);
+  const [selectedFavoriteCourses, setSelectedFavoriteCourses] = useState<string[]>([]);
   const [sortOrder, setSortOrder] = useState<string>('default');
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [providerFilter, setProviderFilter] = useState('');
@@ -289,6 +290,35 @@ const MiBuscador: React.FC = () => {
         ? { ...course, isFavorite: !course.isFavorite }
         : course
     ));
+
+    setSelectedFavoriteCourses(prev => prev.filter(id => id !== courseId));
+  };
+
+  const toggleFavoriteSelection = (courseId: string, checked: boolean) => {
+    setSelectedFavoriteCourses(prev =>
+      checked ? [...new Set([...prev, courseId])] : prev.filter(id => id !== courseId)
+    );
+  };
+
+  const selectAllFavoriteCourses = () => {
+    setSelectedFavoriteCourses(filteredCourses.filter(course => course.isFavorite).map(course => course.id));
+  };
+
+  const clearFavoriteSelection = () => {
+    setSelectedFavoriteCourses([]);
+  };
+
+  const removeSelectedFavorites = () => {
+    if (selectedFavoriteCourses.length === 0) return;
+
+    setCourses(prev =>
+      prev.map(course =>
+        selectedFavoriteCourses.includes(course.id)
+          ? { ...course, isFavorite: false }
+          : course
+      )
+    );
+    setSelectedFavoriteCourses([]);
   };
 
   const toggleCompare = (courseId: string) => {
@@ -380,6 +410,11 @@ const MiBuscador: React.FC = () => {
       ? 'bg-primary/10 text-primary border-primary/30' 
       : 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300';
   };
+
+  const visibleFavoriteCourses = filteredCourses.filter(course => course.isFavorite);
+  const allVisibleFavoritesSelected =
+    visibleFavoriteCourses.length > 0 &&
+    visibleFavoriteCourses.every(course => selectedFavoriteCourses.includes(course.id));
 
   return (
     <div className="space-y-6 pr-14">
@@ -931,6 +966,18 @@ const MiBuscador: React.FC = () => {
                 </Button>
               )}
             </div>
+            {showFavoritesOnly && visibleFavoriteCourses.length > 0 && (
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="sm" onClick={allVisibleFavoritesSelected ? clearFavoriteSelection : selectAllFavoriteCourses}>
+                  {allVisibleFavoritesSelected ? 'Quitar selección' : 'Seleccionar todo'}
+                </Button>
+                {selectedFavoriteCourses.length > 0 && (
+                  <Button variant="destructive" size="sm" onClick={removeSelectedFavorites}>
+                    Eliminar selección
+                  </Button>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Course Grid */}
@@ -939,6 +986,15 @@ const MiBuscador: React.FC = () => {
               <Card key={course.id} className="group hover:shadow-lg transition-all duration-300 hover:border-primary/50 overflow-hidden">
                 {/* Course Image */}
                 <div className="relative h-40 overflow-hidden">
+                  {showFavoritesOnly && course.isFavorite && (
+                    <div className="absolute top-2 left-2 z-10 rounded-md bg-background/90 p-1 shadow-sm">
+                      <Checkbox
+                        checked={selectedFavoriteCourses.includes(course.id)}
+                        onCheckedChange={(checked) => toggleFavoriteSelection(course.id, checked === true)}
+                        aria-label={`Seleccionar ${course.name}`}
+                      />
+                    </div>
+                  )}
                   <img 
                     src={course.imageUrl} 
                     alt={course.name}
