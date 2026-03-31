@@ -258,6 +258,7 @@ const MiBuscador: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>(mockCourses);
   const [selectedCourses, setSelectedCourses] = useState<string[]>([]);
   const [sortOrder, setSortOrder] = useState<string>('default');
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [providerFilter, setProviderFilter] = useState('');
   const [modalityFilters, setModalityFilters] = useState<string[]>([]);
   const [courseTypeFilters, setCourseTypeFilters] = useState<string[]>([]);
@@ -344,9 +345,10 @@ const MiBuscador: React.FC = () => {
       const matchesProvider = providerFilter.trim() === '' || course.provider.toLowerCase().includes(providerFilter.toLowerCase());
       const matchesModality = modalityFilters.length === 0 || modalityFilters.includes(course.modality);
       const matchesCourseType = courseTypeFilters.length === 0 || courseTypeFilters.includes(course.type);
+      const matchesFavorites = !showFavoritesOnly || course.isFavorite;
       const matchesArea = areaFilter === 'all' || course.area === areaFilter;
       const matchesRegion = regionFilter === 'all' || course.region === regionFilter;
-      return matchesSearch && matchesProvider && matchesModality && matchesCourseType && matchesArea && matchesRegion;
+      return matchesSearch && matchesProvider && matchesModality && matchesCourseType && matchesFavorites && matchesArea && matchesRegion;
     })
     .sort((a, b) => {
       switch (sortOrder) {
@@ -919,9 +921,16 @@ const MiBuscador: React.FC = () => {
 
           {/* Results Count */}
           <div className="flex items-center justify-between">
-            <p className="text-sm text-muted-foreground">
-              Mostrando <span className="font-medium text-foreground">{filteredCourses.length}</span> cursos
-            </p>
+            <div className="flex items-center gap-3">
+              <p className="text-sm text-muted-foreground">
+                Mostrando <span className="font-medium text-foreground">{filteredCourses.length}</span> cursos
+              </p>
+              {showFavoritesOnly && (
+                <Button variant="link" className="h-auto p-0" onClick={() => setShowFavoritesOnly(false)}>
+                  Volver a la vista por defecto
+                </Button>
+              )}
+            </div>
           </div>
 
           {/* Course Grid */}
@@ -1056,6 +1065,9 @@ const MiBuscador: React.FC = () => {
         favoriteCourses={courses.filter(c => c.isFavorite)}
         onRemoveFavorite={toggleFavorite}
         formatPrice={formatPrice}
+        isFavoritesViewActive={showFavoritesOnly}
+        onShowFavorites={() => setShowFavoritesOnly(true)}
+        onShowAllCourses={() => setShowFavoritesOnly(false)}
       />
 
       {/* Course Comparison Modal */}
