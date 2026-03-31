@@ -257,8 +257,6 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      const selectedCompanyData = mockCompanies.find((c) => c.id === selectedCompany);
-      
       const insertData: any = {
         rut,
         email,
@@ -269,6 +267,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
 
       if (userType === 'OTIC') {
         insertData.empresa = oticEmpresa || null;
+        insertData.holding = oticSelectedHoldings.length > 0 ? oticSelectedHoldings.join(', ') : null;
         insertData.celula = oticCelula || null;
         insertData.jefe_comercial = oticJefeComercial || null;
         insertData.analista_comercial = oticAnalistaComercial || null;
