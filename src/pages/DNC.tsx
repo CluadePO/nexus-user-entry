@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import TermsSignatureModal from '@/components/dnc/TermsSignatureModal';
 import DNCConfiguracion from '@/components/dnc/DNCConfiguracion';
+import DNCHistorial from '@/components/dnc/DNCHistorial';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
@@ -15,7 +16,8 @@ import {
   Target, 
   TrendingUp,
   CheckCircle2,
-  Info
+  Info,
+  History
 } from 'lucide-react';
 
 const processSteps = [
@@ -49,27 +51,33 @@ const benefits = [
   { icon: CheckCircle2, title: 'Cursos recomendados', description: 'Obtén un listado de cursos alineados a las brechas detectadas, listo para gestionar.' },
 ];
 
+type DNCPhase = 'landing' | 'config' | 'historial';
+
 const DNC: React.FC = () => {
   const [showTerms, setShowTerms] = useState(false);
-  const [phase, setPhase] = useState<'landing' | 'config'>(() => {
-    const saved = localStorage.getItem('dnc_draft_phase');
-    return saved === 'config' ? 'config' : 'landing';
-  });
+  const [phase, setPhase] = useState<DNCPhase>('landing');
 
   const handleSigned = () => {
     setPhase('config');
-    localStorage.setItem('dnc_draft_phase', 'config');
     toast.success('Documento firmado correctamente');
   };
 
   const handleBackToLanding = () => {
-    localStorage.setItem('dnc_draft_phase', 'config');
     toast.info('Proceso guardado como borrador');
     setPhase('landing');
   };
 
   if (phase === 'config') {
     return <DNCConfiguracion onBack={handleBackToLanding} />;
+  }
+
+  if (phase === 'historial') {
+    return (
+      <DNCHistorial
+        onBack={() => setPhase('landing')}
+        onResumeDraft={() => setPhase('config')}
+      />
+    );
   }
 
   return (
