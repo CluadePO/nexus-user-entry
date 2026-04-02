@@ -21,7 +21,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { ArrowLeft, Settings, Users, FileText, CheckCircle2, Save, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Settings, Users, FileText, CheckCircle2, Save, AlertTriangle, Info } from 'lucide-react';
 import DNCParticipantUpload, { type Participante } from './DNCParticipantUpload';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
