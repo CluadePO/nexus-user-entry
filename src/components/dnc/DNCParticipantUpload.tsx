@@ -19,7 +19,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { Upload, Download, FileSpreadsheet, Eye, Trash2, CheckCircle2, AlertTriangle, Users, Info } from 'lucide-react';
+import { Upload, Download, FileSpreadsheet, Eye, Trash2, CheckCircle2, AlertTriangle, Users } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import * as XLSX from 'xlsx';
