@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -41,13 +42,14 @@ const modalidades: { value: Modalidad; label: string; description: string }[] = 
 const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack, existingDraft }) => {
   const [draftId] = useState(() => existingDraft?.id || generateId());
   const [nombre, setNombre] = useState(existingDraft?.nombre || '');
+  const [rubro, setRubro] = useState(existingDraft?.rubro || '');
   const [fechaInicio, setFechaInicio] = useState(existingDraft?.fechaInicio || '');
   const [fechaFin, setFechaFin] = useState(existingDraft?.fechaFin || '');
   const [modalidad, setModalidad] = useState<Modalidad | null>(existingDraft?.modalidad || null);
   const [participants, setParticipants] = useState<Participante[]>([]);
   const [showExitDialog, setShowExitDialog] = useState(false);
   const [step1Complete, setStep1Complete] = useState(
-    !!(existingDraft?.nombre && existingDraft?.fechaInicio && existingDraft?.fechaFin && existingDraft?.modalidad)
+    !!(existingDraft?.nombre && existingDraft?.rubro && existingDraft?.fechaInicio && existingDraft?.fechaFin && existingDraft?.modalidad)
   );
   const [step3Complete, setStep3Complete] = useState(false);
   const [selectedQuestions, setSelectedQuestions] = useState<string[]>(['mes_capacitacion', 'modalidad_capacitacion']);
@@ -58,11 +60,12 @@ const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack, existingDra
 
   const showAutodiagnostico = modalidad === 'jefaturas' || modalidad === 'mixta';
 
-  const isStep1Valid = nombre.trim() !== '' && fechaInicio !== '' && fechaFin !== '' && modalidad !== null;
+  const isStep1Valid = nombre.trim() !== '' && rubro !== '' && fechaInicio !== '' && fechaFin !== '' && modalidad !== null;
 
   const buildDraft = (): DNCProceso => ({
     id: draftId,
     nombre,
+    rubro,
     fechaInicio,
     fechaFin,
     modalidad: modalidad!,
@@ -166,6 +169,27 @@ const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack, existingDra
               </div>
 
               <div className="space-y-2">
+                <Label htmlFor="dnc-rubro">Rubro <span className="text-destructive">*</span></Label>
+                <Select value={rubro} onValueChange={setRubro}>
+                  <SelectTrigger id="dnc-rubro">
+                    <SelectValue placeholder="Selecciona un rubro" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {[
+                      'Agricultura y Ganadería', 'Minería', 'Industria Manufacturera', 'Construcción',
+                      'Comercio', 'Transporte y Logística', 'Tecnología e Informática', 'Telecomunicaciones',
+                      'Servicios Financieros y Banca', 'Salud y Servicios Sociales', 'Educación',
+                      'Hotelería y Turismo', 'Energía y Medio Ambiente', 'Inmobiliario',
+                      'Servicios Profesionales y Consultoría', 'Administración Pública', 'Retail',
+                      'Alimentos y Bebidas', 'Forestal y Pesca', 'Otro',
+                    ].map((r) => (
+                      <SelectItem key={r} value={r}>{r}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
                 <Label>Período de evaluación <span className="text-destructive">*</span></Label>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
@@ -209,10 +233,14 @@ const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack, existingDra
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
               <div>
                 <p className="text-muted-foreground text-xs">Nombre</p>
                 <p className="font-medium text-foreground">{nombre}</p>
+              </div>
+              <div>
+                <p className="text-muted-foreground text-xs">Rubro</p>
+                <p className="font-medium text-foreground">{rubro}</p>
               </div>
               <div>
                 <p className="text-muted-foreground text-xs">Período</p>

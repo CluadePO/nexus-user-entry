@@ -4,6 +4,7 @@ export type ProcesoStatus = 'borrador' | 'en_curso' | 'completado' | 'cancelado'
 export interface DNCProceso {
   id: string;
   nombre: string;
+  rubro: string;
   fechaInicio: string;
   fechaFin: string;
   modalidad: Modalidad;
@@ -21,6 +22,7 @@ const seedProcesos: DNCProceso[] = [
   {
     id: 'DNC-2025-002',
     nombre: 'DNC Área Comercial Q1',
+    rubro: 'Comercio',
     fechaInicio: '2025-01-15',
     fechaFin: '2025-03-20',
     modalidad: 'colaboradores',
@@ -33,6 +35,7 @@ const seedProcesos: DNCProceso[] = [
   {
     id: 'DNC-2024-001',
     nombre: 'DNC Anual 2024',
+    rubro: 'Tecnología',
     fechaInicio: '2024-08-01',
     fechaFin: '2024-11-10',
     modalidad: 'mixta',
