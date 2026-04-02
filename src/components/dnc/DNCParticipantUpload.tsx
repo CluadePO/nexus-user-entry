@@ -159,24 +159,16 @@ const DNCParticipantUpload: React.FC<DNCParticipantUploadProps> = ({
 
   return (
     <div className="space-y-4">
-      {/* Download links */}
-      <div className="flex flex-wrap items-center gap-4">
+      {/* Action links */}
+      <div className="flex items-center justify-between">
         <Button variant="link" className="gap-2 text-primary p-0 h-auto" onClick={downloadTemplate}>
           <Download className="w-4 h-4" />
           Descargar plantilla base
         </Button>
-        <Button variant="link" className="gap-2 text-primary p-0 h-auto" onClick={downloadExample}>
+        <Button variant="link" className="gap-2 text-primary p-0 h-auto" onClick={() => setShowExample(true)}>
           <FileSpreadsheet className="w-4 h-4" />
-          Descargar ejemplo de carga
+          Ejemplo de carga
         </Button>
-      </div>
-
-      {/* Info box */}
-      <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 border">
-        <Info className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
-        <p className="text-xs text-muted-foreground">
-          La plantilla debe contener las columnas: <strong>Rut, Nombre, Apellido Paterno, Apellido Materno, E-mail, Cargo, Nivel de Cargo, Área, Unidad y Rut Jefatura Evaluadora</strong>. Descarga el ejemplo para ver cómo completar los datos correctamente.
-        </p>
       </div>
 
       {/* Upload area */}
