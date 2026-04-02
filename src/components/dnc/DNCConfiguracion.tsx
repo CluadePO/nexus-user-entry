@@ -512,7 +512,19 @@ const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack, existingDra
               )}
             </div>
           ) : (
-            <div className="text-sm space-y-2">
+            <div className="text-sm space-y-3">
+              <div className="flex flex-wrap gap-4 text-xs">
+                <div>
+                  <span className="text-muted-foreground">Diagnóstico:</span>{' '}
+                  <Badge variant="outline" className="text-xs">{tipoDiagnostico === 'persona' ? 'Por persona' : tipoDiagnostico === 'cargo' ? 'Por cargo' : 'Por persona y cargo'}</Badge>
+                </div>
+                {showAutodiagnostico && (
+                  <div>
+                    <span className="text-muted-foreground">Autodiagnóstico jefaturas:</span>{' '}
+                    <Badge variant="outline" className="text-xs">{incluirAutodiagnostico ? 'Sí' : 'No'}</Badge>
+                  </div>
+                )}
+              </div>
               <p className="text-muted-foreground text-xs">Preguntas incluidas en la encuesta:</p>
               <div className="flex flex-wrap gap-2">
                 {selectedQuestions.includes('mes_capacitacion') && (
