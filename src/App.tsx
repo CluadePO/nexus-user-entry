@@ -15,6 +15,7 @@ import AsesorDashboard from "./pages/AsesorDashboard";
 import MiBuscador from "./pages/MiBuscador";
 import MiRecomendador from "./pages/MiRecomendador";
 import CourseDetail from "./pages/CourseDetail";
+import DNC from "./pages/DNC";
 import Encuestas from "./pages/Encuestas";
 import CursosResumen from "./pages/CursosResumen";
 import AdminUsuarios from "./pages/AdminUsuarios";
