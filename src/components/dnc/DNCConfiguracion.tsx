@@ -65,6 +65,7 @@ const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack, existingDra
   const buildDraft = (): DNCProceso => ({
     id: draftId,
     nombre,
+    rubro,
     fechaInicio,
     fechaFin,
     modalidad: modalidad!,
