@@ -293,13 +293,109 @@ const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack, existingDra
               </div>
             </div>
             {step3Complete && (
-              <Button size="sm" variant="ghost" onClick={() => setStep3Complete(false)}>Editar</Button>
+              <Button size="sm" variant="ghost" onClick={() => { setStep3Complete(false); setDiagnosticoConfigured(false); }}>Editar</Button>
             )}
           </div>
 
           {!step3Complete ? (
             <div className="space-y-4">
-              <p className="text-xs text-muted-foreground">Selecciona las preguntas obligatorias que se incluirán en la encuesta. Puedes ver el detalle de cada pregunta para conocer las opciones de respuesta.</p>
+              {!diagnosticoConfigured ? (
+                /* Sub-paso: Configuración del diagnóstico */
+                <div className="space-y-5">
+                  <p className="text-xs text-muted-foreground">Antes de configurar las preguntas de la encuesta, define cómo deseas realizar el diagnóstico.</p>
+
+                  {/* Tipo de diagnóstico */}
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium">¿Cómo deseas realizar el diagnóstico? <span className="text-destructive">*</span></Label>
+                    <p className="text-xs text-muted-foreground">Esta selección determina cómo se identificarán los datos en el proceso.</p>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                      {[
+                        { value: 'persona', label: 'Por persona', desc: 'El diagnóstico se realiza de forma individual por cada participante.' },
+                        { value: 'cargo', label: 'Por cargo', desc: 'El diagnóstico se agrupa por el cargo de los participantes.' },
+                        { value: 'persona_cargo', label: 'Por persona y cargo', desc: 'Combina la identificación individual con la agrupación por cargo.' },
+                      ].map((opt) => (
+                        <button
+                          key={opt.value}
+                          type="button"
+                          onClick={() => setTipoDiagnostico(opt.value)}
+                          className={cn(
+                            "text-left p-4 rounded-lg border-2 transition-all",
+                            tipoDiagnostico === opt.value
+                              ? "border-primary bg-primary/5 ring-1 ring-primary/20"
+                              : "border-border hover:border-primary/40 bg-background"
+                          )}
+                        >
+                          <p className="font-medium text-sm text-foreground">{opt.label}</p>
+                          <p className="text-xs text-muted-foreground mt-1">{opt.desc}</p>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Autodiagnóstico para jefaturas */}
+                  {showAutodiagnostico && (
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium">¿Deseas incluir autodiagnóstico para jefaturas? <span className="text-destructive">*</span></Label>
+                      <p className="text-xs text-muted-foreground">Permite que las jefaturas también se evalúen a sí mismas dentro del proceso.</p>
+                      <div className="grid grid-cols-2 gap-3 max-w-md">
+                        {[
+                          { value: true, label: 'Sí, incluir' },
+                          { value: false, label: 'No, omitir' },
+                        ].map((opt) => (
+                          <button
+                            key={String(opt.value)}
+                            type="button"
+                            onClick={() => setIncluirAutodiagnostico(opt.value)}
+                            className={cn(
+                              "p-3 rounded-lg border-2 transition-all text-center",
+                              incluirAutodiagnostico === opt.value
+                                ? "border-primary bg-primary/5 ring-1 ring-primary/20"
+                                : "border-border hover:border-primary/40 bg-background"
+                            )}
+                          >
+                            <p className="font-medium text-sm text-foreground">{opt.label}</p>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex justify-end pt-2">
+                    <Button
+                      className="gap-2"
+                      disabled={!tipoDiagnostico || (showAutodiagnostico && incluirAutodiagnostico === null)}
+                      onClick={() => {
+                        setDiagnosticoConfigured(true);
+                        toast.success('Configuración de diagnóstico guardada');
+                      }}
+                    >
+                      Continuar a preguntas de encuesta
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                /* Sub-paso: Preguntas de la encuesta */
+                <div className="space-y-4">
+                  {/* Resumen diagnóstico */}
+                  <div className="bg-muted/50 rounded-lg p-3 flex flex-wrap gap-4 items-center text-xs">
+                    <div>
+                      <span className="text-muted-foreground">Diagnóstico:</span>{' '}
+                      <span className="font-medium text-foreground">
+                        {tipoDiagnostico === 'persona' ? 'Por persona' : tipoDiagnostico === 'cargo' ? 'Por cargo' : 'Por persona y cargo'}
+                      </span>
+                    </div>
+                    {showAutodiagnostico && (
+                      <div>
+                        <span className="text-muted-foreground">Autodiagnóstico jefaturas:</span>{' '}
+                        <span className="font-medium text-foreground">{incluirAutodiagnostico ? 'Sí' : 'No'}</span>
+                      </div>
+                    )}
+                    <Button variant="ghost" size="sm" className="text-xs ml-auto h-7" onClick={() => setDiagnosticoConfigured(false)}>
+                      Modificar
+                    </Button>
+                  </div>
+
+                  <p className="text-xs text-muted-foreground">Selecciona las preguntas obligatorias que se incluirán en la encuesta.</p>
 
               {/* Pregunta 1: Mes de capacitación */}
               <div className={cn("rounded-lg border-2 transition-all", selectedQuestions.includes('mes_capacitacion') ? "border-primary/40 bg-primary/5" : "border-border bg-background")}>
