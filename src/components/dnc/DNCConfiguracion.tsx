@@ -21,7 +21,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { ArrowLeft, Settings, Users, FileText, CheckCircle2, Save, AlertTriangle, Info, ClipboardList } from 'lucide-react';
+import { ArrowLeft, Settings, Users, FileText, CheckCircle2, Save, AlertTriangle, Info, ClipboardList, ChevronDown, ChevronUp } from 'lucide-react';
 import DNCParticipantUpload, { type Participante } from './DNCParticipantUpload';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
@@ -49,9 +49,9 @@ const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack, existingDra
   const [step1Complete, setStep1Complete] = useState(
     !!(existingDraft?.nombre && existingDraft?.fechaInicio && existingDraft?.fechaFin && existingDraft?.modalidad)
   );
-  const [mesesCapacitacion, setMesesCapacitacion] = useState<string[]>([]);
-  const [modalidadCapacitacion, setModalidadCapacitacion] = useState<string[]>([]);
   const [step3Complete, setStep3Complete] = useState(false);
+  const [selectedQuestions, setSelectedQuestions] = useState<string[]>(['mes_capacitacion', 'modalidad_capacitacion']);
+  const [expandedQuestions, setExpandedQuestions] = useState<string[]>([]);
 
   const isStep1Valid = nombre.trim() !== '' && fechaInicio !== '' && fechaFin !== '' && modalidad !== null;
 
@@ -293,65 +293,111 @@ const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack, existingDra
           </div>
 
           {!step3Complete ? (
-            <div className="space-y-6">
-              {/* Pregunta: Mes de capacitación */}
-              <div className="space-y-2">
-                <Label className="text-sm font-medium">
-                  Indica tu preferencia de mes de capacitación <span className="text-destructive">*</span>
-                </Label>
-                <p className="text-xs text-muted-foreground">Selecciona uno o más meses en los que prefieres recibir capacitación.</p>
-                <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
-                  {['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'].map((mes) => (
-                    <button
-                      key={mes}
-                      type="button"
-                      onClick={() => setMesesCapacitacion(prev =>
-                        prev.includes(mes) ? prev.filter(m => m !== mes) : [...prev, mes]
-                      )}
-                      className={cn(
-                        "px-3 py-2 rounded-lg border text-sm font-medium transition-all",
-                        mesesCapacitacion.includes(mes)
-                          ? "border-primary bg-primary/10 text-primary ring-1 ring-primary/20"
-                          : "border-border bg-background text-muted-foreground hover:border-primary/40"
-                      )}
-                    >
-                      {mes}
-                    </button>
-                  ))}
+            <div className="space-y-4">
+              <p className="text-xs text-muted-foreground">Selecciona las preguntas obligatorias que se incluirán en la encuesta. Puedes ver el detalle de cada pregunta para conocer las opciones de respuesta.</p>
+
+              {/* Pregunta 1: Mes de capacitación */}
+              <div className={cn("rounded-lg border-2 transition-all", selectedQuestions.includes('mes_capacitacion') ? "border-primary/40 bg-primary/5" : "border-border bg-background")}>
+                <div className="flex items-center justify-between p-4">
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="checkbox"
+                      checked={selectedQuestions.includes('mes_capacitacion')}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedQuestions(prev => [...prev, 'mes_capacitacion']);
+                        } else {
+                          setSelectedQuestions(prev => prev.filter(q => q !== 'mes_capacitacion'));
+                        }
+                      }}
+                      className="w-4 h-4 rounded border-border text-primary focus:ring-primary"
+                    />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Indica tu preferencia de mes de capacitación</p>
+                      <p className="text-xs text-muted-foreground">Permite seleccionar uno o más meses del año</p>
+                    </div>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="gap-1 text-xs text-muted-foreground"
+                    onClick={() => setExpandedQuestions(prev =>
+                      prev.includes('mes_capacitacion') ? prev.filter(q => q !== 'mes_capacitacion') : [...prev, 'mes_capacitacion']
+                    )}
+                  >
+                    {expandedQuestions.includes('mes_capacitacion') ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                    Ver detalle
+                  </Button>
                 </div>
+                {expandedQuestions.includes('mes_capacitacion') && (
+                  <div className="px-4 pb-4 pt-0">
+                    <div className="bg-muted/50 rounded-lg p-3">
+                      <p className="text-xs font-medium text-muted-foreground mb-2">Opciones de respuesta disponibles:</p>
+                      <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
+                        {['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'].map((mes) => (
+                          <span key={mes} className="px-3 py-1.5 rounded-lg border border-border bg-background text-xs text-muted-foreground text-center">
+                            {mes}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
-              {/* Pregunta: Modalidad de capacitación */}
-              <div className="space-y-2">
-                <Label className="text-sm font-medium">
-                  Indica tu preferencia de modalidad de capacitación <span className="text-destructive">*</span>
-                </Label>
-                <p className="text-xs text-muted-foreground">Selecciona una o más modalidades de tu preferencia.</p>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  {['Presencial','Distancia','E-Learning','Híbrida'].map((mod) => (
-                    <button
-                      key={mod}
-                      type="button"
-                      onClick={() => setModalidadCapacitacion(prev =>
-                        prev.includes(mod) ? prev.filter(m => m !== mod) : [...prev, mod]
-                      )}
-                      className={cn(
-                        "px-4 py-3 rounded-lg border-2 text-sm font-medium transition-all",
-                        modalidadCapacitacion.includes(mod)
-                          ? "border-primary bg-primary/10 text-primary ring-1 ring-primary/20"
-                          : "border-border bg-background text-muted-foreground hover:border-primary/40"
-                      )}
-                    >
-                      {mod}
-                    </button>
-                  ))}
+              {/* Pregunta 2: Modalidad de capacitación */}
+              <div className={cn("rounded-lg border-2 transition-all", selectedQuestions.includes('modalidad_capacitacion') ? "border-primary/40 bg-primary/5" : "border-border bg-background")}>
+                <div className="flex items-center justify-between p-4">
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="checkbox"
+                      checked={selectedQuestions.includes('modalidad_capacitacion')}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedQuestions(prev => [...prev, 'modalidad_capacitacion']);
+                        } else {
+                          setSelectedQuestions(prev => prev.filter(q => q !== 'modalidad_capacitacion'));
+                        }
+                      }}
+                      className="w-4 h-4 rounded border-border text-primary focus:ring-primary"
+                    />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Indica tu preferencia de modalidad de capacitación</p>
+                      <p className="text-xs text-muted-foreground">Permite seleccionar una o más modalidades</p>
+                    </div>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="gap-1 text-xs text-muted-foreground"
+                    onClick={() => setExpandedQuestions(prev =>
+                      prev.includes('modalidad_capacitacion') ? prev.filter(q => q !== 'modalidad_capacitacion') : [...prev, 'modalidad_capacitacion']
+                    )}
+                  >
+                    {expandedQuestions.includes('modalidad_capacitacion') ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                    Ver detalle
+                  </Button>
                 </div>
+                {expandedQuestions.includes('modalidad_capacitacion') && (
+                  <div className="px-4 pb-4 pt-0">
+                    <div className="bg-muted/50 rounded-lg p-3">
+                      <p className="text-xs font-medium text-muted-foreground mb-2">Opciones de respuesta disponibles:</p>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                        {['Presencial','Distancia','E-Learning','Híbrida'].map((mod) => (
+                          <span key={mod} className="px-4 py-2 rounded-lg border border-border bg-background text-xs text-muted-foreground text-center">
+                            {mod}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="flex justify-end pt-2">
                 <Button
                   className="gap-2"
-                  disabled={mesesCapacitacion.length === 0 || modalidadCapacitacion.length === 0}
+                  disabled={selectedQuestions.length === 0}
                   onClick={() => {
                     setStep3Complete(true);
                     toast.success('Configuración de encuesta guardada');
@@ -363,22 +409,15 @@ const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack, existingDra
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-              <div>
-                <p className="text-muted-foreground text-xs">Meses preferidos</p>
-                <div className="flex flex-wrap gap-1 mt-1">
-                  {mesesCapacitacion.map(m => (
-                    <Badge key={m} variant="secondary" className="text-xs">{m}</Badge>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <p className="text-muted-foreground text-xs">Modalidad preferida</p>
-                <div className="flex flex-wrap gap-1 mt-1">
-                  {modalidadCapacitacion.map(m => (
-                    <Badge key={m} variant="secondary" className="text-xs">{m}</Badge>
-                  ))}
-                </div>
+            <div className="text-sm space-y-2">
+              <p className="text-muted-foreground text-xs">Preguntas incluidas en la encuesta:</p>
+              <div className="flex flex-wrap gap-2">
+                {selectedQuestions.includes('mes_capacitacion') && (
+                  <Badge variant="secondary" className="text-xs">Preferencia de mes de capacitación</Badge>
+                )}
+                {selectedQuestions.includes('modalidad_capacitacion') && (
+                  <Badge variant="secondary" className="text-xs">Preferencia de modalidad de capacitación</Badge>
+                )}
               </div>
             </div>
           )}
