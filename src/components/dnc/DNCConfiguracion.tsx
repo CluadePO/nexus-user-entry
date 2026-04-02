@@ -238,8 +238,17 @@ const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack, existingDra
                 <div className="flex items-center gap-2">
                   <h3 className="font-semibold text-foreground">Paso 2: Selección de participantes</h3>
                   <Badge variant="secondary" className="text-xs">Paso 2</Badge>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Info className="w-4 h-4 text-muted-foreground cursor-help" />
+                      </TooltipTrigger>
+                      <TooltipContent side="right" className="max-w-xs">
+                        <p className="text-xs">La plantilla debe contener las columnas: <strong>Rut, Nombre, Apellido Paterno, Apellido Materno, E-mail, Cargo, Nivel de Cargo, Área, Unidad y Rut Jefatura Evaluadora</strong>.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
-                <p className="text-xs text-muted-foreground">Carga un archivo Excel con los colaboradores que participarán en las encuestas.</p>
               </div>
             </div>
           </div>
