@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Input, Button, Space, Tag, Spin, Tooltip, Modal } from 'antd';
-import { SearchOutlined, ReloadOutlined, UserAddOutlined, EyeOutlined, CalendarOutlined } from '@ant-design/icons';
+import { SearchOutlined, ReloadOutlined, UserAddOutlined, EyeOutlined, EditOutlined, CalendarOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -8,6 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Users, Briefcase } from 'lucide-react';
 import CreateUserModal from '@/components/admin/CreateUserModal';
+import EditUserModal from '@/components/admin/EditUserModal';
 import dayjs from 'dayjs';
 
 interface SystemUser {
@@ -50,6 +51,7 @@ const AdminUsuarios: React.FC = () => {
   const [searchText, setSearchText] = useState('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<SystemUser | null>(null);
   const { toast } = useToast();
 
@@ -282,18 +284,33 @@ const AdminUsuarios: React.FC = () => {
     {
       title: 'Acciones',
       key: 'actions',
-      width: 80,
+      width: 120,
       fixed: 'right',
       render: (_, record) => (
-        <Button 
-          type="text" 
-          icon={<EyeOutlined />} 
-          onClick={() => {
-            setSelectedUser(record);
-            setIsViewModalOpen(true);
-          }}
-          size="small"
-        />
+        <Space size="small">
+          <Tooltip title="Detalle del Usuario">
+            <Button 
+              type="text" 
+              icon={<EyeOutlined />} 
+              onClick={() => {
+                setSelectedUser(record);
+                setIsViewModalOpen(true);
+              }}
+              size="small"
+            />
+          </Tooltip>
+          <Tooltip title="Editar información">
+            <Button 
+              type="text" 
+              icon={<EditOutlined />} 
+              onClick={() => {
+                setSelectedUser(record);
+                setIsEditModalOpen(true);
+              }}
+              size="small"
+            />
+          </Tooltip>
+        </Space>
       ),
     },
   ];
@@ -578,6 +595,17 @@ const AdminUsuarios: React.FC = () => {
           </div>
         )}
       </Modal>
+
+      {/* Edit User Modal */}
+      <EditUserModal
+        open={isEditModalOpen}
+        onOpenChange={setIsEditModalOpen}
+        onSuccess={() => {
+          fetchUsers();
+          fetchPortfolioAssignments();
+        }}
+        user={selectedUser}
+      />
     </div>
   );
 };
