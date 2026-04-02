@@ -74,7 +74,7 @@ const DNC: React.FC = () => {
               <strong> resumen de cursos recomendados</strong> que se alinean con las brechas de competencias detectadas.
             </p>
             <div className="flex gap-3 pt-2">
-              <Button className="gap-2">
+              <Button className="gap-2" onClick={() => setShowTerms(true)}>
                 <ClipboardList className="w-4 h-4" />
                 Iniciar Diagnóstico
               </Button>
