@@ -508,6 +508,8 @@ const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack, existingDra
                   Guardar configuración
                 </Button>
               </div>
+                </div>
+              )}
             </div>
           ) : (
             <div className="text-sm space-y-2">
