@@ -43,6 +43,7 @@ const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack, existingDra
   const [fechaInicio, setFechaInicio] = useState(existingDraft?.fechaInicio || '');
   const [fechaFin, setFechaFin] = useState(existingDraft?.fechaFin || '');
   const [modalidad, setModalidad] = useState<Modalidad | null>(existingDraft?.modalidad || null);
+  const [participants, setParticipants] = useState<Participante[]>([]);
   const [showExitDialog, setShowExitDialog] = useState(false);
   const [step1Complete, setStep1Complete] = useState(
     !!(existingDraft?.nombre && existingDraft?.fechaInicio && existingDraft?.fechaFin && existingDraft?.modalidad)
