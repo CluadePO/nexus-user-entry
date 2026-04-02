@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import TermsSignatureModal from '@/components/dnc/TermsSignatureModal';
+import DNCConfiguracion from '@/components/dnc/DNCConfiguracion';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { toast } from 'sonner';
 import { 
   PlayCircle, 
   ClipboardList, 
