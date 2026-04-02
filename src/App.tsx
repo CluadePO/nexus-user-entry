@@ -15,6 +15,7 @@ import AsesorDashboard from "./pages/AsesorDashboard";
 import MiBuscador from "./pages/MiBuscador";
 import MiRecomendador from "./pages/MiRecomendador";
 import CourseDetail from "./pages/CourseDetail";
+import DNC from "./pages/DNC";
 import Encuestas from "./pages/Encuestas";
 import CursosResumen from "./pages/CursosResumen";
 import AdminUsuarios from "./pages/AdminUsuarios";
@@ -69,7 +70,7 @@ const App = () => (
                 <Route path="/asesor/ruta" element={<PlaceholderPage title="Mi Ruta" />} />
                 <Route path="/documentos/*" element={<PlaceholderPage title="Gestión Documental" />} />
                 <Route path="/facturacion/*" element={<PlaceholderPage title="Facturación" />} />
-                <Route path="/formacion/dnc" element={<PlaceholderPage title="DNC" />} />
+                <Route path="/formacion/dnc" element={<DNC />} />
                 <Route path="/formacion/*" element={<PlaceholderPage title="Formación" />} />
                 <Route path="/encuestas" element={<Encuestas />} />
                 <Route path="/admin/usuarios" element={<AdminUsuarios />} />
