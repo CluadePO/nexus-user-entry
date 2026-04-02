@@ -48,6 +48,13 @@ const benefits = [
 ];
 
 const DNC: React.FC = () => {
+  const [showTerms, setShowTerms] = useState(false);
+
+  const handleSigned = () => {
+    // TODO: proceed to DNC configuration
+    console.log('Document signed, proceeding with DNC');
+  };
+
   return (
     <div className="space-y-8 max-w-6xl mx-auto">
       {/* Hero Section */}
