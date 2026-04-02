@@ -60,7 +60,7 @@ const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack, existingDra
 
   const showAutodiagnostico = modalidad === 'jefaturas' || modalidad === 'mixta';
 
-  const isStep1Valid = nombre.trim() !== '' && fechaInicio !== '' && fechaFin !== '' && modalidad !== null;
+  const isStep1Valid = nombre.trim() !== '' && rubro !== '' && fechaInicio !== '' && fechaFin !== '' && modalidad !== null;
 
   const buildDraft = (): DNCProceso => ({
     id: draftId,
