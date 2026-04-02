@@ -52,6 +52,11 @@ const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack, existingDra
   const [step3Complete, setStep3Complete] = useState(false);
   const [selectedQuestions, setSelectedQuestions] = useState<string[]>(['mes_capacitacion', 'modalidad_capacitacion']);
   const [expandedQuestions, setExpandedQuestions] = useState<string[]>([]);
+  const [tipoDiagnostico, setTipoDiagnostico] = useState<string | null>(null);
+  const [incluirAutodiagnostico, setIncluirAutodiagnostico] = useState<boolean | null>(null);
+  const [diagnosticoConfigured, setDiagnosticoConfigured] = useState(false);
+
+  const showAutodiagnostico = modalidad === 'jefaturas' || modalidad === 'mixta';
 
   const isStep1Valid = nombre.trim() !== '' && fechaInicio !== '' && fechaFin !== '' && modalidad !== null;
 
