@@ -595,6 +595,17 @@ const AdminUsuarios: React.FC = () => {
           </div>
         )}
       </Modal>
+
+      {/* Edit User Modal */}
+      <EditUserModal
+        open={isEditModalOpen}
+        onOpenChange={setIsEditModalOpen}
+        onSuccess={() => {
+          fetchUsers();
+          fetchPortfolioAssignments();
+        }}
+        user={selectedUser}
+      />
     </div>
   );
 };
