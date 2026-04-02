@@ -63,7 +63,6 @@ const DNC: React.FC = () => {
   };
 
   const handleBackToLanding = () => {
-    toast.info('Proceso guardado como borrador');
     setPhase('landing');
   };
 
