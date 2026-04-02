@@ -51,11 +51,26 @@ const benefits = [
 
 const DNC: React.FC = () => {
   const [showTerms, setShowTerms] = useState(false);
+  const [phase, setPhase] = useState<'landing' | 'config'>(() => {
+    const saved = localStorage.getItem('dnc_draft_phase');
+    return saved === 'config' ? 'config' : 'landing';
+  });
 
   const handleSigned = () => {
-    // TODO: proceed to DNC configuration
-    console.log('Document signed, proceeding with DNC');
+    setPhase('config');
+    localStorage.setItem('dnc_draft_phase', 'config');
+    toast.success('Documento firmado correctamente');
   };
+
+  const handleBackToLanding = () => {
+    localStorage.setItem('dnc_draft_phase', 'config');
+    toast.info('Proceso guardado como borrador');
+    setPhase('landing');
+  };
+
+  if (phase === 'config') {
+    return <DNCConfiguracion onBack={handleBackToLanding} />;
+  }
 
   return (
     <div className="space-y-8 max-w-6xl mx-auto">
