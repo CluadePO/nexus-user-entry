@@ -104,6 +104,7 @@ const DNCParticipantUpload: React.FC<DNCParticipantUploadProps> = ({
   const [showPreview, setShowPreview] = useState(false);
   const [showExample, setShowExample] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [fileName, setFileName] = useState<string | null>(null);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
