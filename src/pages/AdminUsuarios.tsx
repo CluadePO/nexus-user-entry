@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Input, Button, Space, Tag, Spin, Tooltip, Modal } from 'antd';
-import { SearchOutlined, ReloadOutlined, UserAddOutlined, EyeOutlined, CalendarOutlined } from '@ant-design/icons';
+import { SearchOutlined, ReloadOutlined, UserAddOutlined, EyeOutlined, EditOutlined, CalendarOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
