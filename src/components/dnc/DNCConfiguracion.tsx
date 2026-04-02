@@ -233,10 +233,14 @@ const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack, existingDra
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
               <div>
                 <p className="text-muted-foreground text-xs">Nombre</p>
                 <p className="font-medium text-foreground">{nombre}</p>
+              </div>
+              <div>
+                <p className="text-muted-foreground text-xs">Rubro</p>
+                <p className="font-medium text-foreground">{rubro}</p>
               </div>
               <div>
                 <p className="text-muted-foreground text-xs">Período</p>
