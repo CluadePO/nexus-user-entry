@@ -284,18 +284,33 @@ const AdminUsuarios: React.FC = () => {
     {
       title: 'Acciones',
       key: 'actions',
-      width: 80,
+      width: 120,
       fixed: 'right',
       render: (_, record) => (
-        <Button 
-          type="text" 
-          icon={<EyeOutlined />} 
-          onClick={() => {
-            setSelectedUser(record);
-            setIsViewModalOpen(true);
-          }}
-          size="small"
-        />
+        <Space size="small">
+          <Tooltip title="Detalle del Usuario">
+            <Button 
+              type="text" 
+              icon={<EyeOutlined />} 
+              onClick={() => {
+                setSelectedUser(record);
+                setIsViewModalOpen(true);
+              }}
+              size="small"
+            />
+          </Tooltip>
+          <Tooltip title="Editar información">
+            <Button 
+              type="text" 
+              icon={<EditOutlined />} 
+              onClick={() => {
+                setSelectedUser(record);
+                setIsEditModalOpen(true);
+              }}
+              size="small"
+            />
+          </Tooltip>
+        </Space>
       ),
     },
   ];
