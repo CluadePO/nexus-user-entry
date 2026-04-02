@@ -49,6 +49,9 @@ const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack, existingDra
   const [step1Complete, setStep1Complete] = useState(
     !!(existingDraft?.nombre && existingDraft?.fechaInicio && existingDraft?.fechaFin && existingDraft?.modalidad)
   );
+  const [mesesCapacitacion, setMesesCapacitacion] = useState<string[]>([]);
+  const [modalidadCapacitacion, setModalidadCapacitacion] = useState<string[]>([]);
+  const [step3Complete, setStep3Complete] = useState(false);
 
   const isStep1Valid = nombre.trim() !== '' && fechaInicio !== '' && fechaFin !== '' && modalidad !== null;
 
