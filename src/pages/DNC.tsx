@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
+import TermsSignatureModal from '@/components/dnc/TermsSignatureModal';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 
@@ -47,6 +48,13 @@ const benefits = [
 ];
 
 const DNC: React.FC = () => {
+  const [showTerms, setShowTerms] = useState(false);
+
+  const handleSigned = () => {
+    // TODO: proceed to DNC configuration
+    console.log('Document signed, proceeding with DNC');
+  };
+
   return (
     <div className="space-y-8 max-w-6xl mx-auto">
       {/* Hero Section */}
@@ -66,7 +74,7 @@ const DNC: React.FC = () => {
               <strong> resumen de cursos recomendados</strong> que se alinean con las brechas de competencias detectadas.
             </p>
             <div className="flex gap-3 pt-2">
-              <Button className="gap-2">
+              <Button className="gap-2" onClick={() => setShowTerms(true)}>
                 <ClipboardList className="w-4 h-4" />
                 Iniciar Diagnóstico
               </Button>
@@ -168,6 +176,7 @@ const DNC: React.FC = () => {
           </div>
         </div>
       </Card>
+      <TermsSignatureModal open={showTerms} onOpenChange={setShowTerms} onSigned={handleSigned} />
     </div>
   );
 };
