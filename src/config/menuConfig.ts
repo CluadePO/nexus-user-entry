@@ -217,6 +217,7 @@ export const menuByRole: Record<UserRole, MenuItem[]> = {
         { key: 'rol-asesor', label: 'Rol Asesor', url: '/asesor' },
         { key: 'mi-buscador', label: 'Mi Buscador', url: '/formacion/buscador' },
         { key: 'mallas', label: 'Mallas de Formación', url: '/formacion/mallas' },
+        { key: 'dnc', label: 'DNC', url: '/formacion/dnc' },
       ]
     },
     { 
