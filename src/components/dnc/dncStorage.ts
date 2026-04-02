@@ -22,6 +22,7 @@ const seedProcesos: DNCProceso[] = [
   {
     id: 'DNC-2025-002',
     nombre: 'DNC Área Comercial Q1',
+    rubro: 'Comercio',
     fechaInicio: '2025-01-15',
     fechaFin: '2025-03-20',
     modalidad: 'colaboradores',
