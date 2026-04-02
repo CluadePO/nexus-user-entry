@@ -21,6 +21,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { ArrowLeft, Settings, Users, FileText, CheckCircle2, Save, AlertTriangle } from 'lucide-react';
+import DNCParticipantUpload, { type Participante } from './DNCParticipantUpload';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { type Modalidad, type DNCProceso, saveDraft, generateId } from './dncStorage';
@@ -42,6 +43,7 @@ const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack, existingDra
   const [fechaInicio, setFechaInicio] = useState(existingDraft?.fechaInicio || '');
   const [fechaFin, setFechaFin] = useState(existingDraft?.fechaFin || '');
   const [modalidad, setModalidad] = useState<Modalidad | null>(existingDraft?.modalidad || null);
+  const [participants, setParticipants] = useState<Participante[]>([]);
   const [showExitDialog, setShowExitDialog] = useState(false);
   const [step1Complete, setStep1Complete] = useState(
     !!(existingDraft?.nombre && existingDraft?.fechaInicio && existingDraft?.fechaFin && existingDraft?.modalidad)
@@ -56,7 +58,7 @@ const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack, existingDra
     fechaFin,
     modalidad: modalidad!,
     estado: 'borrador',
-    participantes: existingDraft?.participantes || 0,
+    participantes: participants.length || existingDraft?.participantes || 0,
     avance: 10,
     tcFirmados: true,
     creadoEn: existingDraft?.creadoEn || new Date().toISOString().split('T')[0],
@@ -221,20 +223,30 @@ const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack, existingDra
       </Card>
 
       {/* Step 2 */}
-      <Card className={cn("p-6", step1Complete ? "" : "opacity-50 pointer-events-none")}>
-        <div className="space-y-3">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-muted border flex items-center justify-center">
-              <Users className="w-5 h-5 text-muted-foreground" />
+      <Card className={cn("p-6 border-2", step1Complete ? (participants.length > 0 ? "border-emerald-300 bg-emerald-50/30" : "border-primary/30 bg-primary/5") : "opacity-50 pointer-events-none")}>
+        <div className="space-y-5">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className={cn(
+                "w-10 h-10 rounded-lg border flex items-center justify-center",
+                participants.length > 0 ? "bg-emerald-100 border-emerald-200" : "bg-muted"
+              )}>
+                {participants.length > 0 ? <CheckCircle2 className="w-5 h-5 text-emerald-600" /> : <Users className="w-5 h-5 text-muted-foreground" />}
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-semibold text-foreground">Paso 2: Selección de participantes</h3>
+                  <Badge variant="secondary" className="text-xs">Paso 2</Badge>
+                </div>
+                <p className="text-xs text-muted-foreground">Carga un archivo Excel con los colaboradores que participarán en las encuestas.</p>
+              </div>
             </div>
-            <Badge variant="secondary" className="text-xs">Paso 2</Badge>
           </div>
-          <h3 className="font-semibold text-foreground">Selección de participantes</h3>
-          <p className="text-sm text-muted-foreground">Selecciona los colaboradores que participarán en las encuestas del diagnóstico.</p>
-          <Button size="sm" variant="outline" className="w-full gap-2" disabled={!step1Complete}>
-            <Users className="w-4 h-4" />
-            Seleccionar
-          </Button>
+          <DNCParticipantUpload
+            participants={participants}
+            onParticipantsChange={setParticipants}
+            disabled={!step1Complete}
+          />
         </div>
       </Card>
 
