@@ -49,7 +49,7 @@ const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack, existingDra
   const [participants, setParticipants] = useState<Participante[]>([]);
   const [showExitDialog, setShowExitDialog] = useState(false);
   const [step1Complete, setStep1Complete] = useState(
-    !!(existingDraft?.nombre && existingDraft?.fechaInicio && existingDraft?.fechaFin && existingDraft?.modalidad)
+    !!(existingDraft?.nombre && existingDraft?.rubro && existingDraft?.fechaInicio && existingDraft?.fechaFin && existingDraft?.modalidad)
   );
   const [step3Complete, setStep3Complete] = useState(false);
   const [selectedQuestions, setSelectedQuestions] = useState<string[]>(['mes_capacitacion', 'modalidad_capacitacion']);
