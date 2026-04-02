@@ -42,6 +42,7 @@ const modalidades: { value: Modalidad; label: string; description: string }[] = 
 const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack, existingDraft }) => {
   const [draftId] = useState(() => existingDraft?.id || generateId());
   const [nombre, setNombre] = useState(existingDraft?.nombre || '');
+  const [rubro, setRubro] = useState(existingDraft?.rubro || '');
   const [fechaInicio, setFechaInicio] = useState(existingDraft?.fechaInicio || '');
   const [fechaFin, setFechaFin] = useState(existingDraft?.fechaFin || '');
   const [modalidad, setModalidad] = useState<Modalidad | null>(existingDraft?.modalidad || null);
