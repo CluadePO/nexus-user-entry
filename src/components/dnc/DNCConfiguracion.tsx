@@ -169,6 +169,27 @@ const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack, existingDra
               </div>
 
               <div className="space-y-2">
+                <Label htmlFor="dnc-rubro">Rubro <span className="text-destructive">*</span></Label>
+                <Select value={rubro} onValueChange={setRubro}>
+                  <SelectTrigger id="dnc-rubro">
+                    <SelectValue placeholder="Selecciona un rubro" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {[
+                      'Agricultura y Ganadería', 'Minería', 'Industria Manufacturera', 'Construcción',
+                      'Comercio', 'Transporte y Logística', 'Tecnología e Informática', 'Telecomunicaciones',
+                      'Servicios Financieros y Banca', 'Salud y Servicios Sociales', 'Educación',
+                      'Hotelería y Turismo', 'Energía y Medio Ambiente', 'Inmobiliario',
+                      'Servicios Profesionales y Consultoría', 'Administración Pública', 'Retail',
+                      'Alimentos y Bebidas', 'Forestal y Pesca', 'Otro',
+                    ].map((r) => (
+                      <SelectItem key={r} value={r}>{r}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
                 <Label>Período de evaluación <span className="text-destructive">*</span></Label>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
