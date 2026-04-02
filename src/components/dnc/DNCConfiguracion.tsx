@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -23,12 +23,12 @@ import {
 import { ArrowLeft, Settings, Users, FileText, CheckCircle2, Save, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { type Modalidad, type DNCProceso, saveDraft, generateId } from './dncStorage';
 
 interface DNCConfiguracionProps {
   onBack: () => void;
+  existingDraft?: DNCProceso | null;
 }
-
-type Modalidad = 'colaboradores' | 'jefaturas' | 'mixta';
 
 const modalidades: { value: Modalidad; label: string; description: string }[] = [
   { value: 'colaboradores', label: 'Consulta a Colaboradores', description: 'Encuestas dirigidas directamente a los colaboradores de la organización.' },
@@ -36,49 +36,66 @@ const modalidades: { value: Modalidad; label: string; description: string }[] = 
   { value: 'mixta', label: 'Consulta Mixta', description: 'Encuestas tanto a colaboradores como a jefaturas para un diagnóstico integral.' },
 ];
 
-const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack }) => {
-  const [nombre, setNombre] = useState('');
-  const [fechaInicio, setFechaInicio] = useState('');
-  const [fechaFin, setFechaFin] = useState('');
-  const [modalidad, setModalidad] = useState<Modalidad | null>(null);
+const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack, existingDraft }) => {
+  const [draftId] = useState(() => existingDraft?.id || generateId());
+  const [nombre, setNombre] = useState(existingDraft?.nombre || '');
+  const [fechaInicio, setFechaInicio] = useState(existingDraft?.fechaInicio || '');
+  const [fechaFin, setFechaFin] = useState(existingDraft?.fechaFin || '');
+  const [modalidad, setModalidad] = useState<Modalidad | null>(existingDraft?.modalidad || null);
   const [showExitDialog, setShowExitDialog] = useState(false);
-  const [step1Complete, setStep1Complete] = useState(false);
+  const [step1Complete, setStep1Complete] = useState(
+    !!(existingDraft?.nombre && existingDraft?.fechaInicio && existingDraft?.fechaFin && existingDraft?.modalidad)
+  );
 
   const isStep1Valid = nombre.trim() !== '' && fechaInicio !== '' && fechaFin !== '' && modalidad !== null;
 
+  const buildDraft = (): DNCProceso => ({
+    id: draftId,
+    nombre,
+    fechaInicio,
+    fechaFin,
+    modalidad: modalidad!,
+    estado: 'borrador',
+    participantes: existingDraft?.participantes || 0,
+    avance: 10,
+    tcFirmados: true,
+    creadoEn: existingDraft?.creadoEn || new Date().toISOString().split('T')[0],
+  });
+
   const handleSaveStep1 = () => {
     if (!isStep1Valid) return;
+    saveDraft(buildDraft());
     setStep1Complete(true);
-    toast.success('Parámetros generales guardados');
+    toast.success('Parámetros generales guardados como borrador');
   };
 
   const handleBack = () => {
     if (step1Complete) {
-      // Already saved as draft, can leave
+      saveDraft(buildDraft());
       toast.info('Proceso guardado como borrador');
       onBack();
     } else if (isStep1Valid) {
-      // Has valid data but hasn't saved — prompt
       setShowExitDialog(true);
     } else {
-      // Nothing configured — warn that draft won't be saved
       setShowExitDialog(true);
     }
   };
 
-  const handleConfirmExit = (saveDraft: boolean) => {
+  const handleConfirmExit = (save: boolean) => {
     setShowExitDialog(false);
-    if (saveDraft && isStep1Valid) {
+    if (save && isStep1Valid) {
+      saveDraft(buildDraft());
       toast.info('Proceso guardado como borrador');
     } else if (!isStep1Valid) {
-      toast('El proceso no se guardó: faltan campos obligatorios', { icon: <AlertTriangle className="w-4 h-4 text-amber-500" /> });
+      toast('El proceso no se guardó: faltan campos obligatorios', {
+        icon: <AlertTriangle className="w-4 h-4 text-amber-500" />,
+      });
     }
     onBack();
   };
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
-      {/* Breadcrumb */}
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -93,14 +110,11 @@ const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack }) => {
         </BreadcrumbList>
       </Breadcrumb>
 
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div className="space-y-1">
           <div className="flex items-center gap-3">
             <h1 className="text-2xl font-bold text-foreground">Configuración del proceso DNC</h1>
-            <Badge variant="outline" className="text-amber-600 border-amber-300 bg-amber-50">
-              Borrador
-            </Badge>
+            <Badge variant="outline" className="text-amber-600 border-amber-300 bg-amber-50">Borrador</Badge>
           </div>
           <p className="text-sm text-muted-foreground">
             Configura los parámetros del diagnóstico antes de enviarlo a los colaboradores.
@@ -112,7 +126,7 @@ const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack }) => {
         </Button>
       </div>
 
-      {/* Step 1 — Configuration Form */}
+      {/* Step 1 */}
       <Card className={cn("p-6 border-2", step1Complete ? "border-emerald-300 bg-emerald-50/30" : "border-primary/30 bg-primary/5")}>
         <div className="space-y-5">
           <div className="flex items-center justify-between">
@@ -129,51 +143,31 @@ const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack }) => {
               </div>
             </div>
             {step1Complete && (
-              <Button size="sm" variant="ghost" onClick={() => setStep1Complete(false)}>
-                Editar
-              </Button>
+              <Button size="sm" variant="ghost" onClick={() => setStep1Complete(false)}>Editar</Button>
             )}
           </div>
 
           {!step1Complete ? (
             <div className="space-y-4">
-              {/* Nombre del proceso */}
               <div className="space-y-2">
                 <Label htmlFor="dnc-nombre">Nombre del proceso <span className="text-destructive">*</span></Label>
-                <Input
-                  id="dnc-nombre"
-                  placeholder="Ej: DNC Primer Semestre 2025"
-                  value={nombre}
-                  onChange={(e) => setNombre(e.target.value)}
-                />
+                <Input id="dnc-nombre" placeholder="Ej: DNC Primer Semestre 2025" value={nombre} onChange={(e) => setNombre(e.target.value)} />
               </div>
 
-              {/* Período de evaluación */}
               <div className="space-y-2">
                 <Label>Período de evaluación <span className="text-destructive">*</span></Label>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <Label htmlFor="dnc-inicio" className="text-xs text-muted-foreground">Fecha inicio</Label>
-                    <Input
-                      id="dnc-inicio"
-                      type="date"
-                      value={fechaInicio}
-                      onChange={(e) => setFechaInicio(e.target.value)}
-                    />
+                    <Input id="dnc-inicio" type="date" value={fechaInicio} onChange={(e) => setFechaInicio(e.target.value)} />
                   </div>
                   <div className="space-y-1">
                     <Label htmlFor="dnc-fin" className="text-xs text-muted-foreground">Fecha fin</Label>
-                    <Input
-                      id="dnc-fin"
-                      type="date"
-                      value={fechaFin}
-                      onChange={(e) => setFechaFin(e.target.value)}
-                    />
+                    <Input id="dnc-fin" type="date" value={fechaFin} onChange={(e) => setFechaFin(e.target.value)} />
                   </div>
                 </div>
               </div>
 
-              {/* Modalidad */}
               <div className="space-y-2">
                 <Label>Modalidad del proceso <span className="text-destructive">*</span></Label>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -196,13 +190,8 @@ const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack }) => {
                 </div>
               </div>
 
-              {/* Save button */}
               <div className="flex justify-end pt-2">
-                <Button
-                  className="gap-2"
-                  disabled={!isStep1Valid}
-                  onClick={handleSaveStep1}
-                >
+                <Button className="gap-2" disabled={!isStep1Valid} onClick={handleSaveStep1}>
                   <Save className="w-4 h-4" />
                   Guardar parámetros
                 </Button>
@@ -278,7 +267,7 @@ const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack }) => {
         </div>
       </Card>
 
-      {/* Exit confirmation dialog */}
+      {/* Exit dialog */}
       <Dialog open={showExitDialog} onOpenChange={setShowExitDialog}>
         <DialogContent>
           <DialogHeader>
@@ -290,22 +279,14 @@ const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack }) => {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-2">
-            <Button variant="outline" onClick={() => setShowExitDialog(false)}>
-              Cancelar
-            </Button>
+            <Button variant="outline" onClick={() => setShowExitDialog(false)}>Cancelar</Button>
             {isStep1Valid ? (
               <>
-                <Button variant="destructive" onClick={() => handleConfirmExit(false)}>
-                  Salir sin guardar
-                </Button>
-                <Button onClick={() => handleConfirmExit(true)}>
-                  Guardar y salir
-                </Button>
+                <Button variant="destructive" onClick={() => handleConfirmExit(false)}>Salir sin guardar</Button>
+                <Button onClick={() => handleConfirmExit(true)}>Guardar y salir</Button>
               </>
             ) : (
-              <Button variant="destructive" onClick={() => handleConfirmExit(false)}>
-                Salir sin guardar
-              </Button>
+              <Button variant="destructive" onClick={() => handleConfirmExit(false)}>Salir sin guardar</Button>
             )}
           </DialogFooter>
         </DialogContent>

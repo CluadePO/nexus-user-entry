@@ -6,6 +6,7 @@ import DNCHistorial from '@/components/dnc/DNCHistorial';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
+import { type DNCProceso } from '@/components/dnc/dncStorage';
 import { 
   PlayCircle, 
   ClipboardList, 
@@ -56,25 +57,33 @@ type DNCPhase = 'landing' | 'config' | 'historial';
 const DNC: React.FC = () => {
   const [showTerms, setShowTerms] = useState(false);
   const [phase, setPhase] = useState<DNCPhase>('landing');
+  const [editingDraft, setEditingDraft] = useState<DNCProceso | null>(null);
 
   const handleSigned = () => {
+    setEditingDraft(null); // new process
     setPhase('config');
     toast.success('Documento firmado correctamente');
   };
 
   const handleBackToLanding = () => {
+    setEditingDraft(null);
     setPhase('landing');
   };
 
+  const handleResumeDraft = (draft: DNCProceso) => {
+    setEditingDraft(draft);
+    setPhase('config');
+  };
+
   if (phase === 'config') {
-    return <DNCConfiguracion onBack={handleBackToLanding} />;
+    return <DNCConfiguracion onBack={handleBackToLanding} existingDraft={editingDraft} />;
   }
 
   if (phase === 'historial') {
     return (
       <DNCHistorial
         onBack={() => setPhase('landing')}
-        onResumeDraft={() => setPhase('config')}
+        onResumeDraft={handleResumeDraft}
       />
     );
   }
