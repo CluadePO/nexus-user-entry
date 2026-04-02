@@ -35,6 +35,7 @@ const seedProcesos: DNCProceso[] = [
   {
     id: 'DNC-2024-001',
     nombre: 'DNC Anual 2024',
+    rubro: 'Tecnología',
     fechaInicio: '2024-08-01',
     fechaFin: '2024-11-10',
     modalidad: 'mixta',
