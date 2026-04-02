@@ -216,8 +216,15 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold flex items-center gap-2">
             <Settings className="h-5 w-5 text-primary" />
-            Editar Información del Usuario
+            Configuración de la información de {nombres} {apellidos}
           </DialogTitle>
+          <div className="flex items-center gap-3 mt-2">
+            <span className="text-sm text-muted-foreground">RUT: <span className="font-medium text-foreground">{rut}</span></span>
+            <Badge variant="outline" className="flex items-center gap-1.5">
+              <User className="h-3 w-3" />
+              {userType || 'Sin perfil'}
+            </Badge>
+          </div>
         </DialogHeader>
 
         <Tabs defaultValue="personal" className="w-full">
