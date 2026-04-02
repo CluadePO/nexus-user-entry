@@ -4,6 +4,7 @@ export type ProcesoStatus = 'borrador' | 'en_curso' | 'completado' | 'cancelado'
 export interface DNCProceso {
   id: string;
   nombre: string;
+  rubro: string;
   fechaInicio: string;
   fechaFin: string;
   modalidad: Modalidad;
