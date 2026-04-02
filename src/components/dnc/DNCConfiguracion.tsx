@@ -21,6 +21,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { ArrowLeft, Settings, Users, FileText, CheckCircle2, Save, AlertTriangle } from 'lucide-react';
+import DNCParticipantUpload, { type Participante } from './DNCParticipantUpload';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { type Modalidad, type DNCProceso, saveDraft, generateId } from './dncStorage';
