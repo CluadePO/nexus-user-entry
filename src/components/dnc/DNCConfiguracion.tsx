@@ -21,7 +21,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { ArrowLeft, Settings, Users, FileText, CheckCircle2, Save, AlertTriangle, Info } from 'lucide-react';
+import { ArrowLeft, Settings, Users, FileText, CheckCircle2, Save, AlertTriangle, Info, ClipboardList } from 'lucide-react';
 import DNCParticipantUpload, { type Participante } from './DNCParticipantUpload';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
@@ -49,6 +49,9 @@ const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack, existingDra
   const [step1Complete, setStep1Complete] = useState(
     !!(existingDraft?.nombre && existingDraft?.fechaInicio && existingDraft?.fechaFin && existingDraft?.modalidad)
   );
+  const [mesesCapacitacion, setMesesCapacitacion] = useState<string[]>([]);
+  const [modalidadCapacitacion, setModalidadCapacitacion] = useState<string[]>([]);
+  const [step3Complete, setStep3Complete] = useState(false);
 
   const isStep1Valid = nombre.trim() !== '' && fechaInicio !== '' && fechaFin !== '' && modalidad !== null;
 
@@ -261,20 +264,124 @@ const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack, existingDra
       </Card>
 
       {/* Step 3 */}
-      <Card className="p-6 opacity-50 pointer-events-none">
-        <div className="space-y-3">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-muted border flex items-center justify-center">
-              <FileText className="w-5 h-5 text-muted-foreground" />
+      <Card className={cn(
+        "p-6 border-2",
+        step1Complete && participants.length > 0
+          ? (step3Complete ? "border-emerald-300 bg-emerald-50/30" : "border-primary/30 bg-primary/5")
+          : "opacity-50 pointer-events-none"
+      )}>
+        <div className="space-y-5">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className={cn(
+                "w-10 h-10 rounded-lg border flex items-center justify-center",
+                step3Complete ? "bg-emerald-100 border-emerald-200" : "bg-muted"
+              )}>
+                {step3Complete ? <CheckCircle2 className="w-5 h-5 text-emerald-600" /> : <ClipboardList className="w-5 h-5 text-muted-foreground" />}
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-semibold text-foreground">Paso 3: Configuración de la encuesta</h3>
+                  <Badge variant="secondary" className="text-xs">Paso 3</Badge>
+                </div>
+                <p className="text-xs text-muted-foreground">Define las preguntas obligatorias que se incluirán en la encuesta DNC.</p>
+              </div>
             </div>
-            <Badge variant="secondary" className="text-xs">Paso 3</Badge>
+            {step3Complete && (
+              <Button size="sm" variant="ghost" onClick={() => setStep3Complete(false)}>Editar</Button>
+            )}
           </div>
-          <h3 className="font-semibold text-foreground">Revisión y envío</h3>
-          <p className="text-sm text-muted-foreground">Revisa la configuración completa y envía las encuestas a los participantes seleccionados.</p>
-          <Button size="sm" variant="outline" className="w-full gap-2" disabled>
-            <CheckCircle2 className="w-4 h-4" />
-            Revisar
-          </Button>
+
+          {!step3Complete ? (
+            <div className="space-y-6">
+              {/* Pregunta: Mes de capacitación */}
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">
+                  Indica tu preferencia de mes de capacitación <span className="text-destructive">*</span>
+                </Label>
+                <p className="text-xs text-muted-foreground">Selecciona uno o más meses en los que prefieres recibir capacitación.</p>
+                <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
+                  {['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'].map((mes) => (
+                    <button
+                      key={mes}
+                      type="button"
+                      onClick={() => setMesesCapacitacion(prev =>
+                        prev.includes(mes) ? prev.filter(m => m !== mes) : [...prev, mes]
+                      )}
+                      className={cn(
+                        "px-3 py-2 rounded-lg border text-sm font-medium transition-all",
+                        mesesCapacitacion.includes(mes)
+                          ? "border-primary bg-primary/10 text-primary ring-1 ring-primary/20"
+                          : "border-border bg-background text-muted-foreground hover:border-primary/40"
+                      )}
+                    >
+                      {mes}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Pregunta: Modalidad de capacitación */}
+              <div className="space-y-2">
+                <Label className="text-sm font-medium">
+                  Indica tu preferencia de modalidad de capacitación <span className="text-destructive">*</span>
+                </Label>
+                <p className="text-xs text-muted-foreground">Selecciona una o más modalidades de tu preferencia.</p>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {['Presencial','Distancia','E-Learning','Híbrida'].map((mod) => (
+                    <button
+                      key={mod}
+                      type="button"
+                      onClick={() => setModalidadCapacitacion(prev =>
+                        prev.includes(mod) ? prev.filter(m => m !== mod) : [...prev, mod]
+                      )}
+                      className={cn(
+                        "px-4 py-3 rounded-lg border-2 text-sm font-medium transition-all",
+                        modalidadCapacitacion.includes(mod)
+                          ? "border-primary bg-primary/10 text-primary ring-1 ring-primary/20"
+                          : "border-border bg-background text-muted-foreground hover:border-primary/40"
+                      )}
+                    >
+                      {mod}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex justify-end pt-2">
+                <Button
+                  className="gap-2"
+                  disabled={mesesCapacitacion.length === 0 || modalidadCapacitacion.length === 0}
+                  onClick={() => {
+                    setStep3Complete(true);
+                    toast.success('Configuración de encuesta guardada');
+                  }}
+                >
+                  <Save className="w-4 h-4" />
+                  Guardar configuración
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+              <div>
+                <p className="text-muted-foreground text-xs">Meses preferidos</p>
+                <div className="flex flex-wrap gap-1 mt-1">
+                  {mesesCapacitacion.map(m => (
+                    <Badge key={m} variant="secondary" className="text-xs">{m}</Badge>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <p className="text-muted-foreground text-xs">Modalidad preferida</p>
+                <div className="flex flex-wrap gap-1 mt-1">
+                  {modalidadCapacitacion.map(m => (
+                    <Badge key={m} variant="secondary" className="text-xs">{m}</Badge>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </Card>
 
