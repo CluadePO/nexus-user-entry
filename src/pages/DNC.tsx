@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import TermsSignatureModal from '@/components/dnc/TermsSignatureModal';
+import DNCConfiguracion from '@/components/dnc/DNCConfiguracion';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { toast } from 'sonner';
 import { 
   PlayCircle, 
   ClipboardList, 
@@ -49,11 +51,26 @@ const benefits = [
 
 const DNC: React.FC = () => {
   const [showTerms, setShowTerms] = useState(false);
+  const [phase, setPhase] = useState<'landing' | 'config'>(() => {
+    const saved = localStorage.getItem('dnc_draft_phase');
+    return saved === 'config' ? 'config' : 'landing';
+  });
 
   const handleSigned = () => {
-    // TODO: proceed to DNC configuration
-    console.log('Document signed, proceeding with DNC');
+    setPhase('config');
+    localStorage.setItem('dnc_draft_phase', 'config');
+    toast.success('Documento firmado correctamente');
   };
+
+  const handleBackToLanding = () => {
+    localStorage.setItem('dnc_draft_phase', 'config');
+    toast.info('Proceso guardado como borrador');
+    setPhase('landing');
+  };
+
+  if (phase === 'config') {
+    return <DNCConfiguracion onBack={handleBackToLanding} />;
+  }
 
   return (
     <div className="space-y-8 max-w-6xl mx-auto">
@@ -74,9 +91,16 @@ const DNC: React.FC = () => {
               <strong> resumen de cursos recomendados</strong> que se alinean con las brechas de competencias detectadas.
             </p>
             <div className="flex gap-3 pt-2">
-              <Button className="gap-2" onClick={() => setShowTerms(true)}>
+              <Button className="gap-2" onClick={() => {
+                const hasDraft = localStorage.getItem('dnc_draft_phase') === 'config';
+                if (hasDraft) {
+                  setPhase('config');
+                } else {
+                  setShowTerms(true);
+                }
+              }}>
                 <ClipboardList className="w-4 h-4" />
-                Iniciar Diagnóstico
+                {localStorage.getItem('dnc_draft_phase') === 'config' ? 'Retomar Diagnóstico' : 'Iniciar Diagnóstico'}
               </Button>
               <Button variant="outline" className="gap-2">
                 Ver resultados anteriores
