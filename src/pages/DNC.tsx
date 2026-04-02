@@ -99,20 +99,13 @@ const DNC: React.FC = () => {
               <strong> resumen de cursos recomendados</strong> que se alinean con las brechas de competencias detectadas.
             </p>
             <div className="flex gap-3 pt-2">
-              <Button className="gap-2" onClick={() => {
-                const hasDraft = localStorage.getItem('dnc_draft_phase') === 'config';
-                if (hasDraft) {
-                  setPhase('config');
-                } else {
-                  setShowTerms(true);
-                }
-              }}>
+              <Button className="gap-2" onClick={() => setShowTerms(true)}>
                 <ClipboardList className="w-4 h-4" />
-                {localStorage.getItem('dnc_draft_phase') === 'config' ? 'Retomar Diagnóstico' : 'Iniciar Diagnóstico'}
+                Iniciar Diagnóstico
               </Button>
-              <Button variant="outline" className="gap-2">
-                Ver resultados anteriores
-                <ArrowRight className="w-4 h-4" />
+              <Button variant="outline" className="gap-2" onClick={() => setPhase('historial')}>
+                <History className="w-4 h-4" />
+                Historial de procesos
               </Button>
             </div>
           </div>
