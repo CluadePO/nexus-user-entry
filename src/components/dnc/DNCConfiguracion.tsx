@@ -58,7 +58,7 @@ const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack, existingDra
     fechaFin,
     modalidad: modalidad!,
     estado: 'borrador',
-    participantes: existingDraft?.participantes || 0,
+    participantes: participants.length || existingDraft?.participantes || 0,
     avance: 10,
     tcFirmados: true,
     creadoEn: existingDraft?.creadoEn || new Date().toISOString().split('T')[0],
