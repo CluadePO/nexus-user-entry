@@ -19,7 +19,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { Upload, Download, FileSpreadsheet, Eye, Trash2, CheckCircle2, AlertTriangle, Users, Info } from 'lucide-react';
+import { Upload, Download, FileSpreadsheet, Eye, Trash2, CheckCircle2, AlertTriangle, Users } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import * as XLSX from 'xlsx';
@@ -102,6 +102,7 @@ const DNCParticipantUpload: React.FC<DNCParticipantUploadProps> = ({
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showPreview, setShowPreview] = useState(false);
+  const [showExample, setShowExample] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
 
@@ -159,24 +160,16 @@ const DNCParticipantUpload: React.FC<DNCParticipantUploadProps> = ({
 
   return (
     <div className="space-y-4">
-      {/* Download links */}
-      <div className="flex flex-wrap items-center gap-4">
+      {/* Action links */}
+      <div className="flex items-center justify-between">
         <Button variant="link" className="gap-2 text-primary p-0 h-auto" onClick={downloadTemplate}>
           <Download className="w-4 h-4" />
           Descargar plantilla base
         </Button>
-        <Button variant="link" className="gap-2 text-primary p-0 h-auto" onClick={downloadExample}>
+        <Button variant="link" className="gap-2 text-primary p-0 h-auto" onClick={() => setShowExample(true)}>
           <FileSpreadsheet className="w-4 h-4" />
-          Descargar ejemplo de carga
+          Ejemplo de carga
         </Button>
-      </div>
-
-      {/* Info box */}
-      <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 border">
-        <Info className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
-        <p className="text-xs text-muted-foreground">
-          La plantilla debe contener las columnas: <strong>Rut, Nombre, Apellido Paterno, Apellido Materno, E-mail, Cargo, Nivel de Cargo, Área, Unidad y Rut Jefatura Evaluadora</strong>. Descarga el ejemplo para ver cómo completar los datos correctamente.
-        </p>
       </div>
 
       {/* Upload area */}
@@ -289,6 +282,43 @@ const DNCParticipantUpload: React.FC<DNCParticipantUploadProps> = ({
           </ScrollArea>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowPreview(false)}>Cerrar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Example modal */}
+      <Dialog open={showExample} onOpenChange={setShowExample}>
+        <DialogContent className="max-w-5xl max-h-[80vh]">
+          <DialogHeader>
+            <DialogTitle>Ejemplo de carga de participantes</DialogTitle>
+            <DialogDescription>Así es como debe verse tu archivo Excel antes de cargarlo al sistema.</DialogDescription>
+          </DialogHeader>
+          <ScrollArea className="h-[40vh]">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  {TEMPLATE_COLUMNS.map((col) => (
+                    <TableHead key={col} className="text-xs font-semibold">{col}</TableHead>
+                  ))}
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {EXAMPLE_DATA.map((row, i) => (
+                  <TableRow key={i}>
+                    {row.map((cell, j) => (
+                      <TableCell key={j} className="text-xs">{cell}</TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </ScrollArea>
+          <DialogFooter className="flex items-center justify-between sm:justify-between">
+            <Button variant="link" className="gap-2 text-primary p-0 h-auto" onClick={downloadTemplate}>
+              <Download className="w-4 h-4" />
+              Descargar plantilla base
+            </Button>
+            <Button variant="outline" onClick={() => setShowExample(false)}>Cerrar</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
