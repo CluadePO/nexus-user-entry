@@ -176,6 +176,7 @@ const DNC: React.FC = () => {
           </div>
         </div>
       </Card>
+      <TermsSignatureModal open={showTerms} onOpenChange={setShowTerms} onSigned={handleSigned} />
     </div>
   );
 };
