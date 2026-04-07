@@ -39,6 +39,74 @@ const modalidades: { value: Modalidad; label: string; description: string }[] = 
   { value: 'mixta', label: 'Consulta Mixta', description: 'Encuestas tanto a colaboradores como a jefaturas para un diagnóstico integral.' },
 ];
 
+const surveyQuestions: { id: string; title: string; subtitle: string; options: string[]; gridCols?: string }[] = [
+  {
+    id: 'mes_capacitacion',
+    title: 'Indica tu preferencia de mes de capacitación',
+    subtitle: 'Permite seleccionar uno o más meses del año',
+    options: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
+    gridCols: 'grid-cols-3 md:grid-cols-4 lg:grid-cols-6',
+  },
+  {
+    id: 'modalidad_capacitacion',
+    title: 'Indica tu preferencia de modalidad de capacitación',
+    subtitle: 'Permite seleccionar una o más modalidades',
+    options: ['Presencial','Distancia','E-Learning','Híbrida'],
+  },
+  {
+    id: 'areas_tecnicas',
+    title: '¿En cuál de las siguientes áreas técnicas consideras prioritario fortalecer tus conocimientos este año?',
+    subtitle: 'El encuestado puede seleccionar una o más áreas',
+    options: ['Gestión de proyectos','Análisis de datos','Marketing','Normas técnicas','Finanzas y contabilidad','Logística y operaciones','Recursos humanos','Calidad y mejora continua'],
+  },
+  {
+    id: 'nivel_capacitacion',
+    title: 'Para las herramientas técnicas que utilizas, ¿qué nivel de capacitación buscas alcanzar en tu próxima formación?',
+    subtitle: 'Selección única de nivel',
+    options: ['Básico','Intermedio','Avanzado'],
+    gridCols: 'grid-cols-3',
+  },
+  {
+    id: 'habilidad_blanda',
+    title: 'Si pudieras potenciar una sola habilidad para mejorar tu interacción y resultados, ¿cuál elegirías?',
+    subtitle: 'Selección única de habilidad interpersonal',
+    options: ['Comunicación asertiva','Liderazgo','Negociación','Inteligencia emocional','Trabajo en equipo','Resolución de conflictos'],
+  },
+  {
+    id: 'competencia_transversal',
+    title: '¿Qué competencia transversal consideras que tendría mayor impacto en tu día a día?',
+    subtitle: 'Selección entre dos opciones',
+    options: ['Gestión del tiempo y priorización','Pensamiento creativo e innovación'],
+    gridCols: 'grid-cols-1 md:grid-cols-2',
+  },
+  {
+    id: 'herramientas_productividad',
+    title: '¿En qué herramientas de productividad te interesaría profundizar para agilizar tu trabajo?',
+    subtitle: 'El encuestado puede seleccionar una o más herramientas',
+    options: ['Excel avanzado','Power BI','Herramientas de IA','Herramientas de gestión de tareas','Google Workspace','SAP / ERP','Python / Automatización'],
+  },
+  {
+    id: 'interes_tecnologias',
+    title: '¿Qué nivel de interés tienes en realizar cursos sobre nuevas tecnologías y tendencias digitales aplicadas a tu ámbito profesional?',
+    subtitle: 'Escala de 1 a 5 (1 = Muy bajo, 5 = Muy alto)',
+    options: ['1 - Muy bajo','2 - Bajo','3 - Medio','4 - Alto','5 - Muy alto'],
+    gridCols: 'grid-cols-5',
+  },
+  {
+    id: 'metodologia_aprendizaje',
+    title: 'Para asegurar tu aprendizaje, ¿qué tipo de metodología prefieres?',
+    subtitle: 'Selección única de metodología',
+    options: ['Videos cortos a tu propio ritmo','Talleres prácticos en vivo','Mentorías grupales','Clases teóricas con material descargable'],
+  },
+  {
+    id: 'tiempo_disponible',
+    title: '¿De cuánto tiempo semanal dispones de forma efectiva para completar un plan de capacitación recomendado?',
+    subtitle: 'Selección única de disponibilidad',
+    options: ['Menos de 1 hora','1 a 2 horas','2 a 4 horas','4 a 6 horas','Más de 6 horas'],
+    gridCols: 'grid-cols-2 md:grid-cols-5',
+  },
+];
+
 const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack, existingDraft }) => {
   const [draftId] = useState(() => existingDraft?.id || generateId());
   const [nombre, setNombre] = useState(existingDraft?.nombre || '');
@@ -52,7 +120,7 @@ const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack, existingDra
     !!(existingDraft?.nombre && existingDraft?.rubro && existingDraft?.fechaInicio && existingDraft?.fechaFin && existingDraft?.modalidad)
   );
   const [step3Complete, setStep3Complete] = useState(false);
-  const [selectedQuestions, setSelectedQuestions] = useState<string[]>(['mes_capacitacion', 'modalidad_capacitacion']);
+  const [selectedQuestions, setSelectedQuestions] = useState<string[]>(surveyQuestions.map(q => q.id));
   const [expandedQuestions, setExpandedQuestions] = useState<string[]>([]);
   const [tipoDiagnostico, setTipoDiagnostico] = useState<string | null>(null);
   const [incluirAutodiagnostico, setIncluirAutodiagnostico] = useState<boolean | null>(null);
@@ -423,119 +491,71 @@ const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack, existingDra
                     </Button>
                   </div>
 
-                  <p className="text-xs text-muted-foreground">Selecciona las preguntas obligatorias que se incluirán en la encuesta.</p>
+                  <p className="text-xs text-muted-foreground">Selecciona las preguntas que se incluirán en la encuesta.</p>
 
-              {/* Pregunta 1: Mes de capacitación */}
-              <div className={cn("rounded-lg border-2 transition-all", selectedQuestions.includes('mes_capacitacion') ? "border-primary/40 bg-primary/5" : "border-border bg-background")}>
-                <div className="flex items-center justify-between p-4">
-                  <div className="flex items-center gap-3">
-                    <input
-                      type="checkbox"
-                      checked={selectedQuestions.includes('mes_capacitacion')}
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setSelectedQuestions(prev => [...prev, 'mes_capacitacion']);
-                        } else {
-                          setSelectedQuestions(prev => prev.filter(q => q !== 'mes_capacitacion'));
-                        }
-                      }}
-                      className="w-4 h-4 rounded border-border text-primary focus:ring-primary"
-                    />
-                    <div>
-                      <p className="text-sm font-medium text-foreground">Indica tu preferencia de mes de capacitación</p>
-                      <p className="text-xs text-muted-foreground">Permite seleccionar uno o más meses del año</p>
-                    </div>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="gap-1 text-xs text-muted-foreground"
-                    onClick={() => setExpandedQuestions(prev =>
-                      prev.includes('mes_capacitacion') ? prev.filter(q => q !== 'mes_capacitacion') : [...prev, 'mes_capacitacion']
-                    )}
-                  >
-                    {expandedQuestions.includes('mes_capacitacion') ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                    Ver detalle
-                  </Button>
-                </div>
-                {expandedQuestions.includes('mes_capacitacion') && (
-                  <div className="px-4 pb-4 pt-0">
-                    <div className="bg-muted/50 rounded-lg p-3">
-                      <p className="text-xs font-medium text-muted-foreground mb-2">Opciones de respuesta disponibles:</p>
-                      <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
-                        {['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'].map((mes) => (
-                          <span key={mes} className="px-3 py-1.5 rounded-lg border border-border bg-background text-xs text-muted-foreground text-center">
-                            {mes}
-                          </span>
-                        ))}
+                  {surveyQuestions.map((q) => (
+                    <div key={q.id} className={cn("rounded-lg border-2 transition-all", selectedQuestions.includes(q.id) ? "border-primary/40 bg-primary/5" : "border-border bg-background")}>
+                      <div className="flex items-center justify-between p-4">
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="checkbox"
+                            checked={selectedQuestions.includes(q.id)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedQuestions(prev => [...prev, q.id]);
+                              } else {
+                                setSelectedQuestions(prev => prev.filter(x => x !== q.id));
+                              }
+                            }}
+                            className="w-4 h-4 rounded border-border text-primary focus:ring-primary"
+                          />
+                          <div>
+                            <p className="text-sm font-medium text-foreground">{q.title}</p>
+                            <p className="text-xs text-muted-foreground">{q.subtitle}</p>
+                          </div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="gap-1 text-xs text-muted-foreground flex-shrink-0"
+                          onClick={() => setExpandedQuestions(prev =>
+                            prev.includes(q.id) ? prev.filter(x => x !== q.id) : [...prev, q.id]
+                          )}
+                        >
+                          {expandedQuestions.includes(q.id) ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                          Ver detalle
+                        </Button>
                       </div>
+                      {expandedQuestions.includes(q.id) && (
+                        <div className="px-4 pb-4 pt-0">
+                          <div className="bg-muted/50 rounded-lg p-3">
+                            <p className="text-xs font-medium text-muted-foreground mb-2">Opciones de respuesta disponibles:</p>
+                            <div className={cn("grid gap-2", q.gridCols || "grid-cols-2 md:grid-cols-4")}>
+                              {q.options.map((opt) => (
+                                <span key={opt} className="px-3 py-1.5 rounded-lg border border-border bg-background text-xs text-muted-foreground text-center">
+                                  {opt}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                )}
-              </div>
+                  ))}
 
-              {/* Pregunta 2: Modalidad de capacitación */}
-              <div className={cn("rounded-lg border-2 transition-all", selectedQuestions.includes('modalidad_capacitacion') ? "border-primary/40 bg-primary/5" : "border-border bg-background")}>
-                <div className="flex items-center justify-between p-4">
-                  <div className="flex items-center gap-3">
-                    <input
-                      type="checkbox"
-                      checked={selectedQuestions.includes('modalidad_capacitacion')}
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setSelectedQuestions(prev => [...prev, 'modalidad_capacitacion']);
-                        } else {
-                          setSelectedQuestions(prev => prev.filter(q => q !== 'modalidad_capacitacion'));
-                        }
+                  <div className="flex justify-end pt-2">
+                    <Button
+                      className="gap-2"
+                      disabled={selectedQuestions.length === 0}
+                      onClick={() => {
+                        setStep3Complete(true);
+                        toast.success('Configuración de encuesta guardada');
                       }}
-                      className="w-4 h-4 rounded border-border text-primary focus:ring-primary"
-                    />
-                    <div>
-                      <p className="text-sm font-medium text-foreground">Indica tu preferencia de modalidad de capacitación</p>
-                      <p className="text-xs text-muted-foreground">Permite seleccionar una o más modalidades</p>
-                    </div>
+                    >
+                      <Save className="w-4 h-4" />
+                      Guardar configuración
+                    </Button>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="gap-1 text-xs text-muted-foreground"
-                    onClick={() => setExpandedQuestions(prev =>
-                      prev.includes('modalidad_capacitacion') ? prev.filter(q => q !== 'modalidad_capacitacion') : [...prev, 'modalidad_capacitacion']
-                    )}
-                  >
-                    {expandedQuestions.includes('modalidad_capacitacion') ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                    Ver detalle
-                  </Button>
-                </div>
-                {expandedQuestions.includes('modalidad_capacitacion') && (
-                  <div className="px-4 pb-4 pt-0">
-                    <div className="bg-muted/50 rounded-lg p-3">
-                      <p className="text-xs font-medium text-muted-foreground mb-2">Opciones de respuesta disponibles:</p>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                        {['Presencial','Distancia','E-Learning','Híbrida'].map((mod) => (
-                          <span key={mod} className="px-4 py-2 rounded-lg border border-border bg-background text-xs text-muted-foreground text-center">
-                            {mod}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <div className="flex justify-end pt-2">
-                <Button
-                  className="gap-2"
-                  disabled={selectedQuestions.length === 0}
-                  onClick={() => {
-                    setStep3Complete(true);
-                    toast.success('Configuración de encuesta guardada');
-                  }}
-                >
-                  <Save className="w-4 h-4" />
-                  Guardar configuración
-                </Button>
-              </div>
                 </div>
               )}
             </div>
@@ -555,12 +575,9 @@ const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack, existingDra
               </div>
               <p className="text-muted-foreground text-xs">Preguntas incluidas en la encuesta:</p>
               <div className="flex flex-wrap gap-2">
-                {selectedQuestions.includes('mes_capacitacion') && (
-                  <Badge variant="secondary" className="text-xs">Preferencia de mes de capacitación</Badge>
-                )}
-                {selectedQuestions.includes('modalidad_capacitacion') && (
-                  <Badge variant="secondary" className="text-xs">Preferencia de modalidad de capacitación</Badge>
-                )}
+                {surveyQuestions.filter(q => selectedQuestions.includes(q.id)).map(q => (
+                  <Badge key={q.id} variant="secondary" className="text-xs">{q.title.length > 50 ? q.title.slice(0, 50) + '…' : q.title}</Badge>
+                ))}
               </div>
             </div>
           )}
