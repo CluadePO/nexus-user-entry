@@ -109,6 +109,20 @@ const surveyQuestions: { id: string; title: string; subtitle: string; options: s
   },
 ];
 
+const createPreviewSelections = () =>
+  surveyQuestions.reduce((acc, question) => {
+    acc[question.id] = question.options[0] ?? '';
+    return acc;
+  }, {} as Record<string, string>);
+
+const getPreviewOptionId = (questionId: string, option: string) =>
+  `preview-${questionId}-${option
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '')}`;
+
 const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack, existingDraft }) => {
   const [draftId] = useState(() => existingDraft?.id || generateId());
   const [nombre, setNombre] = useState(existingDraft?.nombre || '');
@@ -127,6 +141,7 @@ const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack, existingDra
   const [tipoDiagnostico, setTipoDiagnostico] = useState<string | null>(null);
   const [incluirAutodiagnostico, setIncluirAutodiagnostico] = useState<boolean | null>(null);
   const [diagnosticoConfigured, setDiagnosticoConfigured] = useState(false);
+  const [previewSelections, setPreviewSelections] = useState<Record<string, string>>(() => createPreviewSelections());
 
   const showAutodiagnostico = modalidad === 'jefaturas' || modalidad === 'mixta';
 
@@ -176,6 +191,13 @@ const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack, existingDra
       });
     }
     onBack();
+  };
+
+  const handlePreviewSelectionChange = (questionId: string, value: string) => {
+    setPreviewSelections((prev) => ({
+      ...prev,
+      [questionId]: value,
+    }));
   };
 
   return (
@@ -515,12 +537,17 @@ const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack, existingDra
                         {expandedQuestions.includes(q.id) && (
                           <div className="px-4 pb-4 pt-0">
                             <div className="bg-muted/50 rounded-lg p-3">
-                              <p className="text-xs font-medium text-muted-foreground mb-2">Opciones de respuesta disponibles:</p>
-                              <div className={cn("grid gap-2", q.gridCols || "grid-cols-2 md:grid-cols-4")}>
-                                {q.options.map((opt) => (
-                                  <span key={opt} className="px-3 py-1.5 rounded-lg border border-border bg-background text-xs text-muted-foreground text-center">{opt}</span>
-                                ))}
-                              </div>
+                              <p className="text-xs font-medium text-muted-foreground mb-2">Vista interactiva de ejemplo:</p>
+                              <Select value={previewSelections[q.id]} onValueChange={(value) => handlePreviewSelectionChange(q.id, value)}>
+                                <SelectTrigger className="w-full max-w-sm bg-background">
+                                  <SelectValue placeholder="Seleccionar opción..." />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {q.options.map((opt) => (
+                                    <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
                             </div>
                           </div>
                         )}
@@ -554,35 +581,35 @@ const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack, existingDra
                                 <div className="bg-muted/50 rounded-lg p-3">
                                   <p className="text-xs font-medium text-muted-foreground mb-2">Vista previa del tipo de respuesta:</p>
                                   {q.id === 'nivel_capacitacion' ? (
-                                    <RadioGroup disabled className="flex gap-4">
+                                    <RadioGroup value={previewSelections[q.id]} onValueChange={(value) => handlePreviewSelectionChange(q.id, value)} className="flex gap-4">
                                       {q.options.map((opt) => (
                                         <div key={opt} className="flex items-center gap-2">
-                                          <RadioGroupItem value={opt} id={`preview-${q.id}-${opt}`} disabled />
-                                          <Label htmlFor={`preview-${q.id}-${opt}`} className="text-xs text-muted-foreground cursor-default">{opt}</Label>
+                                          <RadioGroupItem value={opt} id={getPreviewOptionId(q.id, opt)} />
+                                          <Label htmlFor={getPreviewOptionId(q.id, opt)} className="text-xs text-muted-foreground">{opt}</Label>
                                         </div>
                                       ))}
                                     </RadioGroup>
                                   ) : q.id === 'competencia_transversal' ? (
-                                    <RadioGroup disabled className="flex flex-col gap-2 md:flex-row md:gap-4">
+                                    <RadioGroup value={previewSelections[q.id]} onValueChange={(value) => handlePreviewSelectionChange(q.id, value)} className="flex flex-col gap-2 md:flex-row md:gap-4">
                                       {q.options.map((opt) => (
                                         <div key={opt} className="flex items-center gap-2">
-                                          <RadioGroupItem value={opt} id={`preview-${q.id}-${opt}`} disabled />
-                                          <Label htmlFor={`preview-${q.id}-${opt}`} className="text-xs text-muted-foreground cursor-default">{opt}</Label>
+                                          <RadioGroupItem value={opt} id={getPreviewOptionId(q.id, opt)} />
+                                          <Label htmlFor={getPreviewOptionId(q.id, opt)} className="text-xs text-muted-foreground">{opt}</Label>
                                         </div>
                                       ))}
                                     </RadioGroup>
                                   ) : q.id === 'interes_tecnologias' ? (
-                                    <RadioGroup disabled className="flex gap-3">
+                                    <RadioGroup value={previewSelections[q.id]} onValueChange={(value) => handlePreviewSelectionChange(q.id, value)} className="flex gap-3">
                                       {q.options.map((opt) => (
                                         <div key={opt} className="flex items-center gap-1.5">
-                                          <RadioGroupItem value={opt} id={`preview-${q.id}-${opt}`} disabled />
-                                          <Label htmlFor={`preview-${q.id}-${opt}`} className="text-xs text-muted-foreground cursor-default">{opt}</Label>
+                                          <RadioGroupItem value={opt} id={getPreviewOptionId(q.id, opt)} />
+                                          <Label htmlFor={getPreviewOptionId(q.id, opt)} className="text-xs text-muted-foreground">{opt}</Label>
                                         </div>
                                       ))}
                                     </RadioGroup>
                                   ) : (
-                                    <Select>
-                                      <SelectTrigger className="w-full max-w-sm bg-background" disabled>
+                                    <Select value={previewSelections[q.id]} onValueChange={(value) => handlePreviewSelectionChange(q.id, value)}>
+                                      <SelectTrigger className="w-full max-w-sm bg-background">
                                         <SelectValue placeholder="Seleccionar opción..." />
                                       </SelectTrigger>
                                       <SelectContent>
