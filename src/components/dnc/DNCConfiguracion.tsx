@@ -581,8 +581,8 @@ const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack, existingDra
                                       ))}
                                     </RadioGroup>
                                   ) : (
-                                    <Select disabled>
-                                      <SelectTrigger className="w-full max-w-sm bg-background">
+                                    <Select>
+                                      <SelectTrigger className="w-full max-w-sm bg-background" disabled>
                                         <SelectValue placeholder="Seleccionar opción..." />
                                       </SelectTrigger>
                                       <SelectContent>
