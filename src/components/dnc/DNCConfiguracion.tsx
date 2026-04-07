@@ -39,6 +39,74 @@ const modalidades: { value: Modalidad; label: string; description: string }[] = 
   { value: 'mixta', label: 'Consulta Mixta', description: 'Encuestas tanto a colaboradores como a jefaturas para un diagnóstico integral.' },
 ];
 
+const surveyQuestions: { id: string; title: string; subtitle: string; options: string[]; gridCols?: string }[] = [
+  {
+    id: 'mes_capacitacion',
+    title: 'Indica tu preferencia de mes de capacitación',
+    subtitle: 'Permite seleccionar uno o más meses del año',
+    options: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'],
+    gridCols: 'grid-cols-3 md:grid-cols-4 lg:grid-cols-6',
+  },
+  {
+    id: 'modalidad_capacitacion',
+    title: 'Indica tu preferencia de modalidad de capacitación',
+    subtitle: 'Permite seleccionar una o más modalidades',
+    options: ['Presencial','Distancia','E-Learning','Híbrida'],
+  },
+  {
+    id: 'areas_tecnicas',
+    title: '¿En cuál de las siguientes áreas técnicas consideras prioritario fortalecer tus conocimientos este año?',
+    subtitle: 'El encuestado puede seleccionar una o más áreas',
+    options: ['Gestión de proyectos','Análisis de datos','Marketing','Normas técnicas','Finanzas y contabilidad','Logística y operaciones','Recursos humanos','Calidad y mejora continua'],
+  },
+  {
+    id: 'nivel_capacitacion',
+    title: 'Para las herramientas técnicas que utilizas, ¿qué nivel de capacitación buscas alcanzar en tu próxima formación?',
+    subtitle: 'Selección única de nivel',
+    options: ['Básico','Intermedio','Avanzado'],
+    gridCols: 'grid-cols-3',
+  },
+  {
+    id: 'habilidad_blanda',
+    title: 'Si pudieras potenciar una sola habilidad para mejorar tu interacción y resultados, ¿cuál elegirías?',
+    subtitle: 'Selección única de habilidad interpersonal',
+    options: ['Comunicación asertiva','Liderazgo','Negociación','Inteligencia emocional','Trabajo en equipo','Resolución de conflictos'],
+  },
+  {
+    id: 'competencia_transversal',
+    title: '¿Qué competencia transversal consideras que tendría mayor impacto en tu día a día?',
+    subtitle: 'Selección entre dos opciones',
+    options: ['Gestión del tiempo y priorización','Pensamiento creativo e innovación'],
+    gridCols: 'grid-cols-1 md:grid-cols-2',
+  },
+  {
+    id: 'herramientas_productividad',
+    title: '¿En qué herramientas de productividad te interesaría profundizar para agilizar tu trabajo?',
+    subtitle: 'El encuestado puede seleccionar una o más herramientas',
+    options: ['Excel avanzado','Power BI','Herramientas de IA','Herramientas de gestión de tareas','Google Workspace','SAP / ERP','Python / Automatización'],
+  },
+  {
+    id: 'interes_tecnologias',
+    title: '¿Qué nivel de interés tienes en realizar cursos sobre nuevas tecnologías y tendencias digitales aplicadas a tu ámbito profesional?',
+    subtitle: 'Escala de 1 a 5 (1 = Muy bajo, 5 = Muy alto)',
+    options: ['1 - Muy bajo','2 - Bajo','3 - Medio','4 - Alto','5 - Muy alto'],
+    gridCols: 'grid-cols-5',
+  },
+  {
+    id: 'metodologia_aprendizaje',
+    title: 'Para asegurar tu aprendizaje, ¿qué tipo de metodología prefieres?',
+    subtitle: 'Selección única de metodología',
+    options: ['Videos cortos a tu propio ritmo','Talleres prácticos en vivo','Mentorías grupales','Clases teóricas con material descargable'],
+  },
+  {
+    id: 'tiempo_disponible',
+    title: '¿De cuánto tiempo semanal dispones de forma efectiva para completar un plan de capacitación recomendado?',
+    subtitle: 'Selección única de disponibilidad',
+    options: ['Menos de 1 hora','1 a 2 horas','2 a 4 horas','4 a 6 horas','Más de 6 horas'],
+    gridCols: 'grid-cols-2 md:grid-cols-5',
+  },
+];
+
 const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack, existingDraft }) => {
   const [draftId] = useState(() => existingDraft?.id || generateId());
   const [nombre, setNombre] = useState(existingDraft?.nombre || '');
