@@ -120,7 +120,7 @@ const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack, existingDra
     !!(existingDraft?.nombre && existingDraft?.rubro && existingDraft?.fechaInicio && existingDraft?.fechaFin && existingDraft?.modalidad)
   );
   const [step3Complete, setStep3Complete] = useState(false);
-  const [selectedQuestions, setSelectedQuestions] = useState<string[]>(['mes_capacitacion', 'modalidad_capacitacion']);
+  const [selectedQuestions, setSelectedQuestions] = useState<string[]>(surveyQuestions.map(q => q.id));
   const [expandedQuestions, setExpandedQuestions] = useState<string[]>([]);
   const [tipoDiagnostico, setTipoDiagnostico] = useState<string | null>(null);
   const [incluirAutodiagnostico, setIncluirAutodiagnostico] = useState<boolean | null>(null);
