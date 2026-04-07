@@ -22,6 +22,8 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { ArrowLeft, Settings, Users, FileText, CheckCircle2, Save, AlertTriangle, Info, ClipboardList, ChevronDown, ChevronUp } from 'lucide-react';
 import DNCParticipantUpload, { type Participante } from './DNCParticipantUpload';
 import { toast } from 'sonner';
