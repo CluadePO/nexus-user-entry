@@ -575,12 +575,9 @@ const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack, existingDra
               </div>
               <p className="text-muted-foreground text-xs">Preguntas incluidas en la encuesta:</p>
               <div className="flex flex-wrap gap-2">
-                {selectedQuestions.includes('mes_capacitacion') && (
-                  <Badge variant="secondary" className="text-xs">Preferencia de mes de capacitación</Badge>
-                )}
-                {selectedQuestions.includes('modalidad_capacitacion') && (
-                  <Badge variant="secondary" className="text-xs">Preferencia de modalidad de capacitación</Badge>
-                )}
+                {surveyQuestions.filter(q => selectedQuestions.includes(q.id)).map(q => (
+                  <Badge key={q.id} variant="secondary" className="text-xs">{q.title.length > 50 ? q.title.slice(0, 50) + '…' : q.title}</Badge>
+                ))}
               </div>
             </div>
           )}
