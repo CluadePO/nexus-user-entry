@@ -22,6 +22,8 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { ArrowLeft, Settings, Users, FileText, CheckCircle2, Save, AlertTriangle, Info, ClipboardList, ChevronDown, ChevronUp } from 'lucide-react';
 import DNCParticipantUpload, { type Participante } from './DNCParticipantUpload';
 import { toast } from 'sonner';
@@ -491,57 +493,113 @@ const DNCConfiguracion: React.FC<DNCConfiguracionProps> = ({ onBack, existingDra
                     </Button>
                   </div>
 
-                  <p className="text-xs text-muted-foreground">Selecciona las preguntas que se incluirán en la encuesta.</p>
-
-                  {surveyQuestions.map((q) => (
-                    <div key={q.id} className={cn("rounded-lg border-2 transition-all", selectedQuestions.includes(q.id) ? "border-primary/40 bg-primary/5" : "border-border bg-background")}>
-                      <div className="flex items-center justify-between p-4">
-                        <div className="flex items-center gap-3">
-                          <input
-                            type="checkbox"
-                            checked={selectedQuestions.includes(q.id)}
-                            onChange={(e) => {
-                              if (e.target.checked) {
-                                setSelectedQuestions(prev => [...prev, q.id]);
-                              } else {
-                                setSelectedQuestions(prev => prev.filter(x => x !== q.id));
-                              }
-                            }}
-                            className="w-4 h-4 rounded border-border text-primary focus:ring-primary"
-                          />
-                          <div>
-                            <p className="text-sm font-medium text-foreground">{q.title}</p>
-                            <p className="text-xs text-muted-foreground">{q.subtitle}</p>
-                          </div>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="gap-1 text-xs text-muted-foreground flex-shrink-0"
-                          onClick={() => setExpandedQuestions(prev =>
-                            prev.includes(q.id) ? prev.filter(x => x !== q.id) : [...prev, q.id]
-                          )}
-                        >
-                          {expandedQuestions.includes(q.id) ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                          Ver detalle
-                        </Button>
-                      </div>
-                      {expandedQuestions.includes(q.id) && (
-                        <div className="px-4 pb-4 pt-0">
-                          <div className="bg-muted/50 rounded-lg p-3">
-                            <p className="text-xs font-medium text-muted-foreground mb-2">Opciones de respuesta disponibles:</p>
-                            <div className={cn("grid gap-2", q.gridCols || "grid-cols-2 md:grid-cols-4")}>
-                              {q.options.map((opt) => (
-                                <span key={opt} className="px-3 py-1.5 rounded-lg border border-border bg-background text-xs text-muted-foreground text-center">
-                                  {opt}
-                                </span>
-                              ))}
+                  {/* 3a: Preferencias obligatorias */}
+                  <div className="space-y-3">
+                    <h4 className="text-sm font-semibold text-foreground">3a. Preferencias de capacitación</h4>
+                    <p className="text-xs text-muted-foreground">Preguntas base sobre mes y modalidad de preferencia.</p>
+                    {surveyQuestions.filter(q => q.id === 'mes_capacitacion' || q.id === 'modalidad_capacitacion').map((q) => (
+                      <div key={q.id} className={cn("rounded-lg border-2 transition-all", selectedQuestions.includes(q.id) ? "border-primary/40 bg-primary/5" : "border-border bg-background")}>
+                        <div className="flex items-center justify-between p-4">
+                          <div className="flex items-center gap-3">
+                            <input type="checkbox" checked={selectedQuestions.includes(q.id)} onChange={(e) => { if (e.target.checked) setSelectedQuestions(prev => [...prev, q.id]); else setSelectedQuestions(prev => prev.filter(x => x !== q.id)); }} className="w-4 h-4 rounded border-border text-primary focus:ring-primary" />
+                            <div>
+                              <p className="text-sm font-medium text-foreground">{q.title}</p>
+                              <p className="text-xs text-muted-foreground">{q.subtitle}</p>
                             </div>
                           </div>
+                          <Button variant="ghost" size="sm" className="gap-1 text-xs text-muted-foreground flex-shrink-0" onClick={() => setExpandedQuestions(prev => prev.includes(q.id) ? prev.filter(x => x !== q.id) : [...prev, q.id])}>
+                            {expandedQuestions.includes(q.id) ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                            Ver detalle
+                          </Button>
                         </div>
-                      )}
-                    </div>
-                  ))}
+                        {expandedQuestions.includes(q.id) && (
+                          <div className="px-4 pb-4 pt-0">
+                            <div className="bg-muted/50 rounded-lg p-3">
+                              <p className="text-xs font-medium text-muted-foreground mb-2">Opciones de respuesta disponibles:</p>
+                              <div className={cn("grid gap-2", q.gridCols || "grid-cols-2 md:grid-cols-4")}>
+                                {q.options.map((opt) => (
+                                  <span key={opt} className="px-3 py-1.5 rounded-lg border border-border bg-background text-xs text-muted-foreground text-center">{opt}</span>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* 3b: Preguntas adicionales */}
+                  <div className="space-y-3">
+                    <h4 className="text-sm font-semibold text-foreground">3b. Preguntas de diagnóstico</h4>
+                    <p className="text-xs text-muted-foreground">Selecciona las preguntas adicionales que se incluirán en la encuesta.</p>
+                    <ScrollArea className="h-[420px] pr-3">
+                      <div className="space-y-3">
+                        {surveyQuestions.filter(q => q.id !== 'mes_capacitacion' && q.id !== 'modalidad_capacitacion').map((q) => (
+                          <div key={q.id} className={cn("rounded-lg border-2 transition-all", selectedQuestions.includes(q.id) ? "border-primary/40 bg-primary/5" : "border-border bg-background")}>
+                            <div className="flex items-center justify-between p-4">
+                              <div className="flex items-center gap-3">
+                                <input type="checkbox" checked={selectedQuestions.includes(q.id)} onChange={(e) => { if (e.target.checked) setSelectedQuestions(prev => [...prev, q.id]); else setSelectedQuestions(prev => prev.filter(x => x !== q.id)); }} className="w-4 h-4 rounded border-border text-primary focus:ring-primary" />
+                                <div>
+                                  <p className="text-sm font-medium text-foreground">{q.title}</p>
+                                  <p className="text-xs text-muted-foreground">{q.subtitle}</p>
+                                </div>
+                              </div>
+                              <Button variant="ghost" size="sm" className="gap-1 text-xs text-muted-foreground flex-shrink-0" onClick={() => setExpandedQuestions(prev => prev.includes(q.id) ? prev.filter(x => x !== q.id) : [...prev, q.id])}>
+                                {expandedQuestions.includes(q.id) ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                                Ver detalle
+                              </Button>
+                            </div>
+                            {expandedQuestions.includes(q.id) && (
+                              <div className="px-4 pb-4 pt-0">
+                                <div className="bg-muted/50 rounded-lg p-3">
+                                  <p className="text-xs font-medium text-muted-foreground mb-2">Vista previa del tipo de respuesta:</p>
+                                  {q.id === 'nivel_capacitacion' ? (
+                                    <RadioGroup disabled className="flex gap-4">
+                                      {q.options.map((opt) => (
+                                        <div key={opt} className="flex items-center gap-2">
+                                          <RadioGroupItem value={opt} id={`preview-${q.id}-${opt}`} disabled />
+                                          <Label htmlFor={`preview-${q.id}-${opt}`} className="text-xs text-muted-foreground cursor-default">{opt}</Label>
+                                        </div>
+                                      ))}
+                                    </RadioGroup>
+                                  ) : q.id === 'competencia_transversal' ? (
+                                    <RadioGroup disabled className="flex flex-col gap-2 md:flex-row md:gap-4">
+                                      {q.options.map((opt) => (
+                                        <div key={opt} className="flex items-center gap-2">
+                                          <RadioGroupItem value={opt} id={`preview-${q.id}-${opt}`} disabled />
+                                          <Label htmlFor={`preview-${q.id}-${opt}`} className="text-xs text-muted-foreground cursor-default">{opt}</Label>
+                                        </div>
+                                      ))}
+                                    </RadioGroup>
+                                  ) : q.id === 'interes_tecnologias' ? (
+                                    <RadioGroup disabled className="flex gap-3">
+                                      {q.options.map((opt) => (
+                                        <div key={opt} className="flex items-center gap-1.5">
+                                          <RadioGroupItem value={opt} id={`preview-${q.id}-${opt}`} disabled />
+                                          <Label htmlFor={`preview-${q.id}-${opt}`} className="text-xs text-muted-foreground cursor-default">{opt}</Label>
+                                        </div>
+                                      ))}
+                                    </RadioGroup>
+                                  ) : (
+                                    <Select disabled>
+                                      <SelectTrigger className="w-full max-w-sm bg-background">
+                                        <SelectValue placeholder="Seleccionar opción..." />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        {q.options.map((opt) => (
+                                          <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                                        ))}
+                                      </SelectContent>
+                                    </Select>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </ScrollArea>
+                  </div>
 
                   <div className="flex justify-end pt-2">
                     <Button
