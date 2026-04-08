@@ -59,6 +59,10 @@ const CursosResumen: React.FC = () => {
             <Briefcase className="w-4 h-4" />
             Gestión de Servicios
           </TabsTrigger>
+          <TabsTrigger value="contratos" className="flex items-center gap-2">
+            <FileText className="w-4 h-4" />
+            Gestión de Contratos
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="cursos" className="mt-6 space-y-6">
