@@ -79,11 +79,12 @@ const CursosResumen: React.FC = () => {
         </TabsContent>
 
         <TabsContent value="servicios" className="mt-6 space-y-6">
-          {/* Service Stages Pipeline */}
           <ServiceStagesSection />
-
-          {/* Service Search */}
           <ServiceSearchGrid />
+        </TabsContent>
+
+        <TabsContent value="contratos" className="mt-6 space-y-6">
+          <ContractManagementSection />
         </TabsContent>
       </Tabs>
     </div>
