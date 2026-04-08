@@ -3,8 +3,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs as AntTabs, Card as AntCard } from 'antd';
 import { useAuth } from '@/context/AuthContext';
-import { BookOpen, Briefcase } from 'lucide-react';
+import { BookOpen, Briefcase, FileText } from 'lucide-react';
 import { CourseStagesSection, CourseSearchGrid, usePendingManagementTabs, useEmpresaPendingManagementTabs, ServiceStagesSection, ServiceSearchGrid } from '@/components/dashboard/OTICDashboardSections';
+import { ContractManagementSection } from '@/components/dashboard/ContractManagementSection';
 
 const CursosResumen: React.FC = () => {
   const { user } = useAuth();
@@ -58,6 +59,10 @@ const CursosResumen: React.FC = () => {
             <Briefcase className="w-4 h-4" />
             Gestión de Servicios
           </TabsTrigger>
+          <TabsTrigger value="contratos" className="flex items-center gap-2">
+            <FileText className="w-4 h-4" />
+            Gestión de Contratos
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="cursos" className="mt-6 space-y-6">
@@ -74,11 +79,12 @@ const CursosResumen: React.FC = () => {
         </TabsContent>
 
         <TabsContent value="servicios" className="mt-6 space-y-6">
-          {/* Service Stages Pipeline */}
           <ServiceStagesSection />
-
-          {/* Service Search */}
           <ServiceSearchGrid />
+        </TabsContent>
+
+        <TabsContent value="contratos" className="mt-6 space-y-6">
+          <ContractManagementSection />
         </TabsContent>
       </Tabs>
     </div>
