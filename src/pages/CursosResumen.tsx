@@ -3,8 +3,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs as AntTabs, Card as AntCard } from 'antd';
 import { useAuth } from '@/context/AuthContext';
-import { BookOpen, Briefcase } from 'lucide-react';
+import { BookOpen, Briefcase, FileText } from 'lucide-react';
 import { CourseStagesSection, CourseSearchGrid, usePendingManagementTabs, useEmpresaPendingManagementTabs, ServiceStagesSection, ServiceSearchGrid } from '@/components/dashboard/OTICDashboardSections';
+import { ContractManagementSection } from '@/components/dashboard/ContractManagementSection';
 
 const CursosResumen: React.FC = () => {
   const { user } = useAuth();
