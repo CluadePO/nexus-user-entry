@@ -1079,7 +1079,12 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                         </div>
                       </div>
                     )}
-                    {oticAssignedCompanies.length > 0 && (
+                    {allCompaniesSelected ? (
+                      <div className="col-span-2">
+                        <span className="text-muted-foreground">Empresas Asignadas:</span>
+                        <Badge variant="secondary" className="text-xs ml-2">Todas las empresas</Badge>
+                      </div>
+                    ) : oticAssignedCompanies.length > 0 && (
                       <div className="col-span-2">
                         <span className="text-muted-foreground">Empresas Asignadas:</span>
                         <div className="flex flex-wrap gap-1 mt-1">
@@ -1102,7 +1107,12 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                       <span className="text-muted-foreground">Holding:</span>
                       <p className="font-medium">{selectedHolding}</p>
                     </div>
-                    {assignedCompanies.length > 0 && (
+                    {allCompaniesSelected ? (
+                      <div className="col-span-2">
+                        <span className="text-muted-foreground">Empresas Asignadas:</span>
+                        <Badge variant="secondary" className="text-xs ml-2">Todas las empresas</Badge>
+                      </div>
+                    ) : assignedCompanies.length > 0 && (
                       <div className="col-span-2">
                         <span className="text-muted-foreground">Empresas Asignadas:</span>
                         <div className="flex flex-wrap gap-1 mt-1">
