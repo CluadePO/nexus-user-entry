@@ -641,6 +641,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                   )}
 
                   {/* Holding and Company Assignment for OTIC */}
+                  {!allCompaniesSelected && (
                   <div className="border-t pt-4 mt-4">
                     <h4 className="font-medium text-sm mb-4">Asignación de Holdings y Empresas</h4>
                     
