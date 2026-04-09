@@ -1067,7 +1067,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                         </div>
                       </>
                     )}
-                    {oticSelectedHoldings.length > 0 && (
+                    {!allCompaniesSelected && oticSelectedHoldings.length > 0 && (
                       <div className="col-span-2">
                         <span className="text-muted-foreground">Holdings:</span>
                         <div className="flex flex-wrap gap-1 mt-1">
