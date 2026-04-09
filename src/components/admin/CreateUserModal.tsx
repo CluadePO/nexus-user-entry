@@ -782,6 +782,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                       </div>
                     </div>
                   </div>
+                  )}
                 </>
               ) : (
                 // OTEC/EMPRESA fields - homologated with OTIC pattern
