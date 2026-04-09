@@ -162,6 +162,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
       setOtecHoldingSearchQuery('');
       setOtecCompanySearchQuery('');
       setOticRoleFieldsEnabled(false);
+      setAllCompaniesSelected(false);
     }
   }, [open]);
 
