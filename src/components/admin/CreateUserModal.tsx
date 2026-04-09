@@ -127,6 +127,9 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
   // Checkbox to enable OTIC role fields
   const [oticRoleFieldsEnabled, setOticRoleFieldsEnabled] = useState(false);
 
+  // "Select all companies" checkbox
+  const [allCompaniesSelected, setAllCompaniesSelected] = useState(false);
+
   // Reset form when modal closes
   useEffect(() => {
     if (!open) {
@@ -159,6 +162,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
       setOtecHoldingSearchQuery('');
       setOtecCompanySearchQuery('');
       setOticRoleFieldsEnabled(false);
+      setAllCompaniesSelected(false);
     }
   }, [open]);
 
@@ -485,6 +489,25 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                     </Select>
                   </div>
 
+                  {/* Select all companies checkbox */}
+                  <div className="flex items-center space-x-2 py-2 bg-muted/30 rounded-md px-3">
+                    <Checkbox
+                      id="otic-all-companies"
+                      checked={allCompaniesSelected}
+                      onCheckedChange={(checked) => {
+                        const isChecked = checked === true;
+                        setAllCompaniesSelected(isChecked);
+                        if (isChecked) {
+                          setOticSelectedHoldings([]);
+                          setOticAssignedCompanies([]);
+                        }
+                      }}
+                    />
+                    <label htmlFor="otic-all-companies" className="text-sm font-medium cursor-pointer">
+                      Seleccionar todas las empresas
+                    </label>
+                  </div>
+
                   {/* Checkbox to enable role fields */}
                   <div className="flex items-center space-x-2 py-2">
                     <Checkbox
@@ -618,6 +641,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                   )}
 
                   {/* Holding and Company Assignment for OTIC */}
+                  {!allCompaniesSelected && (
                   <div className="border-t pt-4 mt-4">
                     <h4 className="font-medium text-sm mb-4">Asignación de Holdings y Empresas</h4>
                     
@@ -758,6 +782,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                       </div>
                     </div>
                   </div>
+                  )}
                 </>
               ) : (
                 // OTEC/EMPRESA fields - homologated with OTIC pattern
@@ -780,6 +805,27 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                       </Select>
                     </div>
 
+                    {/* Select all companies checkbox */}
+                    <div className="flex items-center space-x-2 py-2 bg-muted/30 rounded-md px-3">
+                      <Checkbox
+                        id="otec-all-companies"
+                        checked={allCompaniesSelected}
+                        onCheckedChange={(checked) => {
+                          const isChecked = checked === true;
+                          setAllCompaniesSelected(isChecked);
+                          if (isChecked) {
+                            setSelectedHolding('');
+                            setAssignedCompanies([]);
+                          }
+                        }}
+                      />
+                      <label htmlFor="otec-all-companies" className="text-sm font-medium cursor-pointer">
+                        Seleccionar todas las empresas
+                      </label>
+                    </div>
+
+                    {!allCompaniesSelected && (
+                    <>
                     {/* Holding multi-select with search */}
                     <div className="space-y-2">
                       <Label>Holding *</Label>
@@ -906,6 +952,8 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                         </p>
                       )}
                     </div>
+                    </>
+                    )}
 
                   </div>
 
@@ -1019,7 +1067,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                         </div>
                       </>
                     )}
-                    {oticSelectedHoldings.length > 0 && (
+                    {!allCompaniesSelected && oticSelectedHoldings.length > 0 && (
                       <div className="col-span-2">
                         <span className="text-muted-foreground">Holdings:</span>
                         <div className="flex flex-wrap gap-1 mt-1">
@@ -1031,7 +1079,12 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                         </div>
                       </div>
                     )}
-                    {oticAssignedCompanies.length > 0 && (
+                    {allCompaniesSelected ? (
+                      <div className="col-span-2">
+                        <span className="text-muted-foreground">Empresas Asignadas:</span>
+                        <Badge variant="secondary" className="text-xs ml-2">Todas las empresas</Badge>
+                      </div>
+                    ) : oticAssignedCompanies.length > 0 && (
                       <div className="col-span-2">
                         <span className="text-muted-foreground">Empresas Asignadas:</span>
                         <div className="flex flex-wrap gap-1 mt-1">
@@ -1054,7 +1107,12 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                       <span className="text-muted-foreground">Holding:</span>
                       <p className="font-medium">{selectedHolding}</p>
                     </div>
-                    {assignedCompanies.length > 0 && (
+                    {allCompaniesSelected ? (
+                      <div className="col-span-2">
+                        <span className="text-muted-foreground">Empresas Asignadas:</span>
+                        <Badge variant="secondary" className="text-xs ml-2">Todas las empresas</Badge>
+                      </div>
+                    ) : assignedCompanies.length > 0 && (
                       <div className="col-span-2">
                         <span className="text-muted-foreground">Empresas Asignadas:</span>
                         <div className="flex flex-wrap gap-1 mt-1">
