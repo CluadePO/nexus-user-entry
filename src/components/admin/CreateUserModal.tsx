@@ -641,15 +641,13 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                   )}
 
                   {/* Holding and Company Assignment for OTIC */}
-                  {!allCompaniesSelected && (
-                  <div className="border-t pt-4 mt-4">
+                  <div className={`border-t pt-4 mt-4 ${allCompaniesSelected ? 'opacity-50 pointer-events-none' : ''}`}>
                     <h4 className="font-medium text-sm mb-4">Asignación de Holdings y Empresas</h4>
                     
                     <div className="space-y-4">
                       <div className="space-y-2">
                         <Label>Holding</Label>
                         <div className="border rounded-md bg-background">
-                          {/* Search input */}
                           <div className="p-2 border-b">
                             <div className="relative">
                               <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -658,10 +656,10 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                                 value={holdingSearchQuery}
                                 onChange={(e) => setHoldingSearchQuery(e.target.value)}
                                 className="pl-8 h-8 text-sm"
+                                disabled={allCompaniesSelected}
                               />
                             </div>
                           </div>
-                          {/* Holdings list with scroll */}
                           <div className="p-2 max-h-48 overflow-y-auto">
                             {mockHoldings
                               .filter((holding) => 
@@ -672,12 +670,12 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                                   <Checkbox
                                     id={`otic-holding-${holding}`}
                                     checked={oticSelectedHoldings.includes(holding)}
+                                    disabled={allCompaniesSelected}
                                     onCheckedChange={(checked) => {
                                       if (checked) {
                                         setOticSelectedHoldings((prev) => [...prev, holding]);
                                       } else {
                                         setOticSelectedHoldings((prev) => prev.filter((h) => h !== holding));
-                                        // Also remove companies from the unselected holding
                                         const companiesFromHolding = mockCompanies
                                           .filter((c) => c.holding === holding)
                                           .map((c) => c.id);
@@ -719,19 +717,20 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                       <div className="space-y-2">
                         <div className="flex items-center justify-between">
                           <Label>Empresas Asignadas</Label>
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={handleOticSelectAllCompanies}
-                          >
-                            {oticFilteredCompanies.every((c) => oticAssignedCompanies.includes(c.id))
-                              ? 'Deseleccionar Todas'
-                              : 'Seleccionar Todas'}
-                          </Button>
+                          {!allCompaniesSelected && (
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={handleOticSelectAllCompanies}
+                            >
+                              {oticFilteredCompanies.every((c) => oticAssignedCompanies.includes(c.id))
+                                ? 'Deseleccionar Todas'
+                                : 'Seleccionar Todas'}
+                            </Button>
+                          )}
                         </div>
                         <div className="border rounded-md bg-background">
-                          {/* Search input */}
                           <div className="p-2 border-b">
                             <div className="relative">
                               <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -740,10 +739,10 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                                 value={oticCompanySearchQuery}
                                 onChange={(e) => setOticCompanySearchQuery(e.target.value)}
                                 className="pl-8 h-8 text-sm"
+                                disabled={allCompaniesSelected}
                               />
                             </div>
                           </div>
-                          {/* Companies list with scroll */}
                           <div className="p-2 max-h-48 overflow-y-auto space-y-1">
                             {oticFilteredCompanies
                               .filter((company) =>
@@ -754,6 +753,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                                   <Checkbox
                                     id={`otic-company-${company.id}`}
                                     checked={oticAssignedCompanies.includes(company.id)}
+                                    disabled={allCompaniesSelected}
                                     onCheckedChange={() => toggleOticCompanyAssignment(company.id)}
                                   />
                                   <label
@@ -782,7 +782,6 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                       </div>
                     </div>
                   </div>
-                  )}
                 </>
               ) : (
                 // OTEC/EMPRESA fields - homologated with OTIC pattern
@@ -824,13 +823,11 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                       </label>
                     </div>
 
-                    {!allCompaniesSelected && (
-                    <>
+                    <div className={`space-y-4 ${allCompaniesSelected ? 'opacity-50 pointer-events-none' : ''}`}>
                     {/* Holding multi-select with search */}
                     <div className="space-y-2">
                       <Label>Holding *</Label>
                       <div className="border rounded-md bg-background">
-                        {/* Search input */}
                         <div className="p-2 border-b">
                           <div className="relative">
                             <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -839,10 +836,10 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                               value={otecHoldingSearchQuery}
                               onChange={(e) => setOtecHoldingSearchQuery(e.target.value)}
                               className="pl-8 h-8 text-sm"
+                              disabled={allCompaniesSelected}
                             />
                           </div>
                         </div>
-                        {/* Holdings list with scroll */}
                         <div className="p-2 max-h-48 overflow-y-auto">
                           {mockHoldings
                             .filter((holding) => 
@@ -853,6 +850,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                                 <Checkbox
                                   id={`otec-holding-${holding}`}
                                   checked={selectedHolding === holding}
+                                  disabled={allCompaniesSelected}
                                   onCheckedChange={(checked) => {
                                     if (checked) {
                                       setSelectedHolding(holding);
@@ -891,19 +889,20 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
                         <Label>Empresas Asignadas</Label>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={handleSelectAllCompanies}
-                        >
-                          {assignedCompanies.length === mockCompanies.length
-                            ? 'Deseleccionar Todas'
-                            : 'Seleccionar Todas'}
-                        </Button>
+                        {!allCompaniesSelected && (
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={handleSelectAllCompanies}
+                          >
+                            {assignedCompanies.length === mockCompanies.length
+                              ? 'Deseleccionar Todas'
+                              : 'Seleccionar Todas'}
+                          </Button>
+                        )}
                       </div>
                       <div className="border rounded-md bg-background">
-                        {/* Search input */}
                         <div className="p-2 border-b">
                           <div className="relative">
                             <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -912,10 +911,10 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                               value={otecCompanySearchQuery}
                               onChange={(e) => setOtecCompanySearchQuery(e.target.value)}
                               className="pl-8 h-8 text-sm"
+                              disabled={allCompaniesSelected}
                             />
                           </div>
                         </div>
-                        {/* Companies list with scroll */}
                         <div className="p-2 max-h-48 overflow-y-auto space-y-1">
                           {mockCompanies
                             .filter((company) =>
@@ -926,6 +925,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                                 <Checkbox
                                   id={`otec-company-${company.id}`}
                                   checked={assignedCompanies.includes(company.id)}
+                                  disabled={allCompaniesSelected}
                                   onCheckedChange={() => toggleCompanyAssignment(company.id)}
                                 />
                                 <label
@@ -952,8 +952,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                         </p>
                       )}
                     </div>
-                    </>
-                    )}
+                    </div>
 
                   </div>
 
