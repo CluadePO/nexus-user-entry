@@ -489,6 +489,25 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                     </Select>
                   </div>
 
+                  {/* Select all companies checkbox */}
+                  <div className="flex items-center space-x-2 py-2 bg-muted/30 rounded-md px-3">
+                    <Checkbox
+                      id="otic-all-companies"
+                      checked={allCompaniesSelected}
+                      onCheckedChange={(checked) => {
+                        const isChecked = checked === true;
+                        setAllCompaniesSelected(isChecked);
+                        if (isChecked) {
+                          setOticSelectedHoldings([]);
+                          setOticAssignedCompanies([]);
+                        }
+                      }}
+                    />
+                    <label htmlFor="otic-all-companies" className="text-sm font-medium cursor-pointer">
+                      Seleccionar todas las empresas
+                    </label>
+                  </div>
+
                   {/* Checkbox to enable role fields */}
                   <div className="flex items-center space-x-2 py-2">
                     <Checkbox
