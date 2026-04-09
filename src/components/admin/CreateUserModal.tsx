@@ -952,6 +952,8 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
                         </p>
                       )}
                     </div>
+                    </>
+                    )}
 
                   </div>
 
