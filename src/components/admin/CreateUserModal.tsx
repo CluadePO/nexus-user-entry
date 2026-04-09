@@ -127,6 +127,9 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
   // Checkbox to enable OTIC role fields
   const [oticRoleFieldsEnabled, setOticRoleFieldsEnabled] = useState(false);
 
+  // "Select all companies" checkbox
+  const [allCompaniesSelected, setAllCompaniesSelected] = useState(false);
+
   // Reset form when modal closes
   useEffect(() => {
     if (!open) {
