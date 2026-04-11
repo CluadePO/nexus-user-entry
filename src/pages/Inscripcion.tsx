@@ -495,6 +495,15 @@ const Inscripcion: React.FC = () => {
             </CollapsibleContent>
           </Collapsible>
 
+          {mockSenceData.modality.toLowerCase() === 'distancia' && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-start gap-3">
+              <Info className="h-5 w-5 text-blue-600 mt-0.5 shrink-0" />
+              <p className="text-sm text-blue-800">
+                El curso es de modalidad distancia, por tanto no debe superar los <strong>20 participantes</strong>.
+              </p>
+            </div>
+          )}
+
           <div>
             <h3 className="text-lg font-semibold text-muted-foreground mb-3">¿Cual es el valor acordado por participante?</h3>
             <div className="flex items-center gap-2 border rounded-lg px-4 py-3 max-w-xs">
