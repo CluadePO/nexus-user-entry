@@ -11,7 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
-import { Search, X, ChevronUp, ChevronDown, Trash2, Copy, Upload, Download, Eye, LogOut, ArrowLeft, ArrowRight, Save, Plus, CheckCircle, Info } from 'lucide-react';
+import { Search, X, ChevronUp, ChevronDown, Trash2, Copy, Upload, Download, Eye, LogOut, ArrowLeft, ArrowRight, Save, Plus, CheckCircle, Info, AlertTriangle } from 'lucide-react';
 import dayjs from 'dayjs';
 
 // ─── Mock Data ───────────────────────────────────────────────────
@@ -148,7 +148,7 @@ const Inscripcion: React.FC = () => {
       case 0: return lineaTrabajo !== null && (lineaTrabajo === 'no_franquicia' || contractType !== null);
       case 1: return senceValidated && agreedValue !== '';
       case 2: return fechaInicio !== '' && fechaTermino !== '';
-      case 3: return participants.length > 0;
+      case 3: return participants.length > 0 && !(getModality().toLowerCase() === 'distancia' && participants.length > 20);
       case 4: return selectedAccount !== null;
       default: return false;
     }
@@ -691,6 +691,20 @@ const Inscripcion: React.FC = () => {
           </>
         )}
       </div>
+
+      {getModality().toLowerCase() === 'distancia' && participants.length > 20 && (
+        <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-4 flex items-start gap-3">
+          <AlertTriangle className="h-5 w-5 text-destructive mt-0.5 shrink-0" />
+          <div>
+            <p className="text-sm font-semibold text-destructive">Exceso de participantes para modalidad Distancia</p>
+            <p className="text-sm text-destructive/80">
+              El curso es de modalidad distancia y no debe superar los <strong>20 participantes</strong>. 
+              La plantilla cargada contiene <strong>{participants.length} participantes</strong>. 
+              Por favor, adjunte una nueva plantilla con 20 o menos participantes para continuar.
+            </p>
+          </div>
+        </div>
+      )}
 
       {participants.length > 0 && (
         <Button variant="outline" className="gap-2 border-primary text-primary" onClick={() => setShowParticipantsModal(true)}>
