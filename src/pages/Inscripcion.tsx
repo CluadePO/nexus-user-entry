@@ -502,7 +502,7 @@ const Inscripcion: React.FC = () => {
             </CollapsibleContent>
           </Collapsible>
 
-          {mockSenceData.modality.toLowerCase() === 'distancia' && (
+          {getModality().toLowerCase() === 'distancia' && (
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-start gap-3">
               <Info className="h-5 w-5 text-blue-600 mt-0.5 shrink-0" />
               <p className="text-sm text-blue-800">
