@@ -170,12 +170,19 @@ const Inscripcion: React.FC = () => {
     toast.success('Curso inscrito con éxito!');
   };
 
+  const getModality = () => {
+    const code = senceCode.toLowerCase();
+    if (code.includes('distancia')) return 'Distancia';
+    if (code.includes('e-learning')) return 'E-learning';
+    return 'Presencial';
+  };
+
   const handleValidateSence = () => {
-    if (senceCode.length >= 8) {
+    if (senceCode.length >= 3) {
       setSenceValidated(true);
       toast.success('¡Validado exitosamente!');
     } else {
-      toast.error('El código SENCE debe tener al menos 8 caracteres');
+      toast.error('El código SENCE debe tener al menos 3 caracteres');
     }
   };
 
@@ -428,7 +435,7 @@ const Inscripcion: React.FC = () => {
           )}
         </div>
         {!senceValidated ? (
-          <Button onClick={handleValidateSence} disabled={senceCode.length < 8} className="bg-primary hover:bg-primary/90">Validar</Button>
+          <Button onClick={handleValidateSence} disabled={senceCode.length < 3} className="bg-primary hover:bg-primary/90">Validar</Button>
         ) : (
           <div className="flex items-center gap-2 text-green-600 font-semibold">
             <CheckCircle className="h-5 w-5" />
@@ -474,7 +481,7 @@ const Inscripcion: React.FC = () => {
                   </div>
                   <div className="p-4">
                     <p className="text-xs text-muted-foreground">Modalidad</p>
-                    <p className="font-bold text-sm">{mockSenceData.modality}</p>
+                    <p className="font-bold text-sm">{getModality()}</p>
                   </div>
                 </div>
                 <div className="grid grid-cols-3 divide-x">
@@ -495,7 +502,7 @@ const Inscripcion: React.FC = () => {
             </CollapsibleContent>
           </Collapsible>
 
-          {mockSenceData.modality.toLowerCase() === 'distancia' && (
+          {getModality().toLowerCase() === 'distancia' && (
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-start gap-3">
               <Info className="h-5 w-5 text-blue-600 mt-0.5 shrink-0" />
               <p className="text-sm text-blue-800">
