@@ -525,6 +525,24 @@ const Inscripcion: React.FC = () => {
         </div>
       )}
 
+      {contractType === 'Normal' && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-start gap-3">
+          <span className="w-3 h-3 bg-blue-500 rounded-full mt-1 shrink-0" />
+          <p className="text-sm text-blue-800">
+            Contrato Normal: El curso debe ejecutarse dentro del período de vigencia del contrato. Las fechas deben estar dentro del año calendario correspondiente.
+          </p>
+        </div>
+      )}
+
+      {contractType === 'Postcontrato' && (
+        <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 flex items-start gap-3">
+          <span className="w-3 h-3 bg-orange-500 rounded-full mt-1 shrink-0" />
+          <p className="text-sm text-orange-800">
+            Importante: Para este tipo de contrato (postcontrato), el curso debe iniciar dentro de los <span className="underline font-semibold">60 días posteriores</span> al término de la relación laboral según lo estipulado por Sence.
+          </p>
+        </div>
+      )}
+
       <p className="text-muted-foreground text-sm">Comencemos por ingresar la fecha de inicio y término del curso</p>
       <div className="flex gap-4">
         <div className="flex items-center gap-2 border rounded-lg px-4 py-2">
