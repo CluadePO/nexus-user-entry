@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import { Search, X, ChevronUp, ChevronDown, Trash2, Copy, Upload, Download, Eye, LogOut, ArrowLeft, ArrowRight, Save, Plus, CheckCircle, Info, AlertTriangle } from 'lucide-react';
+import * as XLSX from 'xlsx';
 import dayjs from 'dayjs';
 
 // ─── Mock Data ───────────────────────────────────────────────────
@@ -47,6 +48,19 @@ const dayLabelsShort = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
 const dayNamesFull = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
 const formatCLP = (v: number) => '$' + v.toLocaleString('es-CL');
+const normalizeSheetRow = (row: Record<string, unknown>) =>
+  Object.entries(row).reduce<Record<string, unknown>>((acc, [key, value]) => {
+    acc[key.trim().toUpperCase()] = value;
+    return acc;
+  }, {});
+
+const formatExcelDate = (value: unknown) => {
+  if (typeof value === 'number') {
+    return XLSX.SSF.format('dd/mm/yyyy', value);
+  }
+
+  return String(value ?? '').trim();
+};
 
 // ─── Stepper Component ──────────────────────────────────────────
 const Stepper = ({ current, steps }: { current: number; steps: string[] }) => (
@@ -111,6 +125,7 @@ const Inscripcion: React.FC = () => {
   const [uploadedFile, setUploadedFile] = useState<string | null>(null);
   const [showParticipantsModal, setShowParticipantsModal] = useState(false);
   const [financialOpen, setFinancialOpen] = useState(true);
+  const participantFileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Step 5
   const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
@@ -187,12 +202,67 @@ const Inscripcion: React.FC = () => {
   };
 
   const handleFileUpload = () => {
-    setUploadedFile('Carga_Masiva_Participantes_Plantilla (19).xlsx');
-    setParticipants([
-      { id: 1, tipoDoc: 'RUT', rut: '15.429.504-6', numDoc: '', name: 'Maria Antonieta Perez Rodriguez', fechaNac: '14-12-1987', sexo: 'F' },
-      { id: 2, tipoDoc: 'RUT', rut: '15.241.420-K', numDoc: '', name: 'Alejandra Rodriguez Rodriguez', fechaNac: '14-12-1987', sexo: 'F' },
-    ]);
-    toast.success('Archivo cargado exitosamente');
+    participantFileInputRef.current?.click();
+  };
+
+  const handleParticipantsFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+
+    if (!file) return;
+
+    try {
+      const buffer = await file.arrayBuffer();
+      const workbook = XLSX.read(buffer, { type: 'array', cellDates: false });
+      const firstSheetName = workbook.SheetNames[0];
+
+      if (!firstSheetName) {
+        throw new Error('Archivo sin hojas');
+      }
+
+      const sheet = workbook.Sheets[firstSheetName];
+      const rows = XLSX.utils.sheet_to_json<Record<string, unknown>>(sheet, { defval: '' });
+      const parsedParticipants = rows
+        .map(normalizeSheetRow)
+        .filter(row => Object.values(row).some(value => String(value ?? '').trim() !== ''))
+        .map((row, index) => {
+          const documentNumber = String(row['NUMERO DE DOCUMENTO'] ?? '').trim();
+          const documentDigit = String(row['DIGITO'] ?? '').trim();
+          const fullName = [row['NOMBRES'], row['APELLIDO PATERNO'], row['APELLIDO MATERNO']]
+            .map(value => String(value ?? '').trim())
+            .filter(Boolean)
+            .join(' ');
+
+          return {
+            id: index + 1,
+            tipoDoc: String(row['TIPO DE DOCUMENTO'] ?? '').trim(),
+            rut: documentDigit ? `${documentNumber}-${documentDigit}` : documentNumber,
+            numDoc: documentNumber,
+            name: fullName,
+            fechaNac: formatExcelDate(row['FECHA NACIMIENTO']),
+            sexo: String(row['SEXO'] ?? '').trim(),
+          };
+        });
+
+      if (parsedParticipants.length === 0) {
+        setUploadedFile(null);
+        setParticipants([]);
+        toast.error('La plantilla no contiene participantes válidos');
+        return;
+      }
+
+      setUploadedFile(file.name);
+      setParticipants(parsedParticipants);
+
+      if (getModality().toLowerCase() === 'distancia' && parsedParticipants.length > 20) {
+        toast.error('La modalidad Distancia permite máximo 20 participantes. Debe cargar una nueva plantilla para continuar.');
+      } else {
+        toast.success(`Archivo cargado exitosamente: ${parsedParticipants.length} participantes`);
+      }
+    } catch (error) {
+      setUploadedFile(null);
+      setParticipants([]);
+      toast.error('No se pudo leer la plantilla de participantes');
+    }
   };
 
   const toggleDay = (index: number) => {
@@ -674,14 +744,21 @@ const Inscripcion: React.FC = () => {
       </Button>
 
       <p className="text-sm text-muted-foreground">Puedes ingresarlos en grupo desde un archivo</p>
+      <input
+        ref={participantFileInputRef}
+        type="file"
+        accept=".xlsx,.xls"
+        className="hidden"
+        onChange={handleParticipantsFileChange}
+      />
       <div
         onClick={handleFileUpload}
         className="border-2 border-dashed border-primary/40 rounded-xl p-8 text-center cursor-pointer hover:bg-muted/50 transition-colors"
       >
         {uploadedFile ? (
           <>
-            <Upload className="h-6 w-6 mx-auto mb-2 text-muted-foreground animate-spin" />
-            <Badge className="bg-primary text-primary-foreground mb-2">📄 Archivo cargado:{uploadedFile}</Badge>
+            <Upload className="h-6 w-6 mx-auto mb-2 text-muted-foreground" />
+            <Badge className="bg-primary text-primary-foreground mb-2">📄 Archivo cargado: {uploadedFile}</Badge>
             <p className="text-xs text-muted-foreground">Haz clic aquí para reemplazar tu archivo o arrastra y suéltalo</p>
           </>
         ) : (
