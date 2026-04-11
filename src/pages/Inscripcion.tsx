@@ -692,6 +692,20 @@ const Inscripcion: React.FC = () => {
         )}
       </div>
 
+      {getModality().toLowerCase() === 'distancia' && participants.length > 20 && (
+        <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-4 flex items-start gap-3">
+          <AlertTriangle className="h-5 w-5 text-destructive mt-0.5 shrink-0" />
+          <div>
+            <p className="text-sm font-semibold text-destructive">Exceso de participantes para modalidad Distancia</p>
+            <p className="text-sm text-destructive/80">
+              El curso es de modalidad distancia y no debe superar los <strong>20 participantes</strong>. 
+              La plantilla cargada contiene <strong>{participants.length} participantes</strong>. 
+              Por favor, adjunte una nueva plantilla con 20 o menos participantes para continuar.
+            </p>
+          </div>
+        </div>
+      )}
+
       {participants.length > 0 && (
         <Button variant="outline" className="gap-2 border-primary text-primary" onClick={() => setShowParticipantsModal(true)}>
           <Eye className="h-4 w-4" /> Ver Listado de Participantes
