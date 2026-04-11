@@ -170,12 +170,19 @@ const Inscripcion: React.FC = () => {
     toast.success('Curso inscrito con éxito!');
   };
 
+  const getModality = () => {
+    const code = senceCode.toLowerCase();
+    if (code.includes('distancia')) return 'Distancia';
+    if (code.includes('e-learning')) return 'E-learning';
+    return 'Presencial';
+  };
+
   const handleValidateSence = () => {
-    if (senceCode.length >= 8) {
+    if (senceCode.length >= 3) {
       setSenceValidated(true);
       toast.success('¡Validado exitosamente!');
     } else {
-      toast.error('El código SENCE debe tener al menos 8 caracteres');
+      toast.error('El código SENCE debe tener al menos 3 caracteres');
     }
   };
 
