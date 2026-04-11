@@ -435,7 +435,7 @@ const Inscripcion: React.FC = () => {
           )}
         </div>
         {!senceValidated ? (
-          <Button onClick={handleValidateSence} disabled={senceCode.length < 8} className="bg-primary hover:bg-primary/90">Validar</Button>
+          <Button onClick={handleValidateSence} disabled={senceCode.length < 3} className="bg-primary hover:bg-primary/90">Validar</Button>
         ) : (
           <div className="flex items-center gap-2 text-green-600 font-semibold">
             <CheckCircle className="h-5 w-5" />
