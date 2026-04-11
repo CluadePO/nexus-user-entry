@@ -11,7 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
-import { Search, X, ChevronUp, ChevronDown, Trash2, Copy, Upload, Download, Eye, LogOut, ArrowLeft, ArrowRight, Save, Plus, CheckCircle } from 'lucide-react';
+import { Search, X, ChevronUp, ChevronDown, Trash2, Copy, Upload, Download, Eye, LogOut, ArrowLeft, ArrowRight, Save, Plus, CheckCircle, Info } from 'lucide-react';
 import dayjs from 'dayjs';
 
 // ─── Mock Data ───────────────────────────────────────────────────
@@ -494,6 +494,15 @@ const Inscripcion: React.FC = () => {
               </div>
             </CollapsibleContent>
           </Collapsible>
+
+          {mockSenceData.modality.toLowerCase() === 'distancia' && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-start gap-3">
+              <Info className="h-5 w-5 text-blue-600 mt-0.5 shrink-0" />
+              <p className="text-sm text-blue-800">
+                El curso es de modalidad distancia, por tanto no debe superar los <strong>20 participantes</strong>.
+              </p>
+            </div>
+          )}
 
           <div>
             <h3 className="text-lg font-semibold text-muted-foreground mb-3">¿Cual es el valor acordado por participante?</h3>
