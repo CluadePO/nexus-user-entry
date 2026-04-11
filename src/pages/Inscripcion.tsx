@@ -397,8 +397,8 @@ const Inscripcion: React.FC = () => {
                 onClick={() => setContractType(type)}
                 className={`py-3 px-4 rounded-full text-sm font-medium transition-colors ${
                   contractType === type
-                    ? type === 'Precontrato' ? 'bg-amber-200 text-amber-900 border-2 border-amber-400' : 'bg-primary text-primary-foreground border-2 border-primary'
-                    : type === 'Precontrato' ? 'bg-amber-100 text-amber-800 border border-amber-200 hover:bg-amber-200' : 'bg-primary/80 text-primary-foreground border border-primary hover:bg-primary'
+                    ? 'bg-primary text-primary-foreground border-2 border-primary'
+                    : 'bg-muted text-muted-foreground border border-muted-foreground/30 hover:bg-muted-foreground/10'
                 }`}
               >
                 {type}
