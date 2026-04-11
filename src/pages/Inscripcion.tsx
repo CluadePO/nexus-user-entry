@@ -744,14 +744,21 @@ const Inscripcion: React.FC = () => {
       </Button>
 
       <p className="text-sm text-muted-foreground">Puedes ingresarlos en grupo desde un archivo</p>
+      <input
+        ref={participantFileInputRef}
+        type="file"
+        accept=".xlsx,.xls"
+        className="hidden"
+        onChange={handleParticipantsFileChange}
+      />
       <div
         onClick={handleFileUpload}
         className="border-2 border-dashed border-primary/40 rounded-xl p-8 text-center cursor-pointer hover:bg-muted/50 transition-colors"
       >
         {uploadedFile ? (
           <>
-            <Upload className="h-6 w-6 mx-auto mb-2 text-muted-foreground animate-spin" />
-            <Badge className="bg-primary text-primary-foreground mb-2">📄 Archivo cargado:{uploadedFile}</Badge>
+            <Upload className="h-6 w-6 mx-auto mb-2 text-muted-foreground" />
+            <Badge className="bg-primary text-primary-foreground mb-2">📄 Archivo cargado: {uploadedFile}</Badge>
             <p className="text-xs text-muted-foreground">Haz clic aquí para reemplazar tu archivo o arrastra y suéltalo</p>
           </>
         ) : (
