@@ -148,7 +148,7 @@ const Inscripcion: React.FC = () => {
       case 0: return lineaTrabajo !== null && (lineaTrabajo === 'no_franquicia' || contractType !== null);
       case 1: return senceValidated && agreedValue !== '';
       case 2: return fechaInicio !== '' && fechaTermino !== '';
-      case 3: return participants.length > 0;
+      case 3: return participants.length > 0 && !(getModality().toLowerCase() === 'distancia' && participants.length > 20);
       case 4: return selectedAccount !== null;
       default: return false;
     }
