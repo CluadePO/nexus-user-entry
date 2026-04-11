@@ -11,7 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
-import { Search, X, ChevronUp, ChevronDown, Trash2, Copy, Upload, Download, Eye, LogOut, ArrowLeft, ArrowRight, Save, Plus, CheckCircle } from 'lucide-react';
+import { Search, X, ChevronUp, ChevronDown, Trash2, Copy, Upload, Download, Eye, LogOut, ArrowLeft, ArrowRight, Save, Plus, CheckCircle, Info } from 'lucide-react';
 import dayjs from 'dayjs';
 
 // ─── Mock Data ───────────────────────────────────────────────────
