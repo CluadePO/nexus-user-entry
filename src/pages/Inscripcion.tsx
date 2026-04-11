@@ -481,7 +481,7 @@ const Inscripcion: React.FC = () => {
                   </div>
                   <div className="p-4">
                     <p className="text-xs text-muted-foreground">Modalidad</p>
-                    <p className="font-bold text-sm">{mockSenceData.modality}</p>
+                    <p className="font-bold text-sm">{getModality()}</p>
                   </div>
                 </div>
                 <div className="grid grid-cols-3 divide-x">
