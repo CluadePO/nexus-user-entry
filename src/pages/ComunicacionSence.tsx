@@ -61,6 +61,14 @@ const ComunicacionSence: React.FC = () => {
     return `${day}/${month}/${year}`;
   };
 
+  const isProximoAVencer = (vencimiento: string) => {
+    const hoy = new Date();
+    const fechaVenc = new Date(vencimiento);
+    const diffMs = fechaVenc.getTime() - hoy.getTime();
+    const diffDias = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+    return diffDias >= 0 && diffDias <= 10;
+  };
+
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold text-foreground">
@@ -153,6 +161,9 @@ const ComunicacionSence: React.FC = () => {
               <th className="p-3 text-left font-medium text-muted-foreground whitespace-nowrap">
                 Tipo de Contrato <span className="text-xs">▾</span>
               </th>
+              <th className="p-3 text-left font-medium text-muted-foreground whitespace-nowrap">
+                Sección <span className="text-xs">▾</span>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -171,6 +182,16 @@ const ComunicacionSence: React.FC = () => {
                 <td className="p-3">{curso.inicioCurso}</td>
                 <td className="p-3">{curso.modalidad}</td>
                 <td className="p-3">{curso.tipoContrato}</td>
+                <td className="p-3">
+                  {isProximoAVencer(curso.vencimientoSence) ? (
+                    <Badge variant="destructive" className="gap-1 text-xs">
+                      <AlertCircle className="w-3 h-3" />
+                      Próximo a vencer
+                    </Badge>
+                  ) : (
+                    <span className="text-muted-foreground text-xs">Vigente</span>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
