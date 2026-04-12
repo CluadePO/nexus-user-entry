@@ -687,19 +687,19 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
           </div>
         </div>
         <div className="border rounded-lg overflow-hidden">
-          <table className="w-full text-xs">
+          <table className="w-full text-xs table-fixed">
             <thead>
               <tr className="border-b bg-muted/30">
-                <th className="p-2.5 text-left font-medium text-primary w-[14%]">Nombre participante</th>
-                <th className="p-2.5 text-left font-medium text-primary w-[8%]">Rut</th>
-                <th className="p-2.5 text-left font-medium text-primary w-[14%]">Correo electrónico</th>
-                <th className="p-2.5 text-left font-medium text-primary w-[8%]">Teléfono</th>
-                <th className="p-2.5 text-center font-medium text-primary w-[8%]">Firma<br/>empresa</th>
-                <th className="p-2.5 text-center font-medium text-primary w-[8%]">Firma<br/>participante</th>
-                <th className="p-2.5 text-center font-medium text-primary w-[14%]">Autorización para menor de<br/>edad</th>
-                <th className="p-2.5 text-center font-medium text-primary w-[10%]">Vulnerabilidad</th>
-                <th className="p-2.5 text-left font-medium text-primary w-[12%]">Último recordatorio</th>
-                <th className="p-2.5 text-center font-medium text-primary w-[4%]"></th>
+                <th className="p-2 text-left font-medium text-primary">Nombre participante</th>
+                <th className="p-2 text-left font-medium text-primary">Rut</th>
+                <th className="p-2 text-left font-medium text-primary">Correo</th>
+                <th className="p-2 text-left font-medium text-primary">Teléfono</th>
+                <th className="p-2 text-center font-medium text-primary">Firma<br/>empresa</th>
+                <th className="p-2 text-center font-medium text-primary">Firma<br/>particip.</th>
+                <th className="p-2 text-center font-medium text-primary">Autoriz.<br/>menor</th>
+                <th className="p-2 text-center font-medium text-primary">Vulner.</th>
+                <th className="p-2 text-left font-medium text-primary">Último recordatorio</th>
+                <th className="p-2 text-center font-medium text-primary w-[50px]"></th>
               </tr>
             </thead>
             <tbody>
