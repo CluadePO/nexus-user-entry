@@ -667,6 +667,7 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
             >
               <Upload className="h-3.5 w-3.5 mr-1" />
               SUBIR LEGAJO DE PRECONTRATO
+              <span className="bg-blue-500 text-white text-[8px] font-bold px-1 py-0.5 rounded-full ml-1">C1PPPC15</span>
             </Button>
             <input
               ref={legajoInputRef}
