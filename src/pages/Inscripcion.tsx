@@ -796,6 +796,10 @@ const Inscripcion: React.FC = () => {
                 setSelectedSucursal('');
                 setLineaTrabajo(null);
                 setContractType(null);
+                setPrecontratoSubtype(null);
+                setModularAssociate(null);
+                setSelectedModularId(null);
+                setGeneratedModularId(null);
                 setSenceCode('');
                 setSenceValidated(false);
                 setAgreedValue('');
