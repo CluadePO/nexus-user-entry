@@ -204,6 +204,7 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
   const [uploadTarget, setUploadTarget] = useState<number | null>(null);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const legajoInputRef = useRef<HTMLInputElement>(null);
 
   // Validation actions modal (POR VALIDAR clicked)
   const [validationModalOpen, setValidationModalOpen] = useState(false);
@@ -254,6 +255,24 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
       toast.success(`Documento descargado: ${fileName}`);
     }
   };
+
+  const handleSubirLegajo = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    // Mark all participants as VALIDADO
+    setParticipantesState(prev =>
+      prev.map(p => ({
+        ...p,
+        firmaEmpresa: 'FIRMADO' as const,
+        firmaParticipante: 'VALIDADO' as const,
+        vulnerabilidad: p.vulnerabilidad === 'FALTANTE' ? 'SIN VULNERABILIDAD' as const : p.vulnerabilidad,
+      }))
+    );
+    toast.success(`Legajo "${file.name}" subido correctamente. Todos los participantes han sido validados.`);
+    // Reset input
+    if (legajoInputRef.current) legajoInputRef.current.value = '';
+  };
+
   const handleDescargarLegajo = () => {
     const doc = new jsPDF('p', 'mm', 'a4');
     const pageWidth = 210;
@@ -638,6 +657,22 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
               DESCARGA LEGAJO DE PRECONTRATO
               <span className="bg-blue-500 text-white text-[8px] font-bold px-1 py-0.5 rounded-full ml-1">C1PPPC3</span>
             </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-xs border-amber-600 text-amber-700 hover:bg-amber-50"
+              onClick={() => legajoInputRef.current?.click()}
+            >
+              <Upload className="h-3.5 w-3.5 mr-1" />
+              SUBIR LEGAJO DE PRECONTRATO
+            </Button>
+            <input
+              ref={legajoInputRef}
+              type="file"
+              accept=".pdf,.zip"
+              className="hidden"
+              onChange={handleSubirLegajo}
+            />
             <Button size="sm" className="bg-teal-700 hover:bg-teal-800 text-white text-xs">
               <Download className="h-3.5 w-3.5 mr-1" />
               DESCARGAR
