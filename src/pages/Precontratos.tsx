@@ -201,6 +201,10 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
   const [correctionEmail, setCorrectionEmail] = useState('');
   const [correctionObservaciones, setCorrectionObservaciones] = useState('');
 
+  // Validated document viewer modal
+  const [viewDocModalOpen, setViewDocModalOpen] = useState(false);
+  const [viewDocTarget, setViewDocTarget] = useState<number | null>(null);
+
   const filteredParticipantes = participantesState.filter(p =>
     p.nombre.toLowerCase().includes(searchParticipante.toLowerCase()) ||
     p.rut.includes(searchParticipante)
@@ -215,6 +219,24 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
       setValidationTarget(globalIdx);
       setPreviewFile(false);
       setValidationModalOpen(true);
+    } else if (status === 'VALIDADO') {
+      setViewDocTarget(globalIdx);
+      setViewDocModalOpen(true);
+    }
+  };
+
+  const handleDownloadPrecontrato = () => {
+    if (viewDocTarget !== null) {
+      const p = participantesState[viewDocTarget];
+      const fileName = `${precontrato.codigoSence}_Precontrato_${p.nombre.replace(/\s+/g, '_')}.pdf`;
+      const blob = new Blob(['Contenido del precontrato'], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success(`Documento descargado: ${fileName}`);
     }
   };
 
@@ -610,6 +632,105 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
               ENVIAR
             </Button>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Validated Document Viewer Modal */}
+      <Dialog open={viewDocModalOpen} onOpenChange={setViewDocModalOpen}>
+        <DialogContent className="max-w-5xl p-0 overflow-hidden">
+          {viewDocTarget !== null && participantesState[viewDocTarget] && (() => {
+            const p = participantesState[viewDocTarget];
+            return (
+              <>
+                {/* Header */}
+                <div className="bg-teal-700 text-white px-6 py-4 flex items-center justify-between">
+                  <p className="text-sm font-medium">
+                    Precontrato · Nº Inscripción {precontrato.nroInscripcion} · RUT {p.rut} · {p.nombre} · VALIDADO
+                  </p>
+                </div>
+
+                {/* Course info bar */}
+                <div className="bg-muted/30 px-6 py-3 flex items-center gap-6 border-b">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-muted/50 flex items-center justify-center">
+                      <FileText className="h-4 w-4 text-muted-foreground" />
+                    </div>
+                    <div className="text-xs">
+                      <p className="text-primary font-medium">Curso</p>
+                      <p className="text-foreground">{precontrato.curso}</p>
+                    </div>
+                  </div>
+                  <div className="text-xs">
+                    <p className="text-primary font-medium">Sencenet</p>
+                    <p className="text-foreground">{precontrato.sencenet}</p>
+                  </div>
+                  <div className="text-xs">
+                    <p className="text-primary font-medium">Código Sence</p>
+                    <p className="text-foreground">{precontrato.codigoSence}</p>
+                  </div>
+                  <div className="text-xs">
+                    <p className="text-primary font-medium">Inicio y término</p>
+                    <p className="text-foreground">{precontrato.inicioTermino}</p>
+                  </div>
+                  <div className="text-xs">
+                    <p className="text-primary font-medium">Participantes activos</p>
+                    <p className="text-foreground">{precontrato.participantes.length}</p>
+                  </div>
+                </div>
+
+                {/* Document preview area */}
+                <div className="bg-muted/20 flex flex-col items-center justify-center min-h-[400px] p-6">
+                  <div className="bg-white shadow-lg rounded-lg w-full max-w-2xl p-10 space-y-6 text-sm text-foreground border">
+                    <h3 className="text-center font-bold text-base">CONTRATO DE CAPACITACIÓN</h3>
+                    <p className="text-justify leading-relaxed">
+                      En ANTOFAGASTA a 2 de Septiembre del 2025, entre la Empresa <strong>{precontrato.empresaNombre.toUpperCase()}</strong>, R.U.T. Nº{precontrato.empresaRut}, representada por don <strong>{precontrato.repLegalNombre}</strong>, ambos domiciliados en la ciudad de Antofagasta, en adelante la empresa, y Don(ña) <strong>{p.nombre.toUpperCase()}</strong>, Cédula Nacional de Identidad Nº {p.rut}, en adelante el capacitado, se ha convenido el siguiente Contrato de Capacitación.
+                    </p>
+                    <div className="border rounded overflow-hidden">
+                      <table className="w-full text-[10px]">
+                        <thead>
+                          <tr className="bg-muted/40 border-b">
+                            <th className="p-1.5 border-r text-left font-semibold">CÓDIGO SENCE</th>
+                            <th className="p-1.5 border-r text-left font-semibold">NOMBRE CURSO</th>
+                            <th className="p-1.5 border-r text-left font-semibold">OTEC</th>
+                            <th className="p-1.5 border-r text-left font-semibold">DURACIÓN EN HORAS</th>
+                            <th className="p-1.5 text-left font-semibold">FECHA INICIO/TÉRMINO</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td className="p-1.5 border-r">{precontrato.codigoSence}</td>
+                            <td className="p-1.5 border-r">{precontrato.curso}</td>
+                            <td className="p-1.5 border-r">{precontrato.otecNombre}</td>
+                            <td className="p-1.5 border-r text-center">200</td>
+                            <td className="p-1.5">{precontrato.inicioTermino}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Footer with download button */}
+                <div className="flex items-center justify-end gap-3 px-6 py-4 border-t">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setViewDocModalOpen(false)}
+                  >
+                    CERRAR
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="bg-teal-700 hover:bg-teal-800 text-white"
+                    onClick={handleDownloadPrecontrato}
+                  >
+                    <Download className="h-4 w-4 mr-1" />
+                    DESCARGAR
+                  </Button>
+                </div>
+              </>
+            );
+          })()}
         </DialogContent>
       </Dialog>
     </div>
