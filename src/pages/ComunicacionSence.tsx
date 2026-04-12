@@ -177,7 +177,10 @@ const ComunicacionSence: React.FC = () => {
                 </span>
               </th>
               <th className="p-3 text-center font-medium text-muted-foreground whitespace-nowrap">
-                No comunicar
+                <span className="inline-flex items-center gap-2">
+                  <span>No comunicar</span>
+                  <span className="inline-flex items-center rounded-full bg-blue-600 px-1.5 py-0.5 text-[9px] font-bold leading-none text-white shadow-sm">C1CCOM5</span>
+                </span>
               </th>
             </tr>
           </thead>
