@@ -228,7 +228,7 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
   const handleDownloadPrecontrato = () => {
     if (viewDocTarget !== null) {
       const p = participantesState[viewDocTarget];
-      const fileName = `${precontrato.codigoSence}_Precontrato_${p.nombre.replace(/\s+/g, '_')}.pdf`;
+      const fileName = `${precontrato.sencenet}_Precontrato_${p.nombre.replace(/\s+/g, '_')}.pdf`;
       const blob = new Blob(['Contenido del precontrato'], { type: 'application/pdf' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
