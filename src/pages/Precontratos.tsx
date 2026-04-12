@@ -105,6 +105,20 @@ const precontratosCerradosData: PrecontratoCerrado[] = [
   { fechaCierre: '18/08/2025', nroInscripcion: '2092419', sencenet: '6665325', curso: 'Aplicación de Estratégica de Gestión de Redes Sociales – Precontratos', empresa: '98.000.000-1 – A.f.p. Capital S.A.', empresaRut: '98.000.000-1', empresaNombre: 'A.f.p. Capital S.A.', otecNombre: 'Corporacion Instituto Profesional Inacap', otecRut: '87.152.900-0', codigoSence: '1238073230', tipoContrato: 'precontrato', inicioTermino: '20/07/2025 - 20/08/2025', preinscripcion: '126735234', precontratosFirmados: '41/41', celula: 'Cel4', repLegalNombre: '-', repLegalCi: 'No disponible', participantes: mockParticipantesCerrados },
 ];
 
+const celulasOperacionales = ['Cel1', 'Cel2', 'Cel3', 'Cel4', 'Cel5', 'Cel6', 'Cel7', 'Cel8', 'Cel9'];
+
+const precontratosProximosAVencer: PrecontratoNormal[] = [
+  { diasPlazo: 3, nroInscripcion: '2155001', sencenet: '6780101', curso: 'Gestión de Seguridad en Minería', empresa: '76.081.590-K – Sierra Gorda S.c.m.', empresaRut: '76.081.590-K', empresaNombre: 'Sierra Gorda S.c.m.', otecNombre: 'Corporacion Instituto Profesional Inacap', otecRut: '87.152.900-0', codigoSence: '1238074001', tipoContrato: 'precontrato', inicioTermino: '15/04/2026 - 15/05/2026', preinscripcion: '134961001', precontratosFaltantes: '8/15', autorizMenores: '0/0', vulnerabilidad: 0, celula: 'Cel1', criticidad: 'alta', repLegalNombre: '-', repLegalCi: 'No disponible', participantes: mockParticipantes },
+  { diasPlazo: 5, nroInscripcion: '2155002', sencenet: '6780102', curso: 'Operación de Maquinaria Pesada', empresa: '85.066.600-8 – Albemarle Limitada', empresaRut: '85.066.600-8', empresaNombre: 'Albemarle Limitada', otecNombre: 'Corporacion Instituto Profesional Inacap', otecRut: '87.152.900-0', codigoSence: '1238074002', tipoContrato: 'precontrato', inicioTermino: '17/04/2026 - 17/05/2026', preinscripcion: '134961002', precontratosFaltantes: '12/20', autorizMenores: '1/1', vulnerabilidad: 2, celula: 'Cel2', criticidad: 'alta', repLegalNombre: '-', repLegalCi: 'No disponible', participantes: mockParticipantes.slice(0, 4) },
+  { diasPlazo: 7, nroInscripcion: '2155003', sencenet: '6780103', curso: 'Técnicas de Soldadura Industrial', empresa: '93.770.000-8 – Goodyear de Chile S.a.i.c.', empresaRut: '93.770.000-8', empresaNombre: 'Goodyear de Chile S.a.i.c.', otecNombre: 'Corporacion Instituto Profesional Inacap', otecRut: '87.152.900-0', codigoSence: '1238074003', tipoContrato: 'precontrato', inicioTermino: '19/04/2026 - 19/05/2026', preinscripcion: '134961003', precontratosFaltantes: '5/10', autorizMenores: '0/0', vulnerabilidad: 1, celula: 'Cel3', criticidad: 'media', repLegalNombre: '-', repLegalCi: 'No disponible', participantes: mockParticipantes.slice(0, 3) },
+  { diasPlazo: 2, nroInscripcion: '2155004', sencenet: '6780104', curso: 'Administración de Bodegas y Logística', empresa: '78.163.829-3 – Gestiones y Servicios Los Álamos S.A.', empresaRut: '78.163.829-3', empresaNombre: 'Gestiones y Servicios Los Álamos S.A.', otecNombre: 'Corporacion Instituto Profesional Inacap', otecRut: '87.152.900-0', codigoSence: '1238074004', tipoContrato: 'precontrato', inicioTermino: '14/04/2026 - 14/05/2026', preinscripcion: '134961004', precontratosFaltantes: '18/18', autorizMenores: '0/0', vulnerabilidad: 0, celula: 'Cel4', criticidad: 'alta', repLegalNombre: '-', repLegalCi: 'No disponible', participantes: mockParticipantes },
+  { diasPlazo: 9, nroInscripcion: '2155005', sencenet: '6780105', curso: 'Prevención de Riesgos Laborales', empresa: '93.077.000-0 – Metso Chile SPA', empresaRut: '93.077.000-0', empresaNombre: 'Metso Chile SPA', otecNombre: 'Corporacion Instituto Profesional Inacap', otecRut: '87.152.900-0', codigoSence: '1238074005', tipoContrato: 'precontrato', inicioTermino: '21/04/2026 - 21/05/2026', preinscripcion: '134961005', precontratosFaltantes: '3/12', autorizMenores: '0/0', vulnerabilidad: 0, celula: 'Cel5', criticidad: 'baja', repLegalNombre: '-', repLegalCi: 'No disponible', participantes: mockParticipantes.slice(0, 2) },
+  { diasPlazo: 1, nroInscripcion: '2155006', sencenet: '6780106', curso: 'Mantenimiento Eléctrico Industrial', empresa: '76.727.040-2 – Minera Centinela', empresaRut: '76.727.040-2', empresaNombre: 'Minera Centinela', otecNombre: 'Corporacion Instituto Profesional Inacap', otecRut: '87.152.900-0', codigoSence: '1238074006', tipoContrato: 'precontrato', inicioTermino: '13/04/2026 - 13/05/2026', preinscripcion: '134961006', precontratosFaltantes: '22/22', autorizMenores: '2/2', vulnerabilidad: 3, celula: 'Cel6', criticidad: 'alta', repLegalNombre: '-', repLegalCi: 'No disponible', participantes: mockParticipantes },
+  { diasPlazo: 6, nroInscripcion: '2155007', sencenet: '6780107', curso: 'Control de Calidad en Procesos Mineros', empresa: '98.000.000-1 – A.f.p. Capital S.A.', empresaRut: '98.000.000-1', empresaNombre: 'A.f.p. Capital S.A.', otecNombre: 'Corporacion Instituto Profesional Inacap', otecRut: '87.152.900-0', codigoSence: '1238074007', tipoContrato: 'precontrato', inicioTermino: '18/04/2026 - 18/05/2026', preinscripcion: '134961007', precontratosFaltantes: '10/16', autorizMenores: '0/0', vulnerabilidad: 0, celula: 'Cel7', criticidad: 'media', repLegalNombre: '-', repLegalCi: 'No disponible', participantes: mockParticipantes.slice(0, 4) },
+  { diasPlazo: 4, nroInscripcion: '2155008', sencenet: '6780108', curso: 'Hidráulica y Neumática Básica', empresa: '84.009.400-6 – Astilleros y Servicios Navales S.A.', empresaRut: '84.009.400-6', empresaNombre: 'Astilleros y Servicios Navales S.A.', otecNombre: 'Corporacion Instituto Profesional Inacap', otecRut: '87.152.900-0', codigoSence: '1238074008', tipoContrato: 'precontrato', inicioTermino: '16/04/2026 - 16/05/2026', preinscripcion: '134961008', precontratosFaltantes: '14/14', autorizMenores: '0/0', vulnerabilidad: 0, celula: 'Cel8', criticidad: 'alta', repLegalNombre: '-', repLegalCi: 'No disponible', participantes: mockParticipantes },
+  { diasPlazo: 10, nroInscripcion: '2155009', sencenet: '6780109', curso: 'Gestión Ambiental en la Industria', empresa: '78.163.838-2 – Outsourcing Global de Servicios S.A.', empresaRut: '78.163.838-2', empresaNombre: 'Outsourcing Global de Servicios S.A.', otecNombre: 'Corporacion Instituto Profesional Inacap', otecRut: '87.152.900-0', codigoSence: '1238074009', tipoContrato: 'precontrato', inicioTermino: '22/04/2026 - 22/05/2026', preinscripcion: '134961009', precontratosFaltantes: '7/25', autorizMenores: '0/0', vulnerabilidad: 0, celula: 'Cel9', criticidad: 'media', repLegalNombre: '-', repLegalCi: 'No disponible', participantes: mockParticipantes.slice(0, 3) },
+];
+
 const getCriticidadColor = (val: string) => {
   const [a, b] = val.split('/').map(Number);
   if (a === b && a > 0) return 'text-green-700 bg-green-50 border-green-200';
@@ -991,6 +1005,7 @@ const Precontratos: React.FC = () => {
   const [selectedModulares, setSelectedModulares] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState('precontratos');
   const [subTab, setSubTab] = useState('pendientes');
+  const [celulaFilter, setCelulaFilter] = useState('todas');
   const [criticidadAlta, setCriticidadAlta] = useState(true);
   const [criticidadMedia, setCriticidadMedia] = useState(true);
   const [criticidadBaja, setCriticidadBaja] = useState(true);
@@ -1019,7 +1034,12 @@ const Precontratos: React.FC = () => {
     return true;
   });
 
-  // Convert cerrado to normal format for detail view
+  const filteredProximos = precontratosProximosAVencer.filter(p => {
+    if (celulaFilter !== 'todas' && p.celula !== celulaFilter) return false;
+    return true;
+  });
+
+
   const cerradoToNormal = (c: PrecontratoCerrado): PrecontratoNormal => ({
     diasPlazo: 0,
     nroInscripcion: c.nroInscripcion,
@@ -1158,6 +1178,12 @@ const Precontratos: React.FC = () => {
               >
                 CERRADOS
               </button>
+              <button
+                onClick={() => setSubTab('proximos')}
+                className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${subTab === 'proximos' ? 'border-orange-500 text-orange-600' : 'border-transparent text-muted-foreground hover:text-foreground'}`}
+              >
+                PRÓXIMOS A VENCER
+              </button>
             </div>
             <Button variant="default" size="sm" className="bg-teal-700 hover:bg-teal-800 text-white">
               <Download className="h-4 w-4 mr-1" />
@@ -1260,6 +1286,81 @@ const Precontratos: React.FC = () => {
                   ))}
                 </tbody>
               </table>
+            </div>
+          )}
+
+          {/* Table - Próximos a Vencer */}
+          {subTab === 'proximos' && (
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <span className="text-xs font-medium text-muted-foreground">Célula Operacional:</span>
+                <Select value={celulaFilter} onValueChange={setCelulaFilter}>
+                  <SelectTrigger className="w-[180px] h-8 text-xs">
+                    <SelectValue placeholder="Todas las células" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="todas">Todas las células</SelectItem>
+                    {celulasOperacionales.map(cel => (
+                      <SelectItem key={cel} value={cel}>{cel}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <span className="text-xs text-orange-600 font-medium">
+                  {filteredProximos.length} curso{filteredProximos.length !== 1 ? 's' : ''} próximo{filteredProximos.length !== 1 ? 's' : ''} a vencer (≤10 días)
+                </span>
+              </div>
+              <div className="border rounded-lg overflow-hidden">
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="border-b bg-orange-50/50">
+                      <th className="p-2 text-center font-medium text-muted-foreground w-[8%]">Días<br/>restantes</th>
+                      <th className="p-2 text-center font-medium text-muted-foreground w-[9%]">Nº<br/>Inscripción</th>
+                      <th className="p-2 text-center font-medium text-muted-foreground w-[8%]">Sencenet</th>
+                      <th className="p-2 text-left font-medium text-muted-foreground w-[20%]">Curso</th>
+                      <th className="p-2 text-left font-medium text-muted-foreground w-[20%]">Empresa</th>
+                      <th className="p-2 text-center font-medium text-muted-foreground w-[10%]">Precontratos<br/>faltantes</th>
+                      <th className="p-2 text-center font-medium text-muted-foreground w-[8%]">Autoriz.<br/>Menores</th>
+                      <th className="p-2 text-center font-medium text-muted-foreground w-[9%]">Vulnerabilidad</th>
+                      <th className="p-2 text-center font-medium text-muted-foreground w-[6%]">Célula</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredProximos.sort((a, b) => a.diasPlazo - b.diasPlazo).map((p, idx) => (
+                      <tr
+                        key={p.nroInscripcion}
+                        className={`border-b ${idx % 2 === 0 ? '' : 'bg-muted/10'} hover:bg-muted/20 cursor-pointer`}
+                        onClick={() => setSelectedPrecontrato(p)}
+                      >
+                        <td className="p-2 text-center">
+                          <span className={`inline-flex items-center justify-center text-white text-[10px] font-bold rounded-full px-2 py-0.5 min-w-[36px] ${p.diasPlazo <= 3 ? 'bg-red-600' : p.diasPlazo <= 7 ? 'bg-orange-500' : 'bg-yellow-500'}`}>
+                            {p.diasPlazo}d
+                          </span>
+                        </td>
+                        <td className="p-2 text-center">{p.nroInscripcion}</td>
+                        <td className="p-2 text-center">{p.sencenet}</td>
+                        <td className="p-2">{p.curso}</td>
+                        <td className="p-2 text-muted-foreground">{p.empresa}</td>
+                        <td className="p-2 text-center">
+                          <span className={`inline-block border rounded-full px-2 py-0.5 text-[10px] font-medium ${getCriticidadColor(p.precontratosFaltantes)}`}>
+                            {p.precontratosFaltantes}
+                          </span>
+                        </td>
+                        <td className="p-2 text-center">
+                          <span className="inline-block border rounded-full px-2 py-0.5 text-[10px] font-medium text-green-700 bg-green-50 border-green-200">
+                            {p.autorizMenores}
+                          </span>
+                        </td>
+                        <td className="p-2 text-center">
+                          <span className="inline-block border rounded-full px-2 py-0.5 text-[10px] font-medium text-muted-foreground bg-muted/30 border-border">
+                            {p.vulnerabilidad}
+                          </span>
+                        </td>
+                        <td className="p-2 text-center text-muted-foreground">{p.celula}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
         </TabsContent>
