@@ -183,7 +183,18 @@ const Inscripcion: React.FC = () => {
   // ─── Step navigation ───────────────────────────────
   const canProceed = () => {
     switch (currentStep) {
-      case 0: return lineaTrabajo !== null && (lineaTrabajo === 'no_franquicia' || contractType !== null);
+      case 0: {
+        if (lineaTrabajo === null) return false;
+        if (lineaTrabajo === 'no_franquicia') return true;
+        if (!contractType) return false;
+        if (contractType !== 'Precontrato') return true;
+        if (!precontratoSubtype) return false;
+        if (precontratoSubtype === 'Normal') return true;
+        // Modular
+        if (modularAssociate === null) return false;
+        if (modularAssociate === false) return generatedModularId !== null;
+        return selectedModularId !== null;
+      }
       case 1: return senceValidated && agreedValue !== '';
       case 2: return fechaInicio !== '' && fechaTermino !== '';
       case 3: return participants.length > 0 && !(getModality().toLowerCase() === 'distancia' && participants.length > 20);
