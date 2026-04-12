@@ -826,7 +826,11 @@ const Inscripcion: React.FC = () => {
             </TableBody>
           </Table>
           <div className="flex gap-4 mt-4">
-            <Button variant="outline" className="border-primary text-primary">Guardar</Button>
+            <Button 
+              variant="outline" 
+              className="border-primary text-primary disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={getModality().toLowerCase() === 'distancia' && participants.length > 20}
+            >Guardar</Button>
             <Button className="bg-primary hover:bg-primary/90" onClick={() => setShowParticipantsModal(false)}>Salir</Button>
           </div>
         </DialogContent>
