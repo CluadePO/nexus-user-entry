@@ -657,7 +657,8 @@ const Inscripcion: React.FC = () => {
       return (
         <div className="p-6">
           <div className="flex gap-8 max-w-5xl mx-auto">
-            <div className="flex-1 flex flex-col items-center justify-center min-h-[400px]">
+            <div className="flex-1 flex flex-col items-center justify-center min-h-[400px] relative">
+              <span className="absolute top-4 right-4 bg-blue-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full shadow-sm">C1CINS4</span>
               <div className="w-20 h-20 rounded-full bg-destructive/10 flex items-center justify-center mb-6">
                 <AlertTriangle className="h-10 w-10 text-destructive" />
               </div>
@@ -688,7 +689,8 @@ const Inscripcion: React.FC = () => {
                 Has completado la inscripción del curso. Te invitamos a revisar tu solicitud de compra generada.
               </p>
 
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6 flex items-center gap-3">
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6 flex items-center gap-3 relative">
+                <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full z-10 shadow-sm">C1CINS4</span>
                 <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
                 <p className="text-sm text-green-800">
                   Tu inscripción fue creada exitosamente. Nro. de inscripción: <span className="font-bold">{inscripcionId}</span>
