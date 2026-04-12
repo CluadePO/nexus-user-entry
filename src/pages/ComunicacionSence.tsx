@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
-import { Calendar, PlusCircle, ArrowRight, AlertCircle } from 'lucide-react';
+import { Calendar, PlusCircle, ArrowRight, AlertCircle, Ban, Eye, EyeOff } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface CursoSence {
@@ -41,6 +41,13 @@ const ComunicacionSence: React.FC = () => {
   const [selectAll, setSelectAll] = useState(false);
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  const [noComunicar, setNoComunicar] = useState<string[]>([]);
+
+  const toggleNoComunicar = (sc: string) => {
+    setNoComunicar(prev =>
+      prev.includes(sc) ? prev.filter(s => s !== sc) : [...prev, sc]
+    );
+  };
 
   const handleSelectAll = (checked: boolean) => {
     setSelectAll(checked);
@@ -169,19 +176,24 @@ const ComunicacionSence: React.FC = () => {
                   </span>
                 </span>
               </th>
+              <th className="p-3 text-center font-medium text-muted-foreground whitespace-nowrap">
+                No comunicar
+              </th>
             </tr>
           </thead>
           <tbody>
-            {mockCursos.map((curso, idx) => (
-              <tr key={curso.sc} className={`border-b hover:bg-muted/20 ${idx % 2 === 0 ? '' : 'bg-muted/10'}`}>
+            {mockCursos.map((curso, idx) => {
+              const excluido = noComunicar.includes(curso.sc);
+              return (
+              <tr key={curso.sc} className={`border-b hover:bg-muted/20 ${excluido ? 'bg-red-50 opacity-60' : idx % 2 === 0 ? '' : 'bg-muted/10'}`}>
                 <td className="p-3">
                   <Checkbox
                     checked={selectedRows.includes(curso.sc)}
                     onCheckedChange={(checked) => handleSelectRow(curso.sc, !!checked)}
                   />
                 </td>
-                <td className="p-3 font-medium">{curso.sc}</td>
-                <td className="p-3 text-muted-foreground">{curso.cliente}</td>
+                <td className={`p-3 font-medium ${excluido ? 'line-through text-muted-foreground' : ''}`}>{curso.sc}</td>
+                <td className={`p-3 text-muted-foreground ${excluido ? 'line-through' : ''}`}>{curso.cliente}</td>
                 <td className="p-3 text-center">{curso.nroPart}</td>
                 <td className="p-3">{curso.mtFranquicia}</td>
                 <td className="p-3">{curso.inicioCurso}</td>
@@ -197,8 +209,23 @@ const ComunicacionSence: React.FC = () => {
                     <span className="text-muted-foreground text-xs">Vigente</span>
                   )}
                 </td>
+                <td className="p-3 text-center">
+                  <Button
+                    variant={excluido ? 'destructive' : 'outline'}
+                    size="sm"
+                    className="gap-1 text-xs h-7 px-2"
+                    onClick={() => toggleNoComunicar(curso.sc)}
+                  >
+                    {excluido ? (
+                      <><EyeOff className="w-3 h-3" /> Excluido</>
+                    ) : (
+                      <><Ban className="w-3 h-3" /> Excluir</>
+                    )}
+                  </Button>
+                </td>
               </tr>
-            ))}
+              );
+            })}
           </tbody>
         </table>
       </div>
