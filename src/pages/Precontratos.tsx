@@ -92,18 +92,26 @@ const getCriticidadColor = (val: string) => {
   return 'text-orange-700 bg-orange-50 border-orange-200';
 };
 
-const getStatusBadge = (status: string) => {
+const getStatusBadge = (status: string, onClick?: () => void) => {
+  const base = "inline-block text-[10px] font-semibold rounded px-2 py-0.5";
+  const clickable = onClick ? "cursor-pointer hover:opacity-80" : "";
   switch (status) {
     case 'FALTANTE':
-      return <span className="inline-block bg-red-500 text-white text-[10px] font-semibold rounded px-2 py-0.5">FALTANTE</span>;
+      return <span className={`${base} bg-red-500 text-white ${clickable}`} onClick={onClick}>FALTANTE</span>;
+    case 'POR VALIDAR':
+      return <span className={`${base} bg-yellow-600 text-white ${clickable}`} onClick={onClick}>POR VALIDAR</span>;
+    case 'EN CORRECCIÓN':
+      return <span className={`${base} bg-orange-500 text-white ${clickable}`} onClick={onClick}>EN CORRECCIÓN</span>;
+    case 'VALIDADO':
+      return <span className={`${base} bg-green-600 text-white ${clickable}`} onClick={onClick}>VALIDADO</span>;
     case 'FIRMADO':
-      return <span className="inline-block bg-green-600 text-white text-[10px] font-semibold rounded px-2 py-0.5">FIRMADO</span>;
+      return <span className={`${base} bg-green-600 text-white ${clickable}`} onClick={onClick}>FIRMADO</span>;
     case 'NO APLICA':
-      return <span className="inline-block bg-muted text-muted-foreground text-[10px] font-semibold rounded px-2 py-0.5">NO APLICA</span>;
+      return <span className={`${base} bg-muted text-muted-foreground ${clickable}`} onClick={onClick}>NO APLICA</span>;
     case 'SIN VULNERABILIDAD':
-      return <span className="inline-block bg-green-600 text-white text-[10px] font-semibold rounded px-2 py-0.5">SIN VULNERABILIDAD</span>;
+      return <span className={`${base} bg-green-600 text-white ${clickable}`} onClick={onClick}>SIN VULNERABILIDAD</span>;
     case 'VULNERABLE':
-      return <span className="inline-block bg-orange-500 text-white text-[10px] font-semibold rounded px-2 py-0.5">VULNERABLE</span>;
+      return <span className={`${base} bg-orange-500 text-white ${clickable}`} onClick={onClick}>VULNERABLE</span>;
     default:
       return <span className="text-[10px] text-muted-foreground">{status}</span>;
   }
