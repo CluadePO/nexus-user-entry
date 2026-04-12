@@ -226,7 +226,6 @@ const ComunicacionSence: React.FC = () => {
               </tr>
               );
             })}
-            ))}
           </tbody>
         </table>
       </div>
