@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
-import { Calendar, PlusCircle, ArrowRight, AlertCircle } from 'lucide-react';
+import { Calendar, PlusCircle, ArrowRight, AlertCircle, AlertTriangle } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface CursoSence {
@@ -57,6 +57,15 @@ const ComunicacionSence: React.FC = () => {
   const formatDateDisplay = (dateStr: string) => {
     const [year, month, day] = dateStr.split('-');
     return `${day}/${month}/${year}`;
+  };
+
+  const isProximoAVencer = (fechaInicioCurso: string) => {
+    // Parse dd/mm/yyyy format
+    const [day, month, year] = fechaInicioCurso.split('/').map(Number);
+    const cursoDate = new Date(year, month - 1, day);
+    const today = new Date(2026, 3, 12); // April 12, 2026
+    const diffDays = Math.floor((cursoDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    return diffDays >= 0 && diffDays <= 15;
   };
 
   return (
@@ -162,7 +171,17 @@ const ComunicacionSence: React.FC = () => {
                     onCheckedChange={(checked) => handleSelectRow(curso.sc, !!checked)}
                   />
                 </td>
-                <td className="p-3 font-medium">{curso.sc}</td>
+                <td className="p-3 font-medium">
+                  <div className="flex items-center gap-2">
+                    {curso.sc}
+                    {isProximoAVencer(curso.inicioCurso) && (
+                      <span className="inline-flex items-center gap-1 bg-amber-100 text-amber-800 text-[10px] font-semibold px-2 py-0.5 rounded-full border border-amber-300">
+                        <AlertTriangle className="w-3 h-3" />
+                        Próximo a vencer
+                      </span>
+                    )}
+                  </div>
+                </td>
                 <td className="p-3 text-muted-foreground">{curso.cliente}</td>
                 <td className="p-3 text-center">{curso.nroPart}</td>
                 <td className="p-3">{curso.mtFranquicia}</td>
