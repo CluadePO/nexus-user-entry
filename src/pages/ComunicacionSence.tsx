@@ -196,14 +196,14 @@ const ComunicacionSence: React.FC = () => {
                 </td>
                 <td className="p-2 font-medium">{curso.sc}</td>
                 <td className="p-2 text-muted-foreground truncate">{curso.cliente}</td>
-                <td className="p-3 text-center">{curso.nroPart}</td>
-                <td className="p-3">{curso.mtFranquicia}</td>
-                <td className="p-3">{curso.inicioCurso}</td>
-                <td className="p-3">{curso.modalidad}</td>
-                <td className="p-3">{curso.tipoContrato}</td>
-                <td className="p-3">
+                <td className="p-2 text-center">{curso.nroPart}</td>
+                <td className="p-2">{curso.mtFranquicia}</td>
+                <td className="p-2">{curso.inicioCurso}</td>
+                <td className="p-2">{curso.modalidad}</td>
+                <td className="p-2">{curso.tipoContrato}</td>
+                <td className="p-2">
                   {isProximoAVencer(curso.vencimientoSence) ? (
-                    <Badge variant="destructive" className="gap-1 text-xs whitespace-nowrap">
+                    <Badge variant="destructive" className="gap-1 text-[10px] whitespace-nowrap px-2 py-0.5">
                       <AlertCircle className="w-3 h-3" />
                       Por vencer
                     </Badge>
@@ -211,7 +211,7 @@ const ComunicacionSence: React.FC = () => {
                     <span className="text-muted-foreground text-xs">Vigente</span>
                   )}
                 </td>
-                <td className="p-3 text-center">
+                <td className="p-2 text-center">
                   <Button
                     variant={excluido ? 'destructive' : 'outline'}
                     size="sm"
