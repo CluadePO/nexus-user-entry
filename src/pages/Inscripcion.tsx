@@ -139,6 +139,7 @@ const Inscripcion: React.FC = () => {
   // Completion
   const [isComplete, setIsComplete] = useState(false);
   const [showServiceError, setShowServiceError] = useState(false);
+  const [retrySuccess, setRetrySuccess] = useState(false);
   const [inscripcionId] = useState('2148684');
 
   // ─── Client search ──────────────────────────────────
@@ -652,7 +653,7 @@ const Inscripcion: React.FC = () => {
 
   // ─── Completion Screen ─────────────────────────────
   if (isComplete) {
-    if (showServiceError) {
+    if (showServiceError && !retrySuccess) {
       return (
         <div className="p-6">
           <div className="flex gap-8 max-w-5xl mx-auto">
@@ -666,10 +667,65 @@ const Inscripcion: React.FC = () => {
               </p>
               <Button
                 className="gap-2 bg-primary hover:bg-primary/90"
-                onClick={() => setShowServiceError(false)}
+                onClick={() => setRetrySuccess(true)}
               >
                 <ArrowLeft className="h-4 w-4" /> Reintentar Inscripción
               </Button>
+            </div>
+            {renderSidebar()}
+          </div>
+        </div>
+      );
+    }
+
+    if (showServiceError && retrySuccess) {
+      return (
+        <div className="p-6">
+          <div className="flex gap-8 max-w-5xl mx-auto">
+            <div className="flex-1">
+              <h1 className="text-3xl font-semibold text-primary mb-4">Inscripción de curso realizada</h1>
+              <p className="text-muted-foreground mb-8">
+                Has completado la inscripción del curso. Te invitamos a revisar tu solicitud de compra generada.
+              </p>
+
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6 flex items-center gap-3">
+                <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
+                <p className="text-sm text-green-800">
+                  Tu inscripción fue creada exitosamente. Nro. de inscripción: <span className="font-bold">{inscripcionId}</span>
+                </p>
+              </div>
+
+              <h2 className="text-lg font-semibold text-muted-foreground mb-4">Descargar solicitud de compra</h2>
+              <div className="flex items-center justify-between border rounded-lg p-4 mb-8">
+                <div>
+                  <span className="text-sm text-muted-foreground">Franquicia {contractType || 'Normal'}</span>
+                  <span className="text-sm text-muted-foreground ml-8">Nro. 2107893</span>
+                </div>
+                <Button className="gap-2 bg-primary hover:bg-primary/90" onClick={generatePurchaseOrderPDF}>
+                  Descargar <Download className="h-4 w-4" />
+                </Button>
+              </div>
+
+              <div className="flex justify-center">
+                <Button variant="outline" className="gap-2 border-primary text-primary" onClick={() => {
+                  setIsComplete(false);
+                  setShowServiceError(false);
+                  setRetrySuccess(false);
+                  setPreStepDone(false);
+                  setCurrentStep(0);
+                  setSelectedClient(null);
+                  setSelectedSucursal('');
+                  setLineaTrabajo(null);
+                  setContractType(null);
+                  setSenceCode('');
+                  setSenceValidated(false);
+                  setAgreedValue('');
+                  setParticipants([]);
+                  setSelectedAccount(null);
+                }}>
+                  <LogOut className="h-4 w-4" /> Salir
+                </Button>
+              </div>
             </div>
             {renderSidebar()}
           </div>
@@ -718,7 +774,7 @@ const Inscripcion: React.FC = () => {
               <Button
                 variant="outline"
                 className="gap-2 border-destructive/50 text-destructive hover:bg-destructive/10"
-                onClick={() => setShowServiceError(true)}
+                onClick={() => { setShowServiceError(true); setRetrySuccess(false); }}
               >
                 <AlertTriangle className="h-4 w-4" /> Simulación
               </Button>
