@@ -193,6 +193,264 @@ const Inscripcion: React.FC = () => {
     return 'Presencial';
   };
 
+  const generatePurchaseOrderPDF = () => {
+    const doc = new jsPDF();
+    const pageW = doc.internal.pageSize.getWidth();
+    const marginL = 15;
+    const marginR = 15;
+    const contentW = pageW - marginL - marginR;
+    let y = 15;
+    const today = dayjs().format('DD/MM/YYYY');
+    const scNumber = '2107893';
+
+    const addHeader = () => {
+      doc.setFontSize(8);
+      doc.setTextColor(100);
+      doc.text('OTIC CChC', marginL, 10);
+      doc.setFontSize(9);
+      doc.text(`Solicitud de Compra: FQ - ${scNumber}`, pageW - marginR, 10, { align: 'right' });
+      doc.text(today, pageW - marginR, 15, { align: 'right' });
+      doc.setDrawColor(76, 175, 147);
+      doc.setLineWidth(0.8);
+      doc.line(marginL, 17, pageW - marginR, 17);
+      return 22;
+    };
+
+    y = addHeader();
+
+    // Title
+    doc.setFontSize(14);
+    doc.setTextColor(76, 175, 147);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`Solicitud de Compra: FQ - ${scNumber}`, marginL, y);
+    y += 6;
+    doc.setFontSize(9);
+    doc.setTextColor(60);
+    doc.setFont('helvetica', 'normal');
+    doc.text(today, marginL, y);
+    y += 8;
+
+    // Provider/Client info block
+    const infoBlock = (label: string, value: string, xPos: number, yPos: number) => {
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8);
+      doc.setTextColor(100);
+      doc.text(label, xPos, yPos);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(40);
+      doc.text(value, xPos + doc.getTextWidth(label) + 2, yPos);
+    };
+
+    infoBlock('Señores: ', mockSenceData.otec, marginL, y); y += 5;
+    infoBlock('Rut : ', mockSenceData.otecRut, marginL, y); y += 5;
+    infoBlock('Con atención a: ', 'ALBERTO VARELA OYARZUN', marginL, y); y += 5;
+    infoBlock('Dirección : ', 'AV VITACURA 10151', marginL, y); y += 8;
+
+    // Contract info
+    const halfW = contentW / 2;
+    infoBlock('Tipo de Contrato: ', contractType?.toUpperCase() || 'PRECONTRATO', marginL, y);
+    infoBlock('Fecha de Emisión: ', today, marginL + halfW, y); y += 5;
+    infoBlock('Modalidad: ', getModality(), marginL, y);
+    infoBlock('ID Sence: ', senceCode || '0', marginL + halfW, y); y += 5;
+    infoBlock('Tipo de Curso: ', `${lineaTrabajo === 'franquicia' ? 'Franquicia' : 'No Franquicia'} ${contractType || 'Normal'}`, marginL, y);
+    y += 10;
+
+    // Section I
+    doc.setFillColor(76, 175, 147);
+    doc.rect(marginL, y, contentW, 7, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.setTextColor(255);
+    doc.text('I.- DATOS DE LA ACTIVIDAD', marginL + 3, y + 5);
+    y += 12;
+
+    doc.setTextColor(40);
+    doc.setFontSize(8);
+    const actData = [
+      ['Nombre del Proveedor', mockSenceData.otec, 'Rut del Proveedor', mockSenceData.otecRut],
+      ['Nombre Cliente', selectedClient?.name || '', 'Rut Cliente', selectedClient?.rut || ''],
+      ['Código Sence', senceCode || '1238056271', 'Lugar de realización', `${region} / ${comuna} / ${direccion}`],
+      ['Fecha de inicio', fechaInicio, 'Fecha de término', fechaTermino],
+      ['Horas autorizadas', `${mockSenceData.hours} horas`, '', ''],
+      ['Nombre del Curso', mockSenceData.courseName, '', ''],
+    ];
+
+    actData.forEach(([l1, v1, l2, v2]) => {
+      doc.setFont('helvetica', 'normal');
+      doc.text(`${l1}: `, marginL, y);
+      doc.setFont('helvetica', 'bold');
+      doc.text(v1, marginL + doc.getTextWidth(`${l1}: `), y);
+      if (l2) {
+        doc.setFont('helvetica', 'normal');
+        doc.text(`${l2}: `, marginL + halfW, y);
+        doc.setFont('helvetica', 'bold');
+        doc.text(v2, marginL + halfW + doc.getTextWidth(`${l2}: `), y);
+      }
+      y += 5;
+    });
+
+    // Observaciones
+    if (observaciones) {
+      doc.setFont('helvetica', 'normal');
+      doc.text('Comentarios: ', marginL, y);
+      doc.setFont('helvetica', 'bold');
+      doc.text(observaciones.substring(0, 80), marginL + doc.getTextWidth('Comentarios: '), y);
+      y += 5;
+    }
+
+    // Horario
+    const schedDays = selectedDays
+      .map((sel, i) => sel ? `${['Lu.', 'Ma.', 'Mi.', 'Ju.', 'Vi.', 'Sa.', 'Do.'][i]} 07:00 a 14:00` : null)
+      .filter(Boolean)
+      .join(' ');
+    if (schedDays) {
+      y += 3;
+      doc.setFont('helvetica', 'normal');
+      doc.text('Horario: ', marginL, y);
+      doc.setFont('helvetica', 'bold');
+      const schedLines = doc.splitTextToSize(schedDays, contentW - 20);
+      doc.text(schedLines, marginL + doc.getTextWidth('Horario: '), y);
+      y += schedLines.length * 4 + 3;
+    }
+
+    y += 5;
+
+    // Section II - Financial
+    doc.setFillColor(76, 175, 147);
+    doc.rect(marginL, y, contentW, 7, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.setTextColor(255);
+    doc.text('II.- DATOS DE INSCRIPCIÓN', marginL + 3, y + 5);
+    y += 12;
+
+    doc.setTextColor(40);
+    doc.setFontSize(8);
+
+    // OTIC
+    doc.setFont('helvetica', 'bold');
+    doc.text('MONTO OTIC CChC', marginL, y); y += 5;
+    doc.setFont('helvetica', 'normal');
+    doc.text('Nombre: Corporación de Capacitación de la Construcción', marginL, y); y += 4;
+    doc.text('Rut: 70.200.800-K', marginL, y);
+    doc.text(`Monto Otic: ${formatCLP(20000)}`, marginL + halfW, y); y += 4;
+    doc.text('Dirección: Santa Beatriz N° 170, Piso 2 - Providencia', marginL, y); y += 8;
+
+    // Empresa
+    doc.setFont('helvetica', 'bold');
+    doc.text('MONTO EMPRESA', marginL, y); y += 5;
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Nombre: ${selectedClient?.name || ''}`, marginL, y); y += 4;
+    doc.text(`Rut: ${selectedClient?.rut || ''}`, marginL, y);
+    doc.text('Monto Empresa: $0', marginL + halfW, y); y += 8;
+
+    // Cost summary table
+    doc.setFont('helvetica', 'bold');
+    doc.text('RESUMEN COSTO DE LA ACTIVIDAD', marginL, y); y += 5;
+
+    const tableStartY = y;
+    doc.setFillColor(76, 175, 147);
+    doc.rect(marginL, y, contentW, 6, 'F');
+    doc.setTextColor(255);
+    doc.setFontSize(8);
+    doc.text('MONTO', marginL + 3, y + 4);
+    doc.text('CURSO', marginL + contentW - 30, y + 4);
+    y += 6;
+
+    doc.setTextColor(40);
+    doc.setFont('helvetica', 'normal');
+    const rows = [
+      ['Costo OTIC CChC', '20.000'],
+      ['Costo EMPRESA', '0'],
+    ];
+    rows.forEach(([label, val]) => {
+      doc.setDrawColor(200);
+      doc.line(marginL, y, marginL + contentW, y);
+      doc.text(label, marginL + 3, y + 4);
+      doc.text(val, marginL + contentW - 30, y + 4);
+      y += 6;
+    });
+    doc.setFont('helvetica', 'bold');
+    doc.setDrawColor(200);
+    doc.line(marginL, y, marginL + contentW, y);
+    doc.text('TOTAL:', marginL + 3, y + 4);
+    doc.text('20.000', marginL + contentW - 30, y + 4);
+    y += 6;
+    doc.rect(marginL, tableStartY, contentW, y - tableStartY);
+
+    // Page 2 - Legal text
+    doc.addPage();
+    y = addHeader();
+    y += 5;
+
+    doc.setFillColor(76, 175, 147);
+    doc.rect(marginL, y, contentW, 7, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.setTextColor(255);
+    doc.text('III. CUMPLIMIENTO DE NORMATIVA Y PREVENCIÓN DE DELITO', marginL + 3, y + 5);
+    y += 12;
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7);
+    doc.setTextColor(60);
+    const legalText = 'LEY N°20.323 PREVENCIÓN DE DELITOS: En cumplimiento de lo dispuesto en la Ley N°20.393, Corporación de Capacitación de la Construcción ha adoptado e implementado un Modelo de Prevención de Delitos, que conforme a lo dispuesto en el Artículo 4°, N° 3, letra d), de dicha ley, entre otros elementos, debe incluir la existencia de obligaciones, prohibiciones, sanciones administrativas y procedimientos de denuncia y determinación de responsabilidades en contra de las personas que incumplan el modelo de prevención de delitos. Además, estas obligaciones, prohibiciones y sanciones deben ser incorporadas expresamente en los contratos con proveedores de OTIC CChC.';
+    const legalLines = doc.splitTextToSize(legalText, contentW);
+    doc.text(legalLines, marginL, y);
+    y += legalLines.length * 3.5 + 10;
+
+    // Page 3 - Participants
+    doc.addPage();
+    y = addHeader();
+    y += 5;
+
+    doc.setFillColor(76, 175, 147);
+    doc.rect(marginL, y, contentW, 7, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.setTextColor(255);
+    doc.text('IV. LISTADO PARTICIPANTES', marginL + 3, y + 5);
+    y += 12;
+
+    // Participants table
+    const colWidths = [12, 35, 60, 30, 18, 25];
+    const headers = ['N°', 'RUT', 'NOMBRE', 'FECHA NAC.', 'SEXO', 'TIPO DOC.'];
+
+    doc.setFillColor(76, 175, 147);
+    doc.rect(marginL, y, contentW, 6, 'F');
+    doc.setTextColor(255);
+    doc.setFontSize(7);
+    let xOffset = marginL;
+    headers.forEach((h, i) => {
+      doc.text(h, xOffset + 1, y + 4);
+      xOffset += colWidths[i];
+    });
+    y += 6;
+
+    doc.setTextColor(40);
+    doc.setFont('helvetica', 'normal');
+    participants.forEach((p, idx) => {
+      if (y > 270) {
+        doc.addPage();
+        y = addHeader();
+        y += 5;
+      }
+      doc.setDrawColor(220);
+      doc.line(marginL, y, marginL + contentW, y);
+      xOffset = marginL;
+      const rowData = [String(idx + 1), p.rut, p.name?.substring(0, 35), p.fechaNac, p.sexo, p.tipoDoc];
+      rowData.forEach((val, i) => {
+        doc.text(val || '', xOffset + 1, y + 4);
+        xOffset += colWidths[i];
+      });
+      y += 6;
+    });
+    doc.rect(marginL, y - participants.length * 6 - 6, contentW, participants.length * 6 + 6);
+
+    doc.save(`SC-${scNumber}.pdf`);
+    toast.success('Solicitud de compra descargada');
+  };
+
   const handleValidateSence = () => {
     if (senceCode.length >= 3) {
       setSenceValidated(true);
