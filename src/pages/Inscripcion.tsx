@@ -666,7 +666,7 @@ const Inscripcion: React.FC = () => {
                 <span className="text-sm text-muted-foreground">Franquicia {contractType || 'Normal'}</span>
                 <span className="text-sm text-muted-foreground ml-8">Nro. 2107893</span>
               </div>
-              <Button className="gap-2 bg-primary hover:bg-primary/90">
+              <Button className="gap-2 bg-primary hover:bg-primary/90" onClick={generatePurchaseOrderPDF}>
                 Descargar <Download className="h-4 w-4" />
               </Button>
             </div>
