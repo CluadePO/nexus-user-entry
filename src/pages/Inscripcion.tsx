@@ -912,7 +912,7 @@ const Inscripcion: React.FC = () => {
               {precontratoSubtype === 'Modular' && (
                 <>
                   <p className="text-muted-foreground">¿Deseas asociar este precontrato modular a un módulo existente?</p>
-                  <div className="grid grid-cols-2 gap-4 max-w-xs">
+                  <div className="grid grid-cols-2 gap-4 max-w-xs mb-2">
                     <button
                       onClick={() => { setModularAssociate(true); setGeneratedModularId(null); setSelectedModularId(null); }}
                       className={`py-3 px-6 rounded-full text-sm font-medium transition-colors ${
