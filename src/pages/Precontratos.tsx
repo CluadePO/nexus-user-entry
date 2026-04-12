@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Download, Pencil, ArrowLeft, Mail, FileDown, ChevronUp, ChevronDown, Users, FileText, Building2, GraduationCap, Search } from 'lucide-react';
-
+import { Textarea } from '@/components/ui/textarea';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Download, Pencil, ArrowLeft, Mail, FileDown, ChevronUp, ChevronDown, Users, FileText, Building2, GraduationCap, Search, Upload, X, CheckCircle, AlertCircle, RefreshCw } from 'lucide-react';
+import { toast } from 'sonner';
 // ── Precontratos Normales ──
 
 interface Participante {
