@@ -138,6 +138,7 @@ const Inscripcion: React.FC = () => {
 
   // Completion
   const [isComplete, setIsComplete] = useState(false);
+  const [showServiceError, setShowServiceError] = useState(false);
   const [inscripcionId] = useState('2148684');
 
   // ─── Client search ──────────────────────────────────
