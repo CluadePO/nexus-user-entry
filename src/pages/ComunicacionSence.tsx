@@ -185,7 +185,7 @@ const ComunicacionSence: React.FC = () => {
             {mockCursos.map((curso, idx) => {
               const excluido = noComunicar.includes(curso.sc);
               return (
-              <tr key={curso.sc} className={`border-b ${excluido ? 'bg-red-50/50 opacity-60 pointer-events-none' : idx % 2 === 0 ? 'hover:bg-muted/20' : 'bg-muted/10 hover:bg-muted/20'}`}>
+              <tr key={curso.sc} className={`border-b ${excluido ? 'bg-red-50/50 opacity-60' : idx % 2 === 0 ? 'hover:bg-muted/20' : 'bg-muted/10 hover:bg-muted/20'}`}>
                 <td className="p-3">
                   <Checkbox
                     checked={selectedRows.includes(curso.sc)}
