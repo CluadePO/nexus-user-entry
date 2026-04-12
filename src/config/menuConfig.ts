@@ -240,7 +240,6 @@ export const menuByRole: Record<UserRole, MenuItem[]> = {
         { key: 'cursos-resumen', label: 'Resumen', url: '/cursos/resumen' },
         { key: 'cursos-inscripcion', label: 'Inscripción', url: '/cursos/inscripcion' },
         { key: 'comunicacion-sence', label: 'Comunicación Sence', url: '/cursos/sence' },
-        { key: 'precontratos', label: 'Precontratos', url: '/cursos/precontratos' },
         { key: 'liquidacion-sence', label: 'Liquidación Sence', url: '/cursos/liquidacion' },
       ]
     },
