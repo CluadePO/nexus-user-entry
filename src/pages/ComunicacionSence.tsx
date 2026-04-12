@@ -59,6 +59,15 @@ const ComunicacionSence: React.FC = () => {
     return `${day}/${month}/${year}`;
   };
 
+  const isProximoAVencer = (fechaInicioCurso: string) => {
+    // Parse dd/mm/yyyy format
+    const [day, month, year] = fechaInicioCurso.split('/').map(Number);
+    const cursoDate = new Date(year, month - 1, day);
+    const today = new Date(2026, 3, 12); // April 12, 2026
+    const diffDays = Math.floor((cursoDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    return diffDays >= 0 && diffDays <= 15;
+  };
+
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold text-foreground">
