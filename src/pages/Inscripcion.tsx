@@ -744,6 +744,9 @@ const Inscripcion: React.FC = () => {
                 <div>
                   <span className="text-sm text-muted-foreground">Franquicia {contractType || 'Normal'}</span>
                   <span className="text-sm text-muted-foreground ml-8">Nro. {inscripcionId}</span>
+                  {precontratoSubtype === 'Modular' && (selectedModularId || generatedModularId) && (
+                    <Badge variant="outline" className="ml-4 border-amber-400 text-amber-700 bg-amber-50 text-xs">{selectedModularId || generatedModularId}</Badge>
+                  )}
                 </div>
                 <Button className="gap-2 bg-primary hover:bg-primary/90" onClick={generatePurchaseOrderPDF}>
                   Descargar <Download className="h-4 w-4" />
@@ -791,6 +794,9 @@ const Inscripcion: React.FC = () => {
               <div>
                 <span className="text-sm text-muted-foreground">Franquicia {contractType || 'Normal'}</span>
                 <span className="text-sm text-muted-foreground ml-8">Nro. {inscripcionId}</span>
+                {precontratoSubtype === 'Modular' && (selectedModularId || generatedModularId) && (
+                  <Badge variant="outline" className="ml-4 border-amber-400 text-amber-700 bg-amber-50 text-xs">{selectedModularId || generatedModularId}</Badge>
+                )}
               </div>
               <Button className="gap-2 bg-primary hover:bg-primary/90" onClick={generatePurchaseOrderPDF}>
                 Descargar <Download className="h-4 w-4" />
