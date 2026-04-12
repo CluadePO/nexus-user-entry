@@ -163,11 +163,98 @@ const precontratosModulares: ModuloGroup[] = [
 const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: () => void }> = ({ precontrato, onBack }) => {
   const [detalleOpen, setDetalleOpen] = useState(true);
   const [searchParticipante, setSearchParticipante] = useState('');
+  const [participantesState, setParticipantesState] = useState<Participante[]>(precontrato.participantes);
 
-  const filteredParticipantes = precontrato.participantes.filter(p =>
+  // Upload modal
+  const [uploadModalOpen, setUploadModalOpen] = useState(false);
+  const [uploadTarget, setUploadTarget] = useState<number | null>(null);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Validation actions modal (POR VALIDAR clicked)
+  const [validationModalOpen, setValidationModalOpen] = useState(false);
+  const [validationTarget, setValidationTarget] = useState<number | null>(null);
+  const [previewFile, setPreviewFile] = useState(false);
+
+  // Correction modal
+  const [correctionModalOpen, setCorrectionModalOpen] = useState(false);
+  const [correctionTarget, setCorrectionTarget] = useState<number | null>(null);
+  const [correctionEmail, setCorrectionEmail] = useState('');
+  const [correctionObservaciones, setCorrectionObservaciones] = useState('');
+
+  const filteredParticipantes = participantesState.filter(p =>
     p.nombre.toLowerCase().includes(searchParticipante.toLowerCase()) ||
     p.rut.includes(searchParticipante)
   );
+
+  const handleFirmaParticipanteClick = (globalIdx: number, status: string) => {
+    if (status === 'FALTANTE') {
+      setUploadTarget(globalIdx);
+      setUploadedFile(null);
+      setUploadModalOpen(true);
+    } else if (status === 'POR VALIDAR') {
+      setValidationTarget(globalIdx);
+      setPreviewFile(false);
+      setValidationModalOpen(true);
+    }
+  };
+
+  const handleFileUpload = (file: File) => {
+    setUploadedFile(file);
+  };
+
+  const handleCargarPrecontrato = () => {
+    if (uploadTarget !== null && uploadedFile) {
+      setParticipantesState(prev => prev.map((p, i) =>
+        i === uploadTarget ? { ...p, firmaParticipante: 'POR VALIDAR' as const } : p
+      ));
+      setUploadModalOpen(false);
+      setUploadedFile(null);
+      toast.success('Se ha subido el documento con éxito');
+    }
+  };
+
+  const handleSolicitarCorreccion = (idx: number) => {
+    const p = participantesState[idx];
+    setCorrectionTarget(idx);
+    setCorrectionEmail(p.correo.toLowerCase());
+    setCorrectionObservaciones('');
+    setValidationModalOpen(false);
+    setCorrectionModalOpen(true);
+  };
+
+  const handleEnviarCorreccion = () => {
+    if (correctionTarget !== null) {
+      setParticipantesState(prev => prev.map((p, i) =>
+        i === correctionTarget ? { ...p, firmaParticipante: 'EN CORRECCIÓN' as const } : p
+      ));
+      setCorrectionModalOpen(false);
+      toast.success('Solicitud de corrección enviada');
+    }
+  };
+
+  const handleValidarDocumento = () => {
+    if (validationTarget !== null) {
+      setParticipantesState(prev => prev.map((p, i) =>
+        i === validationTarget ? { ...p, firmaParticipante: 'VALIDADO' as const } : p
+      ));
+      setValidationModalOpen(false);
+      toast.success('Documento validado exitosamente');
+    }
+  };
+
+  const handleReemplazarDocumento = () => {
+    if (validationTarget !== null) {
+      setValidationModalOpen(false);
+      setUploadTarget(validationTarget);
+      setUploadedFile(null);
+      setUploadModalOpen(true);
+    }
+  };
+
+  const targetParticipante = uploadTarget !== null ? participantesState[uploadTarget] : null;
+  const validationParticipante = validationTarget !== null ? participantesState[validationTarget] : null;
+  const correctionParticipante = correctionTarget !== null ? participantesState[correctionTarget] : null;
 
   return (
     <div className="space-y-6">
@@ -195,26 +282,11 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
                 <FileText className="h-5 w-5 text-muted-foreground" />
               </div>
               <div className="flex-1 grid grid-cols-5 gap-4 text-xs">
-                <div>
-                  <p className="text-primary font-medium">Curso</p>
-                  <p className="text-foreground">{precontrato.curso}</p>
-                </div>
-                <div>
-                  <p className="text-primary font-medium">Sencenet</p>
-                  <p className="text-foreground">{precontrato.sencenet}</p>
-                </div>
-                <div>
-                  <p className="text-primary font-medium">Código Sence</p>
-                  <p className="text-foreground">{precontrato.codigoSence}</p>
-                </div>
-                <div>
-                  <p className="text-primary font-medium">Tipo de contrato</p>
-                  <p className="text-foreground font-semibold">{precontrato.tipoContrato}</p>
-                </div>
-                <div>
-                  <p className="text-primary font-medium">Inicio y término</p>
-                  <p className="text-foreground">{precontrato.inicioTermino}</p>
-                </div>
+                <div><p className="text-primary font-medium">Curso</p><p className="text-foreground">{precontrato.curso}</p></div>
+                <div><p className="text-primary font-medium">Sencenet</p><p className="text-foreground">{precontrato.sencenet}</p></div>
+                <div><p className="text-primary font-medium">Código Sence</p><p className="text-foreground">{precontrato.codigoSence}</p></div>
+                <div><p className="text-primary font-medium">Tipo de contrato</p><p className="text-foreground font-semibold">{precontrato.tipoContrato}</p></div>
+                <div><p className="text-primary font-medium">Inicio y término</p><p className="text-foreground">{precontrato.inicioTermino}</p></div>
               </div>
             </div>
 
@@ -223,18 +295,10 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
               <div className="grid grid-cols-3 gap-8 text-xs">
                 <div>
                   <p className="text-primary font-medium">Días de plazo</p>
-                  <span className="inline-flex items-center justify-center bg-red-600 text-white text-[10px] font-bold rounded-full px-2.5 py-0.5 mt-1">
-                    {precontrato.diasPlazo}
-                  </span>
+                  <span className="inline-flex items-center justify-center bg-red-600 text-white text-[10px] font-bold rounded-full px-2.5 py-0.5 mt-1">{precontrato.diasPlazo}</span>
                 </div>
-                <div>
-                  <p className="text-primary font-medium">Preinscripción</p>
-                  <p className="text-foreground">{precontrato.preinscripcion}</p>
-                </div>
-                <div>
-                  <p className="text-primary font-medium">Célula</p>
-                  <p className="text-foreground">{precontrato.celula}</p>
-                </div>
+                <div><p className="text-primary font-medium">Preinscripción</p><p className="text-foreground">{precontrato.preinscripcion}</p></div>
+                <div><p className="text-primary font-medium">Célula</p><p className="text-foreground">{precontrato.celula}</p></div>
               </div>
             </div>
 
@@ -244,22 +308,10 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
                 <Building2 className="h-5 w-5 text-muted-foreground" />
               </div>
               <div className="flex-1 grid grid-cols-4 gap-4 text-xs">
-                <div>
-                  <p className="text-primary font-medium">Empresa</p>
-                  <p className="text-foreground">{precontrato.empresaNombre}</p>
-                </div>
-                <div>
-                  <p className="text-primary font-medium">RUT</p>
-                  <p className="text-foreground">{precontrato.empresaRut}</p>
-                </div>
-                <div>
-                  <p className="text-primary font-medium">Nombre Rep. Legal</p>
-                  <p className="text-foreground">{precontrato.repLegalNombre}</p>
-                </div>
-                <div>
-                  <p className="text-primary font-medium">C.I. Rep. Legal</p>
-                  <p className="text-foreground">{precontrato.repLegalCi}</p>
-                </div>
+                <div><p className="text-primary font-medium">Empresa</p><p className="text-foreground">{precontrato.empresaNombre}</p></div>
+                <div><p className="text-primary font-medium">RUT</p><p className="text-foreground">{precontrato.empresaRut}</p></div>
+                <div><p className="text-primary font-medium">Nombre Rep. Legal</p><p className="text-foreground">{precontrato.repLegalNombre}</p></div>
+                <div><p className="text-primary font-medium">C.I. Rep. Legal</p><p className="text-foreground">{precontrato.repLegalCi}</p></div>
               </div>
             </div>
 
@@ -269,14 +321,8 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
                 <GraduationCap className="h-5 w-5 text-muted-foreground" />
               </div>
               <div className="flex-1 grid grid-cols-2 gap-4 text-xs">
-                <div>
-                  <p className="text-primary font-medium">Otec</p>
-                  <p className="text-foreground">{precontrato.otecNombre}</p>
-                </div>
-                <div>
-                  <p className="text-primary font-medium">RUT</p>
-                  <p className="text-foreground">{precontrato.otecRut}</p>
-                </div>
+                <div><p className="text-primary font-medium">Otec</p><p className="text-foreground">{precontrato.otecNombre}</p></div>
+                <div><p className="text-primary font-medium">RUT</p><p className="text-foreground">{precontrato.otecRut}</p></div>
               </div>
             </div>
           </div>
@@ -285,13 +331,12 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
 
       {/* Precontrato - Participantes */}
       <div className="space-y-4">
-        {/* Header row */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <h2 className="text-lg font-semibold text-foreground">Precontrato</h2>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Users className="h-4 w-4" />
-              <span>{precontrato.participantes.length} participantes activos</span>
+              <span>{participantesState.length} participantes activos</span>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -333,29 +378,221 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
               </tr>
             </thead>
             <tbody>
-              {filteredParticipantes.map((p, idx) => (
-                <tr key={p.rut} className={`border-b ${idx % 2 === 0 ? '' : 'bg-muted/10'} hover:bg-muted/20`}>
-                  <td className="p-2.5 text-primary font-medium">{p.nombre}</td>
-                  <td className="p-2.5">{p.rut}</td>
-                  <td className="p-2.5 text-muted-foreground">{p.correo}</td>
-                  <td className="p-2.5">{p.telefono}</td>
-                  <td className="p-2.5 text-center">{getStatusBadge(p.firmaEmpresa)}</td>
-                  <td className="p-2.5 text-center">{getStatusBadge(p.firmaParticipante)}</td>
-                  <td className="p-2.5 text-center">{getStatusBadge(p.autorizMenor)}</td>
-                  <td className="p-2.5 text-center">{getStatusBadge(p.vulnerabilidad)}</td>
-                  <td className="p-2.5 text-muted-foreground">{p.ultimoRecordatorio}</td>
-                  <td className="p-2.5 text-center">
-                    <div className="flex items-center gap-1 justify-center">
-                      <button className="text-muted-foreground hover:text-foreground"><Mail className="h-3.5 w-3.5" /></button>
-                      <button className="text-muted-foreground hover:text-foreground"><FileDown className="h-3.5 w-3.5" /></button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+              {filteredParticipantes.map((p) => {
+                const globalIdx = participantesState.findIndex(pp => pp.rut === p.rut);
+                return (
+                  <tr key={p.rut} className={`border-b ${globalIdx % 2 === 0 ? '' : 'bg-muted/10'} hover:bg-muted/20`}>
+                    <td className="p-2.5 text-primary font-medium">{p.nombre}</td>
+                    <td className="p-2.5">{p.rut}</td>
+                    <td className="p-2.5 text-muted-foreground">{p.correo}</td>
+                    <td className="p-2.5">{p.telefono}</td>
+                    <td className="p-2.5 text-center">{getStatusBadge(p.firmaEmpresa)}</td>
+                    <td className="p-2.5 text-center">
+                      {getStatusBadge(
+                        p.firmaParticipante,
+                        (p.firmaParticipante === 'FALTANTE' || p.firmaParticipante === 'POR VALIDAR')
+                          ? () => handleFirmaParticipanteClick(globalIdx, p.firmaParticipante)
+                          : undefined
+                      )}
+                    </td>
+                    <td className="p-2.5 text-center">{getStatusBadge(p.autorizMenor)}</td>
+                    <td className="p-2.5 text-center">{getStatusBadge(p.vulnerabilidad)}</td>
+                    <td className="p-2.5 text-muted-foreground">{p.ultimoRecordatorio}</td>
+                    <td className="p-2.5 text-center">
+                      <div className="flex items-center gap-1 justify-center">
+                        <button className="text-muted-foreground hover:text-foreground"><Mail className="h-3.5 w-3.5" /></button>
+                        <button className="text-muted-foreground hover:text-foreground"><FileDown className="h-3.5 w-3.5" /></button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
       </div>
+
+      {/* ── Upload Modal ── */}
+      <Dialog open={uploadModalOpen} onOpenChange={setUploadModalOpen}>
+        <DialogContent className="max-w-3xl p-0 overflow-hidden">
+          <div className="bg-teal-700 text-white px-6 py-4">
+            <DialogTitle className="text-white text-base font-semibold">
+              Cargar Precontrato · RUT {targetParticipante?.rut} · {targetParticipante?.nombre}
+            </DialogTitle>
+          </div>
+          <div className="px-6 py-4 space-y-4">
+            {/* Course info header */}
+            <div className="flex items-center gap-4 border-b pb-4">
+              <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-muted/50 flex items-center justify-center">
+                <FileText className="h-5 w-5 text-muted-foreground" />
+              </div>
+              <div className="flex-1 grid grid-cols-5 gap-3 text-xs">
+                <div><p className="text-muted-foreground font-medium">Curso</p><p className="text-foreground">{precontrato.curso}</p></div>
+                <div><p className="text-muted-foreground font-medium">Sencenet</p><p className="text-foreground">{precontrato.sencenet}</p></div>
+                <div><p className="text-muted-foreground font-medium">Código Sence</p><p className="text-foreground">{precontrato.codigoSence}</p></div>
+                <div><p className="text-muted-foreground font-medium">Inicio y término</p><p className="text-foreground">{precontrato.inicioTermino}</p></div>
+                <div><p className="text-muted-foreground font-medium">Participantes activos</p><p className="text-foreground">{participantesState.length}</p></div>
+              </div>
+            </div>
+
+            {/* Drop zone */}
+            <div
+              className="border-2 border-dashed border-muted-foreground/30 rounded-lg p-12 text-center cursor-pointer hover:border-primary/50 transition-colors"
+              onClick={() => fileInputRef.current?.click()}
+              onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
+              onDrop={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const file = e.dataTransfer.files?.[0];
+                if (file) handleFileUpload(file);
+              }}
+            >
+              {uploadedFile ? (
+                <div className="flex flex-col items-center gap-2">
+                  <CheckCircle className="h-8 w-8 text-green-600" />
+                  <p className="text-sm font-medium text-foreground">{uploadedFile.name}</p>
+                  <p className="text-xs text-muted-foreground">{(uploadedFile.size / 1024).toFixed(1)} KB</p>
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">Arrastra el archivo aquí o presiona para seleccionarlo</p>
+              )}
+            </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              className="hidden"
+              accept=".pdf,.doc,.docx,.jpg,.png"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) handleFileUpload(file);
+              }}
+            />
+          </div>
+          {/* Footer */}
+          <div className="flex items-center justify-between px-6 py-4 border-t">
+            <button className="text-sm text-red-600 font-medium hover:underline">ELIMINAR</button>
+            <div className="flex items-center gap-3">
+              <button className="text-sm font-medium text-foreground hover:underline" onClick={() => setUploadModalOpen(false)}>CANCELAR</button>
+              <Button
+                size="sm"
+                disabled={!uploadedFile}
+                className="bg-teal-700 hover:bg-teal-800 text-white"
+                onClick={handleCargarPrecontrato}
+              >
+                CARGAR
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Validation Actions Modal (POR VALIDAR) ── */}
+      <Dialog open={validationModalOpen} onOpenChange={setValidationModalOpen}>
+        <DialogContent className="max-w-3xl p-0 overflow-hidden">
+          <div className="bg-teal-700 text-white px-6 py-4">
+            <DialogTitle className="text-white text-base font-semibold">
+              Precontrato · Nº Inscripción {precontrato.nroInscripcion} · RUT {validationParticipante?.rut} · {validationParticipante?.nombre} · POR VALIDAR
+            </DialogTitle>
+          </div>
+          <div className="px-6 py-4 space-y-4">
+            {/* Course info */}
+            <div className="flex items-center gap-4 border-b pb-4">
+              <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-muted/50 flex items-center justify-center">
+                <FileText className="h-5 w-5 text-muted-foreground" />
+              </div>
+              <div className="flex-1 grid grid-cols-5 gap-3 text-xs">
+                <div><p className="text-muted-foreground font-medium">Curso</p><p className="text-foreground">{precontrato.curso}</p></div>
+                <div><p className="text-muted-foreground font-medium">Sencenet</p><p className="text-foreground">{precontrato.sencenet}</p></div>
+                <div><p className="text-muted-foreground font-medium">Código Sence</p><p className="text-foreground">{precontrato.codigoSence}</p></div>
+                <div><p className="text-muted-foreground font-medium">Inicio y término</p><p className="text-foreground">{precontrato.inicioTermino}</p></div>
+                <div><p className="text-muted-foreground font-medium">Participantes activos</p><p className="text-foreground">{participantesState.length}</p></div>
+              </div>
+            </div>
+
+            {/* Document preview placeholder */}
+            <div className="bg-muted/20 border rounded-lg h-64 flex items-center justify-center">
+              <div className="text-center space-y-2">
+                <FileText className="h-12 w-12 text-muted-foreground mx-auto" />
+                <p className="text-sm text-muted-foreground">Vista previa del documento cargado</p>
+              </div>
+            </div>
+          </div>
+          {/* Action buttons */}
+          <div className="flex items-center justify-center gap-4 px-6 py-4 border-t">
+            <Button
+              variant="outline"
+              size="sm"
+              className="border-red-500 text-red-600 hover:bg-red-50"
+              onClick={() => validationTarget !== null && handleSolicitarCorreccion(validationTarget)}
+            >
+              <Mail className="h-3.5 w-3.5 mr-1" />
+              SOLICITAR CORRECCIÓN
+            </Button>
+            <Button
+              size="sm"
+              className="bg-green-600 hover:bg-green-700 text-white"
+              onClick={handleValidarDocumento}
+            >
+              <CheckCircle className="h-3.5 w-3.5 mr-1" />
+              VALIDAR DOCUMENTO
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleReemplazarDocumento}
+            >
+              <RefreshCw className="h-3.5 w-3.5 mr-1" />
+              REEMPLAZAR DOCUMENTO
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Correction Email Modal ── */}
+      <Dialog open={correctionModalOpen} onOpenChange={setCorrectionModalOpen}>
+        <DialogContent className="max-w-lg p-0 overflow-hidden">
+          <div className="bg-teal-700 text-white px-6 py-4">
+            <DialogTitle className="text-white text-base font-semibold">
+              Solicitar corrección · RUT {correctionParticipante?.rut} · {correctionParticipante?.nombre} · POR VALIDAR
+            </DialogTitle>
+          </div>
+          <div className="px-6 py-5 space-y-4">
+            <div className="flex items-center gap-4 text-sm">
+              <span className="text-muted-foreground font-medium w-12">Para</span>
+              <Input value={correctionEmail} onChange={(e) => setCorrectionEmail(e.target.value)} className="flex-1" />
+            </div>
+            <div className="flex items-center gap-4 text-sm">
+              <span className="text-muted-foreground font-medium w-12">Asunto</span>
+              <div className="flex items-center gap-2">
+                <span className="inline-block w-3 h-3 rounded-full bg-teal-600" />
+                <span>Solicitar corrección</span>
+              </div>
+            </div>
+            <div className="space-y-1">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground font-medium">Observaciones del documento</span>
+                <span className="text-xs text-muted-foreground">{correctionObservaciones.length}/1500</span>
+              </div>
+              <Textarea
+                value={correctionObservaciones}
+                onChange={(e) => setCorrectionObservaciones(e.target.value.slice(0, 1500))}
+                placeholder="Escriba las observaciones..."
+                className="min-h-[150px]"
+              />
+            </div>
+          </div>
+          <div className="flex items-center justify-end gap-3 px-6 py-4 border-t">
+            <button className="text-sm font-medium text-foreground hover:underline" onClick={() => setCorrectionModalOpen(false)}>CANCELAR</button>
+            <Button
+              size="sm"
+              className="bg-teal-700 hover:bg-teal-800 text-white"
+              onClick={handleEnviarCorreccion}
+            >
+              ENVIAR
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
