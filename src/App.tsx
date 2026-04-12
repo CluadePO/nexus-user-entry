@@ -21,6 +21,7 @@ import CursosResumen from "./pages/CursosResumen";
 import AdminUsuarios from "./pages/AdminUsuarios";
 import AdminCarterasComerciales from "./pages/AdminCarterasComerciales";
 import CentroAyuda from "./pages/CentroAyuda";
+import ComunicacionSence from "./pages/ComunicacionSence";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -53,6 +54,7 @@ const App = () => (
                 <Route path="/cursos/inscripcion" element={<Inscripcion />} />
                 {/* Cursos y Servicios routes */}
                 <Route path="/cursos/resumen" element={<CursosResumen />} />
+                <Route path="/cursos/sence" element={<ComunicacionSence />} />
                 <Route path="/cursos/*" element={<PlaceholderPage title="Cursos y Servicios" />} />
                 <Route path="/reportes" element={<PlaceholderPage title="Reportes" />} />
                 <Route path="/data360" element={<PlaceholderPage title="Data 360" />} />
