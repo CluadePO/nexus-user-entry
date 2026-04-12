@@ -14,6 +14,7 @@ import { toast } from 'sonner';
 import { Search, X, ChevronUp, ChevronDown, Trash2, Copy, Upload, Download, Eye, LogOut, ArrowLeft, ArrowRight, Save, Plus, CheckCircle, Info, AlertTriangle } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import dayjs from 'dayjs';
+import jsPDF from 'jspdf';
 
 // ─── Mock Data ───────────────────────────────────────────────────
 const mockClients = [
