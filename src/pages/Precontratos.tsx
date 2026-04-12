@@ -431,7 +431,7 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
                     <td className="p-2.5 text-center">
                       {getStatusBadge(
                         p.firmaParticipante,
-                        (p.firmaParticipante === 'FALTANTE' || p.firmaParticipante === 'POR VALIDAR')
+                        (p.firmaParticipante === 'FALTANTE' || p.firmaParticipante === 'POR VALIDAR' || p.firmaParticipante === 'VALIDADO')
                           ? () => handleFirmaParticipanteClick(globalIdx, p.firmaParticipante)
                           : undefined
                       )}
