@@ -241,62 +241,231 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
     }
   };
   const handleDescargarLegajo = () => {
-    const secciones = participantesState.map(p => {
-      return [
-        `=== PRECONTRATO ===`,
-        `Participante: ${p.nombre}`,
-        `RUT: ${p.rut}`,
-        `Curso: ${precontrato.curso}`,
-        `Sencenet: ${precontrato.sencenet}`,
-        `Empresa: ${precontrato.empresaNombre} - RUT: ${precontrato.empresaRut}`,
-        `OTEC: ${precontrato.otecNombre} - RUT: ${precontrato.otecRut}`,
-        `Período: ${precontrato.inicioTermino}`,
-        ``,
-        `--- Cédula de Identidad ---`,
-        `Documento de identidad de ${p.nombre} - RUT: ${p.rut}`,
-        ``,
-        `--- Registro Social de Hogares ---`,
-        `Registro social de hogares de ${p.nombre}`,
-        ``,
-        `--- Autorización del Tutor ---`,
-        `Autorización del tutor para ${p.nombre}`,
-        ``,
-        `--- Cédula de Identidad del Tutor ---`,
-        `Documento de identidad del tutor de ${p.nombre}`,
-        ``,
-        `${'='.repeat(60)}`,
-        ``
-      ].join('\n');
+    const doc = new jsPDF('p', 'mm', 'a4');
+    const pageWidth = 210;
+    const margin = 20;
+    const contentWidth = pageWidth - margin * 2;
+    let y = 0;
+
+    const addNewPage = () => { doc.addPage(); y = margin; };
+    const checkPage = (needed: number) => { if (y + needed > 280) addNewPage(); };
+
+    // --- Cover page ---
+    y = 60;
+    doc.setFontSize(22);
+    doc.setFont('helvetica', 'bold');
+    doc.text('LEGAJO DE PRECONTRATO', pageWidth / 2, y, { align: 'center' });
+    y += 15;
+
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Curso: ${precontrato.curso}`, pageWidth / 2, y, { align: 'center' });
+    y += 8;
+    doc.text(`Sencenet: ${precontrato.sencenet}`, pageWidth / 2, y, { align: 'center' });
+    y += 8;
+    doc.text(`Empresa: ${precontrato.empresaNombre}`, pageWidth / 2, y, { align: 'center' });
+    y += 8;
+    doc.text(`OTEC: ${precontrato.otecNombre}`, pageWidth / 2, y, { align: 'center' });
+    y += 8;
+    doc.text(`Periodo: ${precontrato.inicioTermino}`, pageWidth / 2, y, { align: 'center' });
+    y += 15;
+
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`Total participantes: ${participantesState.length}`, pageWidth / 2, y, { align: 'center' });
+    y += 20;
+
+    // Order info
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    const orderItems = [
+      'Orden del legajo por participante:',
+      '1. Precontrato',
+      '2. Cedula de Identidad',
+      '3. Registro Social de Hogares',
+      '4. Autorizacion del Tutor',
+      '5. Cedula de Identidad del Tutor',
+    ];
+    orderItems.forEach(item => {
+      doc.text(item, pageWidth / 2, y, { align: 'center' });
+      y += 6;
     });
 
-    const contenido = [
-      `LEGAJO DE PRECONTRATO`,
-      `Curso: ${precontrato.curso}`,
-      `Sencenet: ${precontrato.sencenet}`,
-      `Código Sence: ${precontrato.codigoSence}`,
-      `Empresa: ${precontrato.empresaNombre}`,
-      `Total participantes: ${participantesState.length}`,
-      ``,
-      `Orden del legajo por participante:`,
-      `1. Precontrato`,
-      `2. Cédula de Identidad`,
-      `3. Registro Social de Hogares`,
-      `4. Autorización del Tutor`,
-      `5. Cédula de Identidad del Tutor`,
-      ``,
-      `${'='.repeat(60)}`,
-      ``,
-      ...secciones
-    ].join('\n');
+    // --- Per participant ---
+    participantesState.forEach((p, idx) => {
+      // === 1. PRECONTRATO ===
+      addNewPage();
+      doc.setFillColor(0, 128, 128);
+      doc.rect(0, 0, pageWidth, 12, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`Participante ${idx + 1} de ${participantesState.length} - ${p.nombre} - RUT: ${p.rut}`, pageWidth / 2, 8, { align: 'center' });
+      doc.setTextColor(0, 0, 0);
+      y = 25;
+
+      doc.setFontSize(16);
+      doc.setFont('helvetica', 'bold');
+      doc.text('CONTRATO DE CAPACITACION', pageWidth / 2, y, { align: 'center' });
+      y += 12;
+
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      const contractText = `En ANTOFAGASTA a 2 de Septiembre del 2025, entre la Empresa ${precontrato.empresaNombre.toUpperCase()}, R.U.T. No${precontrato.empresaRut}, representada por don ${precontrato.repLegalNombre}, ambos domiciliados en la ciudad de Antofagasta, en adelante la empresa, y Don(a) ${p.nombre.toUpperCase()}, Cedula Nacional de Identidad No ${p.rut}, en adelante el capacitado, se ha convenido el siguiente Contrato de Capacitacion.`;
+      const lines = doc.splitTextToSize(contractText, contentWidth);
+      doc.text(lines, margin, y);
+      y += lines.length * 5 + 10;
+
+      // Course table
+      checkPage(30);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(8);
+      const tableHeaders = ['COD. SENCE', 'NOMBRE CURSO', 'OTEC', 'DURACION', 'FECHA INICIO/TERMINO'];
+      const colWidths = [30, 40, 40, 25, 35];
+      let tx = margin;
+      doc.setFillColor(230, 230, 230);
+      doc.rect(margin, y - 3, contentWidth, 8, 'F');
+      tableHeaders.forEach((h, i) => {
+        doc.text(h, tx + 1, y + 2);
+        tx += colWidths[i];
+      });
+      y += 10;
+
+      doc.setFont('helvetica', 'normal');
+      tx = margin;
+      const tableData = [precontrato.codigoSence, precontrato.curso.substring(0, 25), precontrato.otecNombre.substring(0, 25), '200 hrs', precontrato.inicioTermino];
+      tableData.forEach((d, i) => {
+        doc.text(d, tx + 1, y + 2);
+        tx += colWidths[i];
+      });
+      doc.rect(margin, y - 3, contentWidth, 8);
+      y += 15;
+
+      // Numbered clauses
+      checkPage(40);
+      doc.setFontSize(9);
+      const clauses = [
+        '1. El Capacitado se obliga a asistir a los siguientes cursos, sin perjuicio de ser modificado(s) el lugar y horario.',
+        '2. El presente contrato tendra una duracion de acuerdo al periodo indicado en la tabla anterior.',
+        '3. La empresa se obliga a pagar al capacitado la suma correspondiente al costo del curso.',
+        '4. El capacitado declara conocer y aceptar las condiciones del presente contrato de capacitacion.',
+      ];
+      clauses.forEach(c => {
+        checkPage(10);
+        const cl = doc.splitTextToSize(c, contentWidth);
+        doc.text(cl, margin, y);
+        y += cl.length * 4.5 + 3;
+      });
+
+      y += 15;
+      checkPage(25);
+      doc.line(margin, y, margin + 60, y);
+      doc.line(pageWidth - margin - 60, y, pageWidth - margin, y);
+      y += 5;
+      doc.setFontSize(8);
+      doc.text('Firma Empresa', margin + 15, y);
+      doc.text('Firma Participante', pageWidth - margin - 50, y);
+
+      // === 2. CEDULA DE IDENTIDAD ===
+      addNewPage();
+      doc.setFillColor(0, 128, 128);
+      doc.rect(0, 0, pageWidth, 12, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`Cedula de Identidad - ${p.nombre}`, pageWidth / 2, 8, { align: 'center' });
+      doc.setTextColor(0, 0, 0);
+      y = 30;
+
+      doc.setFontSize(14);
+      doc.text('CEDULA DE IDENTIDAD', pageWidth / 2, y, { align: 'center' });
+      y += 15;
+      doc.setDrawColor(180, 180, 180);
+      doc.setFillColor(245, 245, 245);
+      doc.roundedRect(margin + 10, y, contentWidth - 20, 60, 3, 3, 'FD');
+      y += 15;
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Nombre: ${p.nombre}`, margin + 20, y); y += 8;
+      doc.text(`RUT: ${p.rut}`, margin + 20, y); y += 8;
+      doc.text(`Nacionalidad: Chilena`, margin + 20, y); y += 8;
+      doc.text(`[Imagen del documento de identidad]`, margin + 20, y);
+
+      // === 3. REGISTRO SOCIAL DE HOGARES ===
+      addNewPage();
+      doc.setFillColor(0, 128, 128);
+      doc.rect(0, 0, pageWidth, 12, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`Registro Social de Hogares - ${p.nombre}`, pageWidth / 2, 8, { align: 'center' });
+      doc.setTextColor(0, 0, 0);
+      y = 30;
+
+      doc.setFontSize(14);
+      doc.text('REGISTRO SOCIAL DE HOGARES', pageWidth / 2, y, { align: 'center' });
+      y += 15;
+      doc.setFillColor(245, 245, 245);
+      doc.roundedRect(margin + 10, y, contentWidth - 20, 50, 3, 3, 'FD');
+      y += 15;
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Participante: ${p.nombre}`, margin + 20, y); y += 8;
+      doc.text(`RUT: ${p.rut}`, margin + 20, y); y += 8;
+      doc.text(`[Documento de Registro Social de Hogares]`, margin + 20, y);
+
+      // === 4. AUTORIZACION DEL TUTOR ===
+      addNewPage();
+      doc.setFillColor(0, 128, 128);
+      doc.rect(0, 0, pageWidth, 12, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`Autorizacion del Tutor - ${p.nombre}`, pageWidth / 2, 8, { align: 'center' });
+      doc.setTextColor(0, 0, 0);
+      y = 30;
+
+      doc.setFontSize(14);
+      doc.text('AUTORIZACION DEL TUTOR', pageWidth / 2, y, { align: 'center' });
+      y += 15;
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      const authText = `Yo, en calidad de tutor/a legal del participante ${p.nombre}, RUT ${p.rut}, autorizo su participacion en el curso "${precontrato.curso}" impartido por ${precontrato.otecNombre}, en el periodo ${precontrato.inicioTermino}.`;
+      const authLines = doc.splitTextToSize(authText, contentWidth);
+      doc.text(authLines, margin, y);
+      y += authLines.length * 5 + 20;
+
+      checkPage(25);
+      doc.line(margin, y, margin + 60, y);
+      y += 5;
+      doc.setFontSize(8);
+      doc.text('Firma del Tutor', margin + 15, y);
+
+      // === 5. CEDULA DE IDENTIDAD DEL TUTOR ===
+      addNewPage();
+      doc.setFillColor(0, 128, 128);
+      doc.rect(0, 0, pageWidth, 12, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`Cedula de Identidad del Tutor - ${p.nombre}`, pageWidth / 2, 8, { align: 'center' });
+      doc.setTextColor(0, 0, 0);
+      y = 30;
+
+      doc.setFontSize(14);
+      doc.text('CEDULA DE IDENTIDAD DEL TUTOR', pageWidth / 2, y, { align: 'center' });
+      y += 15;
+      doc.setFillColor(245, 245, 245);
+      doc.roundedRect(margin + 10, y, contentWidth - 20, 50, 3, 3, 'FD');
+      y += 15;
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Tutor del participante: ${p.nombre}`, margin + 20, y); y += 8;
+      doc.text(`[Imagen del documento de identidad del tutor]`, margin + 20, y);
+    });
 
     const fileName = `${precontrato.sencenet}_Legajo_Precontrato_${precontrato.curso.replace(/\s+/g, '_').substring(0, 50)}.pdf`;
-    const blob = new Blob([contenido], { type: 'application/pdf' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = fileName;
-    a.click();
-    URL.revokeObjectURL(url);
+    doc.save(fileName);
     toast.success(`Legajo descargado: ${fileName}`);
   };
 
