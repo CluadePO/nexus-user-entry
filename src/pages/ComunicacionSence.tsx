@@ -184,7 +184,7 @@ const ComunicacionSence: React.FC = () => {
                 <td className="p-3">{curso.tipoContrato}</td>
                 <td className="p-3">
                   {isProximoAVencer(curso.vencimientoSence) ? (
-                    <Badge variant="destructive" className="gap-1 text-xs">
+                    <Badge variant="destructive" className="gap-1 text-xs whitespace-nowrap">
                       <AlertCircle className="w-3 h-3" />
                       Por vencer
                     </Badge>
