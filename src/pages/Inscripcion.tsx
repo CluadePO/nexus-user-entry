@@ -1007,7 +1007,7 @@ const Inscripcion: React.FC = () => {
                   )}
                 </>
               )}
-            </>
+            </div>
           )}
         </>
       )}
