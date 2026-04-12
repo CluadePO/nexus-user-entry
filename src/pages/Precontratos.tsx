@@ -644,9 +644,12 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
               <>
                 {/* Header */}
                 <div className="bg-teal-700 text-white px-6 py-4 flex items-center justify-between">
-                  <p className="text-sm font-medium">
-                    Precontrato · Nº Inscripción {precontrato.nroInscripcion} · RUT {p.rut} · {p.nombre} · VALIDADO
-                  </p>
+                  <div className="flex items-center gap-3">
+                    <p className="text-sm font-medium">
+                      Precontrato · Nº Inscripción {precontrato.nroInscripcion} · RUT {p.rut} · {p.nombre} · VALIDADO
+                    </p>
+                    <span className="bg-blue-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">C1PPPC3</span>
+                  </div>
                 </div>
 
                 {/* Course info bar */}
