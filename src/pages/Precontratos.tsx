@@ -1178,6 +1178,12 @@ const Precontratos: React.FC = () => {
               >
                 CERRADOS
               </button>
+              <button
+                onClick={() => setSubTab('proximos')}
+                className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${subTab === 'proximos' ? 'border-orange-500 text-orange-600' : 'border-transparent text-muted-foreground hover:text-foreground'}`}
+              >
+                PRÓXIMOS A VENCER
+              </button>
             </div>
             <Button variant="default" size="sm" className="bg-teal-700 hover:bg-teal-800 text-white">
               <Download className="h-4 w-4 mr-1" />
