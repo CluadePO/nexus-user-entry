@@ -707,12 +707,12 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
                 const globalIdx = participantesState.findIndex(pp => pp.rut === p.rut);
                 return (
                   <tr key={p.rut} className={`border-b ${globalIdx % 2 === 0 ? '' : 'bg-muted/10'} hover:bg-muted/20`}>
-                    <td className="p-2.5 text-primary font-medium">{p.nombre}</td>
-                    <td className="p-2.5">{p.rut}</td>
-                    <td className="p-2.5 text-muted-foreground">{p.correo}</td>
-                    <td className="p-2.5">{p.telefono}</td>
-                    <td className="p-2.5 text-center">{getStatusBadge(p.firmaEmpresa)}</td>
-                    <td className="p-2.5 text-center">
+                    <td className="p-2 text-primary font-medium truncate">{p.nombre}</td>
+                    <td className="p-2 truncate">{p.rut}</td>
+                    <td className="p-2 text-muted-foreground truncate">{p.correo}</td>
+                    <td className="p-2">{p.telefono}</td>
+                    <td className="p-2 text-center">{getStatusBadge(p.firmaEmpresa)}</td>
+                    <td className="p-2 text-center">
                       {getStatusBadge(
                         p.firmaParticipante,
                         (p.firmaParticipante === 'FALTANTE' || p.firmaParticipante === 'POR VALIDAR' || p.firmaParticipante === 'VALIDADO')
@@ -720,13 +720,13 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
                           : undefined
                       )}
                     </td>
-                    <td className="p-2.5 text-center">{getStatusBadge(p.autorizMenor)}</td>
-                    <td className="p-2.5 text-center">{getStatusBadge(p.vulnerabilidad)}</td>
-                    <td className="p-2.5 text-muted-foreground">{p.ultimoRecordatorio}</td>
-                    <td className="p-2.5 text-center">
+                    <td className="p-2 text-center">{getStatusBadge(p.autorizMenor)}</td>
+                    <td className="p-2 text-center">{getStatusBadge(p.vulnerabilidad)}</td>
+                    <td className="p-2 text-muted-foreground truncate">{p.ultimoRecordatorio}</td>
+                    <td className="p-2 text-center">
                       <div className="flex items-center gap-1 justify-center">
-                        <button className="text-muted-foreground hover:text-foreground"><Mail className="h-3.5 w-3.5" /></button>
-                        <button className="text-muted-foreground hover:text-foreground"><FileDown className="h-3.5 w-3.5" /></button>
+                        <button className="text-muted-foreground hover:text-foreground"><Mail className="h-3 w-3" /></button>
+                        <button className="text-muted-foreground hover:text-foreground"><FileDown className="h-3 w-3" /></button>
                       </div>
                     </td>
                   </tr>
