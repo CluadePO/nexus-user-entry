@@ -714,22 +714,28 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
                 </div>
 
                 {/* Footer with download button */}
-                <div className="flex items-center justify-end gap-3 px-6 py-4 border-t">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setViewDocModalOpen(false)}
-                  >
-                    CERRAR
-                  </Button>
-                  <Button
-                    size="sm"
-                    className="bg-teal-700 hover:bg-teal-800 text-white"
-                    onClick={handleDownloadPrecontrato}
-                  >
-                    <Download className="h-4 w-4 mr-1" />
-                    DESCARGAR
-                  </Button>
+                <div className="flex items-center justify-between px-6 py-4 border-t">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <AlertCircle className="h-4 w-4 text-blue-500 flex-shrink-0" />
+                    <span>El archivo se descarga con el nombre que indica el Sence y el nombre del participante</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setViewDocModalOpen(false)}
+                    >
+                      CERRAR
+                    </Button>
+                    <Button
+                      size="sm"
+                      className="bg-teal-700 hover:bg-teal-800 text-white"
+                      onClick={handleDownloadPrecontrato}
+                    >
+                      <Download className="h-4 w-4 mr-1" />
+                      DESCARGAR
+                    </Button>
+                  </div>
                 </div>
               </>
             );
