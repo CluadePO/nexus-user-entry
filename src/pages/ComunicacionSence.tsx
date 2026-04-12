@@ -171,7 +171,17 @@ const ComunicacionSence: React.FC = () => {
                     onCheckedChange={(checked) => handleSelectRow(curso.sc, !!checked)}
                   />
                 </td>
-                <td className="p-3 font-medium">{curso.sc}</td>
+                <td className="p-3 font-medium">
+                  <div className="flex items-center gap-2">
+                    {curso.sc}
+                    {isProximoAVencer(curso.inicioCurso) && (
+                      <span className="inline-flex items-center gap-1 bg-amber-100 text-amber-800 text-[10px] font-semibold px-2 py-0.5 rounded-full border border-amber-300">
+                        <AlertTriangle className="w-3 h-3" />
+                        Próximo a vencer
+                      </span>
+                    )}
+                  </div>
+                </td>
                 <td className="p-3 text-muted-foreground">{curso.cliente}</td>
                 <td className="p-3 text-center">{curso.nroPart}</td>
                 <td className="p-3">{curso.mtFranquicia}</td>
