@@ -137,49 +137,47 @@ const ComunicacionSence: React.FC = () => {
       </div>
 
       {/* Table */}
-      <div className="border rounded-lg overflow-x-auto">
-        <table className="w-full text-sm">
+      <div className="border rounded-lg overflow-hidden">
+        <table className="w-full text-xs table-fixed">
           <thead>
             <tr className="border-b bg-muted/30">
-              <th className="p-3 w-10">
+              <th className="p-2 w-8">
                 <Checkbox
                   checked={selectAll}
                   onCheckedChange={(checked) => handleSelectAll(!!checked)}
                 />
               </th>
-              <th className="p-3 text-left font-medium text-muted-foreground whitespace-nowrap">
+              <th className="p-2 text-left font-medium text-muted-foreground w-[7%]">
                 S.C <span className="text-xs">▾</span>
               </th>
-              <th className="p-3 text-left font-medium text-muted-foreground">
+              <th className="p-2 text-left font-medium text-muted-foreground w-[18%]">
                 Cliente <span className="text-xs">▾</span>
               </th>
-              <th className="p-3 text-left font-medium text-muted-foreground whitespace-nowrap">
+              <th className="p-2 text-center font-medium text-muted-foreground w-[5%]">
                 Nro. Part. <span className="text-xs">▾</span>
               </th>
-              <th className="p-3 text-left font-medium text-muted-foreground whitespace-nowrap">
+              <th className="p-2 text-left font-medium text-muted-foreground w-[10%]">
                 M.T. Franquicia <span className="text-xs">▾</span>
               </th>
-              <th className="p-3 text-left font-medium text-muted-foreground whitespace-nowrap">
+              <th className="p-2 text-left font-medium text-muted-foreground w-[9%]">
                 Inicio Curso <span className="text-xs">▾</span>
               </th>
-              <th className="p-3 text-left font-medium text-muted-foreground whitespace-nowrap">
-                Modalidad del Curso <span className="text-xs">▾</span>
+              <th className="p-2 text-left font-medium text-muted-foreground w-[10%]">
+                Modalidad <span className="text-xs">▾</span>
               </th>
-              <th className="p-3 text-left font-medium text-muted-foreground whitespace-nowrap">
-                Tipo de Contrato <span className="text-xs">▾</span>
+              <th className="p-2 text-left font-medium text-muted-foreground w-[10%]">
+                Tipo Contrato <span className="text-xs">▾</span>
               </th>
-              <th className="p-3 text-left font-medium text-muted-foreground whitespace-nowrap">
-                <span className="inline-flex items-center gap-2">
+              <th className="p-2 text-left font-medium text-muted-foreground w-[12%]">
+                <span className="inline-flex items-center gap-1">
                   <span>Vigencia <span className="text-xs">▾</span></span>
-                  <span className="inline-flex items-center rounded-full bg-blue-600 px-1.5 py-0.5 text-[9px] font-bold leading-none text-white shadow-sm">
-                    C1CCOM4
-                  </span>
+                  <span className="inline-flex items-center rounded-full bg-blue-600 px-1 py-0.5 text-[8px] font-bold leading-none text-white shadow-sm">C1CCOM4</span>
                 </span>
               </th>
-              <th className="p-3 text-center font-medium text-muted-foreground whitespace-nowrap">
-                <span className="inline-flex items-center gap-2">
+              <th className="p-2 text-center font-medium text-muted-foreground w-[12%]">
+                <span className="inline-flex items-center gap-1">
                   <span>No comunicar</span>
-                  <span className="inline-flex items-center rounded-full bg-blue-600 px-1.5 py-0.5 text-[9px] font-bold leading-none text-white shadow-sm">C1CCOM5</span>
+                  <span className="inline-flex items-center rounded-full bg-blue-600 px-1 py-0.5 text-[8px] font-bold leading-none text-white shadow-sm">C1CCOM5</span>
                 </span>
               </th>
             </tr>
@@ -189,23 +187,23 @@ const ComunicacionSence: React.FC = () => {
               const excluido = noComunicar.includes(curso.sc);
               return (
               <tr key={curso.sc} className={`border-b ${excluido ? 'bg-red-50/50 opacity-60' : idx % 2 === 0 ? 'hover:bg-muted/20' : 'bg-muted/10 hover:bg-muted/20'}`}>
-                <td className="p-3">
+                <td className="p-2">
                   <Checkbox
                     checked={selectedRows.includes(curso.sc)}
                     onCheckedChange={(checked) => handleSelectRow(curso.sc, !!checked)}
                     disabled={excluido}
                   />
                 </td>
-                <td className="p-3 font-medium">{curso.sc}</td>
-                <td className="p-3 text-muted-foreground">{curso.cliente}</td>
-                <td className="p-3 text-center">{curso.nroPart}</td>
-                <td className="p-3">{curso.mtFranquicia}</td>
-                <td className="p-3">{curso.inicioCurso}</td>
-                <td className="p-3">{curso.modalidad}</td>
-                <td className="p-3">{curso.tipoContrato}</td>
-                <td className="p-3">
+                <td className="p-2 font-medium">{curso.sc}</td>
+                <td className="p-2 text-muted-foreground truncate">{curso.cliente}</td>
+                <td className="p-2 text-center">{curso.nroPart}</td>
+                <td className="p-2">{curso.mtFranquicia}</td>
+                <td className="p-2">{curso.inicioCurso}</td>
+                <td className="p-2">{curso.modalidad}</td>
+                <td className="p-2">{curso.tipoContrato}</td>
+                <td className="p-2">
                   {isProximoAVencer(curso.vencimientoSence) ? (
-                    <Badge variant="destructive" className="gap-1 text-xs whitespace-nowrap">
+                    <Badge variant="destructive" className="gap-1 text-[10px] whitespace-nowrap px-2 py-0.5">
                       <AlertCircle className="w-3 h-3" />
                       Por vencer
                     </Badge>
@@ -213,7 +211,7 @@ const ComunicacionSence: React.FC = () => {
                     <span className="text-muted-foreground text-xs">Vigente</span>
                   )}
                 </td>
-                <td className="p-3 text-center">
+                <td className="p-2 text-center">
                   <Button
                     variant={excluido ? 'destructive' : 'outline'}
                     size="sm"
