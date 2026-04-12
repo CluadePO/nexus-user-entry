@@ -145,7 +145,6 @@ const ComunicacionSence: React.FC = () => {
         </TabsList>
 
         <TabsContent value="comunicacion" className="space-y-6 mt-4">
-      </h1>
 
       {/* Section 1: Upload */}
       <div className="space-y-3">
