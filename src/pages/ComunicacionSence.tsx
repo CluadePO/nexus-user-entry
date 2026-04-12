@@ -164,7 +164,7 @@ const ComunicacionSence: React.FC = () => {
               <th className="p-3 text-left font-medium text-muted-foreground whitespace-nowrap">
                 <span className="inline-flex items-center gap-2">
                   <span>Vigencia <span className="text-xs">▾</span></span>
-                  <span className="inline-flex items-center rounded-full bg-primary px-1.5 py-0.5 text-[9px] font-bold leading-none text-primary-foreground shadow-sm">
+                  <span className="inline-flex items-center rounded-full bg-blue-600 px-1.5 py-0.5 text-[9px] font-bold leading-none text-white shadow-sm">
                     C1CCOM4
                   </span>
                 </span>
