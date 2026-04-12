@@ -771,7 +771,7 @@ const Inscripcion: React.FC = () => {
       </div>
 
       {getModality().toLowerCase() === 'distancia' && participants.length > 20 && (
-        <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-4 flex items-start gap-3">
+        <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-4 flex items-start gap-3 relative">
           <AlertTriangle className="h-5 w-5 text-destructive mt-0.5 shrink-0" />
           <div>
             <p className="text-sm font-semibold text-destructive">Exceso de participantes para modalidad Distancia</p>
@@ -781,6 +781,7 @@ const Inscripcion: React.FC = () => {
               Por favor, adjunte una nueva plantilla con 20 o menos participantes para continuar.
             </p>
           </div>
+          <span className="absolute -top-2.5 right-2 text-[10px] font-bold bg-blue-600 text-white px-2 py-0.5 rounded-full shadow-sm" title="Mejora del sistema: C1CINS5">C1CINS5</span>
         </div>
       )}
 
