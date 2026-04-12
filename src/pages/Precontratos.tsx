@@ -1183,6 +1183,7 @@ const Precontratos: React.FC = () => {
                 className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${subTab === 'proximos' ? 'border-orange-500 text-orange-600' : 'border-transparent text-muted-foreground hover:text-foreground'}`}
               >
                 PRÓXIMOS A VENCER
+                <span className="bg-blue-500 text-white text-[8px] font-bold px-1 py-0.5 rounded-full ml-1">C1PPPC17</span>
               </button>
             </div>
             <Button variant="default" size="sm" className="bg-teal-700 hover:bg-teal-800 text-white">
