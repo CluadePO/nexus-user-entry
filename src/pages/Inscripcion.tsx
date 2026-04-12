@@ -890,7 +890,8 @@ const Inscripcion: React.FC = () => {
           </div>
 
           {contractType === 'Precontrato' && (
-            <>
+            <div className="relative">
+              <span className="absolute -top-2 right-0 bg-blue-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full shadow-sm z-10">C1PPPC11</span>
               <p className="text-muted-foreground">Selecciona el subtipo de Precontrato</p>
               <div className="grid grid-cols-2 gap-4 max-w-xs">
                 {(['Normal', 'Modular'] as const).map(sub => (
