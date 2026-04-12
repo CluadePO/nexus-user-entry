@@ -875,7 +875,7 @@ const Precontratos: React.FC = () => {
                 </thead>
                 <tbody>
                   {precontratosCerradosData.map((p, idx) => (
-                    <tr key={p.nroInscripcion} className={`border-b ${idx % 2 === 0 ? '' : 'bg-muted/10'} hover:bg-muted/20`}>
+                    <tr key={p.nroInscripcion} className={`border-b ${idx % 2 === 0 ? '' : 'bg-muted/10'} hover:bg-muted/20 cursor-pointer`} onClick={() => setSelectedCerrado(p)}>
                       <td className="p-2">{p.fechaCierre}</td>
                       <td className="p-2 text-center">{p.nroInscripcion}</td>
                       <td className="p-2 text-center">{p.sencenet}</td>
