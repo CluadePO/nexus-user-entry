@@ -774,7 +774,7 @@ const Inscripcion: React.FC = () => {
               <Button
                 variant="outline"
                 className="gap-2 border-destructive/50 text-destructive hover:bg-destructive/10"
-                onClick={() => setShowServiceError(true)}
+                onClick={() => { setShowServiceError(true); setRetrySuccess(false); }}
               >
                 <AlertTriangle className="h-4 w-4" /> Simulación
               </Button>
