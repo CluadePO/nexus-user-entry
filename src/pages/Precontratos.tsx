@@ -299,7 +299,7 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
     toast.success(`Legajo descargado: ${fileName}`);
   };
 
-
+  const handleFileUpload = (file: File) => {
     setUploadedFile(file);
   };
 
