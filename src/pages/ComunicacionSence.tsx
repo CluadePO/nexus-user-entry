@@ -162,7 +162,7 @@ const ComunicacionSence: React.FC = () => {
                 Tipo de Contrato <span className="text-xs">▾</span>
               </th>
               <th className="p-3 text-left font-medium text-muted-foreground whitespace-nowrap">
-                Sección <span className="text-xs">▾</span>
+                Vigencia <span className="text-xs">▾</span>
               </th>
             </tr>
           </thead>
@@ -186,7 +186,7 @@ const ComunicacionSence: React.FC = () => {
                   {isProximoAVencer(curso.vencimientoSence) ? (
                     <Badge variant="destructive" className="gap-1 text-xs">
                       <AlertCircle className="w-3 h-3" />
-                      Próximo a vencer
+                      Por vencer
                     </Badge>
                   ) : (
                     <span className="text-muted-foreground text-xs">Vigente</span>
