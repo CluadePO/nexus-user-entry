@@ -49,20 +49,8 @@ const ComunicacionSence: React.FC = () => {
     );
   };
 
-  const handleSelectModular = (sc: string, checked: boolean) => {
-    setSelectedModulares(prev =>
-      checked ? [...prev, sc] : prev.filter(s => s !== sc)
-    );
-  };
 
-  const handleSelectModulo = (modulo: string, checked: boolean) => {
-    const grupo = precontratosModulares.find(m => m.modulo === modulo);
-    if (!grupo) return;
-    const scs = grupo.cursos.map(c => c.sc);
-    setSelectedModulares(prev =>
-      checked ? [...new Set([...prev, ...scs])] : prev.filter(s => !scs.includes(s))
-    );
-  };
+
 
   const handleSelectAll = (checked: boolean) => {
     setSelectAll(checked);
