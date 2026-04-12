@@ -19,19 +19,19 @@ interface CursoSence {
 }
 
 const mockCursos: CursoSence[] = [
-  { sc: '2074555', cliente: 'SALMONES BLUMAR MAGALLANES SPA', nroPart: 1, mtFranquicia: '$250.250', inicioCurso: '26/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal' },
-  { sc: '2078017', cliente: 'DOMINION SPA', nroPart: 1, mtFranquicia: '$250.250', inicioCurso: '26/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal' },
-  { sc: '2078959', cliente: 'SECURITAS S.A', nroPart: 19, mtFranquicia: '$2.376.000', inicioCurso: '21/04/2026', modalidad: 'E-learning', tipoContrato: 'Normal' },
-  { sc: '2078960', cliente: 'SERVICIOS SECURITAS AUSTRAL LIMITADA', nroPart: 1, mtFranquicia: '$158.400', inicioCurso: '21/04/2026', modalidad: 'E-learning', tipoContrato: 'Normal' },
-  { sc: '2079922', cliente: 'ELECNOR CHILE S A', nroPart: 1, mtFranquicia: '$500.500', inicioCurso: '26/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal' },
-  { sc: '2085199', cliente: 'COOPERATIVA AGRICOLA PISQUERA ELQUI LTDA.', nroPart: 1, mtFranquicia: '$44.156', inicioCurso: '19/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal' },
-  { sc: '2086977', cliente: 'INSTITUTO NACIONAL DE CAPACITACION PROFESIONAL', nroPart: 2, mtFranquicia: '$664.500', inicioCurso: '19/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal' },
-  { sc: '2091162', cliente: 'SERVEO FACILITY MANAGEMENT S.A. AGENCIA EN CHILE', nroPart: 1, mtFranquicia: '$210.000', inicioCurso: '26/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal' },
-  { sc: '2092667', cliente: 'SACYR CHILE S.A.', nroPart: 1, mtFranquicia: '$500.500', inicioCurso: '26/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal' },
-  { sc: '2097498', cliente: 'AGRICOLA LOS QUILLAYES LIMITADA', nroPart: 1, mtFranquicia: '$275.000', inicioCurso: '12/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal' },
-  { sc: '2101685', cliente: 'SERVICIO TECNICO TECNOSUR LTDA.', nroPart: 1, mtFranquicia: '$274.750', inicioCurso: '19/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal' },
-  { sc: '2106283', cliente: 'INMOBILIARIA E INVERSIONES MALPO SPA', nroPart: 1, mtFranquicia: '$301.000', inicioCurso: '11/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal' },
-  { sc: '2107893', cliente: 'CORPORACION EDUCACIONAL KINGSTON COLLEGE', nroPart: 2, mtFranquicia: '$20.000', inicioCurso: '20/04/2026', modalidad: 'Presencial', tipoContrato: 'Precontrato' },
+  { sc: '2074555', cliente: 'SALMONES BLUMAR MAGALLANES SPA', nroPart: 1, mtFranquicia: '$250.250', inicioCurso: '26/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238015432', vencimientoSence: '2026-04-20' },
+  { sc: '2078017', cliente: 'DOMINION SPA', nroPart: 1, mtFranquicia: '$250.250', inicioCurso: '26/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238017891', vencimientoSence: '2026-06-15' },
+  { sc: '2078959', cliente: 'SECURITAS S.A', nroPart: 19, mtFranquicia: '$2.376.000', inicioCurso: '21/04/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238019200', vencimientoSence: '2026-04-18' },
+  { sc: '2078960', cliente: 'SERVICIOS SECURITAS AUSTRAL LIMITADA', nroPart: 1, mtFranquicia: '$158.400', inicioCurso: '21/04/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238019201', vencimientoSence: '2026-07-30' },
+  { sc: '2079922', cliente: 'ELECNOR CHILE S A', nroPart: 1, mtFranquicia: '$500.500', inicioCurso: '26/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238020155', vencimientoSence: '2026-04-22' },
+  { sc: '2085199', cliente: 'COOPERATIVA AGRICOLA PISQUERA ELQUI LTDA.', nroPart: 1, mtFranquicia: '$44.156', inicioCurso: '19/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238025400', vencimientoSence: '2026-08-10' },
+  { sc: '2086977', cliente: 'INSTITUTO NACIONAL DE CAPACITACION PROFESIONAL', nroPart: 2, mtFranquicia: '$664.500', inicioCurso: '19/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238026800', vencimientoSence: '2026-04-19' },
+  { sc: '2091162', cliente: 'SERVEO FACILITY MANAGEMENT S.A. AGENCIA EN CHILE', nroPart: 1, mtFranquicia: '$210.000', inicioCurso: '26/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238031000', vencimientoSence: '2026-09-01' },
+  { sc: '2092667', cliente: 'SACYR CHILE S.A.', nroPart: 1, mtFranquicia: '$500.500', inicioCurso: '26/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238032500', vencimientoSence: '2026-05-20' },
+  { sc: '2097498', cliente: 'AGRICOLA LOS QUILLAYES LIMITADA', nroPart: 1, mtFranquicia: '$275.000', inicioCurso: '12/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238037000', vencimientoSence: '2026-04-21' },
+  { sc: '2101685', cliente: 'SERVICIO TECNICO TECNOSUR LTDA.', nroPart: 1, mtFranquicia: '$274.750', inicioCurso: '19/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238041200', vencimientoSence: '2026-10-15' },
+  { sc: '2106283', cliente: 'INMOBILIARIA E INVERSIONES MALPO SPA', nroPart: 1, mtFranquicia: '$301.000', inicioCurso: '11/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238045800', vencimientoSence: '2026-04-17' },
+  { sc: '2107893', cliente: 'CORPORACION EDUCACIONAL KINGSTON COLLEGE', nroPart: 2, mtFranquicia: '$20.000', inicioCurso: '20/04/2026', modalidad: 'Presencial', tipoContrato: 'Precontrato', codigoSence: '1238047300', vencimientoSence: '2026-12-01' },
 ];
 
 const ComunicacionSence: React.FC = () => {
