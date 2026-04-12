@@ -626,6 +626,7 @@ const Precontratos: React.FC = () => {
   const [criticidadMedia, setCriticidadMedia] = useState(true);
   const [criticidadBaja, setCriticidadBaja] = useState(true);
   const [selectedPrecontrato, setSelectedPrecontrato] = useState<PrecontratoNormal | null>(null);
+  const [selectedCerrado, setSelectedCerrado] = useState<PrecontratoCerrado | null>(null);
 
   const handleSelectModular = (sc: string, checked: boolean) => {
     setSelectedModulares(prev =>
