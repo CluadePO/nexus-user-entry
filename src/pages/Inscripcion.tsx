@@ -573,11 +573,12 @@ const Inscripcion: React.FC = () => {
           </Collapsible>
 
           {getModality().toLowerCase() === 'distancia' && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-start gap-3">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-start gap-3 relative group">
               <Info className="h-5 w-5 text-blue-600 mt-0.5 shrink-0" />
               <p className="text-sm text-blue-800">
                 El curso es de modalidad distancia, por tanto no debe superar los <strong>20 participantes</strong>.
               </p>
+              <span className="absolute top-1 right-2 text-[10px] text-blue-400 opacity-40 group-hover:opacity-100 transition-opacity cursor-default" title="Mejora del sistema: C1CINS5">C1CINS5</span>
             </div>
           )}
 
