@@ -255,6 +255,24 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
       toast.success(`Documento descargado: ${fileName}`);
     }
   };
+
+  const handleSubirLegajo = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    // Mark all participants as VALIDADO
+    setParticipantesState(prev =>
+      prev.map(p => ({
+        ...p,
+        firmaEmpresa: 'FIRMADO' as const,
+        firmaParticipante: 'VALIDADO' as const,
+        vulnerabilidad: p.vulnerabilidad === 'FALTANTE' ? 'SIN VULNERABILIDAD' as const : p.vulnerabilidad,
+      }))
+    );
+    toast.success(`Legajo "${file.name}" subido correctamente. Todos los participantes han sido validados.`);
+    // Reset input
+    if (legajoInputRef.current) legajoInputRef.current.value = '';
+  };
+
   const handleDescargarLegajo = () => {
     const doc = new jsPDF('p', 'mm', 'a4');
     const pageWidth = 210;
