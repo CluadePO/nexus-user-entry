@@ -856,7 +856,7 @@ const Inscripcion: React.FC = () => {
             {['Precontrato', 'Normal', 'Postcontrato'].map(type => (
               <button
                 key={type}
-                onClick={() => setContractType(type)}
+                onClick={() => { setContractType(type); setPrecontratoSubtype(null); setModularAssociate(null); setSelectedModularId(null); setGeneratedModularId(null); }}
                 className={`py-3 px-4 rounded-full text-sm font-medium transition-colors ${
                   contractType === type
                     ? 'bg-primary text-primary-foreground border-2 border-primary'
@@ -867,6 +867,126 @@ const Inscripcion: React.FC = () => {
               </button>
             ))}
           </div>
+
+          {contractType === 'Precontrato' && (
+            <>
+              <p className="text-muted-foreground">Selecciona el subtipo de Precontrato</p>
+              <div className="grid grid-cols-2 gap-4 max-w-xs">
+                {(['Normal', 'Modular'] as const).map(sub => (
+                  <button
+                    key={sub}
+                    onClick={() => { setPrecontratoSubtype(sub); setModularAssociate(null); setSelectedModularId(null); if (sub === 'Normal') setGeneratedModularId(null); }}
+                    className={`py-3 px-6 rounded-full text-sm font-medium transition-colors ${
+                      precontratoSubtype === sub
+                        ? 'bg-amber-200 text-amber-900 border-2 border-amber-400'
+                        : 'bg-muted text-muted-foreground border border-muted-foreground/30 hover:bg-muted-foreground/10'
+                    }`}
+                  >
+                    {sub}
+                  </button>
+                ))}
+              </div>
+
+              {precontratoSubtype === 'Modular' && (
+                <>
+                  <p className="text-muted-foreground">¿Deseas asociar este precontrato modular a un módulo existente?</p>
+                  <div className="grid grid-cols-2 gap-4 max-w-xs">
+                    <button
+                      onClick={() => { setModularAssociate(true); setGeneratedModularId(null); setSelectedModularId(null); }}
+                      className={`py-3 px-6 rounded-full text-sm font-medium transition-colors ${
+                        modularAssociate === true
+                          ? 'bg-primary text-primary-foreground border-2 border-primary'
+                          : 'bg-muted text-muted-foreground border border-muted-foreground/30 hover:bg-muted-foreground/10'
+                      }`}
+                    >
+                      Sí
+                    </button>
+                    <button
+                      onClick={() => {
+                        setModularAssociate(false);
+                        setSelectedModularId(null);
+                        if (!generatedModularId) setGeneratedModularId(generateModularId());
+                      }}
+                      className={`py-3 px-6 rounded-full text-sm font-medium transition-colors ${
+                        modularAssociate === false
+                          ? 'bg-primary text-primary-foreground border-2 border-primary'
+                          : 'bg-muted text-muted-foreground border border-muted-foreground/30 hover:bg-muted-foreground/10'
+                      }`}
+                    >
+                      No
+                    </button>
+                  </div>
+
+                  {modularAssociate === false && generatedModularId && (
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center gap-3">
+                      <CheckCircle className="h-5 w-5 text-green-600 shrink-0" />
+                      <p className="text-sm text-green-800">
+                        Se ha generado un nuevo ID modular: <span className="font-bold">{generatedModularId}</span>
+                      </p>
+                    </div>
+                  )}
+
+                  {modularAssociate === true && selectedClient && (
+                    <div className="space-y-3">
+                      <p className="text-sm font-medium text-muted-foreground">Módulos existentes de {selectedClient.name}:</p>
+                      {(() => {
+                        const clientModulares = mockModularPrecontratos[selectedClient.id] || [];
+                        if (clientModulares.length === 0) {
+                          return (
+                            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm text-amber-800">
+                              Este cliente no tiene precontratos modulares existentes.
+                            </div>
+                          );
+                        }
+                        const uniqueModules = [...new Set(clientModulares.map(c => c.id))];
+                        return (
+                          <div className="border rounded-lg overflow-hidden">
+                            <table className="w-full text-sm">
+                              <thead>
+                                <tr className="border-b bg-muted/30">
+                                  <th className="p-2 text-left font-medium text-muted-foreground w-8"></th>
+                                  <th className="p-2 text-left font-medium text-muted-foreground">ID Módulo</th>
+                                  <th className="p-2 text-left font-medium text-muted-foreground">S.C.</th>
+                                  <th className="p-2 text-left font-medium text-muted-foreground">Curso</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {uniqueModules.map(modId => {
+                                  const cursos = clientModulares.filter(c => c.id === modId);
+                                  return (
+                                    <React.Fragment key={modId}>
+                                      <tr className="bg-muted/20 border-b cursor-pointer hover:bg-muted/30" onClick={() => setSelectedModularId(modId)}>
+                                        <td className="p-2">
+                                          <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${selectedModularId === modId ? 'border-primary' : 'border-muted-foreground/40'}`}>
+                                            {selectedModularId === modId && <div className="w-2 h-2 rounded-full bg-primary" />}
+                                          </div>
+                                        </td>
+                                        <td colSpan={3} className="p-2 font-semibold text-primary text-xs">
+                                          {modId} ({cursos.length} curso{cursos.length > 1 ? 's' : ''})
+                                        </td>
+                                      </tr>
+                                      {cursos.map(curso => (
+                                        <tr key={curso.sc} className="border-b hover:bg-muted/10">
+                                          <td className="p-2"></td>
+                                          <td className="p-2 text-muted-foreground">{curso.id}</td>
+                                          <td className="p-2">{curso.sc}</td>
+                                          <td className="p-2 text-muted-foreground text-xs">{curso.courseName}</td>
+                                        </tr>
+                                      ))}
+                                    </React.Fragment>
+                                  );
+                                })}
+                              </tbody>
+                            </table>
+                          </div>
+                        );
+                      })()}
+                    </div>
+                  )}
+                </>
+              )}
+            </>
+          )}
         </>
       )}
     </div>
