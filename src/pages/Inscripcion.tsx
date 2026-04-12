@@ -45,6 +45,22 @@ const comunas: Record<string, string[]> = {
   'LOS LAGOS': ['PUERTO MONTT', 'OSORNO'],
 };
 
+// Mock modular precontracts per client
+const mockModularPrecontratos: Record<string, { id: string; sc: string; courseName: string }[]> = {
+  '1': [
+    { id: 'MOD-001', sc: '2103919', courseName: 'SEGURIDAD EN OBRAS DE CONSTRUCCIÓN' },
+    { id: 'MOD-001', sc: '2103920', courseName: 'PREVENCIÓN DE RIESGOS LABORALES' },
+    { id: 'MOD-002', sc: '2103922', courseName: 'GESTIÓN DE PROYECTOS INDUSTRIALES' },
+  ],
+  '2': [
+    { id: 'MOD-003', sc: '2103924', courseName: 'TECNOLOGÍAS DE INFORMACIÓN AVANZADA' },
+  ],
+  '3': [],
+};
+
+let modularIdCounter = 4;
+const generateModularId = () => `MOD-${String(modularIdCounter++).padStart(3, '0')}`;
+
 const dayLabelsShort = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
 const dayNamesFull = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
@@ -104,6 +120,10 @@ const Inscripcion: React.FC = () => {
   // Step 1
   const [lineaTrabajo, setLineaTrabajo] = useState<'franquicia' | 'no_franquicia' | null>(null);
   const [contractType, setContractType] = useState<string | null>(null);
+  const [precontratoSubtype, setPrecontratoSubtype] = useState<'Normal' | 'Modular' | null>(null);
+  const [modularAssociate, setModularAssociate] = useState<boolean | null>(null);
+  const [selectedModularId, setSelectedModularId] = useState<string | null>(null);
+  const [generatedModularId, setGeneratedModularId] = useState<string | null>(null);
 
   // Step 2
   const [senceCode, setSenceCode] = useState('');
