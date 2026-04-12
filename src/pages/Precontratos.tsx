@@ -1034,7 +1034,12 @@ const Precontratos: React.FC = () => {
     return true;
   });
 
-  // Convert cerrado to normal format for detail view
+  const filteredProximos = precontratosProximosAVencer.filter(p => {
+    if (celulaFilter !== 'todas' && p.celula !== celulaFilter) return false;
+    return true;
+  });
+
+
   const cerradoToNormal = (c: PrecontratoCerrado): PrecontratoNormal => ({
     diasPlazo: 0,
     nroInscripcion: c.nroInscripcion,
