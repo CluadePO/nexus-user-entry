@@ -34,6 +34,45 @@ const mockCursos: CursoSence[] = [
   { sc: '2107893', cliente: 'CORPORACION EDUCACIONAL KINGSTON COLLEGE', nroPart: 2, mtFranquicia: '$20.000', inicioCurso: '20/04/2026', modalidad: 'Presencial', tipoContrato: 'Precontrato', codigoSence: '1238047300', vencimientoSence: '2026-12-01' },
 ];
 
+interface CursoModular {
+  moduloRef: string;
+  sc: string;
+  cliente: string;
+  nroPart: number;
+  mtFranquicia: string;
+  inicioCurso: string;
+}
+
+interface ModuloGroup {
+  modulo: string;
+  cursos: CursoModular[];
+}
+
+const precontratosModulares: ModuloGroup[] = [
+  {
+    modulo: 'MOD-001',
+    cursos: [
+      { moduloRef: 'MOD-001', sc: '2103919', cliente: 'CORPORACION NACIONAL DEL COBRE', nroPart: 27, mtFranquicia: '$22.680.000', inicioCurso: '26/12/2025' },
+      { moduloRef: 'MOD-001', sc: '2103920', cliente: 'MINERA ESCONDIDA LTDA', nroPart: 15, mtFranquicia: '$18.500.000', inicioCurso: '27/12/2025' },
+      { moduloRef: 'MOD-001', sc: '2103921', cliente: 'ANGLO AMERICAN SUR', nroPart: 22, mtFranquicia: '$20.100.000', inicioCurso: '28/12/2025' },
+    ],
+  },
+  {
+    modulo: 'MOD-002',
+    cursos: [
+      { moduloRef: 'MOD-002', sc: '2103922', cliente: 'BHP BILLITON CHILE', nroPart: 30, mtFranquicia: '$25.000.000', inicioCurso: '02/01/2026' },
+      { moduloRef: 'MOD-002', sc: '2103923', cliente: 'ANTOFAGASTA MINERALS', nroPart: 18, mtFranquicia: '$16.800.000', inicioCurso: '03/01/2026' },
+    ],
+  },
+  {
+    modulo: 'MOD-003',
+    cursos: [
+      { moduloRef: 'MOD-003', sc: '2103924', cliente: 'COLLAHUASI SCM', nroPart: 25, mtFranquicia: '$21.500.000', inicioCurso: '10/01/2026' },
+      { moduloRef: '—', sc: '2103925', cliente: 'TECK RESOURCES CHILE', nroPart: 12, mtFranquicia: '$14.000.000', inicioCurso: '15/01/2026' },
+    ],
+  },
+];
+
 const ComunicacionSence: React.FC = () => {
   const [fechaInicio, setFechaInicio] = useState('2026-04-15');
   const [fechaFin, setFechaFin] = useState('2026-05-31');
@@ -42,10 +81,26 @@ const ComunicacionSence: React.FC = () => {
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [noComunicar, setNoComunicar] = useState<string[]>([]);
+  const [selectedModulares, setSelectedModulares] = useState<string[]>([]);
 
   const toggleNoComunicar = (sc: string) => {
     setNoComunicar(prev =>
       prev.includes(sc) ? prev.filter(s => s !== sc) : [...prev, sc]
+    );
+  };
+
+  const handleSelectModular = (sc: string, checked: boolean) => {
+    setSelectedModulares(prev =>
+      checked ? [...prev, sc] : prev.filter(s => s !== sc)
+    );
+  };
+
+  const handleSelectModulo = (modulo: string, checked: boolean) => {
+    const grupo = precontratosModulares.find(m => m.modulo === modulo);
+    if (!grupo) return;
+    const scs = grupo.cursos.map(c => c.sc);
+    setSelectedModulares(prev =>
+      checked ? [...new Set([...prev, ...scs])] : prev.filter(s => !scs.includes(s))
     );
   };
 
