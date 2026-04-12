@@ -138,6 +138,7 @@ const Inscripcion: React.FC = () => {
 
   // Completion
   const [isComplete, setIsComplete] = useState(false);
+  const [showServiceError, setShowServiceError] = useState(false);
   const [inscripcionId] = useState('2148684');
 
   // ─── Client search ──────────────────────────────────
@@ -651,6 +652,31 @@ const Inscripcion: React.FC = () => {
 
   // ─── Completion Screen ─────────────────────────────
   if (isComplete) {
+    if (showServiceError) {
+      return (
+        <div className="p-6">
+          <div className="flex gap-8 max-w-5xl mx-auto">
+            <div className="flex-1 flex flex-col items-center justify-center min-h-[400px]">
+              <div className="w-20 h-20 rounded-full bg-destructive/10 flex items-center justify-center mb-6">
+                <AlertTriangle className="h-10 w-10 text-destructive" />
+              </div>
+              <h1 className="text-2xl font-semibold text-destructive mb-3">Error en el servicio de inscripción</h1>
+              <p className="text-muted-foreground text-center max-w-md mb-8">
+                El servicio de inscripción no está disponible en este momento. Por favor, intenta nuevamente en unos minutos.
+              </p>
+              <Button
+                className="gap-2 bg-primary hover:bg-primary/90"
+                onClick={() => setShowServiceError(false)}
+              >
+                <ArrowLeft className="h-4 w-4" /> Reintentar Inscripción
+              </Button>
+            </div>
+            {renderSidebar()}
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="p-6">
         <div className="flex gap-8 max-w-5xl mx-auto">
@@ -671,9 +697,10 @@ const Inscripcion: React.FC = () => {
               </Button>
             </div>
 
-            <div className="flex justify-center">
+            <div className="flex justify-center gap-3">
               <Button variant="outline" className="gap-2 border-primary text-primary" onClick={() => {
                 setIsComplete(false);
+                setShowServiceError(false);
                 setPreStepDone(false);
                 setCurrentStep(0);
                 setSelectedClient(null);
@@ -687,6 +714,13 @@ const Inscripcion: React.FC = () => {
                 setSelectedAccount(null);
               }}>
                 <LogOut className="h-4 w-4" /> Salir
+              </Button>
+              <Button
+                variant="outline"
+                className="gap-2 border-destructive/50 text-destructive hover:bg-destructive/10"
+                onClick={() => setShowServiceError(true)}
+              >
+                <AlertTriangle className="h-4 w-4" /> Simulación
               </Button>
             </div>
           </div>
