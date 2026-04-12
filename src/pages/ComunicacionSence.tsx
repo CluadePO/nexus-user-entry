@@ -162,9 +162,11 @@ const ComunicacionSence: React.FC = () => {
                 Tipo de Contrato <span className="text-xs">▾</span>
               </th>
               <th className="p-3 text-left font-medium text-muted-foreground whitespace-nowrap">
-                <span className="relative inline-block">
-                  Vigencia <span className="text-xs">▾</span>
-                  <span className="absolute -top-3 -right-12 bg-blue-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full shadow-sm z-10">C1CCOM4</span>
+                <span className="inline-flex items-center gap-2">
+                  <span>Vigencia <span className="text-xs">▾</span></span>
+                  <span className="inline-flex items-center rounded-full bg-primary px-1.5 py-0.5 text-[9px] font-bold leading-none text-primary-foreground shadow-sm">
+                    C1CCOM4
+                  </span>
                 </span>
               </th>
             </tr>
