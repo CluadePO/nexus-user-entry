@@ -385,6 +385,15 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
               <Mail className="h-3.5 w-3.5 mr-1" />
               RECORDATORIO MASIVO
             </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-xs border-teal-600 text-teal-700 hover:bg-teal-50"
+              onClick={handleDescargarLegajo}
+            >
+              <FileDown className="h-3.5 w-3.5 mr-1" />
+              DESCARGA LEGAJO DE PRECONTRATO
+            </Button>
             <Button size="sm" className="bg-teal-700 hover:bg-teal-800 text-white text-xs">
               <Download className="h-3.5 w-3.5 mr-1" />
               DESCARGAR
