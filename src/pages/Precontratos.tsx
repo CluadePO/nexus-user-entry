@@ -16,7 +16,7 @@ interface Participante {
   correo: string;
   telefono: string;
   firmaEmpresa: 'FALTANTE' | 'FIRMADO';
-  firmaParticipante: 'FALTANTE' | 'FIRMADO';
+  firmaParticipante: 'FALTANTE' | 'POR VALIDAR' | 'EN CORRECCIÓN' | 'VALIDADO' | 'FIRMADO';
   autorizMenor: 'NO APLICA' | 'FALTANTE' | 'FIRMADO';
   vulnerabilidad: 'FALTANTE' | 'SIN VULNERABILIDAD' | 'VULNERABLE';
   ultimoRecordatorio: string;
