@@ -578,7 +578,7 @@ const Inscripcion: React.FC = () => {
               <p className="text-sm text-blue-800">
                 El curso es de modalidad distancia, por tanto no debe superar los <strong>20 participantes</strong>.
               </p>
-              <span className="absolute top-1 right-2 text-[10px] text-blue-400 opacity-40 group-hover:opacity-100 transition-opacity cursor-default" title="Mejora del sistema: C1CINS5">C1CINS5</span>
+              <span className="absolute -top-2.5 right-2 text-[10px] font-bold bg-blue-600 text-white px-2 py-0.5 rounded-full shadow-sm" title="Mejora del sistema: C1CINS5">C1CINS5</span>
             </div>
           )}
 
