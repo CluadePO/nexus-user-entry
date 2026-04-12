@@ -62,6 +62,27 @@ const precontratosNormalesData: PrecontratoNormal[] = [
   { diasPlazo: -79, nroInscripcion: '2144305', sencenet: '6752627', curso: 'Técnicas de Comunicación Efectiva', empresa: '78.163.838-2 – Outsourcing Global de Servicios S.A.', empresaRut: '78.163.838-2', empresaNombre: 'Outsourcing Global de Servicios S.A.', otecNombre: 'Corporacion Instituto Profesional Inacap', otecRut: '87.152.900-0', codigoSence: '1238073230', tipoContrato: 'precontrato', inicioTermino: '05/12/2025 - 20/01/2026', preinscripcion: '134960898', precontratosFaltantes: '27/27', autorizMenores: '0/0', vulnerabilidad: 0, celula: 'Cel4', criticidad: 'alta', repLegalNombre: '-', repLegalCi: 'No disponible', participantes: mockParticipantes },
 ];
 
+interface PrecontratoCerrado {
+  fechaCierre: string;
+  nroInscripcion: string;
+  sencenet: string;
+  curso: string;
+  empresa: string;
+  precontratosFirmados: string;
+  celula: string;
+}
+
+const precontratosCerradosData: PrecontratoCerrado[] = [
+  { fechaCierre: '10/11/2025', nroInscripcion: '2103038', sencenet: '6688091', curso: '2º Ciclo de Educacion Media', empresa: '76.081.590-K – Sierra Gorda S.c.m.', precontratosFirmados: '46/46', celula: 'Cel1' },
+  { fechaCierre: '28/10/2025', nroInscripcion: '2104934', sencenet: '6690634', curso: 'Aplicación de Funciones Matemáticas Para Medir y Calcular Con Exactitud los Diferentes Procesos Productivos en la Industria Minera', empresa: '85.066.600-8 – Albemarle Limitada', precontratosFirmados: '13/13', celula: 'Cel1' },
+  { fechaCierre: '24/11/2025', nroInscripcion: '2119350', sencenet: '6717009', curso: 'Aplicación de Cerámicos en Construcción', empresa: '93.770.000-8 – Goodyear de Chile S.a.i.c.', precontratosFirmados: '17/17', celula: 'Cel7' },
+  { fechaCierre: '19/11/2025', nroInscripcion: '2124060', sencenet: '6724813', curso: 'Aplicación de Cerámicos en Construcción', empresa: '93.770.000-8 – Goodyear de Chile S.a.i.c.', precontratosFirmados: '7/7', celula: 'Cel7' },
+  { fechaCierre: '29/07/2025', nroInscripcion: '2088172', sencenet: '6652266', curso: 'Aplicación de Estrategias de Gestión Del Bienestar Físico y Emocional', empresa: '93.077.000-0 – Metso Chile SPA', precontratosFirmados: '15/15', celula: 'Cel9' },
+  { fechaCierre: '04/08/2025', nroInscripcion: '2088964', sencenet: '6654519', curso: 'Aplicación de Estratégica de Gestión de Redes Sociales – Precontratos', empresa: '98.000.000-1 – A.f.p. Capital S.A.', precontratosFirmados: '39/39', celula: 'Cel4' },
+  { fechaCierre: '18/08/2025', nroInscripcion: '2090118', sencenet: '6657872', curso: 'Aplicación de Estratégica de Gestión de Redes Sociales – Precontratos', empresa: '98.000.000-1 – A.f.p. Capital S.A.', precontratosFirmados: '38/38', celula: 'Cel4' },
+  { fechaCierre: '18/08/2025', nroInscripcion: '2092419', sencenet: '6665325', curso: 'Aplicación de Estratégica de Gestión de Redes Sociales – Precontratos', empresa: '98.000.000-1 – A.f.p. Capital S.A.', precontratosFirmados: '41/41', celula: 'Cel4' },
+];
+
 const getCriticidadColor = (val: string) => {
   const [a, b] = val.split('/').map(Number);
   if (a === b && a > 0) return 'text-green-700 bg-green-50 border-green-200';
