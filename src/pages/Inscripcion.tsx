@@ -771,13 +771,16 @@ const Inscripcion: React.FC = () => {
               }}>
                 <LogOut className="h-4 w-4" /> Salir
               </Button>
-              <Button
-                variant="outline"
-                className="gap-2 border-destructive/50 text-destructive hover:bg-destructive/10"
-                onClick={() => { setShowServiceError(true); setRetrySuccess(false); }}
-              >
-                <AlertTriangle className="h-4 w-4" /> Simulación
-              </Button>
+              <div className="relative inline-block">
+                <span className="absolute -top-2 -right-2 bg-blue-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full z-10 shadow-sm">C1CINS4</span>
+                <Button
+                  variant="outline"
+                  className="gap-2 border-destructive/50 text-destructive hover:bg-destructive/10"
+                  onClick={() => { setShowServiceError(true); setRetrySuccess(false); }}
+                >
+                  <AlertTriangle className="h-4 w-4" /> Simulación
+                </Button>
+              </div>
             </div>
           </div>
           {renderSidebar()}
