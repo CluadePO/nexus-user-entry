@@ -201,6 +201,10 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
   const [correctionEmail, setCorrectionEmail] = useState('');
   const [correctionObservaciones, setCorrectionObservaciones] = useState('');
 
+  // Validated document viewer modal
+  const [viewDocModalOpen, setViewDocModalOpen] = useState(false);
+  const [viewDocTarget, setViewDocTarget] = useState<number | null>(null);
+
   const filteredParticipantes = participantesState.filter(p =>
     p.nombre.toLowerCase().includes(searchParticipante.toLowerCase()) ||
     p.rut.includes(searchParticipante)
@@ -215,6 +219,24 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
       setValidationTarget(globalIdx);
       setPreviewFile(false);
       setValidationModalOpen(true);
+    } else if (status === 'VALIDADO') {
+      setViewDocTarget(globalIdx);
+      setViewDocModalOpen(true);
+    }
+  };
+
+  const handleDownloadPrecontrato = () => {
+    if (viewDocTarget !== null) {
+      const p = participantesState[viewDocTarget];
+      const fileName = `${precontrato.codigoSence}_Precontrato_${p.nombre.replace(/\s+/g, '_')}.pdf`;
+      const blob = new Blob(['Contenido del precontrato'], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success(`Documento descargado: ${fileName}`);
     }
   };
 
