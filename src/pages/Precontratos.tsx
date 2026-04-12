@@ -571,21 +571,27 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
       <div className="border rounded-lg bg-background">
         <button
           onClick={() => setDetalleOpen(!detalleOpen)}
-          className="w-full flex items-center justify-between p-4 text-left"
+          className="w-full flex items-center justify-between p-3 text-left"
         >
-          <h2 className="text-base font-semibold text-foreground">Detalle del curso</h2>
+          <div className="flex items-center gap-3">
+            <h2 className="text-base font-semibold text-foreground">Detalle del curso</h2>
+            <Button variant="outline" size="sm" className="text-xs" onClick={(e) => { e.stopPropagation(); }}>
+              <Mail className="h-3.5 w-3.5 mr-1" />
+              RECORDATORIO MASIVO
+            </Button>
+          </div>
           {detalleOpen ? <ChevronUp className="h-4 w-4 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 text-muted-foreground" />}
         </button>
 
         {detalleOpen && (
-          <div className="px-4 pb-4 space-y-4">
+          <div className="px-3 pb-3 space-y-3">
             {/* Curso info */}
-            <div className="flex items-start gap-4 border-b pb-4">
-              <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-muted/50 flex items-center justify-center">
-                <FileText className="h-5 w-5 text-muted-foreground" />
+            <div className="flex items-start gap-3 border-b pb-3">
+              <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-muted/50 flex items-center justify-center">
+                <FileText className="h-4 w-4 text-muted-foreground" />
               </div>
-              <div className="flex-1 grid grid-cols-5 gap-4 text-xs">
-                <div><p className="text-primary font-medium">Curso</p><p className="text-foreground">{precontrato.curso}</p></div>
+              <div className="flex-1 grid grid-cols-5 gap-2 text-xs">
+                <div><p className="text-primary font-medium">Curso</p><p className="text-foreground leading-tight">{precontrato.curso}</p></div>
                 <div><p className="text-primary font-medium">Sencenet</p><p className="text-foreground">{precontrato.sencenet}</p></div>
                 <div><p className="text-primary font-medium">Código Sence</p><p className="text-foreground">{precontrato.codigoSence}</p></div>
                 <div><p className="text-primary font-medium">Tipo de contrato</p><p className="text-foreground font-semibold">{precontrato.tipoContrato}</p></div>
@@ -594,11 +600,11 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
             </div>
 
             {/* Días de plazo, Preinscripción, Célula */}
-            <div className="flex items-start gap-4 border-b pb-4 pl-14">
-              <div className="grid grid-cols-3 gap-8 text-xs">
+            <div className="flex items-start gap-3 border-b pb-3 pl-11">
+              <div className="grid grid-cols-3 gap-6 text-xs">
                 <div>
                   <p className="text-primary font-medium">Días de plazo</p>
-                  <span className="inline-flex items-center justify-center bg-red-600 text-white text-[10px] font-bold rounded-full px-2.5 py-0.5 mt-1">{precontrato.diasPlazo}</span>
+                  <span className="inline-flex items-center justify-center bg-red-600 text-white text-[10px] font-bold rounded-full px-2 py-0.5 mt-0.5">{precontrato.diasPlazo}</span>
                 </div>
                 <div><p className="text-primary font-medium">Preinscripción</p><p className="text-foreground">{precontrato.preinscripcion}</p></div>
                 <div><p className="text-primary font-medium">Célula</p><p className="text-foreground">{precontrato.celula}</p></div>
@@ -606,11 +612,11 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
             </div>
 
             {/* Empresa info */}
-            <div className="flex items-start gap-4 border-b pb-4">
-              <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-muted/50 flex items-center justify-center">
-                <Building2 className="h-5 w-5 text-muted-foreground" />
+            <div className="flex items-start gap-3 border-b pb-3">
+              <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-muted/50 flex items-center justify-center">
+                <Building2 className="h-4 w-4 text-muted-foreground" />
               </div>
-              <div className="flex-1 grid grid-cols-4 gap-4 text-xs">
+              <div className="flex-1 grid grid-cols-4 gap-2 text-xs">
                 <div><p className="text-primary font-medium">Empresa</p><p className="text-foreground">{precontrato.empresaNombre}</p></div>
                 <div><p className="text-primary font-medium">RUT</p><p className="text-foreground">{precontrato.empresaRut}</p></div>
                 <div><p className="text-primary font-medium">Nombre Rep. Legal</p><p className="text-foreground">{precontrato.repLegalNombre}</p></div>
@@ -619,11 +625,11 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
             </div>
 
             {/* OTEC info */}
-            <div className="flex items-start gap-4">
-              <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-muted/50 flex items-center justify-center">
-                <GraduationCap className="h-5 w-5 text-muted-foreground" />
+            <div className="flex items-start gap-3">
+              <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-muted/50 flex items-center justify-center">
+                <GraduationCap className="h-4 w-4 text-muted-foreground" />
               </div>
-              <div className="flex-1 grid grid-cols-2 gap-4 text-xs">
+              <div className="flex-1 grid grid-cols-2 gap-2 text-xs">
                 <div><p className="text-primary font-medium">Otec</p><p className="text-foreground">{precontrato.otecNombre}</p></div>
                 <div><p className="text-primary font-medium">RUT</p><p className="text-foreground">{precontrato.otecRut}</p></div>
               </div>
@@ -633,20 +639,16 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
       </div>
 
       {/* Precontrato - Participantes */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
+      <div className="space-y-3">
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <div className="flex items-center gap-3">
             <h2 className="text-lg font-semibold text-foreground">Precontrato</h2>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
               <Users className="h-4 w-4" />
               <span>{participantesState.length} participantes activos</span>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm" className="text-xs">
-              <Mail className="h-3.5 w-3.5 mr-1" />
-              RECORDATORIO MASIVO
-            </Button>
+          <div className="flex items-center gap-2 flex-wrap">
             <Button
               variant="outline"
               size="sm"
@@ -673,23 +675,17 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
               className="hidden"
               onChange={handleSubirLegajo}
             />
-            <Button size="sm" className="bg-teal-700 hover:bg-teal-800 text-white text-xs">
-              <Download className="h-3.5 w-3.5 mr-1" />
-              DESCARGAR
-            </Button>
             <div className="relative">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
               <Input
-                placeholder="Buscar por nombre o rut del participante"
+                placeholder="Buscar por nombre o rut"
                 value={searchParticipante}
                 onChange={(e) => setSearchParticipante(e.target.value)}
-                className="pl-8 h-8 text-xs w-[280px]"
+                className="pl-8 h-8 text-xs w-[200px]"
               />
             </div>
           </div>
         </div>
-
-        {/* Participantes table */}
         <div className="border rounded-lg overflow-hidden">
           <table className="w-full text-xs">
             <thead>
