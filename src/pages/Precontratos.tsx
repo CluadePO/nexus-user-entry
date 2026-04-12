@@ -239,6 +239,65 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
       toast.success(`Documento descargado: ${fileName}`);
     }
   };
+  const handleDescargarLegajo = () => {
+    const secciones = participantesState.map(p => {
+      return [
+        `=== PRECONTRATO ===`,
+        `Participante: ${p.nombre}`,
+        `RUT: ${p.rut}`,
+        `Curso: ${precontrato.curso}`,
+        `Sencenet: ${precontrato.sencenet}`,
+        `Empresa: ${precontrato.empresaNombre} - RUT: ${precontrato.empresaRut}`,
+        `OTEC: ${precontrato.otecNombre} - RUT: ${precontrato.otecRut}`,
+        `Período: ${precontrato.inicioTermino}`,
+        ``,
+        `--- Cédula de Identidad ---`,
+        `Documento de identidad de ${p.nombre} - RUT: ${p.rut}`,
+        ``,
+        `--- Registro Social de Hogares ---`,
+        `Registro social de hogares de ${p.nombre}`,
+        ``,
+        `--- Autorización del Tutor ---`,
+        `Autorización del tutor para ${p.nombre}`,
+        ``,
+        `--- Cédula de Identidad del Tutor ---`,
+        `Documento de identidad del tutor de ${p.nombre}`,
+        ``,
+        `${'='.repeat(60)}`,
+        ``
+      ].join('\n');
+    });
+
+    const contenido = [
+      `LEGAJO DE PRECONTRATO`,
+      `Curso: ${precontrato.curso}`,
+      `Sencenet: ${precontrato.sencenet}`,
+      `Código Sence: ${precontrato.codigoSence}`,
+      `Empresa: ${precontrato.empresaNombre}`,
+      `Total participantes: ${participantesState.length}`,
+      ``,
+      `Orden del legajo por participante:`,
+      `1. Precontrato`,
+      `2. Cédula de Identidad`,
+      `3. Registro Social de Hogares`,
+      `4. Autorización del Tutor`,
+      `5. Cédula de Identidad del Tutor`,
+      ``,
+      `${'='.repeat(60)}`,
+      ``,
+      ...secciones
+    ].join('\n');
+
+    const fileName = `${precontrato.sencenet}_Legajo_Precontrato_${precontrato.curso.replace(/\s+/g, '_').substring(0, 50)}.pdf`;
+    const blob = new Blob([contenido], { type: 'application/pdf' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success(`Legajo descargado: ${fileName}`);
+  };
 
   const handleFileUpload = (file: File) => {
     setUploadedFile(file);
@@ -384,6 +443,15 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
             <Button variant="outline" size="sm" className="text-xs">
               <Mail className="h-3.5 w-3.5 mr-1" />
               RECORDATORIO MASIVO
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-xs border-teal-600 text-teal-700 hover:bg-teal-50"
+              onClick={handleDescargarLegajo}
+            >
+              <FileDown className="h-3.5 w-3.5 mr-1" />
+              DESCARGA LEGAJO DE PRECONTRATO
             </Button>
             <Button size="sm" className="bg-teal-700 hover:bg-teal-800 text-white text-xs">
               <Download className="h-3.5 w-3.5 mr-1" />
