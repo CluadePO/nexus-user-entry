@@ -991,6 +991,7 @@ const Precontratos: React.FC = () => {
   const [selectedModulares, setSelectedModulares] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState('precontratos');
   const [subTab, setSubTab] = useState('pendientes');
+  const [celulaFilter, setCelulaFilter] = useState('todas');
   const [criticidadAlta, setCriticidadAlta] = useState(true);
   const [criticidadMedia, setCriticidadMedia] = useState(true);
   const [criticidadBaja, setCriticidadBaja] = useState(true);
