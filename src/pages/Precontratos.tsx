@@ -622,6 +622,7 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
             >
               <FileDown className="h-3.5 w-3.5 mr-1" />
               DESCARGA LEGAJO DE PRECONTRATO
+              <span className="bg-blue-500 text-white text-[8px] font-bold px-1 py-0.5 rounded-full ml-1">C1PPPC3</span>
             </Button>
             <Button size="sm" className="bg-teal-700 hover:bg-teal-800 text-white text-xs">
               <Download className="h-3.5 w-3.5 mr-1" />
