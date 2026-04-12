@@ -587,6 +587,17 @@ const Inscripcion: React.FC = () => {
         <p className="text-xs text-muted-foreground">Línea</p>
         <p className="text-sm font-semibold">{lineaTrabajo === 'franquicia' ? 'Franquicia' : lineaTrabajo === 'no_franquicia' ? 'No Franquicia' : '-'}</p>
       </div>
+      {contractType === 'Precontrato' && precontratoSubtype && (
+        <div>
+          <p className="text-xs text-muted-foreground">Tipo Precontrato</p>
+          <p className="text-sm font-semibold">{precontratoSubtype}</p>
+          {precontratoSubtype === 'Modular' && (selectedModularId || generatedModularId) && (
+            <Badge variant="outline" className="mt-1 border-amber-400 text-amber-700 bg-amber-50 text-xs">
+              {selectedModularId || generatedModularId}
+            </Badge>
+          )}
+        </div>
+      )}
       {senceValidated && (
         <div>
           <p className="text-xs text-muted-foreground">Nombre del curso</p>
@@ -1453,6 +1464,12 @@ const Inscripcion: React.FC = () => {
           <Stepper current={currentStep} steps={stepLabels} />
 
           <Card className="p-6">
+            {precontratoSubtype === 'Modular' && (selectedModularId || generatedModularId) && (
+              <div className="mb-4 flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-lg px-4 py-2">
+                <Info className="h-4 w-4 text-amber-600 shrink-0" />
+                <span className="text-sm text-amber-800">Precontrato Modular — ID: <span className="font-bold">{selectedModularId || generatedModularId}</span></span>
+              </div>
+            )}
             {currentStep === 0 && renderStep1()}
             {currentStep === 1 && renderStep2()}
             {currentStep === 2 && renderStep3()}
