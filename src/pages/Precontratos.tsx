@@ -70,19 +70,38 @@ interface PrecontratoCerrado {
   sencenet: string;
   curso: string;
   empresa: string;
+  empresaRut: string;
+  empresaNombre: string;
+  otecNombre: string;
+  otecRut: string;
+  codigoSence: string;
+  tipoContrato: string;
+  inicioTermino: string;
+  preinscripcion: string;
   precontratosFirmados: string;
   celula: string;
+  repLegalNombre: string;
+  repLegalCi: string;
+  participantes: Participante[];
 }
 
+const mockParticipantesCerrados: Participante[] = [
+  { nombre: 'María Blanca Pérez Vargas', rut: '8.904.037-K', correo: 'mariablancadelcarmenperezvargas@gmail.com', telefono: '956060400', firmaEmpresa: 'FALTANTE', firmaParticipante: 'VALIDADO', autorizMenor: 'NO APLICA', vulnerabilidad: 'FALTANTE', ultimoRecordatorio: 'Sin recordatorios enviados' },
+  { nombre: 'Eduardo Enrique Yañez Vega', rut: '9.582.994-5', correo: 'eduardoenriqueyave@gmail.com', telefono: '966012459', firmaEmpresa: 'FALTANTE', firmaParticipante: 'VALIDADO', autorizMenor: 'NO APLICA', vulnerabilidad: 'FALTANTE', ultimoRecordatorio: 'Sin recordatorios enviados' },
+  { nombre: 'Francisco Javier Moreno Navarrete', rut: '10.697.224-9', correo: 'cobreloa634@gmail.com', telefono: '949606476', firmaEmpresa: 'FALTANTE', firmaParticipante: 'VALIDADO', autorizMenor: 'NO APLICA', vulnerabilidad: 'FALTANTE', ultimoRecordatorio: 'Sin recordatorios enviados' },
+  { nombre: 'María Martina Iriarte Jiménez', rut: '11.007.480-8', correo: 'maria.iriartel@gmail.com', telefono: '995933344', firmaEmpresa: 'FALTANTE', firmaParticipante: 'VALIDADO', autorizMenor: 'NO APLICA', vulnerabilidad: 'FALTANTE', ultimoRecordatorio: 'Sin recordatorios enviados' },
+  { nombre: 'Solange Maritza Villarroel Olivares', rut: '11.506.661-7', correo: 'sole.villarroel1970@gmail.com', telefono: '937142381', firmaEmpresa: 'FALTANTE', firmaParticipante: 'VALIDADO', autorizMenor: 'NO APLICA', vulnerabilidad: 'FALTANTE', ultimoRecordatorio: 'Sin recordatorios enviados' },
+];
+
 const precontratosCerradosData: PrecontratoCerrado[] = [
-  { fechaCierre: '10/11/2025', nroInscripcion: '2103038', sencenet: '6688091', curso: '2º Ciclo de Educacion Media', empresa: '76.081.590-K – Sierra Gorda S.c.m.', precontratosFirmados: '46/46', celula: 'Cel1' },
-  { fechaCierre: '28/10/2025', nroInscripcion: '2104934', sencenet: '6690634', curso: 'Aplicación de Funciones Matemáticas Para Medir y Calcular Con Exactitud los Diferentes Procesos Productivos en la Industria Minera', empresa: '85.066.600-8 – Albemarle Limitada', precontratosFirmados: '13/13', celula: 'Cel1' },
-  { fechaCierre: '24/11/2025', nroInscripcion: '2119350', sencenet: '6717009', curso: 'Aplicación de Cerámicos en Construcción', empresa: '93.770.000-8 – Goodyear de Chile S.a.i.c.', precontratosFirmados: '17/17', celula: 'Cel7' },
-  { fechaCierre: '19/11/2025', nroInscripcion: '2124060', sencenet: '6724813', curso: 'Aplicación de Cerámicos en Construcción', empresa: '93.770.000-8 – Goodyear de Chile S.a.i.c.', precontratosFirmados: '7/7', celula: 'Cel7' },
-  { fechaCierre: '29/07/2025', nroInscripcion: '2088172', sencenet: '6652266', curso: 'Aplicación de Estrategias de Gestión Del Bienestar Físico y Emocional', empresa: '93.077.000-0 – Metso Chile SPA', precontratosFirmados: '15/15', celula: 'Cel9' },
-  { fechaCierre: '04/08/2025', nroInscripcion: '2088964', sencenet: '6654519', curso: 'Aplicación de Estratégica de Gestión de Redes Sociales – Precontratos', empresa: '98.000.000-1 – A.f.p. Capital S.A.', precontratosFirmados: '39/39', celula: 'Cel4' },
-  { fechaCierre: '18/08/2025', nroInscripcion: '2090118', sencenet: '6657872', curso: 'Aplicación de Estratégica de Gestión de Redes Sociales – Precontratos', empresa: '98.000.000-1 – A.f.p. Capital S.A.', precontratosFirmados: '38/38', celula: 'Cel4' },
-  { fechaCierre: '18/08/2025', nroInscripcion: '2092419', sencenet: '6665325', curso: 'Aplicación de Estratégica de Gestión de Redes Sociales – Precontratos', empresa: '98.000.000-1 – A.f.p. Capital S.A.', precontratosFirmados: '41/41', celula: 'Cel4' },
+  { fechaCierre: '10/11/2025', nroInscripcion: '2103038', sencenet: '6688091', curso: '2º Ciclo de Educacion Media', empresa: '76.081.590-K – Sierra Gorda S.c.m.', empresaRut: '76.081.590-K', empresaNombre: 'Sierra Gorda S.c.m.', otecNombre: 'Sociedad Centro de Capacitacion Dvc Limitada', otecRut: '76.546.376-9', codigoSence: '0099000646', tipoContrato: 'precontrato', inicioTermino: '02/09/2025 - 09/10/2025', preinscripcion: '126735227', precontratosFirmados: '46/46', celula: 'Cel1', repLegalNombre: '-', repLegalCi: 'No disponible', participantes: mockParticipantesCerrados },
+  { fechaCierre: '28/10/2025', nroInscripcion: '2104934', sencenet: '6690634', curso: 'Aplicación de Funciones Matemáticas Para Medir y Calcular Con Exactitud los Diferentes Procesos Productivos en la Industria Minera', empresa: '85.066.600-8 – Albemarle Limitada', empresaRut: '85.066.600-8', empresaNombre: 'Albemarle Limitada', otecNombre: 'Corporacion Instituto Profesional Inacap', otecRut: '87.152.900-0', codigoSence: '1238073224', tipoContrato: 'precontrato', inicioTermino: '15/10/2025 - 15/11/2025', preinscripcion: '126735228', precontratosFirmados: '13/13', celula: 'Cel1', repLegalNombre: '-', repLegalCi: 'No disponible', participantes: mockParticipantesCerrados.slice(0, 3) },
+  { fechaCierre: '24/11/2025', nroInscripcion: '2119350', sencenet: '6717009', curso: 'Aplicación de Cerámicos en Construcción', empresa: '93.770.000-8 – Goodyear de Chile S.a.i.c.', empresaRut: '93.770.000-8', empresaNombre: 'Goodyear de Chile S.a.i.c.', otecNombre: 'Corporacion Instituto Profesional Inacap', otecRut: '87.152.900-0', codigoSence: '1238073225', tipoContrato: 'precontrato', inicioTermino: '01/11/2025 - 01/12/2025', preinscripcion: '126735229', precontratosFirmados: '17/17', celula: 'Cel7', repLegalNombre: '-', repLegalCi: 'No disponible', participantes: mockParticipantesCerrados.slice(0, 4) },
+  { fechaCierre: '19/11/2025', nroInscripcion: '2124060', sencenet: '6724813', curso: 'Aplicación de Cerámicos en Construcción', empresa: '93.770.000-8 – Goodyear de Chile S.a.i.c.', empresaRut: '93.770.000-8', empresaNombre: 'Goodyear de Chile S.a.i.c.', otecNombre: 'Corporacion Instituto Profesional Inacap', otecRut: '87.152.900-0', codigoSence: '1238073226', tipoContrato: 'precontrato', inicioTermino: '20/10/2025 - 20/11/2025', preinscripcion: '126735230', precontratosFirmados: '7/7', celula: 'Cel7', repLegalNombre: '-', repLegalCi: 'No disponible', participantes: mockParticipantesCerrados.slice(0, 2) },
+  { fechaCierre: '29/07/2025', nroInscripcion: '2088172', sencenet: '6652266', curso: 'Aplicación de Estrategias de Gestión Del Bienestar Físico y Emocional', empresa: '93.077.000-0 – Metso Chile SPA', empresaRut: '93.077.000-0', empresaNombre: 'Metso Chile SPA', otecNombre: 'Corporacion Instituto Profesional Inacap', otecRut: '87.152.900-0', codigoSence: '1238073227', tipoContrato: 'precontrato', inicioTermino: '01/07/2025 - 01/08/2025', preinscripcion: '126735231', precontratosFirmados: '15/15', celula: 'Cel9', repLegalNombre: '-', repLegalCi: 'No disponible', participantes: mockParticipantesCerrados },
+  { fechaCierre: '04/08/2025', nroInscripcion: '2088964', sencenet: '6654519', curso: 'Aplicación de Estratégica de Gestión de Redes Sociales – Precontratos', empresa: '98.000.000-1 – A.f.p. Capital S.A.', empresaRut: '98.000.000-1', empresaNombre: 'A.f.p. Capital S.A.', otecNombre: 'Corporacion Instituto Profesional Inacap', otecRut: '87.152.900-0', codigoSence: '1238073228', tipoContrato: 'precontrato', inicioTermino: '10/07/2025 - 10/08/2025', preinscripcion: '126735232', precontratosFirmados: '39/39', celula: 'Cel4', repLegalNombre: '-', repLegalCi: 'No disponible', participantes: mockParticipantesCerrados },
+  { fechaCierre: '18/08/2025', nroInscripcion: '2090118', sencenet: '6657872', curso: 'Aplicación de Estratégica de Gestión de Redes Sociales – Precontratos', empresa: '98.000.000-1 – A.f.p. Capital S.A.', empresaRut: '98.000.000-1', empresaNombre: 'A.f.p. Capital S.A.', otecNombre: 'Corporacion Instituto Profesional Inacap', otecRut: '87.152.900-0', codigoSence: '1238073229', tipoContrato: 'precontrato', inicioTermino: '20/07/2025 - 20/08/2025', preinscripcion: '126735233', precontratosFirmados: '38/38', celula: 'Cel4', repLegalNombre: '-', repLegalCi: 'No disponible', participantes: mockParticipantesCerrados.slice(0, 3) },
+  { fechaCierre: '18/08/2025', nroInscripcion: '2092419', sencenet: '6665325', curso: 'Aplicación de Estratégica de Gestión de Redes Sociales – Precontratos', empresa: '98.000.000-1 – A.f.p. Capital S.A.', empresaRut: '98.000.000-1', empresaNombre: 'A.f.p. Capital S.A.', otecNombre: 'Corporacion Instituto Profesional Inacap', otecRut: '87.152.900-0', codigoSence: '1238073230', tipoContrato: 'precontrato', inicioTermino: '20/07/2025 - 20/08/2025', preinscripcion: '126735234', precontratosFirmados: '41/41', celula: 'Cel4', repLegalNombre: '-', repLegalCi: 'No disponible', participantes: mockParticipantesCerrados },
 ];
 
 const getCriticidadColor = (val: string) => {
