@@ -5,6 +5,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Calendar, PlusCircle, ArrowRight, AlertCircle, Ban, Eye, EyeOff } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface CursoSence {
   sc: string;
@@ -135,6 +136,15 @@ const ComunicacionSence: React.FC = () => {
     <div className="space-y-6">
       <h1 className="text-2xl font-bold text-foreground">
         ¿Necesitas generar un archivo o cargar respuesta de comunicación?
+      </h1>
+
+      <Tabs defaultValue="comunicacion" className="w-full">
+        <TabsList className="bg-muted/50 rounded-full p-1">
+          <TabsTrigger value="comunicacion" className="rounded-full px-6 text-sm">Comunicación SENCE</TabsTrigger>
+          <TabsTrigger value="precontratos" className="rounded-full px-6 text-sm">Precontratos Modulares</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="comunicacion" className="space-y-6 mt-4">
       </h1>
 
       {/* Section 1: Upload */}
@@ -286,61 +296,62 @@ const ComunicacionSence: React.FC = () => {
           </tbody>
         </table>
       </div>
+        </TabsContent>
 
-      {/* Precontratos Modulares */}
-      <div className="space-y-4 mt-8">
-        <h2 className="text-base font-semibold text-muted-foreground">
-          Precontratos Modulares
-        </h2>
-        <div className="border rounded-lg overflow-hidden">
-          <table className="w-full text-xs table-fixed">
-            <thead>
-              <tr className="border-b bg-muted/30">
-                <th className="p-2 w-8"></th>
-                <th className="p-2 text-left font-medium text-muted-foreground w-[12%]">Módulo</th>
-                <th className="p-2 text-left font-medium text-muted-foreground w-[10%]">S.C.</th>
-                <th className="p-2 text-left font-medium text-muted-foreground w-[30%]">Cliente</th>
-                <th className="p-2 text-center font-medium text-muted-foreground w-[10%]">Nro. Part.</th>
-                <th className="p-2 text-left font-medium text-muted-foreground w-[15%]">M.T. Franquicia</th>
-                <th className="p-2 text-left font-medium text-muted-foreground w-[15%]">Inicio Curso</th>
-              </tr>
-            </thead>
-            <tbody>
-              {precontratosModulares.map((modulo) => (
-                <React.Fragment key={modulo.modulo}>
-                  <tr className="bg-muted/20 border-b">
-                    <td className="p-2">
-                      <Checkbox
-                        checked={modulo.cursos.every(c => selectedModulares.includes(c.sc))}
-                        onCheckedChange={(checked) => handleSelectModulo(modulo.modulo, !!checked)}
-                      />
-                    </td>
-                    <td colSpan={6} className="p-2 font-semibold text-primary text-xs">
-                      {modulo.modulo} - Seleccionar todos ({modulo.cursos.length} cursos)
-                    </td>
-                  </tr>
-                  {modulo.cursos.map((curso, idx) => (
-                    <tr key={curso.sc} className={`border-b ${idx % 2 === 0 ? '' : 'bg-muted/10'} hover:bg-muted/20`}>
+        <TabsContent value="precontratos" className="space-y-4 mt-4">
+          <h2 className="text-base font-semibold text-muted-foreground">
+            Precontratos Modulares
+          </h2>
+          <div className="border rounded-lg overflow-hidden">
+            <table className="w-full text-xs table-fixed">
+              <thead>
+                <tr className="border-b bg-muted/30">
+                  <th className="p-2 w-8"></th>
+                  <th className="p-2 text-left font-medium text-muted-foreground w-[12%]">Módulo</th>
+                  <th className="p-2 text-left font-medium text-muted-foreground w-[10%]">S.C.</th>
+                  <th className="p-2 text-left font-medium text-muted-foreground w-[30%]">Cliente</th>
+                  <th className="p-2 text-center font-medium text-muted-foreground w-[10%]">Nro. Part.</th>
+                  <th className="p-2 text-left font-medium text-muted-foreground w-[15%]">M.T. Franquicia</th>
+                  <th className="p-2 text-left font-medium text-muted-foreground w-[15%]">Inicio Curso</th>
+                </tr>
+              </thead>
+              <tbody>
+                {precontratosModulares.map((modulo) => (
+                  <React.Fragment key={modulo.modulo}>
+                    <tr className="bg-muted/20 border-b">
                       <td className="p-2">
                         <Checkbox
-                          checked={selectedModulares.includes(curso.sc)}
-                          onCheckedChange={(checked) => handleSelectModular(curso.sc, !!checked)}
+                          checked={modulo.cursos.every(c => selectedModulares.includes(c.sc))}
+                          onCheckedChange={(checked) => handleSelectModulo(modulo.modulo, !!checked)}
                         />
                       </td>
-                      <td className="p-2 text-muted-foreground">{curso.moduloRef}</td>
-                      <td className="p-2 font-medium">{curso.sc}</td>
-                      <td className="p-2 text-muted-foreground">{curso.cliente}</td>
-                      <td className="p-2 text-center">{curso.nroPart}</td>
-                      <td className="p-2">{curso.mtFranquicia}</td>
-                      <td className="p-2">{curso.inicioCurso}</td>
+                      <td colSpan={6} className="p-2 font-semibold text-primary text-xs">
+                        {modulo.modulo} - Seleccionar todos ({modulo.cursos.length} cursos)
+                      </td>
                     </tr>
-                  ))}
-                </React.Fragment>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+                    {modulo.cursos.map((curso, idx) => (
+                      <tr key={curso.sc} className={`border-b ${idx % 2 === 0 ? '' : 'bg-muted/10'} hover:bg-muted/20`}>
+                        <td className="p-2">
+                          <Checkbox
+                            checked={selectedModulares.includes(curso.sc)}
+                            onCheckedChange={(checked) => handleSelectModular(curso.sc, !!checked)}
+                          />
+                        </td>
+                        <td className="p-2 text-muted-foreground">{curso.moduloRef}</td>
+                        <td className="p-2 font-medium">{curso.sc}</td>
+                        <td className="p-2 text-muted-foreground">{curso.cliente}</td>
+                        <td className="p-2 text-center">{curso.nroPart}</td>
+                        <td className="p-2">{curso.mtFranquicia}</td>
+                        <td className="p-2">{curso.inicioCurso}</td>
+                      </tr>
+                    ))}
+                  </React.Fragment>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
