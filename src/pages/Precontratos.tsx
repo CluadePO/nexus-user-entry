@@ -650,6 +650,31 @@ const Precontratos: React.FC = () => {
     return true;
   });
 
+  // Convert cerrado to normal format for detail view
+  const cerradoToNormal = (c: PrecontratoCerrado): PrecontratoNormal => ({
+    diasPlazo: 0,
+    nroInscripcion: c.nroInscripcion,
+    sencenet: c.sencenet,
+    curso: c.curso,
+    empresa: c.empresa,
+    empresaRut: c.empresaRut,
+    empresaNombre: c.empresaNombre,
+    otecNombre: c.otecNombre,
+    otecRut: c.otecRut,
+    codigoSence: c.codigoSence,
+    tipoContrato: c.tipoContrato,
+    inicioTermino: c.inicioTermino,
+    preinscripcion: c.preinscripcion,
+    precontratosFaltantes: c.precontratosFirmados,
+    autorizMenores: '0/0',
+    vulnerabilidad: 0,
+    celula: c.celula,
+    criticidad: 'baja',
+    repLegalNombre: c.repLegalNombre,
+    repLegalCi: c.repLegalCi,
+    participantes: c.participantes,
+  });
+
   // If a precontrato is selected, show detail view
   if (selectedPrecontrato) {
     return (
@@ -663,6 +688,24 @@ const Precontratos: React.FC = () => {
         <PrecontratoDetailView
           precontrato={selectedPrecontrato}
           onBack={() => setSelectedPrecontrato(null)}
+        />
+      </div>
+    );
+  }
+
+  // If a cerrado is selected, show detail view
+  if (selectedCerrado) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-bold text-foreground">Precontratos</h1>
+            <span className="bg-blue-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full shadow-sm">C1PPPC11</span>
+          </div>
+        </div>
+        <PrecontratoDetailView
+          precontrato={cerradoToNormal(selectedCerrado)}
+          onBack={() => setSelectedCerrado(null)}
         />
       </div>
     );
