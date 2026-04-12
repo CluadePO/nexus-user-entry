@@ -1288,6 +1288,81 @@ const Precontratos: React.FC = () => {
               </table>
             </div>
           )}
+
+          {/* Table - Próximos a Vencer */}
+          {subTab === 'proximos' && (
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <span className="text-xs font-medium text-muted-foreground">Célula Operacional:</span>
+                <Select value={celulaFilter} onValueChange={setCelulaFilter}>
+                  <SelectTrigger className="w-[180px] h-8 text-xs">
+                    <SelectValue placeholder="Todas las células" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="todas">Todas las células</SelectItem>
+                    {celulasOperacionales.map(cel => (
+                      <SelectItem key={cel} value={cel}>{cel}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <span className="text-xs text-orange-600 font-medium">
+                  {filteredProximos.length} curso{filteredProximos.length !== 1 ? 's' : ''} próximo{filteredProximos.length !== 1 ? 's' : ''} a vencer (≤10 días)
+                </span>
+              </div>
+              <div className="border rounded-lg overflow-hidden">
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="border-b bg-orange-50/50">
+                      <th className="p-2 text-center font-medium text-muted-foreground w-[8%]">Días<br/>restantes</th>
+                      <th className="p-2 text-center font-medium text-muted-foreground w-[9%]">Nº<br/>Inscripción</th>
+                      <th className="p-2 text-center font-medium text-muted-foreground w-[8%]">Sencenet</th>
+                      <th className="p-2 text-left font-medium text-muted-foreground w-[20%]">Curso</th>
+                      <th className="p-2 text-left font-medium text-muted-foreground w-[20%]">Empresa</th>
+                      <th className="p-2 text-center font-medium text-muted-foreground w-[10%]">Precontratos<br/>faltantes</th>
+                      <th className="p-2 text-center font-medium text-muted-foreground w-[8%]">Autoriz.<br/>Menores</th>
+                      <th className="p-2 text-center font-medium text-muted-foreground w-[9%]">Vulnerabilidad</th>
+                      <th className="p-2 text-center font-medium text-muted-foreground w-[6%]">Célula</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredProximos.sort((a, b) => a.diasPlazo - b.diasPlazo).map((p, idx) => (
+                      <tr
+                        key={p.nroInscripcion}
+                        className={`border-b ${idx % 2 === 0 ? '' : 'bg-muted/10'} hover:bg-muted/20 cursor-pointer`}
+                        onClick={() => setSelectedPrecontrato(p)}
+                      >
+                        <td className="p-2 text-center">
+                          <span className={`inline-flex items-center justify-center text-white text-[10px] font-bold rounded-full px-2 py-0.5 min-w-[36px] ${p.diasPlazo <= 3 ? 'bg-red-600' : p.diasPlazo <= 7 ? 'bg-orange-500' : 'bg-yellow-500'}`}>
+                            {p.diasPlazo}d
+                          </span>
+                        </td>
+                        <td className="p-2 text-center">{p.nroInscripcion}</td>
+                        <td className="p-2 text-center">{p.sencenet}</td>
+                        <td className="p-2">{p.curso}</td>
+                        <td className="p-2 text-muted-foreground">{p.empresa}</td>
+                        <td className="p-2 text-center">
+                          <span className={`inline-block border rounded-full px-2 py-0.5 text-[10px] font-medium ${getCriticidadColor(p.precontratosFaltantes)}`}>
+                            {p.precontratosFaltantes}
+                          </span>
+                        </td>
+                        <td className="p-2 text-center">
+                          <span className="inline-block border rounded-full px-2 py-0.5 text-[10px] font-medium text-green-700 bg-green-50 border-green-200">
+                            {p.autorizMenores}
+                          </span>
+                        </td>
+                        <td className="p-2 text-center">
+                          <span className="inline-block border rounded-full px-2 py-0.5 text-[10px] font-medium text-muted-foreground bg-muted/30 border-border">
+                            {p.vulnerabilidad}
+                          </span>
+                        </td>
+                        <td className="p-2 text-center text-muted-foreground">{p.celula}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
         </TabsContent>
 
         {/* ── Tab: Precontratos Modulares ── */}
