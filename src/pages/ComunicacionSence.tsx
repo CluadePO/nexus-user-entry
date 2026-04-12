@@ -14,6 +14,8 @@ interface CursoSence {
   inicioCurso: string;
   modalidad: string;
   tipoContrato: string;
+  codigoSence: string;
+  vencimientoSence: string;
 }
 
 const mockCursos: CursoSence[] = [
