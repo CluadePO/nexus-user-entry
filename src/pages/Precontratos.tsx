@@ -486,65 +486,103 @@ const Precontratos: React.FC = () => {
             </Button>
           </div>
 
-          {/* Table */}
-          <div className="border rounded-lg overflow-hidden">
-            <table className="w-full text-xs">
-              <thead>
-                <tr className="border-b bg-muted/30">
-                  <th className="p-2 text-center font-medium text-muted-foreground w-[8%]">Días de<br/>plazo</th>
-                  <th className="p-2 text-center font-medium text-muted-foreground w-[9%]">Nº<br/>Inscripción</th>
-                  <th className="p-2 text-center font-medium text-muted-foreground w-[8%]">Sencenet</th>
-                  <th className="p-2 text-left font-medium text-muted-foreground w-[20%]">Curso</th>
-                  <th className="p-2 text-left font-medium text-muted-foreground w-[20%]">Empresa</th>
-                  <th className="p-2 text-center font-medium text-muted-foreground w-[10%]">Precontratos<br/>faltantes</th>
-                  <th className="p-2 text-center font-medium text-muted-foreground w-[8%]">Autoriz.<br/>Menores</th>
-                  <th className="p-2 text-center font-medium text-muted-foreground w-[9%]">Vulnerabilidad</th>
-                  <th className="p-2 text-center font-medium text-muted-foreground w-[4%]"></th>
-                  <th className="p-2 text-center font-medium text-muted-foreground w-[6%]">Célula</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredNormales.map((p, idx) => (
-                  <tr
-                    key={p.nroInscripcion}
-                    className={`border-b ${idx % 2 === 0 ? '' : 'bg-muted/10'} hover:bg-muted/20 cursor-pointer`}
-                    onClick={() => setSelectedPrecontrato(p)}
-                  >
-                    <td className="p-2 text-center">
-                      <span className="inline-flex items-center justify-center bg-red-600 text-white text-[10px] font-bold rounded-full px-2 py-0.5 min-w-[36px]">
-                        {p.diasPlazo}
-                      </span>
-                    </td>
-                    <td className="p-2 text-center">{p.nroInscripcion}</td>
-                    <td className="p-2 text-center">{p.sencenet}</td>
-                    <td className="p-2">{p.curso}</td>
-                    <td className="p-2 text-muted-foreground">{p.empresa}</td>
-                    <td className="p-2 text-center">
-                      <span className={`inline-block border rounded-full px-2 py-0.5 text-[10px] font-medium ${getCriticidadColor(p.precontratosFaltantes)}`}>
-                        {p.precontratosFaltantes}
-                      </span>
-                    </td>
-                    <td className="p-2 text-center">
-                      <span className="inline-block border rounded-full px-2 py-0.5 text-[10px] font-medium text-green-700 bg-green-50 border-green-200">
-                        {p.autorizMenores}
-                      </span>
-                    </td>
-                    <td className="p-2 text-center">
-                      <span className="inline-block border rounded-full px-2 py-0.5 text-[10px] font-medium text-muted-foreground bg-muted/30 border-border">
-                        {p.vulnerabilidad}
-                      </span>
-                    </td>
-                    <td className="p-2 text-center">
-                      <button className="text-muted-foreground hover:text-foreground" onClick={(e) => e.stopPropagation()}>
-                        <Pencil className="h-3.5 w-3.5" />
-                      </button>
-                    </td>
-                    <td className="p-2 text-center text-muted-foreground">{p.celula}</td>
+          {/* Table - Pendientes */}
+          {subTab === 'pendientes' && (
+            <div className="border rounded-lg overflow-hidden">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="border-b bg-muted/30">
+                    <th className="p-2 text-center font-medium text-muted-foreground w-[8%]">Días de<br/>plazo</th>
+                    <th className="p-2 text-center font-medium text-muted-foreground w-[9%]">Nº<br/>Inscripción</th>
+                    <th className="p-2 text-center font-medium text-muted-foreground w-[8%]">Sencenet</th>
+                    <th className="p-2 text-left font-medium text-muted-foreground w-[20%]">Curso</th>
+                    <th className="p-2 text-left font-medium text-muted-foreground w-[20%]">Empresa</th>
+                    <th className="p-2 text-center font-medium text-muted-foreground w-[10%]">Precontratos<br/>faltantes</th>
+                    <th className="p-2 text-center font-medium text-muted-foreground w-[8%]">Autoriz.<br/>Menores</th>
+                    <th className="p-2 text-center font-medium text-muted-foreground w-[9%]">Vulnerabilidad</th>
+                    <th className="p-2 text-center font-medium text-muted-foreground w-[4%]"></th>
+                    <th className="p-2 text-center font-medium text-muted-foreground w-[6%]">Célula</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {filteredNormales.map((p, idx) => (
+                    <tr
+                      key={p.nroInscripcion}
+                      className={`border-b ${idx % 2 === 0 ? '' : 'bg-muted/10'} hover:bg-muted/20 cursor-pointer`}
+                      onClick={() => setSelectedPrecontrato(p)}
+                    >
+                      <td className="p-2 text-center">
+                        <span className="inline-flex items-center justify-center bg-red-600 text-white text-[10px] font-bold rounded-full px-2 py-0.5 min-w-[36px]">
+                          {p.diasPlazo}
+                        </span>
+                      </td>
+                      <td className="p-2 text-center">{p.nroInscripcion}</td>
+                      <td className="p-2 text-center">{p.sencenet}</td>
+                      <td className="p-2">{p.curso}</td>
+                      <td className="p-2 text-muted-foreground">{p.empresa}</td>
+                      <td className="p-2 text-center">
+                        <span className={`inline-block border rounded-full px-2 py-0.5 text-[10px] font-medium ${getCriticidadColor(p.precontratosFaltantes)}`}>
+                          {p.precontratosFaltantes}
+                        </span>
+                      </td>
+                      <td className="p-2 text-center">
+                        <span className="inline-block border rounded-full px-2 py-0.5 text-[10px] font-medium text-green-700 bg-green-50 border-green-200">
+                          {p.autorizMenores}
+                        </span>
+                      </td>
+                      <td className="p-2 text-center">
+                        <span className="inline-block border rounded-full px-2 py-0.5 text-[10px] font-medium text-muted-foreground bg-muted/30 border-border">
+                          {p.vulnerabilidad}
+                        </span>
+                      </td>
+                      <td className="p-2 text-center">
+                        <button className="text-muted-foreground hover:text-foreground" onClick={(e) => e.stopPropagation()}>
+                          <Pencil className="h-3.5 w-3.5" />
+                        </button>
+                      </td>
+                      <td className="p-2 text-center text-muted-foreground">{p.celula}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* Table - Cerrados */}
+          {subTab === 'cerrados' && (
+            <div className="border rounded-lg overflow-hidden">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="border-b bg-muted/30">
+                    <th className="p-2 text-left font-medium text-muted-foreground w-[10%]">Fecha de<br/>cierre</th>
+                    <th className="p-2 text-center font-medium text-muted-foreground w-[10%]">Nº<br/>Inscripción</th>
+                    <th className="p-2 text-center font-medium text-muted-foreground w-[8%]">Sencenet</th>
+                    <th className="p-2 text-left font-medium text-muted-foreground w-[30%]">Curso</th>
+                    <th className="p-2 text-left font-medium text-muted-foreground w-[22%]">Empresa</th>
+                    <th className="p-2 text-center font-medium text-muted-foreground w-[12%]">Precontratos<br/>firmados</th>
+                    <th className="p-2 text-center font-medium text-muted-foreground w-[8%]">Célula</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {precontratosCerradosData.map((p, idx) => (
+                    <tr key={p.nroInscripcion} className={`border-b ${idx % 2 === 0 ? '' : 'bg-muted/10'} hover:bg-muted/20`}>
+                      <td className="p-2">{p.fechaCierre}</td>
+                      <td className="p-2 text-center">{p.nroInscripcion}</td>
+                      <td className="p-2 text-center">{p.sencenet}</td>
+                      <td className="p-2">{p.curso}</td>
+                      <td className="p-2 text-muted-foreground">{p.empresa}</td>
+                      <td className="p-2 text-center">
+                        <span className="inline-block border rounded-full px-2 py-0.5 text-[10px] font-medium text-green-700 bg-green-50 border-green-200">
+                          {p.precontratosFirmados}
+                        </span>
+                      </td>
+                      <td className="p-2 text-center text-muted-foreground">{p.celula}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </TabsContent>
 
         {/* ── Tab: Precontratos Modulares ── */}
