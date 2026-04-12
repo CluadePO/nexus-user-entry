@@ -657,6 +657,22 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
               DESCARGA LEGAJO DE PRECONTRATO
               <span className="bg-blue-500 text-white text-[8px] font-bold px-1 py-0.5 rounded-full ml-1">C1PPPC3</span>
             </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-xs border-amber-600 text-amber-700 hover:bg-amber-50"
+              onClick={() => legajoInputRef.current?.click()}
+            >
+              <Upload className="h-3.5 w-3.5 mr-1" />
+              SUBIR LEGAJO DE PRECONTRATO
+            </Button>
+            <input
+              ref={legajoInputRef}
+              type="file"
+              accept=".pdf,.zip"
+              className="hidden"
+              onChange={handleSubirLegajo}
+            />
             <Button size="sm" className="bg-teal-700 hover:bg-teal-800 text-white text-xs">
               <Download className="h-3.5 w-3.5 mr-1" />
               DESCARGAR
