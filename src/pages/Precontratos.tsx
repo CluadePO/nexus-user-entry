@@ -60,9 +60,11 @@ const Precontratos: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div>
+      <div className="flex items-center gap-3">
         <h1 className="text-2xl font-bold text-foreground">Precontratos</h1>
-        <p className="text-muted-foreground">Gestión de precontratos modulares</p>
+        <span className="bg-blue-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full shadow-sm">C1PPPC11</span>
+      </div>
+      <p className="text-muted-foreground">Gestión de precontratos modulares</p>
       </div>
 
       <div className="border rounded-lg overflow-hidden">
