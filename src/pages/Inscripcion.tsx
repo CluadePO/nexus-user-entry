@@ -677,6 +677,46 @@ const Inscripcion: React.FC = () => {
               </Select>
             </div>
 
+            {/* Consultar Cuentas del Cliente */}
+            <div className="mb-6">
+              <Button
+                variant="outline"
+                className="gap-2 border-primary text-primary"
+                onClick={() => setShowClientAccounts(!showClientAccounts)}
+              >
+                <Search className="h-4 w-4" />
+                Consultar Cuentas del Cliente
+              </Button>
+
+              {showClientAccounts && (
+                <Card className="mt-4 p-4 border border-border">
+                  <p className="text-sm font-semibold text-muted-foreground mb-3">Cuenta Capacitación</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-2">
+                    <div className="rounded-full bg-amber-50 border border-amber-200 text-center py-3 px-4">
+                      <p className="text-xs font-semibold text-amber-700">Capacitación al año</p>
+                      <p className="text-sm font-bold text-amber-800">$916.000</p>
+                    </div>
+                    <div className="rounded-full bg-teal-50 border border-teal-200 text-center py-3 px-4">
+                      <p className="text-xs font-semibold text-teal-700">Excedente capacitación</p>
+                      <p className="text-sm font-bold text-teal-800">$10.800.000</p>
+                    </div>
+                    <div className="rounded-full bg-blue-50 border border-blue-200 text-center py-3 px-4">
+                      <p className="text-xs font-semibold text-blue-700">Viáticos y Traslado</p>
+                      <p className="text-sm font-bold text-blue-800">$1.250.000</p>
+                    </div>
+                    <div className="rounded-full bg-purple-50 border border-purple-200 text-center py-3 px-4">
+                      <p className="text-xs font-semibold text-purple-700">Reparto al Año</p>
+                      <p className="text-sm font-bold text-purple-800">$3.400.000</p>
+                    </div>
+                    <div className="rounded-full bg-rose-50 border border-rose-200 text-center py-3 px-4">
+                      <p className="text-xs font-semibold text-rose-700">Reparto Excedente</p>
+                      <p className="text-sm font-bold text-rose-800">$5.600.000</p>
+                    </div>
+                  </div>
+                </Card>
+              )}
+            </div>
+
             <Separator className="my-6" />
 
             <div className="flex justify-between">
