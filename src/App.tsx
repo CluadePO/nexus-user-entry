@@ -23,6 +23,7 @@ import AdminCarterasComerciales from "./pages/AdminCarterasComerciales";
 import CentroAyuda from "./pages/CentroAyuda";
 import ComunicacionSence from "./pages/ComunicacionSence";
 import Precontratos from "./pages/Precontratos";
+import LiquidacionSence from "./pages/LiquidacionSence";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -56,6 +57,7 @@ const App = () => (
                 {/* Cursos y Servicios routes */}
                 <Route path="/cursos/resumen" element={<CursosResumen />} />
                 <Route path="/cursos/sence" element={<ComunicacionSence />} />
+                <Route path="/cursos/liquidacion" element={<LiquidacionSence />} />
                 <Route path="/cursos/precontratos" element={<Precontratos />} />
                 <Route path="/cursos/*" element={<PlaceholderPage title="Cursos y Servicios" />} />
                 <Route path="/reportes" element={<PlaceholderPage title="Reportes" />} />
