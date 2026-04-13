@@ -691,7 +691,7 @@ const Inscripcion: React.FC = () => {
 
               {showClientAccounts && (
                 <Card className="mt-4 p-4 border border-border">
-                  <p className="text-sm font-semibold text-muted-foreground mb-3">Cuenta Capacitación</p>
+                  <p className="text-sm font-semibold text-muted-foreground mb-3">Cuenta Capacitación <span className="bg-blue-500 text-white text-[8px] font-bold px-1 py-0.5 rounded-full ml-1">C1CINS6</span></p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-2">
                     <div className="rounded-full bg-amber-50 border border-amber-200 text-center py-3 px-4">
                       <p className="text-xs font-semibold text-amber-700">Capacitación al año</p>
