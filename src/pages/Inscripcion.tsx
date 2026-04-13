@@ -161,6 +161,7 @@ const Inscripcion: React.FC = () => {
   const [showServiceError, setShowServiceError] = useState(false);
   const [retrySuccess, setRetrySuccess] = useState(false);
   const [inscripcionId] = useState('2148684');
+  const [showClientAccounts, setShowClientAccounts] = useState(false);
 
   // ─── Client search ──────────────────────────────────
   const filteredClients = clientSearch.length >= 2
