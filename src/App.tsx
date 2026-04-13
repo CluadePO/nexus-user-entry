@@ -23,6 +23,7 @@ import AdminCarterasComerciales from "./pages/AdminCarterasComerciales";
 import CentroAyuda from "./pages/CentroAyuda";
 import ComunicacionSence from "./pages/ComunicacionSence";
 import Precontratos from "./pages/Precontratos";
+import LiquidacionSence from "./pages/LiquidacionSence";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
