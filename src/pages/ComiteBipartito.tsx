@@ -36,6 +36,14 @@ const mockCandidatos = [
   { id: 4, rut: '19.012.345-6', nombre: 'Sofía Vargas', cargo: 'Jefa de Área', habilitado: true, votos: 15 },
 ];
 
+interface CandidatoCreacion {
+  nombre: string;
+  apellidoPaterno: string;
+  apellidoMaterno: string;
+  rut: string;
+  orden: number;
+}
+
 const ComiteBipartito = () => {
   const [activeTab, setActiveTab] = useState('creacion');
   const [searchTerm, setSearchTerm] = useState('');
@@ -43,6 +51,59 @@ const ComiteBipartito = () => {
   const [showAgregarVotante, setShowAgregarVotante] = useState(false);
   const [showAgregarCandidato, setShowAgregarCandidato] = useState(false);
   const [rutValidation, setRutValidation] = useState('');
+
+  // Wizard state for Creación
+  const [wizardStep, setWizardStep] = useState(1);
+  const [rutEmpresa, setRutEmpresa] = useState('');
+  const [comiteCreado, setComiteCreado] = useState(false);
+  const [candidatosFile, setCandidatosFile] = useState<File | null>(null);
+  const [votantesFile, setVotantesFile] = useState<File | null>(null);
+  const [candidatosCargados, setCandidatosCargados] = useState<CandidatoCreacion[]>([]);
+  const [votantesCargados, setVotantesCargados] = useState<number>(0);
+  const [showResumen, setShowResumen] = useState(false);
+
+  const handleCrearComiteWizard = () => {
+    if (!rutEmpresa) {
+      toast({ title: 'Error', description: 'Ingrese el RUT de la empresa', variant: 'destructive' });
+      return;
+    }
+    setComiteCreado(true);
+    toast({ title: 'Comité creado', description: `Comité creado para RUT ${rutEmpresa}` });
+    setWizardStep(2);
+  };
+
+  const handleCargarCandidatos = () => {
+    if (!candidatosFile) {
+      toast({ title: 'Error', description: 'Seleccione un archivo', variant: 'destructive' });
+      return;
+    }
+    const mockCandidatosCargados: CandidatoCreacion[] = [
+      { nombre: 'Daniela', apellidoPaterno: 'Muñoz', apellidoMaterno: 'Oyarzo', rut: '22795498', orden: 1 },
+      { nombre: 'Cristian', apellidoPaterno: 'Maturana', apellidoMaterno: 'Troncoso', rut: '18972327', orden: 2 },
+      { nombre: 'Didier', apellidoPaterno: 'Paredes', apellidoMaterno: 'Vargas', rut: '8285001', orden: 3 },
+      { nombre: 'Mauricio', apellidoPaterno: 'Vergara', apellidoMaterno: 'Cartes', rut: '9196610', orden: 4 },
+      { nombre: 'Angie', apellidoPaterno: 'Vielma', apellidoMaterno: 'Vielma', rut: '22631028', orden: 5 },
+      { nombre: 'Jorge', apellidoPaterno: 'Negron', apellidoMaterno: 'Sanchez', rut: '20550175', orden: 6 },
+    ];
+    setCandidatosCargados(mockCandidatosCargados);
+    toast({ title: 'Candidatos cargados', description: `${mockCandidatosCargados.length} candidatos cargados correctamente` });
+    setWizardStep(3);
+  };
+
+  const handleCargarVotantes = () => {
+    if (!votantesFile) {
+      toast({ title: 'Error', description: 'Seleccione un archivo', variant: 'destructive' });
+      return;
+    }
+    setVotantesCargados(4);
+    toast({ title: 'Votantes cargados', description: '4 votantes cargados correctamente' });
+    setWizardStep(4);
+  };
+
+  const handleFinalizar = () => {
+    setShowResumen(true);
+    toast({ title: 'Comité finalizado', description: 'El comité bipartito ha sido creado exitosamente' });
+  };
 
   const handleValidarRut = () => {
     if (rutValidation.length > 0) {
