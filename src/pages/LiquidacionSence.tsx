@@ -15,22 +15,24 @@ interface CursoLiquidacion {
   tipoContrato: string;
   codigoSence: string;
   vencimientoSence: string;
+  pagoSAP: string;
+  estadoPagoSAP: 'pagado' | 'pendiente' | 'parcial';
 }
 
 const mockCursos: CursoLiquidacion[] = [
-  { sc: '2074555', cliente: 'SALMONES BLUMAR MAGALLANES SPA', nroPart: 1, mtFranquicia: '$250.250', inicioCurso: '26/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238015432', vencimientoSence: '2026-04-20' },
-  { sc: '2078017', cliente: 'DOMINION SPA', nroPart: 1, mtFranquicia: '$250.250', inicioCurso: '26/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238017891', vencimientoSence: '2026-06-15' },
-  { sc: '2078959', cliente: 'SECURITAS S.A', nroPart: 19, mtFranquicia: '$2.376.000', inicioCurso: '21/04/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238019200', vencimientoSence: '2026-04-18' },
-  { sc: '2078960', cliente: 'SERVICIOS SECURITAS AUSTRAL LIMITADA', nroPart: 1, mtFranquicia: '$158.400', inicioCurso: '21/04/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238019201', vencimientoSence: '2026-07-30' },
-  { sc: '2079922', cliente: 'ELECNOR CHILE S A', nroPart: 1, mtFranquicia: '$500.500', inicioCurso: '26/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238020155', vencimientoSence: '2026-04-22' },
-  { sc: '2085199', cliente: 'COOPERATIVA AGRICOLA PISQUERA ELQUI LTDA.', nroPart: 1, mtFranquicia: '$44.156', inicioCurso: '19/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238025400', vencimientoSence: '2026-08-10' },
-  { sc: '2086977', cliente: 'INSTITUTO NACIONAL DE CAPACITACION PROFESIONAL', nroPart: 2, mtFranquicia: '$664.500', inicioCurso: '19/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238026800', vencimientoSence: '2026-04-19' },
-  { sc: '2091162', cliente: 'SERVEO FACILITY MANAGEMENT S.A. AGENCIA EN CHILE', nroPart: 1, mtFranquicia: '$210.000', inicioCurso: '26/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238031000', vencimientoSence: '2026-09-01' },
-  { sc: '2092667', cliente: 'SACYR CHILE S.A.', nroPart: 1, mtFranquicia: '$500.500', inicioCurso: '26/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238032500', vencimientoSence: '2026-05-20' },
-  { sc: '2097498', cliente: 'AGRICOLA LOS QUILLAYES LIMITADA', nroPart: 1, mtFranquicia: '$275.000', inicioCurso: '12/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238037000', vencimientoSence: '2026-04-21' },
-  { sc: '2101685', cliente: 'SERVICIO TECNICO TECNOSUR LTDA.', nroPart: 1, mtFranquicia: '$274.750', inicioCurso: '19/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238041200', vencimientoSence: '2026-10-15' },
-  { sc: '2106283', cliente: 'INMOBILIARIA E INVERSIONES MALPO SPA', nroPart: 1, mtFranquicia: '$301.000', inicioCurso: '11/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238045800', vencimientoSence: '2026-04-17' },
-  { sc: '2107893', cliente: 'CORPORACION EDUCACIONAL KINGSTON COLLEGE', nroPart: 2, mtFranquicia: '$20.000', inicioCurso: '20/04/2026', modalidad: 'Presencial', tipoContrato: 'Precontrato', codigoSence: '1238047300', vencimientoSence: '2026-12-01' },
+  { sc: '2074555', cliente: 'SALMONES BLUMAR MAGALLANES SPA', nroPart: 1, mtFranquicia: '$250.250', inicioCurso: '26/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238015432', vencimientoSence: '2026-04-20', pagoSAP: '$250.250', estadoPagoSAP: 'pagado' },
+  { sc: '2078017', cliente: 'DOMINION SPA', nroPart: 1, mtFranquicia: '$250.250', inicioCurso: '26/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238017891', vencimientoSence: '2026-06-15', pagoSAP: '$0', estadoPagoSAP: 'pendiente' },
+  { sc: '2078959', cliente: 'SECURITAS S.A', nroPart: 19, mtFranquicia: '$2.376.000', inicioCurso: '21/04/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238019200', vencimientoSence: '2026-04-18', pagoSAP: '$1.200.000', estadoPagoSAP: 'parcial' },
+  { sc: '2078960', cliente: 'SERVICIOS SECURITAS AUSTRAL LIMITADA', nroPart: 1, mtFranquicia: '$158.400', inicioCurso: '21/04/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238019201', vencimientoSence: '2026-07-30', pagoSAP: '$158.400', estadoPagoSAP: 'pagado' },
+  { sc: '2079922', cliente: 'ELECNOR CHILE S A', nroPart: 1, mtFranquicia: '$500.500', inicioCurso: '26/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238020155', vencimientoSence: '2026-04-22', pagoSAP: '$500.500', estadoPagoSAP: 'pagado' },
+  { sc: '2085199', cliente: 'COOPERATIVA AGRICOLA PISQUERA ELQUI LTDA.', nroPart: 1, mtFranquicia: '$44.156', inicioCurso: '19/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238025400', vencimientoSence: '2026-08-10', pagoSAP: '$0', estadoPagoSAP: 'pendiente' },
+  { sc: '2086977', cliente: 'INSTITUTO NACIONAL DE CAPACITACION PROFESIONAL', nroPart: 2, mtFranquicia: '$664.500', inicioCurso: '19/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238026800', vencimientoSence: '2026-04-19', pagoSAP: '$664.500', estadoPagoSAP: 'pagado' },
+  { sc: '2091162', cliente: 'SERVEO FACILITY MANAGEMENT S.A. AGENCIA EN CHILE', nroPart: 1, mtFranquicia: '$210.000', inicioCurso: '26/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238031000', vencimientoSence: '2026-09-01', pagoSAP: '$105.000', estadoPagoSAP: 'parcial' },
+  { sc: '2092667', cliente: 'SACYR CHILE S.A.', nroPart: 1, mtFranquicia: '$500.500', inicioCurso: '26/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238032500', vencimientoSence: '2026-05-20', pagoSAP: '$0', estadoPagoSAP: 'pendiente' },
+  { sc: '2097498', cliente: 'AGRICOLA LOS QUILLAYES LIMITADA', nroPart: 1, mtFranquicia: '$275.000', inicioCurso: '12/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238037000', vencimientoSence: '2026-04-21', pagoSAP: '$275.000', estadoPagoSAP: 'pagado' },
+  { sc: '2101685', cliente: 'SERVICIO TECNICO TECNOSUR LTDA.', nroPart: 1, mtFranquicia: '$274.750', inicioCurso: '19/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238041200', vencimientoSence: '2026-10-15', pagoSAP: '$274.750', estadoPagoSAP: 'pagado' },
+  { sc: '2106283', cliente: 'INMOBILIARIA E INVERSIONES MALPO SPA', nroPart: 1, mtFranquicia: '$301.000', inicioCurso: '11/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238045800', vencimientoSence: '2026-04-17', pagoSAP: '$150.500', estadoPagoSAP: 'parcial' },
+  { sc: '2107893', cliente: 'CORPORACION EDUCACIONAL KINGSTON COLLEGE', nroPart: 2, mtFranquicia: '$20.000', inicioCurso: '20/04/2026', modalidad: 'Presencial', tipoContrato: 'Precontrato', codigoSence: '1238047300', vencimientoSence: '2026-12-01', pagoSAP: '$20.000', estadoPagoSAP: 'pagado' },
 ];
 
 const LiquidacionSence: React.FC = () => {
@@ -167,16 +169,21 @@ const LiquidacionSence: React.FC = () => {
                 <th className="p-2 text-left font-medium text-muted-foreground w-[10%]">
                   Tipo Contrato <span className="text-xs">▾</span>
                 </th>
-                <th className="p-2 text-left font-medium text-muted-foreground w-[12%]">
+                <th className="p-2 text-left font-medium text-muted-foreground w-[10%]">
+                  <span className="inline-flex items-center gap-1">
+                    <span>Pago SAP <span className="text-xs">▾</span></span>
+                  </span>
+                </th>
+                <th className="p-2 text-left font-medium text-muted-foreground w-[10%]">
                   <span className="inline-flex items-center gap-1">
                     <span>Vigencia <span className="text-xs">▾</span></span>
-                    <span className="inline-flex items-center rounded-full bg-blue-600 px-1 py-0.5 text-[8px] font-bold leading-none text-white shadow-sm">C1CCOM4</span>
+                    <span className="inline-flex items-center rounded-full bg-primary px-1 py-0.5 text-[8px] font-bold leading-none text-primary-foreground shadow-sm">C1CCOM4</span>
                   </span>
                 </th>
                 <th className="p-2 text-center font-medium text-muted-foreground w-[12%]">
                   <span className="inline-flex items-center gap-1">
                     <span>No comunicar</span>
-                    <span className="inline-flex items-center rounded-full bg-blue-600 px-1 py-0.5 text-[8px] font-bold leading-none text-white shadow-sm">C1CCOM5</span>
+                    <span className="inline-flex items-center rounded-full bg-primary px-1 py-0.5 text-[8px] font-bold leading-none text-primary-foreground shadow-sm">C1CCOM5</span>
                   </span>
                 </th>
               </tr>
@@ -200,6 +207,16 @@ const LiquidacionSence: React.FC = () => {
                     <td className="p-2">{curso.inicioCurso}</td>
                     <td className="p-2">{curso.modalidad}</td>
                     <td className="p-2">{curso.tipoContrato}</td>
+                    <td className="p-2">
+                      <span className={`text-xs font-medium ${curso.estadoPagoSAP === 'pagado' ? 'text-emerald-600' : curso.estadoPagoSAP === 'parcial' ? 'text-amber-600' : 'text-destructive'}`}>
+                        {curso.pagoSAP}
+                      </span>
+                      {curso.estadoPagoSAP !== 'pagado' && (
+                        <Badge variant={curso.estadoPagoSAP === 'parcial' ? 'secondary' : 'destructive'} className="ml-1 text-[9px] px-1 py-0">
+                          {curso.estadoPagoSAP === 'parcial' ? 'Parcial' : 'Pendiente'}
+                        </Badge>
+                      )}
+                    </td>
                     <td className="p-2">
                       {isProximoAVencer(curso.vencimientoSence) ? (
                         <Badge variant="destructive" className="gap-1 text-[10px] whitespace-nowrap px-2 py-0.5">
