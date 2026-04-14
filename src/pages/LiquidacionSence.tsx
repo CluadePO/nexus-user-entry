@@ -15,6 +15,8 @@ interface CursoLiquidacion {
   tipoContrato: string;
   codigoSence: string;
   vencimientoSence: string;
+  pagoSAP: string;
+  estadoPagoSAP: 'pagado' | 'pendiente' | 'parcial';
 }
 
 const mockCursos: CursoLiquidacion[] = [
