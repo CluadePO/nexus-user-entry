@@ -36,6 +36,14 @@ const mockCandidatos = [
   { id: 4, rut: '19.012.345-6', nombre: 'Sofía Vargas', cargo: 'Jefa de Área', habilitado: true, votos: 15 },
 ];
 
+interface CandidatoCreacion {
+  nombre: string;
+  apellidoPaterno: string;
+  apellidoMaterno: string;
+  rut: string;
+  orden: number;
+}
+
 const ComiteBipartito = () => {
   const [activeTab, setActiveTab] = useState('creacion');
   const [searchTerm, setSearchTerm] = useState('');
@@ -43,6 +51,59 @@ const ComiteBipartito = () => {
   const [showAgregarVotante, setShowAgregarVotante] = useState(false);
   const [showAgregarCandidato, setShowAgregarCandidato] = useState(false);
   const [rutValidation, setRutValidation] = useState('');
+
+  // Wizard state for Creación
+  const [wizardStep, setWizardStep] = useState(1);
+  const [rutEmpresa, setRutEmpresa] = useState('');
+  const [comiteCreado, setComiteCreado] = useState(false);
+  const [candidatosFile, setCandidatosFile] = useState<File | null>(null);
+  const [votantesFile, setVotantesFile] = useState<File | null>(null);
+  const [candidatosCargados, setCandidatosCargados] = useState<CandidatoCreacion[]>([]);
+  const [votantesCargados, setVotantesCargados] = useState<number>(0);
+  const [showResumen, setShowResumen] = useState(false);
+
+  const handleCrearComiteWizard = () => {
+    if (!rutEmpresa) {
+      toast({ title: 'Error', description: 'Ingrese el RUT de la empresa', variant: 'destructive' });
+      return;
+    }
+    setComiteCreado(true);
+    toast({ title: 'Comité creado', description: `Comité creado para RUT ${rutEmpresa}` });
+    setWizardStep(2);
+  };
+
+  const handleCargarCandidatos = () => {
+    if (!candidatosFile) {
+      toast({ title: 'Error', description: 'Seleccione un archivo', variant: 'destructive' });
+      return;
+    }
+    const mockCandidatosCargados: CandidatoCreacion[] = [
+      { nombre: 'Daniela', apellidoPaterno: 'Muñoz', apellidoMaterno: 'Oyarzo', rut: '22795498', orden: 1 },
+      { nombre: 'Cristian', apellidoPaterno: 'Maturana', apellidoMaterno: 'Troncoso', rut: '18972327', orden: 2 },
+      { nombre: 'Didier', apellidoPaterno: 'Paredes', apellidoMaterno: 'Vargas', rut: '8285001', orden: 3 },
+      { nombre: 'Mauricio', apellidoPaterno: 'Vergara', apellidoMaterno: 'Cartes', rut: '9196610', orden: 4 },
+      { nombre: 'Angie', apellidoPaterno: 'Vielma', apellidoMaterno: 'Vielma', rut: '22631028', orden: 5 },
+      { nombre: 'Jorge', apellidoPaterno: 'Negron', apellidoMaterno: 'Sanchez', rut: '20550175', orden: 6 },
+    ];
+    setCandidatosCargados(mockCandidatosCargados);
+    toast({ title: 'Candidatos cargados', description: `${mockCandidatosCargados.length} candidatos cargados correctamente` });
+    setWizardStep(3);
+  };
+
+  const handleCargarVotantes = () => {
+    if (!votantesFile) {
+      toast({ title: 'Error', description: 'Seleccione un archivo', variant: 'destructive' });
+      return;
+    }
+    setVotantesCargados(4);
+    toast({ title: 'Votantes cargados', description: '4 votantes cargados correctamente' });
+    setWizardStep(4);
+  };
+
+  const handleFinalizar = () => {
+    setShowResumen(true);
+    toast({ title: 'Comité finalizado', description: 'El comité bipartito ha sido creado exitosamente' });
+  };
 
   const handleValidarRut = () => {
     if (rutValidation.length > 0) {
@@ -79,56 +140,140 @@ const ComiteBipartito = () => {
           <TabsTrigger value="voto" className="text-xs">Voto</TabsTrigger>
         </TabsList>
 
-        {/* ===== MANTENEDOR DE CREACIÓN ===== */}
+        {/* ===== CREACIÓN - WIZARD 4 PASOS ===== */}
         <TabsContent value="creacion" className="space-y-4">
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-base flex items-center gap-2">
-                <Building2 className="h-4 w-4 text-primary" />
-                Mantenedor de Creación
-              </CardTitle>
+              <CardTitle className="text-base">Comité Bipartito</CardTitle>
+              {/* Stepper */}
+              <div className="flex items-center gap-1 text-xs mt-2">
+                <span className={wizardStep === 1 ? 'font-bold text-foreground' : 'text-muted-foreground'}>
+                  1.- Crear Comité
+                </span>
+                <span className="text-muted-foreground">·</span>
+                <span className={wizardStep === 2 ? 'font-bold text-foreground' : 'text-muted-foreground'}>
+                  2. Ingresar Candidatos
+                </span>
+                <span className="text-muted-foreground">·</span>
+                <span className={wizardStep === 3 ? 'font-bold text-foreground' : 'text-muted-foreground'}>
+                  3. Ingresar Votantes
+                </span>
+                <span className="text-muted-foreground">·</span>
+                <span className={wizardStep === 4 || showResumen ? 'font-bold text-foreground' : 'text-muted-foreground'}>
+                  4. Opciones Finales
+                </span>
+              </div>
             </CardHeader>
-            <CardContent className="space-y-4">
-              {/* Acciones rápidas */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                <Button variant="outline" size="sm" className="text-xs" onClick={handleValidarEmpresa}>
-                  <CheckCircle className="h-3 w-3 mr-1" /> Validar Empresa
-                </Button>
-                <Button variant="outline" size="sm" className="text-xs" onClick={() => handleCargaMasiva('Candidatos')}>
-                  <Upload className="h-3 w-3 mr-1" /> Carga Masiva Candidatos
-                </Button>
-                <Button variant="outline" size="sm" className="text-xs" onClick={() => handleCargaMasiva('Votantes')}>
-                  <Upload className="h-3 w-3 mr-1" /> Carga Masiva Votantes
-                </Button>
-                <Button variant="outline" size="sm" className="text-xs" onClick={() => toast({ title: 'Foto actualizada' })}>
-                  <Image className="h-3 w-3 mr-1" /> Actualizar Foto Candidato
-                </Button>
-              </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                <Button variant="outline" size="sm" className="text-xs" onClick={() => toast({ title: 'Votantes validados correctamente' })}>
-                  <ShieldCheck className="h-3 w-3 mr-1" /> Validar Votantes
-                </Button>
-                <Button variant="outline" size="sm" className="text-xs" onClick={() => toast({ title: 'Candidatos validados correctamente' })}>
-                  <ShieldCheck className="h-3 w-3 mr-1" /> Validar Candidatos
-                </Button>
-                <Button variant="outline" size="sm" className="text-xs" onClick={() => toast({ title: 'Logo actualizado' })}>
-                  <Image className="h-3 w-3 mr-1" /> Actualizar Logo
-                </Button>
-                <Button size="sm" className="text-xs" onClick={() => setShowCrearComite(true)}>
-                  <Plus className="h-3 w-3 mr-1" /> Crear Comité
-                </Button>
-              </div>
-
-              {/* Validar RUT */}
-              <div className="flex items-end gap-2 pt-2 border-t">
-                <div className="flex-1 max-w-xs">
-                  <Label className="text-xs">Validar RUT</Label>
-                  <Input placeholder="Ej: 12.345.678-9" value={rutValidation} onChange={(e) => setRutValidation(e.target.value)} className="h-8 text-xs" />
+            <CardContent className="space-y-6">
+              {/* PASO 1: Crear Comité */}
+              {wizardStep === 1 && !showResumen && (
+                <div className="space-y-6">
+                  <div className="flex items-center justify-center gap-3">
+                    <Label className="text-sm">Rut Empresa</Label>
+                    <Input
+                      placeholder="77762940-9"
+                      value={rutEmpresa}
+                      onChange={(e) => setRutEmpresa(e.target.value)}
+                      className="w-48 h-9 text-sm"
+                    />
+                    <Button size="sm" variant="destructive" onClick={handleCrearComiteWizard}>
+                      Crear
+                    </Button>
+                  </div>
+                  <div className="space-y-3">
+                    <a href="#" className="text-sm text-blue-600 underline hover:text-blue-800">Manual de Usuario</a>
+                    <div>
+                      <Button size="sm" variant="destructive">
+                        <Image className="h-3 w-3 mr-1" /> Adjuntar logo
+                      </Button>
+                    </div>
+                  </div>
                 </div>
-                <Button size="sm" variant="secondary" className="text-xs" onClick={handleValidarRut}>
-                  <CheckCircle className="h-3 w-3 mr-1" /> Validar
-                </Button>
-              </div>
+              )}
+
+              {/* PASO 2: Ingresar Candidatos */}
+              {wizardStep === 2 && !showResumen && (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="file"
+                      accept=".csv,.xlsx,.xls"
+                      onChange={(e) => setCandidatosFile(e.target.files?.[0] || null)}
+                      className="text-sm"
+                    />
+                    <Button size="sm" variant="destructive" onClick={handleCargarCandidatos}>
+                      Cargar
+                    </Button>
+                  </div>
+                  <a href="#" className="text-sm text-blue-600 underline hover:text-blue-800">Manual de Usuario</a>
+                </div>
+              )}
+
+              {/* PASO 3: Ingresar Votantes */}
+              {wizardStep === 3 && !showResumen && (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="file"
+                      accept=".csv,.xlsx,.xls"
+                      onChange={(e) => setVotantesFile(e.target.files?.[0] || null)}
+                      className="text-sm"
+                    />
+                    <Button size="sm" variant="destructive" onClick={handleCargarVotantes}>
+                      Cargar
+                    </Button>
+                  </div>
+                  <a href="#" className="text-sm text-blue-600 underline hover:text-blue-800">Manual de Usuario</a>
+                </div>
+              )}
+
+              {/* PASO 4: Opciones Finales */}
+              {wizardStep === 4 && !showResumen && (
+                <div className="space-y-6">
+                  <Button size="sm" variant="destructive">
+                    <Image className="h-3 w-3 mr-1" /> Adjuntar Imagenes
+                  </Button>
+
+                  {candidatosCargados.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="text-sm text-muted-foreground">Seleccione una imagen, a los candidatos que les correspondan:</p>
+                      {candidatosCargados.map((c, idx) => (
+                        <div key={idx} className="flex items-center gap-4 text-sm">
+                          <span className="w-28">{c.nombre}</span>
+                          <span className="w-28">{c.apellidoPaterno}</span>
+                          <span className="w-28">{c.apellidoMaterno}</span>
+                          <input type="file" accept="image/*" className="text-xs" />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <Button variant="outline" size="sm" onClick={handleFinalizar}>
+                    Finalizar
+                  </Button>
+                  <div>
+                    <a href="#" className="text-sm text-blue-600 underline hover:text-blue-800">Manual de Usuario</a>
+                  </div>
+                </div>
+              )}
+
+              {/* RESUMEN */}
+              {showResumen && (
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="text-base font-semibold mb-2">Resumen</h3>
+                    <p className="text-sm">Id Comité: <span className="font-medium">5352</span></p>
+                    <p className="text-sm">Total de Candidatos: <span className="font-medium">{candidatosCargados.length}</span></p>
+                    <p className="text-sm">Total de Votantes: <span className="font-medium">{votantesCargados}</span></p>
+                  </div>
+                  <div>
+                    <h3 className="text-base font-semibold mb-1">Link</h3>
+                    <a href="#" className="text-sm text-blue-600 underline">
+                      https://sistemas.capacinet.cl/comite/Voto/Index/5352/1
+                    </a>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
