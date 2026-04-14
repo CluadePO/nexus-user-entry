@@ -23,6 +23,7 @@ import AdminCarterasComerciales from "./pages/AdminCarterasComerciales";
 import CentroAyuda from "./pages/CentroAyuda";
 import ComunicacionSence from "./pages/ComunicacionSence";
 import Precontratos from "./pages/Precontratos";
+import PrecontratosNuevo from "./pages/PrecontratosNuevo";
 import LiquidacionSence from "./pages/LiquidacionSence";
 import ComiteBipartito from "./pages/ComiteBipartito";
 import NotFound from "./pages/NotFound";
@@ -61,6 +62,7 @@ const App = () => (
                 <Route path="/cursos/liquidacion" element={<LiquidacionSence />} />
                 <Route path="/cursos/comite-bipartito" element={<ComiteBipartito />} />
                 <Route path="/cursos/precontratos" element={<Precontratos />} />
+                <Route path="/cursos/precontratos-nuevo" element={<PrecontratosNuevo />} />
                 <Route path="/cursos/*" element={<PlaceholderPage title="Cursos y Servicios" />} />
                 <Route path="/reportes" element={<PlaceholderPage title="Reportes" />} />
                 <Route path="/data360" element={<PlaceholderPage title="Data 360" />} />
