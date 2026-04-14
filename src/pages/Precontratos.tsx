@@ -1102,7 +1102,7 @@ const Precontratos: React.FC = () => {
       <div className="space-y-6">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold text-foreground">Precontratos</h1>
+            <h1 className="text-2xl font-bold text-foreground">Conecccta</h1>
             <span className="bg-blue-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full shadow-sm">C1PPPC11</span>
           </div>
         </div>
@@ -1120,7 +1120,7 @@ const Precontratos: React.FC = () => {
       <div className="space-y-6">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold text-foreground">Precontratos</h1>
+            <h1 className="text-2xl font-bold text-foreground">Conecccta</h1>
             <span className="bg-blue-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full shadow-sm">C1PPPC11</span>
           </div>
         </div>
@@ -1137,7 +1137,7 @@ const Precontratos: React.FC = () => {
       {/* Header */}
       <div>
         <div className="flex items-center gap-3">
-          <h1 className="text-2xl font-bold text-foreground">Precontratos</h1>
+          <h1 className="text-2xl font-bold text-foreground">Conecccta</h1>
           <span className="bg-blue-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full shadow-sm">C1PPPC11</span>
         </div>
         <p className="text-muted-foreground">Gestión de precontratos y precontratos modulares</p>
@@ -1146,7 +1146,7 @@ const Precontratos: React.FC = () => {
       {/* Main Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
-          <TabsTrigger value="precontratos">Precontratos</TabsTrigger>
+          <TabsTrigger value="precontratos">Precontratos (Normal)</TabsTrigger>
           <TabsTrigger value="modulares">Precontratos Modulares</TabsTrigger>
         </TabsList>
 

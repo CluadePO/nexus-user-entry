@@ -58,7 +58,7 @@ export const menuByRole: Record<UserRole, MenuItem[]> = {
         { key: 'cursos-resumen', label: 'Resumen', url: '/cursos/resumen' },
         { key: 'cursos-contenido', label: 'Contenido del Curso', url: '/cursos/contenido' },
         { key: 'cursos-inscripcion', label: 'Inscripción', url: '/cursos/inscripcion' },
-        { key: 'cursos-precontratos', label: 'Precontratos', url: '/cursos/precontratos' },
+        { key: 'cursos-precontratos', label: 'Conecccta', url: '/cursos/precontratos' },
       ]
     },
     { 
@@ -108,7 +108,7 @@ export const menuByRole: Record<UserRole, MenuItem[]> = {
         { key: 'cursos-resumen', label: 'Resumen', url: '/cursos/resumen' },
         { key: 'cursos-contenido', label: 'Contenido del Curso', url: '/cursos/contenido' },
         { key: 'cursos-inscripcion', label: 'Inscripción', url: '/cursos/inscripcion' },
-        { key: 'cursos-precontratos', label: 'Precontratos', url: '/cursos/precontratos' },
+        { key: 'cursos-precontratos', label: 'Conecccta', url: '/cursos/precontratos' },
       ]
     },
     { 
@@ -157,7 +157,7 @@ export const menuByRole: Record<UserRole, MenuItem[]> = {
       children: [
         { key: 'cursos-resumen', label: 'Resumen', url: '/cursos/resumen' },
         { key: 'cursos-inscripcion', label: 'Inscripción', url: '/cursos/inscripcion' },
-        { key: 'cursos-precontratos', label: 'Precontratos', url: '/cursos/precontratos' },
+        { key: 'cursos-precontratos', label: 'Conecccta', url: '/cursos/precontratos' },
       ]
     },
     { 
@@ -200,7 +200,7 @@ export const menuByRole: Record<UserRole, MenuItem[]> = {
       children: [
         { key: 'cursos-resumen', label: 'Resumen', url: '/cursos/resumen' },
         { key: 'cursos-inscripcion', label: 'Inscripción', url: '/cursos/inscripcion' },
-        { key: 'cursos-precontratos', label: 'Precontratos', url: '/cursos/precontratos' },
+        { key: 'cursos-precontratos', label: 'Conecccta', url: '/cursos/precontratos' },
       ]
     },
     { 
@@ -243,7 +243,7 @@ export const menuByRole: Record<UserRole, MenuItem[]> = {
       children: [
         { key: 'cursos-resumen', label: 'Resumen', url: '/cursos/resumen' },
         { key: 'cursos-inscripcion', label: 'Inscripción', url: '/cursos/inscripcion' },
-        { key: 'cursos-precontratos', label: 'Precontratos', url: '/cursos/precontratos' },
+        { key: 'cursos-precontratos', label: 'Conecccta', url: '/cursos/precontratos' },
         { key: 'comunicacion-sence', label: 'Comunicación Sence', url: '/cursos/sence' },
         { key: 'liquidacion-sence', label: 'Liquidación Sence', url: '/cursos/liquidacion' },
         { key: 'comite-bipartito', label: 'Comité Bipartito', url: '/cursos/comite-bipartito' },
