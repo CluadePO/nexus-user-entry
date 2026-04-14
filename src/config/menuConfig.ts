@@ -246,6 +246,7 @@ export const menuByRole: Record<UserRole, MenuItem[]> = {
         { key: 'cursos-precontratos', label: 'Precontratos', url: '/cursos/precontratos' },
         { key: 'comunicacion-sence', label: 'Comunicación Sence', url: '/cursos/sence' },
         { key: 'liquidacion-sence', label: 'Liquidación Sence', url: '/cursos/liquidacion' },
+        { key: 'comite-bipartito', label: 'Comité Bipartito', url: '/cursos/comite-bipartito' },
       ]
     },
     { 
