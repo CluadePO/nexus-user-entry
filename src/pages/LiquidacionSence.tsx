@@ -208,6 +208,16 @@ const LiquidacionSence: React.FC = () => {
                     <td className="p-2">{curso.modalidad}</td>
                     <td className="p-2">{curso.tipoContrato}</td>
                     <td className="p-2">
+                      <span className={`text-xs font-medium ${curso.estadoPagoSAP === 'pagado' ? 'text-emerald-600' : curso.estadoPagoSAP === 'parcial' ? 'text-amber-600' : 'text-destructive'}`}>
+                        {curso.pagoSAP}
+                      </span>
+                      {curso.estadoPagoSAP !== 'pagado' && (
+                        <Badge variant={curso.estadoPagoSAP === 'parcial' ? 'secondary' : 'destructive'} className="ml-1 text-[9px] px-1 py-0">
+                          {curso.estadoPagoSAP === 'parcial' ? 'Parcial' : 'Pendiente'}
+                        </Badge>
+                      )}
+                    </td>
+                    <td className="p-2">
                       {isProximoAVencer(curso.vencimientoSence) ? (
                         <Badge variant="destructive" className="gap-1 text-[10px] whitespace-nowrap px-2 py-0.5">
                           <AlertCircle className="w-3 h-3" />
