@@ -3,9 +3,11 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Calendar, PlusCircle, ArrowRight, AlertCircle, Ban, Eye, EyeOff } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-
+import ModularesTab from '@/components/modulares/ModularesTab';
+import CursoDetalleCompleto from '@/components/precontratos/CursoDetalleCompleto';
 
 interface CursoSence {
   sc: string;
@@ -40,17 +42,16 @@ const ComunicacionSence: React.FC = () => {
   const [fechaFin, setFechaFin] = useState('2026-05-31');
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [selectAll, setSelectAll] = useState(false);
-  const [sortColumn, setSortColumn] = useState<string | null>(null);
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [noComunicar, setNoComunicar] = useState<string[]>([]);
+  const [activeTab, setActiveTab] = useState('comunicacion');
+  const [cursoDetalleSC, setCursoDetalleSC] = useState<string | null>(null);
+  const [cursoDetalleIdModular, setCursoDetalleIdModular] = useState<string | undefined>();
+
   const toggleNoComunicar = (sc: string) => {
     setNoComunicar(prev =>
       prev.includes(sc) ? prev.filter(s => s !== sc) : [...prev, sc]
     );
   };
-
-
-
 
   const handleSelectAll = (checked: boolean) => {
     setSelectAll(checked);
@@ -79,164 +80,194 @@ const ComunicacionSence: React.FC = () => {
     return diffDias >= 0 && diffDias <= 10;
   };
 
+  if (cursoDetalleSC) {
+    return (
+      <div className="space-y-6">
+        <h1 className="text-2xl font-bold text-foreground">Detalle del Curso</h1>
+        <CursoDetalleCompleto
+          numeroSC={cursoDetalleSC}
+          onBack={() => { setCursoDetalleSC(null); setCursoDetalleIdModular(undefined); }}
+          idModular={cursoDetalleIdModular}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold text-foreground">
         ¿Necesitas generar un archivo o cargar respuesta de comunicación?
       </h1>
 
-      <div className="space-y-6">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList>
+          <TabsTrigger value="comunicacion">Comunicación SENCE</TabsTrigger>
+          <TabsTrigger value="modulares">Precontratos Modulares</TabsTrigger>
+        </TabsList>
 
-      {/* Section 1: Upload */}
-      <div className="space-y-3">
-        <h2 className="text-base font-semibold text-muted-foreground">
-          Carga una respuesta de comunicación SENCE
-        </h2>
-        <Button variant="outline" className="border-primary text-primary hover:bg-primary/5 gap-2 rounded-full px-6">
-          <PlusCircle className="w-4 h-4" />
-          Carga comunicación
-        </Button>
-      </div>
+        <TabsContent value="comunicacion" className="mt-4">
+          <div className="space-y-6">
+            {/* Section 1: Upload */}
+            <div className="space-y-3">
+              <h2 className="text-base font-semibold text-muted-foreground">
+                Carga una respuesta de comunicación SENCE
+              </h2>
+              <Button variant="outline" className="border-primary text-primary hover:bg-primary/5 gap-2 rounded-full px-6">
+                <PlusCircle className="w-4 h-4" />
+                Carga comunicación
+              </Button>
+            </div>
 
-      {/* Section 2: Generate file */}
-      <div className="space-y-4">
-        <h2 className="text-base font-semibold text-muted-foreground">
-          O continua generando un archivo de comunicación SENCE
-        </h2>
+            {/* Section 2: Generate file */}
+            <div className="space-y-4">
+              <h2 className="text-base font-semibold text-muted-foreground">
+                O continua generando un archivo de comunicación SENCE
+              </h2>
 
-        <div className="flex items-center gap-4 flex-wrap">
-          <div className="relative">
-            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input
-              type="date"
-              value={fechaInicio}
-              onChange={(e) => setFechaInicio(e.target.value)}
-              className="pl-10 w-[180px] rounded-full border-border"
-            />
-          </div>
-          <div className="relative">
-            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input
-              type="date"
-              value={fechaFin}
-              onChange={(e) => setFechaFin(e.target.value)}
-              className="pl-10 w-[180px] rounded-full border-border"
-            />
-          </div>
-          <Button variant="secondary" className="gap-2 rounded-full px-6 bg-muted text-muted-foreground">
-            Generar Archivo <ArrowRight className="w-4 h-4" />
-          </Button>
-        </div>
-
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <span className="w-3 h-3 rounded-full bg-amber-400 inline-block" />
-          Deberías indicar los cursos que tienen fechas de inicio a partir del {formatDateDisplay(fechaInicio)}
-        </div>
-      </div>
-
-      {/* Results badge */}
-      <div>
-        <Badge className="bg-primary text-primary-foreground rounded-full px-4 py-1 text-sm font-medium">
-          {mockCursos.length} cursos cargados
-        </Badge>
-      </div>
-
-      {/* Table */}
-      <div className="border rounded-lg overflow-hidden">
-        <table className="w-full text-xs table-fixed">
-          <thead>
-            <tr className="border-b bg-muted/30">
-              <th className="p-2 w-8">
-                <Checkbox
-                  checked={selectAll}
-                  onCheckedChange={(checked) => handleSelectAll(!!checked)}
-                />
-              </th>
-              <th className="p-2 text-left font-medium text-muted-foreground w-[7%]">
-                S.C <span className="text-xs">▾</span>
-              </th>
-              <th className="p-2 text-left font-medium text-muted-foreground w-[18%]">
-                Cliente <span className="text-xs">▾</span>
-              </th>
-              <th className="p-2 text-center font-medium text-muted-foreground w-[5%]">
-                Nro. Part. <span className="text-xs">▾</span>
-              </th>
-              <th className="p-2 text-left font-medium text-muted-foreground w-[10%]">
-                M.T. Franquicia <span className="text-xs">▾</span>
-              </th>
-              <th className="p-2 text-left font-medium text-muted-foreground w-[9%]">
-                Inicio Curso <span className="text-xs">▾</span>
-              </th>
-              <th className="p-2 text-left font-medium text-muted-foreground w-[10%]">
-                Modalidad <span className="text-xs">▾</span>
-              </th>
-              <th className="p-2 text-left font-medium text-muted-foreground w-[10%]">
-                Tipo Contrato <span className="text-xs">▾</span>
-              </th>
-              <th className="p-2 text-left font-medium text-muted-foreground w-[12%]">
-                <span className="inline-flex items-center gap-1">
-                  <span>Vigencia <span className="text-xs">▾</span></span>
-                  <span className="inline-flex items-center rounded-full bg-blue-600 px-1 py-0.5 text-[8px] font-bold leading-none text-white shadow-sm">C1CCOM4</span>
-                </span>
-              </th>
-              <th className="p-2 text-center font-medium text-muted-foreground w-[12%]">
-                <span className="inline-flex items-center gap-1">
-                  <span>No comunicar</span>
-                  <span className="inline-flex items-center rounded-full bg-blue-600 px-1 py-0.5 text-[8px] font-bold leading-none text-white shadow-sm">C1CCOM5</span>
-                </span>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {mockCursos.map((curso, idx) => {
-              const excluido = noComunicar.includes(curso.sc);
-              return (
-              <tr key={curso.sc} className={`border-b ${excluido ? 'bg-red-50/50 opacity-60' : idx % 2 === 0 ? 'hover:bg-muted/20' : 'bg-muted/10 hover:bg-muted/20'}`}>
-                <td className="p-2">
-                  <Checkbox
-                    checked={selectedRows.includes(curso.sc)}
-                    onCheckedChange={(checked) => handleSelectRow(curso.sc, !!checked)}
-                    disabled={excluido}
+              <div className="flex items-center gap-4 flex-wrap">
+                <div className="relative">
+                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
+                    type="date"
+                    value={fechaInicio}
+                    onChange={(e) => setFechaInicio(e.target.value)}
+                    className="pl-10 w-[180px] rounded-full border-border"
                   />
-                </td>
-                <td className="p-2 font-medium">{curso.sc}</td>
-                <td className="p-2 text-muted-foreground truncate">{curso.cliente}</td>
-                <td className="p-2 text-center">{curso.nroPart}</td>
-                <td className="p-2">{curso.mtFranquicia}</td>
-                <td className="p-2">{curso.inicioCurso}</td>
-                <td className="p-2">{curso.modalidad}</td>
-                <td className="p-2">{curso.tipoContrato}</td>
-                <td className="p-2">
-                  {isProximoAVencer(curso.vencimientoSence) ? (
-                    <Badge variant="destructive" className="gap-1 text-[10px] whitespace-nowrap px-2 py-0.5">
-                      <AlertCircle className="w-3 h-3" />
-                      Por vencer
-                    </Badge>
-                  ) : (
-                    <span className="text-muted-foreground text-xs">Vigente</span>
-                  )}
-                </td>
-                <td className="p-2 text-center">
-                  <Button
-                    variant={excluido ? 'destructive' : 'outline'}
-                    size="sm"
-                    className="gap-1 text-xs h-7 px-2"
-                    onClick={() => toggleNoComunicar(curso.sc)}
-                  >
-                    {excluido ? (
-                      <><EyeOff className="w-3 h-3" /> Excluido</>
-                    ) : (
-                      <><Ban className="w-3 h-3" /> Excluir</>
-                    )}
-                  </Button>
-                </td>
-              </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-      </div>
+                </div>
+                <div className="relative">
+                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
+                    type="date"
+                    value={fechaFin}
+                    onChange={(e) => setFechaFin(e.target.value)}
+                    className="pl-10 w-[180px] rounded-full border-border"
+                  />
+                </div>
+                <Button variant="secondary" className="gap-2 rounded-full px-6 bg-muted text-muted-foreground">
+                  Generar Archivo <ArrowRight className="w-4 h-4" />
+                </Button>
+              </div>
+
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <span className="w-3 h-3 rounded-full bg-amber-400 inline-block" />
+                Deberías indicar los cursos que tienen fechas de inicio a partir del {formatDateDisplay(fechaInicio)}
+              </div>
+            </div>
+
+            {/* Results badge */}
+            <div>
+              <Badge className="bg-primary text-primary-foreground rounded-full px-4 py-1 text-sm font-medium">
+                {mockCursos.length} cursos cargados
+              </Badge>
+            </div>
+
+            {/* Table */}
+            <div className="border rounded-lg overflow-hidden">
+              <table className="w-full text-xs table-fixed">
+                <thead>
+                  <tr className="border-b bg-muted/30">
+                    <th className="p-2 w-8">
+                      <Checkbox
+                        checked={selectAll}
+                        onCheckedChange={(checked) => handleSelectAll(!!checked)}
+                      />
+                    </th>
+                    <th className="p-2 text-left font-medium text-muted-foreground w-[7%]">
+                      S.C <span className="text-xs">▾</span>
+                    </th>
+                    <th className="p-2 text-left font-medium text-muted-foreground w-[18%]">
+                      Cliente <span className="text-xs">▾</span>
+                    </th>
+                    <th className="p-2 text-center font-medium text-muted-foreground w-[5%]">
+                      Nro. Part. <span className="text-xs">▾</span>
+                    </th>
+                    <th className="p-2 text-left font-medium text-muted-foreground w-[10%]">
+                      M.T. Franquicia <span className="text-xs">▾</span>
+                    </th>
+                    <th className="p-2 text-left font-medium text-muted-foreground w-[9%]">
+                      Inicio Curso <span className="text-xs">▾</span>
+                    </th>
+                    <th className="p-2 text-left font-medium text-muted-foreground w-[10%]">
+                      Modalidad <span className="text-xs">▾</span>
+                    </th>
+                    <th className="p-2 text-left font-medium text-muted-foreground w-[10%]">
+                      Tipo Contrato <span className="text-xs">▾</span>
+                    </th>
+                    <th className="p-2 text-left font-medium text-muted-foreground w-[12%]">
+                      <span className="inline-flex items-center gap-1">
+                        <span>Vigencia <span className="text-xs">▾</span></span>
+                        <span className="inline-flex items-center rounded-full bg-blue-600 px-1 py-0.5 text-[8px] font-bold leading-none text-white shadow-sm">C1CCOM4</span>
+                      </span>
+                    </th>
+                    <th className="p-2 text-center font-medium text-muted-foreground w-[12%]">
+                      <span className="inline-flex items-center gap-1">
+                        <span>No comunicar</span>
+                        <span className="inline-flex items-center rounded-full bg-blue-600 px-1 py-0.5 text-[8px] font-bold leading-none text-white shadow-sm">C1CCOM5</span>
+                      </span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {mockCursos.map((curso, idx) => {
+                    const excluido = noComunicar.includes(curso.sc);
+                    return (
+                    <tr key={curso.sc} className={`border-b ${excluido ? 'bg-red-50/50 opacity-60' : idx % 2 === 0 ? 'hover:bg-muted/20' : 'bg-muted/10 hover:bg-muted/20'}`}>
+                      <td className="p-2">
+                        <Checkbox
+                          checked={selectedRows.includes(curso.sc)}
+                          onCheckedChange={(checked) => handleSelectRow(curso.sc, !!checked)}
+                          disabled={excluido}
+                        />
+                      </td>
+                      <td className="p-2 font-medium">{curso.sc}</td>
+                      <td className="p-2 text-muted-foreground truncate">{curso.cliente}</td>
+                      <td className="p-2 text-center">{curso.nroPart}</td>
+                      <td className="p-2">{curso.mtFranquicia}</td>
+                      <td className="p-2">{curso.inicioCurso}</td>
+                      <td className="p-2">{curso.modalidad}</td>
+                      <td className="p-2">{curso.tipoContrato}</td>
+                      <td className="p-2">
+                        {isProximoAVencer(curso.vencimientoSence) ? (
+                          <Badge variant="destructive" className="gap-1 text-[10px] whitespace-nowrap px-2 py-0.5">
+                            <AlertCircle className="w-3 h-3" />
+                            Por vencer
+                          </Badge>
+                        ) : (
+                          <span className="text-muted-foreground text-xs">Vigente</span>
+                        )}
+                      </td>
+                      <td className="p-2 text-center">
+                        <Button
+                          variant={excluido ? 'destructive' : 'outline'}
+                          size="sm"
+                          className="gap-1 text-xs h-7 px-2"
+                          onClick={() => toggleNoComunicar(curso.sc)}
+                        >
+                          {excluido ? (
+                            <><EyeOff className="w-3 h-3" /> Excluido</>
+                          ) : (
+                            <><Ban className="w-3 h-3" /> Excluir</>
+                          )}
+                        </Button>
+                      </td>
+                    </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="modulares" className="mt-4">
+          <ModularesTab
+            onVerDetalle={(nroInscripcion, idModular) => {
+              setCursoDetalleSC(nroInscripcion);
+              setCursoDetalleIdModular(idModular);
+            }}
+          />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
