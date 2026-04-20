@@ -192,27 +192,6 @@ const precontratosModulares: ModuloGroup[] = [
   },
 ];
 
-// ── Cursos inscritos como Precontrato Modular (provienen del módulo Inscripción) ──
-interface CursoInscritoModular {
-  idModular: string;
-  nroInscripcion: string;
-  sencenet: string;
-  curso: string;
-  empresa: string;
-  nroParticipantes: number;
-  inicioTermino: string;
-  celula: string;
-}
-
-const cursosInscritosModulares: CursoInscritoModular[] = [
-  { idModular: 'MOD-001', nroInscripcion: '2160101', sencenet: '6790101', curso: 'Operación Segura de Equipos Mineros', empresa: '76.081.590-K – Sierra Gorda S.c.m.', nroParticipantes: 18, inicioTermino: '05/05/2026 - 05/06/2026', celula: 'Cel1' },
-  { idModular: 'MOD-002', nroInscripcion: '2160102', sencenet: '6790102', curso: 'Mantenimiento Predictivo Industrial', empresa: '85.066.600-8 – Albemarle Limitada', nroParticipantes: 22, inicioTermino: '07/05/2026 - 07/06/2026', celula: 'Cel2' },
-  { idModular: 'MOD-003', nroInscripcion: '2160103', sencenet: '6790103', curso: 'Liderazgo y Gestión de Equipos', empresa: '93.770.000-8 – Goodyear de Chile S.a.i.c.', nroParticipantes: 15, inicioTermino: '10/05/2026 - 10/06/2026', celula: 'Cel3' },
-  { idModular: 'MOD-004', nroInscripcion: '2160104', sencenet: '6790104', curso: 'Excel Avanzado para Gestión', empresa: '78.163.829-3 – Gestiones y Servicios Los Álamos S.A.', nroParticipantes: 25, inicioTermino: '12/05/2026 - 12/06/2026', celula: 'Cel4' },
-  { idModular: 'MOD-005', nroInscripcion: '2160105', sencenet: '6790105', curso: 'Inglés Técnico Nivel Intermedio', empresa: '93.077.000-0 – Metso Chile SPA', nroParticipantes: 12, inicioTermino: '15/05/2026 - 15/06/2026', celula: 'Cel5' },
-  { idModular: 'MOD-006', nroInscripcion: '2160106', sencenet: '6790106', curso: 'Gestión Documental Digital', empresa: '76.727.040-2 – Minera Centinela', nroParticipantes: 20, inicioTermino: '18/05/2026 - 18/06/2026', celula: 'Cel6' },
-];
-
 // ── Detail View Component ──
 
 const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: () => void }> = ({ precontrato, onBack }) => {
@@ -1169,7 +1148,6 @@ const Precontratos: React.FC = () => {
         <TabsList>
           <TabsTrigger value="precontratos">Precontratos (Normal)</TabsTrigger>
           <TabsTrigger value="modulares">Precontratos Modulares</TabsTrigger>
-          <TabsTrigger value="inscritos-modulares">Modulares</TabsTrigger>
         </TabsList>
 
         {/* ── Tab: Precontratos ── */}
@@ -1466,51 +1444,6 @@ const Precontratos: React.FC = () => {
                       </tr>
                     ))}
                   </React.Fragment>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </TabsContent>
-
-        {/* ── Tab: Modulares (cursos inscritos como precontrato modular) ── */}
-        <TabsContent value="inscritos-modulares" className="space-y-4 mt-4">
-          <div className="border rounded-lg p-4 bg-background space-y-1">
-            <p className="text-sm font-medium text-foreground">Cursos inscritos como Precontrato Modular</p>
-            <p className="text-xs text-muted-foreground">
-              Listado de cursos generados desde el módulo de Inscripción del sistema con tipo de precontrato Modular (MOD-00X).
-            </p>
-          </div>
-
-          <div className="border rounded-lg overflow-hidden">
-            <table className="w-full text-xs">
-              <thead>
-                <tr className="border-b bg-muted/30">
-                  <th className="p-2 text-center font-medium text-muted-foreground w-[10%]">ID Modular</th>
-                  <th className="p-2 text-center font-medium text-muted-foreground w-[10%]">Nº<br/>Inscripción</th>
-                  <th className="p-2 text-center font-medium text-muted-foreground w-[8%]">Sencenet</th>
-                  <th className="p-2 text-left font-medium text-muted-foreground w-[26%]">Curso</th>
-                  <th className="p-2 text-left font-medium text-muted-foreground w-[20%]">Empresa</th>
-                  <th className="p-2 text-center font-medium text-muted-foreground w-[8%]">Nº Part.</th>
-                  <th className="p-2 text-left font-medium text-muted-foreground w-[12%]">Inicio - Término</th>
-                  <th className="p-2 text-center font-medium text-muted-foreground w-[6%]">Célula</th>
-                </tr>
-              </thead>
-              <tbody>
-                {cursosInscritosModulares.map((c, idx) => (
-                  <tr key={c.nroInscripcion} className={`border-b ${idx % 2 === 0 ? '' : 'bg-muted/10'} hover:bg-muted/20 cursor-pointer`}>
-                    <td className="p-2 text-center">
-                      <span className="inline-block border rounded-full px-2 py-0.5 text-[10px] font-bold text-primary bg-primary/10 border-primary/20">
-                        {c.idModular}
-                      </span>
-                    </td>
-                    <td className="p-2 text-center">{c.nroInscripcion}</td>
-                    <td className="p-2 text-center">{c.sencenet}</td>
-                    <td className="p-2">{c.curso}</td>
-                    <td className="p-2 text-muted-foreground">{c.empresa}</td>
-                    <td className="p-2 text-center">{c.nroParticipantes}</td>
-                    <td className="p-2 text-muted-foreground">{c.inicioTermino}</td>
-                    <td className="p-2 text-center text-muted-foreground">{c.celula}</td>
-                  </tr>
                 ))}
               </tbody>
             </table>
