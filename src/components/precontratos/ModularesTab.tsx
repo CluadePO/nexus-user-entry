@@ -78,7 +78,31 @@ export interface CursoModular {
   codigoSence: string;
   vencimientoSence: string;
   celula: string;
+  otec: string;
+  oc: string;
+  estadoCurso: 'Activo' | 'Pendiente' | 'Finalizado';
+  analistaResponsable: string;
+  edcACargo: string;
+  jefeComercial: string;
+  fechaCreacion: string;
 }
+
+const otecs = ['EDUCAPRO Ltda.', 'CapacitaPro S.A.', 'FormaTec Chile', 'Instituto SENCE Pro'];
+const analistas = ['María González', 'Carlos Pérez', 'Ana Muñoz', 'Roberto Silva'];
+const edcs = ['Roberto Muñoz', 'Patricia Rojas', 'Jorge Díaz', 'Camila Vera'];
+const jefes = ['Patricia Rojas', 'Fernando López', 'Andrea Soto', 'Miguel Torres'];
+const estados: Array<'Activo' | 'Pendiente' | 'Finalizado'> = ['Activo', 'Pendiente', 'Activo'];
+
+const addExtraFields = (base: Omit<CursoModular, 'otec' | 'oc' | 'estadoCurso' | 'analistaResponsable' | 'edcACargo' | 'jefeComercial' | 'fechaCreacion'>, idx: number): CursoModular => ({
+  ...base,
+  otec: otecs[idx % otecs.length],
+  oc: `OC-${800000 + idx * 1111}`,
+  estadoCurso: estados[idx % estados.length],
+  analistaResponsable: analistas[idx % analistas.length],
+  edcACargo: edcs[idx % edcs.length],
+  jefeComercial: jefes[idx % jefes.length],
+  fechaCreacion: `${String(9 + (idx % 20)).padStart(2, '0')}/06/2026`,
+});
 
 const initialCursosModulares: CursoModular[] = [
   { idModular: 'MOD-001', sc: '2160101', sencenet: '6790101', curso: 'Operación Segura de Equipos Mineros', cliente: 'Sierra Gorda S.c.m.', nroPart: 18, mtFranquicia: '$450.000', inicioCurso: '05/05/2026', modalidad: 'E-learning', tipoContrato: 'Precontrato', codigoSence: '1238050101', vencimientoSence: '2026-04-22', celula: 'Cel1' },
@@ -103,7 +127,7 @@ const initialCursosModulares: CursoModular[] = [
   { idModular: 'MOD-012', sc: '2160120', sencenet: '6790120', curso: 'Atención al Cliente Premium', cliente: 'Cencosud Retail S.A.', nroPart: 35, mtFranquicia: '$875.000', inicioCurso: '10/06/2026', modalidad: 'E-learning', tipoContrato: 'Precontrato', codigoSence: '1238050120', vencimientoSence: '2026-04-19', celula: 'Cel6' },
   { idModular: 'MOD-013', sc: '2160121', sencenet: '6790121', curso: 'Logística y Cadena de Suministro', cliente: 'CSAV S.A.', nroPart: 17, mtFranquicia: '$425.000', inicioCurso: '12/06/2026', modalidad: 'E-learning', tipoContrato: 'Precontrato', codigoSence: '1238050121', vencimientoSence: '2026-06-30', celula: 'Cel1' },
   { idModular: 'MOD-014', sc: '2160122', sencenet: '6790122', curso: 'Normativa Ambiental Vigente', cliente: 'Sierra Gorda S.c.m.', nroPart: 22, mtFranquicia: '$550.000', inicioCurso: '15/06/2026', modalidad: 'E-learning', tipoContrato: 'Precontrato', codigoSence: '1238050122', vencimientoSence: '2026-04-21', celula: 'Cel2' },
-];
+].map((item, idx) => addExtraFields(item, idx));
 
 const MOD_PAGE_SIZE = 10;
 
@@ -179,6 +203,13 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true }) =
       codigoSence: '',
       vencimientoSence: '',
       celula: '',
+      otec: '',
+      oc: '',
+      estadoCurso: 'Pendiente',
+      analistaResponsable: '',
+      edcACargo: '',
+      jefeComercial: '',
+      fechaCreacion: new Date().toLocaleDateString('es-CL'),
     };
     setCursosModulares(prev => [...prev, newCurso]);
   };
@@ -401,50 +432,24 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true }) =
             </AccordionTrigger>
             <AccordionContent className="p-0">
               <div className="overflow-x-auto">
-                <table className="w-full text-xs table-fixed">
+                <table className="w-full text-xs">
                   <thead>
                     <tr className="border-b bg-muted/30">
-                      <th className="p-2 w-8">
-                        <Checkbox disabled />
-                      </th>
-                      <th className="p-2 text-left font-medium text-muted-foreground w-[7%]">
-                        S.C <span className="text-xs">▾</span>
-                      </th>
-                      <th className="p-2 text-left font-medium text-muted-foreground w-[18%]">
-                        Cliente <span className="text-xs">▾</span>
-                      </th>
-                      <th className="p-2 text-center font-medium text-muted-foreground w-[5%]">
-                        Nro. Part. <span className="text-xs">▾</span>
-                      </th>
-                      <th className="p-2 text-left font-medium text-muted-foreground w-[10%]">
-                        M.T. Franquicia <span className="text-xs">▾</span>
-                      </th>
-                      <th className="p-2 text-left font-medium text-muted-foreground w-[9%]">
-                        Inicio Curso <span className="text-xs">▾</span>
-                      </th>
-                      <th className="p-2 text-left font-medium text-muted-foreground w-[10%]">
-                        Modalidad <span className="text-xs">▾</span>
-                      </th>
-                      <th className="p-2 text-left font-medium text-muted-foreground w-[10%]">
-                        Tipo Contrato <span className="text-xs">▾</span>
-                      </th>
-                      <th className="p-2 text-left font-medium text-muted-foreground w-[12%]">
-                        <span className="inline-flex items-center gap-1">
-                          <span>Vigencia <span className="text-xs">▾</span></span>
-                          <span className="inline-flex items-center rounded-full bg-blue-600 px-1 py-0.5 text-[8px] font-bold leading-none text-white shadow-sm">C1CCOM4</span>
-                        </span>
-                      </th>
-                      <th className="p-2 text-center font-medium text-muted-foreground w-[12%]">
-                        <span className="inline-flex items-center gap-1">
-                          <span>No comunicar</span>
-                          <span className="inline-flex items-center rounded-full bg-blue-600 px-1 py-0.5 text-[8px] font-bold leading-none text-white shadow-sm">C1CCOM5</span>
-                        </span>
-                      </th>
+                      <th className="p-2 text-left font-medium text-muted-foreground whitespace-nowrap">Sencenet</th>
+                      <th className="p-2 text-left font-medium text-muted-foreground whitespace-nowrap">SSC</th>
+                      <th className="p-2 text-left font-medium text-muted-foreground whitespace-nowrap">Monto Total OTEC</th>
+                      <th className="p-2 text-left font-medium text-muted-foreground whitespace-nowrap">OTEC</th>
+                      <th className="p-2 text-left font-medium text-muted-foreground whitespace-nowrap">OC</th>
+                      <th className="p-2 text-left font-medium text-muted-foreground whitespace-nowrap">Estado del Curso</th>
+                      <th className="p-2 text-left font-medium text-muted-foreground whitespace-nowrap">Célula</th>
+                      <th className="p-2 text-left font-medium text-muted-foreground whitespace-nowrap">Analista Responsable</th>
+                      <th className="p-2 text-left font-medium text-muted-foreground whitespace-nowrap">EDC a Cargo</th>
+                      <th className="p-2 text-left font-medium text-muted-foreground whitespace-nowrap">Jefe Comercial</th>
+                      <th className="p-2 text-left font-medium text-muted-foreground whitespace-nowrap">Fecha Creación</th>
                     </tr>
                   </thead>
                   <tbody>
                     {cursos.map((curso, idx) => {
-                      const excluido = noComunicar.includes(curso.sc);
                       const isExpanded = expandedCourses[curso.sc];
                       const participantes = getParticipantes(curso.sc, curso.nroPart);
                       const currentPartPage = partPages[curso.sc] || 1;
@@ -453,57 +458,37 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true }) =
 
                       return (
                         <React.Fragment key={curso.sc}>
-                          <tr className={`border-b ${excluido ? 'bg-red-50/50 opacity-60' : idx % 2 === 0 ? 'hover:bg-muted/20' : 'bg-muted/10 hover:bg-muted/20'}`}>
-                            <td className="p-2">
-                              <Checkbox
-                                checked={selectedRows.includes(curso.sc)}
-                                onCheckedChange={(checked) => handleSelectRow(curso.sc, !!checked)}
-                                disabled={excluido}
-                              />
-                            </td>
-                            <td className="p-2 font-medium">
+                          <tr className={`border-b ${idx % 2 === 0 ? 'hover:bg-muted/20' : 'bg-muted/10 hover:bg-muted/20'}`}>
+                            <td className="p-2 font-medium whitespace-nowrap">
                               <button
                                 className="flex items-center gap-1 hover:text-primary transition-colors"
                                 onClick={() => toggleCourseExpand(curso.sc)}
                               >
                                 {isExpanded ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
-                                {curso.sc}
+                                SN-{curso.sencenet}
                               </button>
                             </td>
-                            <td className="p-2 text-muted-foreground truncate">{curso.cliente}</td>
-                            <td className="p-2 text-center">{curso.nroPart}</td>
-                            <td className="p-2">{curso.mtFranquicia}</td>
-                            <td className="p-2">{curso.inicioCurso}</td>
-                            <td className="p-2">{curso.modalidad}</td>
-                            <td className="p-2">{curso.tipoContrato}</td>
-                            <td className="p-2">
-                              {isProximoAVencer(curso.vencimientoSence) ? (
-                                <Badge variant="destructive" className="gap-1 text-[10px] whitespace-nowrap px-2 py-0.5">
-                                  <AlertCircle className="w-3 h-3" />
-                                  Por vencer
-                                </Badge>
-                              ) : (
-                                <span className="text-muted-foreground text-xs">Vigente</span>
-                              )}
-                            </td>
-                            <td className="p-2 text-center">
-                              <Button
-                                variant={excluido ? 'destructive' : 'outline'}
-                                size="sm"
-                                className="gap-1 text-xs h-7 px-2"
-                                onClick={() => toggleNoComunicar(curso.sc)}
+                            <td className="p-2 whitespace-nowrap">SSC-{curso.sc}</td>
+                            <td className="p-2 font-medium whitespace-nowrap">{curso.mtFranquicia}</td>
+                            <td className="p-2 whitespace-nowrap">{curso.otec}</td>
+                            <td className="p-2 whitespace-nowrap">{curso.oc}</td>
+                            <td className="p-2 whitespace-nowrap">
+                              <Badge
+                                variant={curso.estadoCurso === 'Activo' ? 'default' : curso.estadoCurso === 'Pendiente' ? 'secondary' : 'outline'}
+                                className={`text-[10px] px-2 py-0.5 ${curso.estadoCurso === 'Activo' ? 'bg-primary/20 text-primary border-primary/30' : ''}`}
                               >
-                                {excluido ? (
-                                  <><EyeOff className="w-3 h-3" /> Excluido</>
-                                ) : (
-                                  <><Ban className="w-3 h-3" /> Excluir</>
-                                )}
-                              </Button>
+                                {curso.estadoCurso}
+                              </Badge>
                             </td>
+                            <td className="p-2 whitespace-nowrap">{curso.celula}</td>
+                            <td className="p-2 whitespace-nowrap">{curso.analistaResponsable}</td>
+                            <td className="p-2 whitespace-nowrap">{curso.edcACargo}</td>
+                            <td className="p-2 whitespace-nowrap">{curso.jefeComercial}</td>
+                            <td className="p-2 whitespace-nowrap">{curso.fechaCreacion}</td>
                           </tr>
                           {isExpanded && (
                             <tr>
-                              <td colSpan={10} className="p-0">
+                              <td colSpan={11} className="p-0">
                                 <div className="bg-muted/20 border-t border-b mx-4 my-1 rounded-md">
                                   <div className="flex items-center gap-2 px-3 py-2 border-b bg-muted/30 rounded-t-md">
                                     <Users className="w-3.5 h-3.5 text-primary" />
