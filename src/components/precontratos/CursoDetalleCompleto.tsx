@@ -532,7 +532,8 @@ const CursoDetalleCompleto: React.FC<CursoDetalleCompletoProps> = ({ numeroSC, o
               icon={<History className="w-4 h-4" />}
               accent="bg-blue-100 text-blue-700"
             >
-              <div className="space-y-4">
+              {(() => {
+                const cambios = [
                 {[
                   {
                     fecha: '20/04/2026',
