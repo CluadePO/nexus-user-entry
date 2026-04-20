@@ -152,20 +152,49 @@ const CursoDetalleCompleto: React.FC<CursoDetalleCompletoProps> = ({ numeroSC, o
       <Card className="overflow-hidden border-l-4 border-l-primary">
         <CardContent className="p-0">
           <div className="p-5 flex items-start justify-between flex-wrap gap-4 bg-gradient-to-r from-primary/5 via-transparent to-transparent">
-            <div className="flex items-start gap-4">
-              <Button variant="ghost" size="sm" onClick={onBack} className="mt-1">
+            <div className="flex items-start gap-4 flex-1 min-w-0">
+              <Button variant="ghost" size="sm" onClick={onBack} className="mt-1 shrink-0">
                 <ArrowLeft className="w-4 h-4 mr-1" /> Volver
               </Button>
-              <div>
-                <div className="flex items-center gap-2 flex-wrap mb-1" />
 
-                <h2 className="text-xl font-bold text-foreground leading-snug max-w-2xl">{curso.nombre}</h2>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Inscripción <span className="font-mono text-foreground">{curso.idInscripcion}</span> · Código Sence{' '}
-                  <span className="font-mono text-foreground">{curso.codigoSence}</span> · SC{' '}
-                  <span className="font-mono text-foreground">{curso.sc}</span> · OC{' '}
-                  <span className="font-mono text-foreground">{curso.oc}</span>
-                </p>
+              <div className="flex-1 min-w-0 space-y-3">
+                {/* Bloque superior: ID Sence + Curso */}
+                <div className="grid grid-cols-1 md:grid-cols-[auto,1fr] gap-x-6 gap-y-2 items-start">
+                  <div>
+                    <p className="text-2xl md:text-3xl font-extrabold text-foreground leading-tight">ID Sence</p>
+                    <p className="text-lg font-semibold text-muted-foreground font-mono leading-tight">
+                      {curso.idSence}
+                    </p>
+                  </div>
+                  <div className="md:border-l md:pl-6 border-border">
+                    <p className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold mb-0.5">
+                      Curso
+                    </p>
+                    <h2 className="text-sm md:text-base font-bold text-foreground uppercase leading-snug">
+                      {curso.nombre}
+                    </h2>
+                  </div>
+                </div>
+
+                {/* Bloque inferior: identificadores en grilla */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 pt-2 border-t border-border">
+                  {[
+                    { label: 'Id Inscripción', value: curso.idInscripcion },
+                    { label: 'Código Sence', value: curso.codigoSence },
+                    { label: 'SC', value: curso.sc },
+                    { label: 'OC', value: curso.oc },
+                  ].map((it) => (
+                    <div
+                      key={it.label}
+                      className="rounded-md border border-border bg-muted/20 px-3 py-2"
+                    >
+                      <p className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold">
+                        {it.label}
+                      </p>
+                      <p className="text-sm font-bold text-foreground font-mono">{it.value}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
 
