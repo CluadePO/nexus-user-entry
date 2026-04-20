@@ -11,9 +11,53 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
-import { AlertCircle, Ban, EyeOff, PlusCircle, Download } from 'lucide-react';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { AlertCircle, Ban, EyeOff, PlusCircle, Download, ChevronDown, ChevronRight, Users } from 'lucide-react';
 import AddCourseToModuleModal from './AddCourseToModuleModal';
 import { toast } from 'sonner';
+
+interface Participante {
+  nombre: string;
+  rut: string;
+}
+
+const mockParticipantesByCurso: Record<string, Participante[]> = {
+  '2160101': [
+    { nombre: 'Alejandro Elías Jesús Castillo Rodríguez', rut: '21.826.390-9' },
+    { nombre: 'Bryan Tomás Villagra Núñez', rut: '19.543.221-7' },
+    { nombre: 'Camila Fernanda Flores Pizarro', rut: '20.112.445-3' },
+    { nombre: 'Claudia Alejandra Chacana Cabrera', rut: '18.765.890-K' },
+    { nombre: 'Cristian Luis Vergara Tobar', rut: '17.234.567-1' },
+    { nombre: 'Cristofer Ignacio Martínez Jiménez', rut: '22.345.678-2' },
+    { nombre: 'Daniel Esteban Rojas Medina', rut: '19.876.543-3' },
+    { nombre: 'Daniela Andrea Soto Espinoza', rut: '20.567.890-4' },
+    { nombre: 'Diego Alejandro Morales Tapia', rut: '21.234.567-5' },
+    { nombre: 'Eduardo Antonio Ramírez López', rut: '18.345.678-6' },
+    { nombre: 'Esteban Felipe Guzmán Araya', rut: '19.456.789-7' },
+    { nombre: 'Fernanda Beatriz Muñoz Contreras', rut: '20.678.901-8' },
+  ],
+  '2160107': [
+    { nombre: 'Gabriel Andrés Herrera Fuentes', rut: '21.789.012-9' },
+    { nombre: 'Héctor Mauricio Paredes Vega', rut: '18.901.234-0' },
+    { nombre: 'Ignacio José Navarro Bravo', rut: '19.012.345-1' },
+    { nombre: 'Javiera Constanza Reyes Aguilar', rut: '20.123.456-2' },
+    { nombre: 'Karen Lorena Figueroa Díaz', rut: '21.234.567-3' },
+    { nombre: 'Leonardo Pablo Sepúlveda Castro', rut: '17.345.678-4' },
+    { nombre: 'María Isabel Contreras Riquelme', rut: '22.456.789-5' },
+  ],
+};
+
+// Generate default participants for courses not in the map
+const getParticipantes = (sc: string, nroPart: number): Participante[] => {
+  if (mockParticipantesByCurso[sc]) return mockParticipantesByCurso[sc];
+  const nombres = ['Ana María González Pérez', 'Carlos Alberto Muñoz Silva', 'Patricia Elena Rojas Vargas', 'Miguel Ángel Torres Fernández', 'Rosa Emilia Díaz Soto', 'Francisco Javier López Cruz', 'Valentina Paz Herrera Mora', 'Rodrigo Esteban Castillo Ruiz'];
+  return Array.from({ length: Math.min(nroPart, nombres.length) }, (_, i) => ({
+    nombre: nombres[i % nombres.length],
+    rut: `${17 + (i % 6)}.${String(100 + i * 111).slice(0, 3)}.${String(200 + i * 77).slice(0, 3)}-${i % 10}`,
+  }));
+};
+
+const PART_PAGE_SIZE = 5;
 
 interface Props {
   onVerDetalle: (nroInscripcion: string, idModular: string) => void;
@@ -110,6 +154,14 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true }) =
     setAddModalModuleId(modId);
     setAddModalCliente(cliente);
     setAddModalOpen(true);
+  };
+
+  const [expandedCourses, setExpandedCourses] = useState<Record<string, boolean>>({});
+  const [partPages, setPartPages] = useState<Record<string, number>>({});
+
+  const toggleCourseExpand = (sc: string) => {
+    setExpandedCourses(prev => ({ ...prev, [sc]: !prev[sc] }));
+    if (!partPages[sc]) setPartPages(prev => ({ ...prev, [sc]: 1 }));
   };
 
   const handleAddCourse = (sc: string) => {
@@ -393,47 +445,122 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true }) =
                   <tbody>
                     {cursos.map((curso, idx) => {
                       const excluido = noComunicar.includes(curso.sc);
+                      const isExpanded = expandedCourses[curso.sc];
+                      const participantes = getParticipantes(curso.sc, curso.nroPart);
+                      const currentPartPage = partPages[curso.sc] || 1;
+                      const totalPartPages = Math.max(1, Math.ceil(participantes.length / PART_PAGE_SIZE));
+                      const paginatedParts = participantes.slice((currentPartPage - 1) * PART_PAGE_SIZE, currentPartPage * PART_PAGE_SIZE);
+
                       return (
-                        <tr key={curso.sc} className={`border-b ${excluido ? 'bg-red-50/50 opacity-60' : idx % 2 === 0 ? 'hover:bg-muted/20' : 'bg-muted/10 hover:bg-muted/20'}`}>
-                          <td className="p-2">
-                            <Checkbox
-                              checked={selectedRows.includes(curso.sc)}
-                              onCheckedChange={(checked) => handleSelectRow(curso.sc, !!checked)}
-                              disabled={excluido}
-                            />
-                          </td>
-                          <td className="p-2 font-medium">{curso.sc}</td>
-                          <td className="p-2 text-muted-foreground truncate">{curso.cliente}</td>
-                          <td className="p-2 text-center">{curso.nroPart}</td>
-                          <td className="p-2">{curso.mtFranquicia}</td>
-                          <td className="p-2">{curso.inicioCurso}</td>
-                          <td className="p-2">{curso.modalidad}</td>
-                          <td className="p-2">{curso.tipoContrato}</td>
-                          <td className="p-2">
-                            {isProximoAVencer(curso.vencimientoSence) ? (
-                              <Badge variant="destructive" className="gap-1 text-[10px] whitespace-nowrap px-2 py-0.5">
-                                <AlertCircle className="w-3 h-3" />
-                                Por vencer
-                              </Badge>
-                            ) : (
-                              <span className="text-muted-foreground text-xs">Vigente</span>
-                            )}
-                          </td>
-                          <td className="p-2 text-center">
-                            <Button
-                              variant={excluido ? 'destructive' : 'outline'}
-                              size="sm"
-                              className="gap-1 text-xs h-7 px-2"
-                              onClick={() => toggleNoComunicar(curso.sc)}
-                            >
-                              {excluido ? (
-                                <><EyeOff className="w-3 h-3" /> Excluido</>
+                        <React.Fragment key={curso.sc}>
+                          <tr className={`border-b ${excluido ? 'bg-red-50/50 opacity-60' : idx % 2 === 0 ? 'hover:bg-muted/20' : 'bg-muted/10 hover:bg-muted/20'}`}>
+                            <td className="p-2">
+                              <Checkbox
+                                checked={selectedRows.includes(curso.sc)}
+                                onCheckedChange={(checked) => handleSelectRow(curso.sc, !!checked)}
+                                disabled={excluido}
+                              />
+                            </td>
+                            <td className="p-2 font-medium">
+                              <button
+                                className="flex items-center gap-1 hover:text-primary transition-colors"
+                                onClick={() => toggleCourseExpand(curso.sc)}
+                              >
+                                {isExpanded ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
+                                {curso.sc}
+                              </button>
+                            </td>
+                            <td className="p-2 text-muted-foreground truncate">{curso.cliente}</td>
+                            <td className="p-2 text-center">{curso.nroPart}</td>
+                            <td className="p-2">{curso.mtFranquicia}</td>
+                            <td className="p-2">{curso.inicioCurso}</td>
+                            <td className="p-2">{curso.modalidad}</td>
+                            <td className="p-2">{curso.tipoContrato}</td>
+                            <td className="p-2">
+                              {isProximoAVencer(curso.vencimientoSence) ? (
+                                <Badge variant="destructive" className="gap-1 text-[10px] whitespace-nowrap px-2 py-0.5">
+                                  <AlertCircle className="w-3 h-3" />
+                                  Por vencer
+                                </Badge>
                               ) : (
-                                <><Ban className="w-3 h-3" /> Excluir</>
+                                <span className="text-muted-foreground text-xs">Vigente</span>
                               )}
-                            </Button>
-                          </td>
-                        </tr>
+                            </td>
+                            <td className="p-2 text-center">
+                              <Button
+                                variant={excluido ? 'destructive' : 'outline'}
+                                size="sm"
+                                className="gap-1 text-xs h-7 px-2"
+                                onClick={() => toggleNoComunicar(curso.sc)}
+                              >
+                                {excluido ? (
+                                  <><EyeOff className="w-3 h-3" /> Excluido</>
+                                ) : (
+                                  <><Ban className="w-3 h-3" /> Excluir</>
+                                )}
+                              </Button>
+                            </td>
+                          </tr>
+                          {isExpanded && (
+                            <tr>
+                              <td colSpan={10} className="p-0">
+                                <div className="bg-muted/20 border-t border-b mx-4 my-1 rounded-md">
+                                  <div className="flex items-center gap-2 px-3 py-2 border-b bg-muted/30 rounded-t-md">
+                                    <Users className="w-3.5 h-3.5 text-primary" />
+                                    <span className="text-xs font-medium text-foreground">Participantes ({participantes.length})</span>
+                                  </div>
+                                  <ScrollArea className="max-h-[200px]">
+                                    <table className="w-full text-xs">
+                                      <thead>
+                                        <tr className="border-b">
+                                          <th className="p-2 text-left font-medium text-muted-foreground pl-4" style={{ width: '70%' }}>Nombre</th>
+                                          <th className="p-2 text-left font-medium text-muted-foreground" style={{ width: '30%' }}>Descargar</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        {paginatedParts.map((part, pIdx) => (
+                                          <tr key={pIdx} className={`border-b last:border-0 ${pIdx % 2 === 0 ? '' : 'bg-muted/10'}`}>
+                                            <td className="p-2 pl-4 text-foreground">{part.nombre}</td>
+                                            <td className="p-2">
+                                              <button className="text-primary hover:underline text-xs font-medium">Descargar</button>
+                                            </td>
+                                          </tr>
+                                        ))}
+                                      </tbody>
+                                    </table>
+                                  </ScrollArea>
+                                  {totalPartPages > 1 && (
+                                    <div className="flex items-center justify-between px-3 py-2 border-t bg-muted/10 rounded-b-md">
+                                      <span className="text-[10px] text-muted-foreground">
+                                        Pág. {currentPartPage} de {totalPartPages}
+                                      </span>
+                                      <div className="flex gap-1">
+                                        <Button
+                                          variant="outline"
+                                          size="sm"
+                                          className="h-6 px-2 text-[10px]"
+                                          disabled={currentPartPage === 1}
+                                          onClick={() => setPartPages(prev => ({ ...prev, [curso.sc]: currentPartPage - 1 }))}
+                                        >
+                                          Anterior
+                                        </Button>
+                                        <Button
+                                          variant="outline"
+                                          size="sm"
+                                          className="h-6 px-2 text-[10px]"
+                                          disabled={currentPartPage === totalPartPages}
+                                          onClick={() => setPartPages(prev => ({ ...prev, [curso.sc]: currentPartPage + 1 }))}
+                                        >
+                                          Siguiente
+                                        </Button>
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                              </td>
+                            </tr>
+                          )}
+                        </React.Fragment>
                       );
                     })}
                   </tbody>
