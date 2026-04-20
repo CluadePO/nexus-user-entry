@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-
+import ModularesTab from '@/components/precontratos/ModularesTab';
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { Calendar } from '@/components/ui/calendar';
@@ -160,8 +160,6 @@ const PrecontratosNuevo: React.FC = () => {
   const [cursoDetalleIdModular, setCursoDetalleIdModular] = useState<string | undefined>();
   const [tab, setTab] = useState('buscador');
   const [page, setPage] = useState(1);
-  
-
   // Filtros grilla "Precontrato Normal"
   const [fSencenet, setFSencenet] = useState('');
   const [fEstadoSence, setFEstadoSence] = useState<string>('all');
@@ -445,6 +443,7 @@ const PrecontratosNuevo: React.FC = () => {
           <TabsTrigger value="buscador">Buscador</TabsTrigger>
           <TabsTrigger value="cursos">Precontrato Normal</TabsTrigger>
           <TabsTrigger value="parcial">Parcial Complementario</TabsTrigger>
+          <TabsTrigger value="modulares">Modulares</TabsTrigger>
         </TabsList>
 
         <TabsContent value="buscador" className="mt-4">
@@ -781,6 +780,14 @@ const PrecontratosNuevo: React.FC = () => {
           </Card>
         </TabsContent>
 
+        <TabsContent value="modulares" className="mt-4">
+          <ModularesTab
+            onVerDetalle={(nroInscripcion, idModular) => {
+              setCursoDetalleSC(nroInscripcion);
+              setCursoDetalleIdModular(idModular);
+            }}
+          />
+        </TabsContent>
       </Tabs>
     </div>
   );
