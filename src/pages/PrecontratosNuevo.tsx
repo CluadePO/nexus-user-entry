@@ -1,8 +1,14 @@
 import React, { useState, useMemo } from 'react';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Label } from '@/components/ui/label';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -20,8 +26,9 @@ import {
   PaginationPrevious,
   PaginationEllipsis,
 } from '@/components/ui/pagination';
-import { ArrowLeft, Search, Download, Home } from 'lucide-react';
+import { ArrowLeft, Search, Download, Home, CalendarIcon, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { cn } from '@/lib/utils';
 
 interface ParticipantePrecontrato {
   nombre: string;
