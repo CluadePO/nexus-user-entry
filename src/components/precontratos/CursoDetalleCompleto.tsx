@@ -315,7 +315,7 @@ const CursoDetalleCompleto: React.FC<CursoDetalleCompletoProps> = ({ numeroSC, o
 
           {/* Montos y financiamiento */}
           <SectionCard title="Montos y Financiamiento" icon={<DollarSign className="w-4 h-4" />} accent="bg-emerald-100 text-emerald-700">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-4">
               <div className="rounded-md border bg-emerald-50/50 p-3">
                 <p className="text-[11px] uppercase tracking-wide text-muted-foreground font-medium">Monto Franquicia</p>
                 <p className="text-base font-bold text-emerald-700 font-mono mt-1">{formatCLP(curso.montoFranquicia)}</p>
@@ -335,6 +335,10 @@ const CursoDetalleCompleto: React.FC<CursoDetalleCompletoProps> = ({ numeroSC, o
               <div className="rounded-md border bg-muted/20 p-3">
                 <p className="text-[11px] uppercase tracking-wide text-muted-foreground font-medium">Por Participante</p>
                 <p className="text-base font-bold font-mono mt-1">{formatCLP(curso.valorPorParticipante)}</p>
+              </div>
+              <div className="rounded-md border bg-blue-50/50 border-blue-200 p-3">
+                <p className="text-[11px] uppercase tracking-wide text-muted-foreground font-medium">Valor Real Curso (SENCE)</p>
+                <p className="text-base font-bold text-blue-700 font-mono mt-1">{formatCLP(curso.valorRealSence)}</p>
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
