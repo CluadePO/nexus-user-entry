@@ -290,9 +290,29 @@ const PrecontratosNuevo: React.FC = () => {
             </BreadcrumbItem>
           </>
         )}
+        {cursoDetalleSC && !detalle && (
+          <>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Curso SC {cursoDetalleSC}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </>
+        )}
       </BreadcrumbList>
     </Breadcrumb>
   );
+
+  if (cursoDetalleSC) {
+    return (
+      <div className="space-y-6">
+        {Migas}
+        <div className="flex items-center gap-3">
+          <h1 className="text-2xl font-bold text-foreground">Detalle del Curso</h1>
+        </div>
+        <CursoDetalleCompleto numeroSC={cursoDetalleSC} onBack={() => setCursoDetalleSC(null)} />
+      </div>
+    );
+  }
 
   if (detalle) {
     return (
