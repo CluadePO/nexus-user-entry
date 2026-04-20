@@ -11,13 +11,14 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
-import { AlertCircle, Ban, EyeOff } from 'lucide-react';
+import { AlertCircle, Ban, EyeOff, PlusCircle } from 'lucide-react';
+import AddCourseToModuleModal from './AddCourseToModuleModal';
 
 interface Props {
   onVerDetalle: (nroInscripcion: string, idModular: string) => void;
 }
 
-interface CursoModular {
+export interface CursoModular {
   idModular: string;
   sc: string;
   sencenet: string;
@@ -33,7 +34,7 @@ interface CursoModular {
   celula: string;
 }
 
-const cursosModulares: CursoModular[] = [
+const initialCursosModulares: CursoModular[] = [
   { idModular: 'MOD-001', sc: '2160101', sencenet: '6790101', curso: 'Operación Segura de Equipos Mineros', cliente: 'Sierra Gorda S.c.m.', nroPart: 18, mtFranquicia: '$450.000', inicioCurso: '05/05/2026', modalidad: 'E-learning', tipoContrato: 'Precontrato', codigoSence: '1238050101', vencimientoSence: '2026-04-22', celula: 'Cel1' },
   { idModular: 'MOD-001', sc: '2160107', sencenet: '6790107', curso: 'Manejo Defensivo en Faenas', cliente: 'Sierra Gorda S.c.m.', nroPart: 15, mtFranquicia: '$375.000', inicioCurso: '08/05/2026', modalidad: 'E-learning', tipoContrato: 'Precontrato', codigoSence: '1238050107', vencimientoSence: '2026-06-15', celula: 'Cel1' },
   { idModular: 'MOD-001', sc: '2160108', sencenet: '6790108', curso: 'Primeros Auxilios en Terreno', cliente: 'Sierra Gorda S.c.m.', nroPart: 20, mtFranquicia: '$500.000', inicioCurso: '10/05/2026', modalidad: 'Presencial', tipoContrato: 'Precontrato', codigoSence: '1238050108', vencimientoSence: '2026-04-19', celula: 'Cel1' },
@@ -72,6 +73,10 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle }) => {
   const [pageModulares, setPageModulares] = useState(1);
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [noComunicar, setNoComunicar] = useState<string[]>([]);
+  const [cursosModulares, setCursosModulares] = useState<CursoModular[]>(initialCursosModulares);
+  const [addModalOpen, setAddModalOpen] = useState(false);
+  const [addModalModuleId, setAddModalModuleId] = useState('');
+  const [addModalCliente, setAddModalCliente] = useState('');
 
   const toggleNoComunicar = (sc: string) => {
     setNoComunicar(prev =>
@@ -98,6 +103,17 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle }) => {
     }
   };
 
+  const handleOpenAddModal = (modId: string, cliente: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setAddModalModuleId(modId);
+    setAddModalCliente(cliente);
+    setAddModalOpen(true);
+  };
+
+  const handleAddCourse = (data: Omit<CursoModular, 'idModular'>) => {
+    setCursosModulares(prev => [...prev, { ...data, idModular: addModalModuleId }]);
+  };
+
   return (
     <>
       <div className="border rounded-lg p-4 bg-background space-y-1 mb-4">
@@ -115,12 +131,21 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle }) => {
         {paginatedGroups.map(([modId, cursos]) => (
           <AccordionItem key={modId} value={modId} className="border rounded-lg overflow-hidden">
             <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-muted/30">
-              <div className="flex items-center gap-3 text-left">
+              <div className="flex items-center gap-3 text-left flex-1">
                 <span className="inline-block border rounded-full px-3 py-0.5 text-xs font-bold text-primary bg-primary/10 border-primary/20">
                   {modId}
                 </span>
                 <span className="text-sm font-medium text-foreground">{cursos[0].cliente}</span>
                 <Badge variant="secondary" className="text-xs">{cursos.length} {cursos.length === 1 ? 'curso' : 'cursos'}</Badge>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="ml-auto mr-2 gap-1 text-xs h-7 px-2 text-primary border-primary/30 hover:bg-primary/10"
+                  onClick={(e) => handleOpenAddModal(modId, cursos[0].cliente, e)}
+                >
+                  <PlusCircle className="w-3.5 h-3.5" />
+                  Agregar curso
+                </Button>
               </div>
             </AccordionTrigger>
             <AccordionContent className="p-0">
@@ -252,6 +277,14 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle }) => {
           </Pagination>
         </div>
       )}
+
+      <AddCourseToModuleModal
+        open={addModalOpen}
+        onClose={() => setAddModalOpen(false)}
+        moduleId={addModalModuleId}
+        clienteName={addModalCliente}
+        onAdd={handleAddCourse}
+      />
     </>
   );
 };
