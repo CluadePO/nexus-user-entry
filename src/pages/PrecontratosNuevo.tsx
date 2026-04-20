@@ -29,6 +29,7 @@ import {
 import { ArrowLeft, Search, Download, Home, CalendarIcon, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+import CursoDetalleCompleto from '@/components/precontratos/CursoDetalleCompleto';
 
 interface ParticipantePrecontrato {
   nombre: string;
@@ -153,6 +154,7 @@ const PAGE_SIZE = 10;
 const PrecontratosNuevo: React.FC = () => {
   const [busqueda, setBusqueda] = useState('');
   const [detalle, setDetalle] = useState<PrecontratoDetalle | null>(null);
+  const [cursoDetalleSC, setCursoDetalleSC] = useState<string | null>(null);
   const [tab, setTab] = useState('buscador');
   const [page, setPage] = useState(1);
 
@@ -288,9 +290,29 @@ const PrecontratosNuevo: React.FC = () => {
             </BreadcrumbItem>
           </>
         )}
+        {cursoDetalleSC && !detalle && (
+          <>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Curso SC {cursoDetalleSC}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </>
+        )}
       </BreadcrumbList>
     </Breadcrumb>
   );
+
+  if (cursoDetalleSC) {
+    return (
+      <div className="space-y-6">
+        {Migas}
+        <div className="flex items-center gap-3">
+          <h1 className="text-2xl font-bold text-foreground">Detalle del Curso</h1>
+        </div>
+        <CursoDetalleCompleto numeroSC={cursoDetalleSC} onBack={() => setCursoDetalleSC(null)} />
+      </div>
+    );
+  }
 
   if (detalle) {
     return (
@@ -653,15 +675,7 @@ const PrecontratosNuevo: React.FC = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => {
-                              const r = mockResultados.find((m) => m.numeroSC === c.numeroSC);
-                              if (r) {
-                                setDetalle(r);
-                              } else {
-                                setBusqueda(c.numeroSC);
-                                setTab('buscador');
-                              }
-                            }}
+                            onClick={() => setCursoDetalleSC(c.numeroSC)}
                           >
                             Ver detalle
                           </Button>
