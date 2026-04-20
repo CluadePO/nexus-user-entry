@@ -1035,6 +1035,13 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
 
 const Precontratos: React.FC = () => {
   const [activeTab, setActiveTab] = useState('precontratos');
+  const [subTab, setSubTab] = useState('pendientes');
+  const [celulaFilter, setCelulaFilter] = useState('todas');
+  const [criticidadAlta, setCriticidadAlta] = useState(true);
+  const [criticidadMedia, setCriticidadMedia] = useState(true);
+  const [criticidadBaja, setCriticidadBaja] = useState(true);
+  const [selectedPrecontrato, setSelectedPrecontrato] = useState<PrecontratoNormal | null>(null);
+  const [selectedCerrado, setSelectedCerrado] = useState<PrecontratoCerrado | null>(null);
 
   const filteredNormales = precontratosNormalesData.filter(p => {
     if (p.criticidad === 'alta' && !criticidadAlta) return false;
