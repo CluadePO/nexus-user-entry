@@ -431,14 +431,6 @@ const CursoDetalleCompleto: React.FC<CursoDetalleCompletoProps> = ({ numeroSC, o
               {curso.comentarios}
             </div>
           </SectionCard>
-
-          <SectionCard
-            title="Trazabilidad de Cambios"
-            icon={<History className="w-4 h-4" />}
-            accent="bg-blue-100 text-blue-700"
-          >
-            <p className="text-sm text-muted-foreground text-center py-2">Sin rectificaciones</p>
-          </SectionCard>
         </div>
 
         {/* Sidebar derecho: histórico */}
@@ -480,6 +472,14 @@ const CursoDetalleCompleto: React.FC<CursoDetalleCompletoProps> = ({ numeroSC, o
                   </div>
                 ))}
               </div>
+            </SectionCard>
+
+            <SectionCard
+              title="Trazabilidad de Cambios"
+              icon={<History className="w-4 h-4" />}
+              accent="bg-blue-100 text-blue-700"
+            >
+              <p className="text-sm text-muted-foreground text-center py-2">Sin rectificaciones</p>
             </SectionCard>
           </div>
         </div>
