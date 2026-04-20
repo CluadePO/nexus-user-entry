@@ -29,6 +29,7 @@ import {
 import { ArrowLeft, Search, Download, Home, CalendarIcon, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+import CursoDetalleCompleto from '@/components/precontratos/CursoDetalleCompleto';
 
 interface ParticipantePrecontrato {
   nombre: string;
