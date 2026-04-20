@@ -441,6 +441,7 @@ const PrecontratosNuevo: React.FC = () => {
           <TabsTrigger value="buscador">Buscador</TabsTrigger>
           <TabsTrigger value="cursos">Precontrato Normal</TabsTrigger>
           <TabsTrigger value="parcial">Parcial Complementario</TabsTrigger>
+          <TabsTrigger value="modulares">Modulares</TabsTrigger>
         </TabsList>
 
         <TabsContent value="buscador" className="mt-4">
@@ -768,6 +769,60 @@ const PrecontratosNuevo: React.FC = () => {
                         <td className="p-3">
                           <Button variant="outline" size="sm">Ver detalle</Button>
                         </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="modulares" className="mt-4">
+          <div className="border rounded-lg p-4 bg-background space-y-1 mb-4">
+            <p className="text-sm font-medium text-foreground">Cursos inscritos como Precontrato Modular</p>
+            <p className="text-xs text-muted-foreground">
+              Listado de cursos generados desde el módulo de Inscripción del sistema con tipo de precontrato Modular (MOD-00X).
+            </p>
+          </div>
+          <Card>
+            <CardContent className="p-0">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="bg-muted/50 border-b">
+                      <th className="p-3 text-center font-medium">ID Modular</th>
+                      <th className="p-3 text-center font-medium">Nº Inscripción</th>
+                      <th className="p-3 text-center font-medium">Sencenet</th>
+                      <th className="p-3 text-left font-medium">Curso</th>
+                      <th className="p-3 text-left font-medium">Empresa</th>
+                      <th className="p-3 text-center font-medium">Nº Part.</th>
+                      <th className="p-3 text-left font-medium">Inicio - Término</th>
+                      <th className="p-3 text-center font-medium">Célula</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      { idModular: 'MOD-001', nroInscripcion: '2160101', sencenet: '6790101', curso: 'Operación Segura de Equipos Mineros', empresa: '76.081.590-K – Sierra Gorda S.c.m.', nroParticipantes: 18, inicioTermino: '05/05/2026 - 05/06/2026', celula: 'Cel1' },
+                      { idModular: 'MOD-002', nroInscripcion: '2160102', sencenet: '6790102', curso: 'Mantenimiento Predictivo Industrial', empresa: '85.066.600-8 – Albemarle Limitada', nroParticipantes: 22, inicioTermino: '07/05/2026 - 07/06/2026', celula: 'Cel2' },
+                      { idModular: 'MOD-003', nroInscripcion: '2160103', sencenet: '6790103', curso: 'Liderazgo y Gestión de Equipos', empresa: '93.770.000-8 – Goodyear de Chile S.a.i.c.', nroParticipantes: 15, inicioTermino: '10/05/2026 - 10/06/2026', celula: 'Cel3' },
+                      { idModular: 'MOD-004', nroInscripcion: '2160104', sencenet: '6790104', curso: 'Excel Avanzado para Gestión', empresa: '78.163.829-3 – Gestiones y Servicios Los Álamos S.A.', nroParticipantes: 25, inicioTermino: '12/05/2026 - 12/06/2026', celula: 'Cel4' },
+                      { idModular: 'MOD-005', nroInscripcion: '2160105', sencenet: '6790105', curso: 'Inglés Técnico Nivel Intermedio', empresa: '93.077.000-0 – Metso Chile SPA', nroParticipantes: 12, inicioTermino: '15/05/2026 - 15/06/2026', celula: 'Cel5' },
+                      { idModular: 'MOD-006', nroInscripcion: '2160106', sencenet: '6790106', curso: 'Gestión Documental Digital', empresa: '76.727.040-2 – Minera Centinela', nroParticipantes: 20, inicioTermino: '18/05/2026 - 18/06/2026', celula: 'Cel6' },
+                    ].map((c, idx) => (
+                      <tr key={c.nroInscripcion} className={`border-b hover:bg-muted/30 ${idx % 2 !== 0 ? 'bg-muted/10' : ''}`}>
+                        <td className="p-3 text-center">
+                          <span className="inline-block border rounded-full px-2 py-0.5 text-xs font-bold text-primary bg-primary/10 border-primary/20">
+                            {c.idModular}
+                          </span>
+                        </td>
+                        <td className="p-3 text-center font-mono">{c.nroInscripcion}</td>
+                        <td className="p-3 text-center font-mono">{c.sencenet}</td>
+                        <td className="p-3">{c.curso}</td>
+                        <td className="p-3 text-muted-foreground">{c.empresa}</td>
+                        <td className="p-3 text-center">{c.nroParticipantes}</td>
+                        <td className="p-3 text-muted-foreground">{c.inicioTermino}</td>
+                        <td className="p-3 text-center text-muted-foreground">{c.celula}</td>
                       </tr>
                     ))}
                   </tbody>
