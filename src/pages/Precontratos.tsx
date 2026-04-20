@@ -1169,7 +1169,6 @@ const Precontratos: React.FC = () => {
         <TabsList>
           <TabsTrigger value="precontratos">Precontratos (Normal)</TabsTrigger>
           <TabsTrigger value="modulares">Precontratos Modulares</TabsTrigger>
-          <TabsTrigger value="inscritos-modulares">Modulares</TabsTrigger>
         </TabsList>
 
         {/* ── Tab: Precontratos ── */}
