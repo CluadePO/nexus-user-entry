@@ -156,6 +156,15 @@ const PrecontratosNuevo: React.FC = () => {
   const [tab, setTab] = useState('buscador');
   const [page, setPage] = useState(1);
 
+  // Filtros grilla "Precontrato Normal"
+  const [fSencenet, setFSencenet] = useState('');
+  const [fEstadoSence, setFEstadoSence] = useState<string>('all');
+  const [fCelula, setFCelula] = useState<string>('all');
+  const [fLiderEdc, setFLiderEdc] = useState<string>('all');
+  const [fFechaCreacionPC, setFFechaCreacionPC] = useState<Date | undefined>();
+  const [fFechaInicio, setFFechaInicio] = useState<Date | undefined>();
+  const [fFechaTermino, setFFechaTermino] = useState<Date | undefined>();
+
   const handleBuscar = () => {
     const resultado = mockResultados.find((r) => r.numeroSC === busqueda.trim());
     setDetalle(resultado || null);
@@ -165,11 +174,46 @@ const PrecontratosNuevo: React.FC = () => {
     if (e.key === 'Enter') handleBuscar();
   };
 
-  const totalPages = Math.ceil(mockCursos.length / PAGE_SIZE);
+  const parseDMY = (s: string) => {
+    const [d, m, y] = s.split('/').map(Number);
+    return new Date(y, m - 1, d);
+  };
+  const sameDay = (a: Date, b: Date) =>
+    a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+
+  const filteredCursos = useMemo(() => {
+    return mockCursos.filter((c) => {
+      if (fSencenet && !c.sencenet.toLowerCase().includes(fSencenet.toLowerCase())) return false;
+      if (fEstadoSence !== 'all' && c.estadoSence !== fEstadoSence) return false;
+      if (fCelula !== 'all' && c.celula !== fCelula) return false;
+      if (fLiderEdc !== 'all' && c.edcACargo !== fLiderEdc) return false;
+      if (fFechaCreacionPC && !sameDay(parseDMY(c.fechaCreacionPC), fFechaCreacionPC)) return false;
+      if (fFechaInicio && !sameDay(parseDMY(c.fechaInicio), fFechaInicio)) return false;
+      if (fFechaTermino && !sameDay(parseDMY(c.fechaTermino), fFechaTermino)) return false;
+      return true;
+    });
+  }, [fSencenet, fEstadoSence, fCelula, fLiderEdc, fFechaCreacionPC, fFechaInicio, fFechaTermino]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredCursos.length / PAGE_SIZE));
+  const safePage = Math.min(page, totalPages);
   const paginatedCursos = useMemo(
-    () => mockCursos.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
-    [page]
+    () => filteredCursos.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE),
+    [filteredCursos, safePage]
   );
+
+  const limpiarFiltros = () => {
+    setFSencenet('');
+    setFEstadoSence('all');
+    setFCelula('all');
+    setFLiderEdc('all');
+    setFFechaCreacionPC(undefined);
+    setFFechaInicio(undefined);
+    setFFechaTermino(undefined);
+    setPage(1);
+  };
+
+  React.useEffect(() => { setPage(1); }, [fSencenet, fEstadoSence, fCelula, fLiderEdc, fFechaCreacionPC, fFechaInicio, fFechaTermino]);
+
 
   const formatCLP = (n: number) =>
     new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 }).format(n);
