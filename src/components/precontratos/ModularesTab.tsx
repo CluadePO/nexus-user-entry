@@ -16,6 +16,7 @@ import AddCourseToModuleModal from './AddCourseToModuleModal';
 
 interface Props {
   onVerDetalle: (nroInscripcion: string, idModular: string) => void;
+  showAddCourse?: boolean;
 }
 
 export interface CursoModular {
