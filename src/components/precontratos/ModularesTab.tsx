@@ -11,8 +11,9 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
-import { AlertCircle, Ban, EyeOff, PlusCircle } from 'lucide-react';
+import { AlertCircle, Ban, EyeOff, PlusCircle, Download } from 'lucide-react';
 import AddCourseToModuleModal from './AddCourseToModuleModal';
+import { toast } from 'sonner';
 
 interface Props {
   onVerDetalle: (nroInscripcion: string, idModular: string) => void;
