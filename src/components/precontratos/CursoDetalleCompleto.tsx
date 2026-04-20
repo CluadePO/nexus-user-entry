@@ -29,6 +29,7 @@ import {
 interface CursoDetalleCompletoProps {
   numeroSC: string;
   onBack: () => void;
+  idModular?: string;
 }
 
 const InfoItem: React.FC<{ label: string; value: React.ReactNode; mono?: boolean }> = ({
@@ -63,7 +64,7 @@ const SectionCard: React.FC<{
   </Card>
 );
 
-const CursoDetalleCompleto: React.FC<CursoDetalleCompletoProps> = ({ numeroSC, onBack }) => {
+const CursoDetalleCompleto: React.FC<CursoDetalleCompletoProps> = ({ numeroSC, onBack, idModular }) => {
   // Mock data basado en la imagen
   const curso = {
     idSence: '6751520',
