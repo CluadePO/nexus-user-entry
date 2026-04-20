@@ -87,6 +87,23 @@ export interface CursoModular {
   fechaCreacion: string;
 }
 
+const otecs = ['EDUCAPRO Ltda.', 'CapacitaPro S.A.', 'FormaTec Chile', 'Instituto SENCE Pro'];
+const analistas = ['María González', 'Carlos Pérez', 'Ana Muñoz', 'Roberto Silva'];
+const edcs = ['Roberto Muñoz', 'Patricia Rojas', 'Jorge Díaz', 'Camila Vera'];
+const jefes = ['Patricia Rojas', 'Fernando López', 'Andrea Soto', 'Miguel Torres'];
+const estados: Array<'Activo' | 'Pendiente' | 'Finalizado'> = ['Activo', 'Pendiente', 'Activo'];
+
+const addExtraFields = (base: Omit<CursoModular, 'otec' | 'oc' | 'estadoCurso' | 'analistaResponsable' | 'edcACargo' | 'jefeComercial' | 'fechaCreacion'>, idx: number): CursoModular => ({
+  ...base,
+  otec: otecs[idx % otecs.length],
+  oc: `OC-${800000 + idx * 1111}`,
+  estadoCurso: estados[idx % estados.length],
+  analistaResponsable: analistas[idx % analistas.length],
+  edcACargo: edcs[idx % edcs.length],
+  jefeComercial: jefes[idx % jefes.length],
+  fechaCreacion: `${String(9 + (idx % 20)).padStart(2, '0')}/06/2026`,
+});
+
 const initialCursosModulares: CursoModular[] = [
   { idModular: 'MOD-001', sc: '2160101', sencenet: '6790101', curso: 'Operación Segura de Equipos Mineros', cliente: 'Sierra Gorda S.c.m.', nroPart: 18, mtFranquicia: '$450.000', inicioCurso: '05/05/2026', modalidad: 'E-learning', tipoContrato: 'Precontrato', codigoSence: '1238050101', vencimientoSence: '2026-04-22', celula: 'Cel1' },
   { idModular: 'MOD-001', sc: '2160107', sencenet: '6790107', curso: 'Manejo Defensivo en Faenas', cliente: 'Sierra Gorda S.c.m.', nroPart: 15, mtFranquicia: '$375.000', inicioCurso: '08/05/2026', modalidad: 'E-learning', tipoContrato: 'Precontrato', codigoSence: '1238050107', vencimientoSence: '2026-06-15', celula: 'Cel1' },
@@ -110,7 +127,7 @@ const initialCursosModulares: CursoModular[] = [
   { idModular: 'MOD-012', sc: '2160120', sencenet: '6790120', curso: 'Atención al Cliente Premium', cliente: 'Cencosud Retail S.A.', nroPart: 35, mtFranquicia: '$875.000', inicioCurso: '10/06/2026', modalidad: 'E-learning', tipoContrato: 'Precontrato', codigoSence: '1238050120', vencimientoSence: '2026-04-19', celula: 'Cel6' },
   { idModular: 'MOD-013', sc: '2160121', sencenet: '6790121', curso: 'Logística y Cadena de Suministro', cliente: 'CSAV S.A.', nroPart: 17, mtFranquicia: '$425.000', inicioCurso: '12/06/2026', modalidad: 'E-learning', tipoContrato: 'Precontrato', codigoSence: '1238050121', vencimientoSence: '2026-06-30', celula: 'Cel1' },
   { idModular: 'MOD-014', sc: '2160122', sencenet: '6790122', curso: 'Normativa Ambiental Vigente', cliente: 'Sierra Gorda S.c.m.', nroPart: 22, mtFranquicia: '$550.000', inicioCurso: '15/06/2026', modalidad: 'E-learning', tipoContrato: 'Precontrato', codigoSence: '1238050122', vencimientoSence: '2026-04-21', celula: 'Cel2' },
-];
+].map((item, idx) => addExtraFields(item, idx));
 
 const MOD_PAGE_SIZE = 10;
 
