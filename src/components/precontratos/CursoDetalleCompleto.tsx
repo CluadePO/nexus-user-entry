@@ -523,72 +523,153 @@ const CursoDetalleCompleto: React.FC<CursoDetalleCompletoProps> = ({ numeroSC, o
                     etapa: 'Previo OC',
                     accion: 'Eliminación de participantes',
                     autor: 'Leslie Marlenne Herrera',
-                    participantes: [
+                    tipo: 'eliminacion' as const,
+                    items: [
                       { nombre: 'Anais Paez Montenegro', rut: '19.774.822-2' },
                       { nombre: 'Romina Quiñones Vergara', rut: '18.706.395-7' },
                     ],
                   },
-                ].map((cambio, idx) => (
-                  <div
-                    key={idx}
-                    className="rounded-lg border border-border bg-background overflow-hidden"
-                  >
-                    {/* Encabezado del cambio */}
-                    <div className="flex items-center justify-between gap-2 px-4 py-2.5 bg-muted/30 border-b border-border flex-wrap">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <Badge
-                          variant="outline"
-                          className="bg-primary/10 text-primary border-primary/30 font-mono text-[11px]"
-                        >
-                          {cambio.fecha} · {cambio.hora}
-                        </Badge>
-                        <Badge variant="outline" className="bg-amber-50 text-amber-800 border-amber-200 text-[11px]">
-                          {cambio.etapa}
-                        </Badge>
-                      </div>
-                    </div>
+                  {
+                    fecha: '18/04/2026',
+                    hora: '15:42 hrs.',
+                    etapa: 'Previo OC',
+                    accion: 'Incorporación de participantes',
+                    autor: 'Natalia Veliz',
+                    tipo: 'incorporacion' as const,
+                    items: [
+                      { nombre: 'Carlos Andrés Pérez', rut: '15.234.567-8' },
+                      { nombre: 'María José Soto', rut: '17.456.789-K' },
+                      { nombre: 'Diego Alarcón Vega', rut: '16.987.654-3' },
+                      { nombre: 'Camila Rojas Muñoz', rut: '18.123.456-7' },
+                      { nombre: 'Felipe Torres Gómez', rut: '19.345.678-2' },
+                    ],
+                  },
+                  {
+                    fecha: '15/04/2026',
+                    hora: '09:25 hrs.',
+                    etapa: 'Inscripción',
+                    accion: 'Cambio de horario',
+                    autor: 'Valentina Carvacho',
+                    tipo: 'modificacion' as const,
+                    items: [
+                      { campo: 'Horario anterior', valor: '08:00 - 11:00 hrs' },
+                      { campo: 'Horario nuevo', valor: '09:00 - 12:00 hrs' },
+                    ],
+                  },
+                  {
+                    fecha: '12/04/2026',
+                    hora: '11:08 hrs.',
+                    etapa: 'Inscripción',
+                    accion: 'Modificación de fechas',
+                    autor: 'Leslie Marlenne Herrera',
+                    tipo: 'modificacion' as const,
+                    items: [
+                      { campo: 'Fecha Inicio', valor: '05-01-2026 → 12-01-2026' },
+                      { campo: 'Fecha Término', valor: '04-03-2026 → 11-03-2026' },
+                      { campo: 'Días', valor: 'L-M-V → L-M-J' },
+                      { campo: 'Sala', valor: 'Sala A1 → Sala B3' },
+                    ],
+                  },
+                ].map((cambio, idx) => {
+                  const tipoStyles = {
+                    eliminacion: 'bg-destructive/10 text-destructive border-destructive/30',
+                    incorporacion: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                    modificacion: 'bg-blue-50 text-blue-700 border-blue-200',
+                  }[cambio.tipo];
 
-                    {/* Acción */}
-                    <div className="px-4 py-3 border-b border-border">
-                      <p className="text-[11px] uppercase tracking-wide text-muted-foreground font-medium mb-0.5">
-                        Acción
-                      </p>
-                      <p className="text-sm font-semibold text-foreground">{cambio.accion}</p>
-                      <p className="text-[11px] text-muted-foreground mt-1">
-                        Por <span className="font-medium text-foreground">{cambio.autor}</span>
-                      </p>
-                    </div>
+                  const showScroll = cambio.items.length > 3;
 
-                    {/* Detalle del cambio: participantes */}
-                    <div className="px-4 py-3">
-                      <p className="text-[11px] uppercase tracking-wide text-muted-foreground font-medium mb-2">
-                        Participantes afectados ({cambio.participantes.length})
-                      </p>
-                      <div className="space-y-1.5">
-                        {cambio.participantes.map((p, i) => (
-                          <div
-                            key={i}
-                            className="flex items-center justify-between gap-3 p-2 rounded-md bg-muted/40 border border-border"
+                  return (
+                    <div
+                      key={idx}
+                      className="rounded-lg border border-border bg-background overflow-hidden"
+                    >
+                      {/* Encabezado del cambio */}
+                      <div className="flex items-center justify-between gap-2 px-4 py-2.5 bg-muted/30 border-b border-border flex-wrap">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <Badge
+                            variant="outline"
+                            className="bg-primary/10 text-primary border-primary/30 font-mono text-[11px]"
                           >
-                            <div className="flex items-center gap-2 min-w-0">
-                              <div className="w-7 h-7 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[11px] font-bold shrink-0">
-                                {p.nombre
-                                  .split(' ')
-                                  .map((n) => n[0])
-                                  .slice(0, 2)
-                                  .join('')}
-                              </div>
-                              <p className="text-sm font-medium text-foreground truncate">{p.nombre}</p>
-                            </div>
-                            <span className="text-[11px] font-mono text-muted-foreground shrink-0">
-                              {p.rut}
-                            </span>
-                          </div>
-                        ))}
+                            {cambio.fecha} · {cambio.hora}
+                          </Badge>
+                          <Badge variant="outline" className="bg-amber-50 text-amber-800 border-amber-200 text-[11px]">
+                            {cambio.etapa}
+                          </Badge>
+                          <Badge variant="outline" className={`text-[11px] ${tipoStyles}`}>
+                            {cambio.tipo === 'eliminacion'
+                              ? 'Eliminación'
+                              : cambio.tipo === 'incorporacion'
+                              ? 'Incorporación'
+                              : 'Modificación'}
+                          </Badge>
+                        </div>
+                      </div>
+
+                      {/* Acción */}
+                      <div className="px-4 py-3 border-b border-border">
+                        <p className="text-[11px] uppercase tracking-wide text-muted-foreground font-medium mb-0.5">
+                          Acción
+                        </p>
+                        <p className="text-sm font-semibold text-foreground">{cambio.accion}</p>
+                        <p className="text-[11px] text-muted-foreground mt-1">
+                          Por <span className="font-medium text-foreground">{cambio.autor}</span>
+                        </p>
+                      </div>
+
+                      {/* Detalle */}
+                      <div className="px-4 py-3">
+                        <p className="text-[11px] uppercase tracking-wide text-muted-foreground font-medium mb-2">
+                          {cambio.tipo === 'modificacion'
+                            ? `Campos modificados (${cambio.items.length})`
+                            : `Participantes (${cambio.items.length})`}
+                        </p>
+                        <div
+                          className={`space-y-1.5 ${
+                            showScroll ? 'max-h-[180px] overflow-y-auto pr-1' : ''
+                          }`}
+                        >
+                          {cambio.tipo === 'modificacion'
+                            ? (cambio.items as { campo: string; valor: string }[]).map((it, i) => (
+                                <div
+                                  key={i}
+                                  className="flex items-center justify-between gap-3 p-2 rounded-md bg-muted/40 border border-border"
+                                >
+                                  <span className="text-xs font-medium text-muted-foreground">
+                                    {it.campo}
+                                  </span>
+                                  <span className="text-xs font-medium text-foreground text-right">
+                                    {it.valor}
+                                  </span>
+                                </div>
+                              ))
+                            : (cambio.items as { nombre: string; rut: string }[]).map((p, i) => (
+                                <div
+                                  key={i}
+                                  className="flex items-center justify-between gap-3 p-2 rounded-md bg-muted/40 border border-border"
+                                >
+                                  <div className="flex items-center gap-2 min-w-0">
+                                    <div className="w-7 h-7 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[11px] font-bold shrink-0">
+                                      {p.nombre
+                                        .split(' ')
+                                        .map((n) => n[0])
+                                        .slice(0, 2)
+                                        .join('')}
+                                    </div>
+                                    <p className="text-sm font-medium text-foreground truncate">
+                                      {p.nombre}
+                                    </p>
+                                  </div>
+                                  <span className="text-[11px] font-mono text-muted-foreground shrink-0">
+                                    {p.rut}
+                                  </span>
+                                </div>
+                              ))}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </SectionCard>
           </div>
