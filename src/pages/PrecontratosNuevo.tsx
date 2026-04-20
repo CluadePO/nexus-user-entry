@@ -434,7 +434,7 @@ const PrecontratosNuevo: React.FC = () => {
                   <tbody>
                     {paginatedCursos.map((c) => (
                       <tr key={c.numeroSC} className="border-b hover:bg-muted/30">
-                        <td className="p-2 font-mono text-foreground">{c.numeroSC}</td>
+                        
                         
                         <td className="p-2 font-mono text-muted-foreground">{c.sencenet}</td>
                         <td className="p-2 font-mono text-muted-foreground">{c.ssc}</td>
