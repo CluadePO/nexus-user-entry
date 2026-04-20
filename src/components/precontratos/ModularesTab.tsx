@@ -110,8 +110,23 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle }) => {
     setAddModalOpen(true);
   };
 
-  const handleAddCourse = (data: Omit<CursoModular, 'idModular'>) => {
-    setCursosModulares(prev => [...prev, { ...data, idModular: addModalModuleId }]);
+  const handleAddCourse = (sc: string) => {
+    const newCurso: CursoModular = {
+      idModular: addModalModuleId,
+      sc,
+      sencenet: '',
+      curso: `Curso S.C ${sc}`,
+      cliente: addModalCliente,
+      nroPart: 0,
+      mtFranquicia: '$0',
+      inicioCurso: '',
+      modalidad: '',
+      tipoContrato: 'Precontrato',
+      codigoSence: '',
+      vencimientoSence: '',
+      celula: '',
+    };
+    setCursosModulares(prev => [...prev, newCurso]);
   };
 
   return (
