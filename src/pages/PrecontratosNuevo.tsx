@@ -445,6 +445,7 @@ const PrecontratosNuevo: React.FC = () => {
           <TabsTrigger value="buscador">Buscador</TabsTrigger>
           <TabsTrigger value="cursos">Precontrato Normal</TabsTrigger>
           <TabsTrigger value="parcial">Parcial Complementario</TabsTrigger>
+          <TabsTrigger value="modulares">Modulares</TabsTrigger>
         </TabsList>
 
         <TabsContent value="buscador" className="mt-4">
@@ -781,6 +782,14 @@ const PrecontratosNuevo: React.FC = () => {
           </Card>
         </TabsContent>
 
+        <TabsContent value="modulares" className="mt-4">
+          <ModularesTab
+            onVerDetalle={(nroInscripcion, idModular) => {
+              setCursoDetalleSC(nroInscripcion);
+              setCursoDetalleIdModular(idModular);
+            }}
+          />
+        </TabsContent>
       </Tabs>
     </div>
   );
