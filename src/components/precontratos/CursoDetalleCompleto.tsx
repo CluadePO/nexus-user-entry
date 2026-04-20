@@ -459,37 +459,54 @@ const CursoDetalleCompleto: React.FC<CursoDetalleCompletoProps> = ({ numeroSC, o
               icon={<Sparkles className="w-4 h-4" />}
               accent="bg-primary/10 text-primary"
             >
-              <div className="space-y-4">
-                {curso.historial.map((etapa, idx) => (
-                  <div key={etapa.etapa}>
-                    <div className="flex items-center gap-2 mb-2">
-                      <div
-                        className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold ${
-                          etapa.activa
-                            ? 'bg-primary text-primary-foreground'
-                            : 'bg-muted text-muted-foreground border'
-                        }`}
-                      >
-                        {idx + 1}
-                      </div>
-                      <span className={`text-sm font-semibold ${etapa.activa ? 'text-foreground' : 'text-muted-foreground'}`}>
-                        {etapa.etapa}
-                      </span>
-                    </div>
-                    {etapa.items.length > 0 && (
-                      <div className="ml-3 pl-5 border-l-2 border-primary/30 space-y-2">
-                        {etapa.items.map((item, i) => (
-                          <div key={i} className="rounded-md bg-primary/5 border border-primary/20 p-2.5">
-                            <p className="text-sm font-medium text-foreground">{item.titulo}</p>
-                            <p className="text-[11px] text-muted-foreground mt-0.5">{item.fecha}</p>
-                            <p className="text-[11px] text-muted-foreground">{item.autor}</p>
+              <Accordion type="multiple" defaultValue={['etapa-0']} className="w-full">
+                {curso.historial.map((etapa, idx) => {
+                  const isLast = idx === curso.historial.length - 1;
+                  return (
+                    <AccordionItem
+                      key={etapa.etapa}
+                      value={`etapa-${idx}`}
+                      className="border-none"
+                    >
+                      <div className="relative">
+                        {/* Línea vertical punteada conectora */}
+                        {!isLast && (
+                          <span
+                            aria-hidden
+                            className="absolute left-[11px] top-7 bottom-0 border-l-2 border-dashed border-muted-foreground/30"
+                          />
+                        )}
+                        <AccordionTrigger className="hover:no-underline py-2.5 px-0 [&>svg]:text-muted-foreground">
+                          <div className="flex items-center gap-3">
+                            <span className="relative z-10 w-[22px] h-[22px] rounded-full border-2 border-foreground bg-background flex items-center justify-center" />
+                            <span className="text-sm font-bold text-foreground">{etapa.etapa}</span>
                           </div>
-                        ))}
+                        </AccordionTrigger>
+                        <AccordionContent className="pb-3 pl-0">
+                          {etapa.items.length > 0 ? (
+                            <div className="ml-[11px] pl-6 space-y-3 relative">
+                              {etapa.items.map((item, i) => (
+                                <div
+                                  key={i}
+                                  className="rounded-md bg-muted/40 border border-border px-3 py-2"
+                                >
+                                  <p className="text-xs font-semibold text-muted-foreground">{item.titulo}</p>
+                                  <p className="text-sm font-bold text-primary mt-0.5">{item.fecha}</p>
+                                  {item.autor && (
+                                    <p className="text-[11px] text-muted-foreground mt-0.5">{item.autor}</p>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <p className="ml-[11px] pl-6 text-xs text-muted-foreground">Sin registros</p>
+                          )}
+                        </AccordionContent>
                       </div>
-                    )}
-                  </div>
-                ))}
-              </div>
+                    </AccordionItem>
+                  );
+                })}
+              </Accordion>
             </SectionCard>
 
             <SectionCard
