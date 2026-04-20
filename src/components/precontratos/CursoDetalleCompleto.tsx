@@ -101,6 +101,7 @@ const CursoDetalleCompleto: React.FC<CursoDetalleCompletoProps> = ({ numeroSC, o
     montoCostoEmpresa: 0,
     valorViatico: 0,
     valorPorParticipante: 273000,
+    valorRealSence: 5460000,
     cuentaActual: 0,
     cuentaSiguiente: 5460000,
     region: 'REGION METROPOLITANA',
