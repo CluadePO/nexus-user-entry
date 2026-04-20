@@ -157,20 +157,8 @@ const CursoDetalleCompleto: React.FC<CursoDetalleCompletoProps> = ({ numeroSC, o
                 <ArrowLeft className="w-4 h-4 mr-1" /> Volver
               </Button>
               <div>
-                <div className="flex items-center gap-2 flex-wrap mb-1">
-                  <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30 font-mono">
-                    ID Sence {curso.idSence}
-                  </Badge>
-                  <Badge variant="outline" className="bg-amber-50 text-amber-800 border-amber-200">
-                    {curso.etapa}
-                  </Badge>
-                  <Badge variant="outline" className="bg-slate-100 text-slate-700">
-                    {curso.modalidad}
-                  </Badge>
-                  <Badge variant="outline" className="bg-slate-100 text-slate-700">
-                    {curso.linea}
-                  </Badge>
-                </div>
+                <div className="flex items-center gap-2 flex-wrap mb-1" />
+
                 <h2 className="text-xl font-bold text-foreground leading-snug max-w-2xl">{curso.nombre}</h2>
                 <p className="text-xs text-muted-foreground mt-1">
                   Inscripción <span className="font-mono text-foreground">{curso.idInscripcion}</span> · Código Sence{' '}
