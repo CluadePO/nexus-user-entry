@@ -100,8 +100,8 @@ const ComunicacionSence: React.FC = () => {
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList>
-          <TabsTrigger value="comunicacion">Comunicación</TabsTrigger>
-          <TabsTrigger value="modulares">Precontratos Modulares</TabsTrigger>
+          <TabsTrigger value="comunicacion">Cursos Normales</TabsTrigger>
+          <TabsTrigger value="modulares">Cursos Modulares</TabsTrigger>
         </TabsList>
 
         <TabsContent value="comunicacion" className="mt-4">
