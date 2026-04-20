@@ -141,7 +141,7 @@ const mockCursos: CursoPrecontrato[] = Array.from({ length: 87 }, (_, i) => {
   };
 });
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 10;
 
 const PrecontratosNuevo: React.FC = () => {
   const [busqueda, setBusqueda] = useState('');
@@ -411,7 +411,7 @@ const PrecontratosNuevo: React.FC = () => {
                   <thead>
                     <tr className="bg-muted/50 border-b">
                       <th className="p-2 text-left font-medium">N° SC</th>
-                      <th className="p-2 text-left font-medium">Nombre del Curso</th>
+                      
                       <th className="p-2 text-left font-medium">Sencenet</th>
                       <th className="p-2 text-left font-medium">SSC</th>
                       <th className="p-2 text-right font-medium">Monto Total OTEC</th>
@@ -435,7 +435,7 @@ const PrecontratosNuevo: React.FC = () => {
                     {paginatedCursos.map((c) => (
                       <tr key={c.numeroSC} className="border-b hover:bg-muted/30">
                         <td className="p-2 font-mono text-foreground">{c.numeroSC}</td>
-                        <td className="p-2">{c.nombreCurso}</td>
+                        
                         <td className="p-2 font-mono text-muted-foreground">{c.sencenet}</td>
                         <td className="p-2 font-mono text-muted-foreground">{c.ssc}</td>
                         <td className="p-2 text-right font-mono">{formatCLP(c.montoTotalOtec)}</td>
