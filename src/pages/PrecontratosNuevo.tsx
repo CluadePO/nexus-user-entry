@@ -141,7 +141,7 @@ const mockCursos: CursoPrecontrato[] = Array.from({ length: 87 }, (_, i) => {
   };
 });
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 10;
 
 const PrecontratosNuevo: React.FC = () => {
   const [busqueda, setBusqueda] = useState('');
