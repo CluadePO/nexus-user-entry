@@ -410,7 +410,7 @@ const PrecontratosNuevo: React.FC = () => {
                 <table className="w-full text-xs whitespace-nowrap">
                   <thead>
                     <tr className="bg-muted/50 border-b">
-                      <th className="p-2 text-left font-medium">N° SC</th>
+                      
                       
                       <th className="p-2 text-left font-medium">Sencenet</th>
                       <th className="p-2 text-left font-medium">SSC</th>
@@ -434,7 +434,7 @@ const PrecontratosNuevo: React.FC = () => {
                   <tbody>
                     {paginatedCursos.map((c) => (
                       <tr key={c.numeroSC} className="border-b hover:bg-muted/30">
-                        <td className="p-2 font-mono text-foreground">{c.numeroSC}</td>
+                        
                         
                         <td className="p-2 font-mono text-muted-foreground">{c.sencenet}</td>
                         <td className="p-2 font-mono text-muted-foreground">{c.ssc}</td>
