@@ -481,16 +481,6 @@ const CursoDetalleCompleto: React.FC<CursoDetalleCompletoProps> = ({ numeroSC, o
                 ))}
               </div>
             </SectionCard>
-
-            <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/30">
-              <CardContent className="p-5 text-center">
-                <p className="text-xs text-muted-foreground mb-2">Próxima actualización</p>
-                <p className="text-2xl font-bold text-primary font-mono">--:-- hrs</p>
-                <Button size="sm" variant="outline" className="mt-3 w-full">
-                  Ir a Requisitos <ChevronRight className="w-3.5 h-3.5 ml-1" />
-                </Button>
-              </CardContent>
-            </Card>
           </div>
         </div>
       </div>
