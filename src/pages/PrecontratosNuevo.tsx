@@ -160,7 +160,7 @@ const PrecontratosNuevo: React.FC = () => {
   const [cursoDetalleIdModular, setCursoDetalleIdModular] = useState<string | undefined>();
   const [tab, setTab] = useState('buscador');
   const [page, setPage] = useState(1);
-  const [pageModulares, setPageModulares] = useState(1);
+  
 
   // Filtros grilla "Precontrato Normal"
   const [fSencenet, setFSencenet] = useState('');
