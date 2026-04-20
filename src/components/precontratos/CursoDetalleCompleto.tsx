@@ -237,48 +237,6 @@ const CursoDetalleCompleto: React.FC<CursoDetalleCompletoProps> = ({ numeroSC, o
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Columna principal */}
         <div className="lg:col-span-2 space-y-5">
-          {/* Pendientes destacado */}
-          <SectionCard
-            title="Pendientes de Carga"
-            icon={<AlertCircle className="w-4 h-4" />}
-            accent="bg-destructive/10 text-destructive"
-          >
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {curso.pendientesCarga.map((p) => (
-                <div
-                  key={p.nombre}
-                  className="flex items-start justify-between gap-2 p-3 rounded-md border border-destructive/20 bg-destructive/5 hover:bg-destructive/10 transition"
-                >
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium text-foreground truncate">{p.nombre}</p>
-                    {p.desc && <p className="text-[11px] text-muted-foreground truncate">{p.desc}</p>}
-                  </div>
-                  <CircleDashed className="w-4 h-4 text-destructive shrink-0 mt-0.5" />
-                </div>
-              ))}
-            </div>
-
-            {curso.validados.length > 0 && (
-              <div className="mt-4 pt-4 border-t">
-                <div className="flex items-center gap-1.5 mb-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                  <span className="text-xs font-semibold text-emerald-700">Validados</span>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {curso.validados.map((v) => (
-                    <div
-                      key={v.nombre}
-                      className="flex items-center justify-between gap-2 p-2.5 rounded-md border border-emerald-200 bg-emerald-50"
-                    >
-                      <span className="text-sm font-medium text-emerald-900">{v.nombre}</span>
-                      <CircleCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </SectionCard>
-
           {/* Información del curso */}
           <SectionCard
             title="Información del Curso"
