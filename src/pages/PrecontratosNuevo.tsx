@@ -154,6 +154,7 @@ const PAGE_SIZE = 10;
 const PrecontratosNuevo: React.FC = () => {
   const [busqueda, setBusqueda] = useState('');
   const [detalle, setDetalle] = useState<PrecontratoDetalle | null>(null);
+  const [cursoDetalleSC, setCursoDetalleSC] = useState<string | null>(null);
   const [tab, setTab] = useState('buscador');
   const [page, setPage] = useState(1);
 
