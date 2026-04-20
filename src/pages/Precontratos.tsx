@@ -1034,30 +1034,7 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
 // ── Main Component ──
 
 const Precontratos: React.FC = () => {
-  const [selectedModulares, setSelectedModulares] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState('precontratos');
-  const [subTab, setSubTab] = useState('pendientes');
-  const [celulaFilter, setCelulaFilter] = useState('todas');
-  const [criticidadAlta, setCriticidadAlta] = useState(true);
-  const [criticidadMedia, setCriticidadMedia] = useState(true);
-  const [criticidadBaja, setCriticidadBaja] = useState(true);
-  const [selectedPrecontrato, setSelectedPrecontrato] = useState<PrecontratoNormal | null>(null);
-  const [selectedCerrado, setSelectedCerrado] = useState<PrecontratoCerrado | null>(null);
-
-  const handleSelectModular = (sc: string, checked: boolean) => {
-    setSelectedModulares(prev =>
-      checked ? [...prev, sc] : prev.filter(s => s !== sc)
-    );
-  };
-
-  const handleSelectModulo = (modulo: string, checked: boolean) => {
-    const grupo = precontratosModulares.find(m => m.modulo === modulo);
-    if (!grupo) return;
-    const scs = grupo.cursos.map(c => c.sc);
-    setSelectedModulares(prev =>
-      checked ? [...new Set([...prev, ...scs])] : prev.filter(s => !scs.includes(s))
-    );
-  };
 
   const filteredNormales = precontratosNormalesData.filter(p => {
     if (p.criticidad === 'alta' && !criticidadAlta) return false;
@@ -1147,7 +1124,6 @@ const Precontratos: React.FC = () => {
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
           <TabsTrigger value="precontratos">Precontratos (Normal)</TabsTrigger>
-          <TabsTrigger value="modulares">Precontratos Modulares</TabsTrigger>
         </TabsList>
 
         {/* ── Tab: Precontratos ── */}
@@ -1398,57 +1374,6 @@ const Precontratos: React.FC = () => {
           )}
         </TabsContent>
 
-        {/* ── Tab: Precontratos Modulares ── */}
-        <TabsContent value="modulares" className="space-y-4 mt-4">
-          <div className="border rounded-lg overflow-hidden">
-            <table className="w-full text-xs table-fixed">
-              <thead>
-                <tr className="border-b bg-muted/30">
-                  <th className="p-2 w-8"></th>
-                  <th className="p-2 text-left font-medium text-muted-foreground w-[12%]">Módulo</th>
-                  <th className="p-2 text-left font-medium text-muted-foreground w-[10%]">S.C.</th>
-                  <th className="p-2 text-left font-medium text-muted-foreground w-[30%]">Cliente</th>
-                  <th className="p-2 text-center font-medium text-muted-foreground w-[10%]">Nro. Part.</th>
-                  <th className="p-2 text-left font-medium text-muted-foreground w-[15%]">M.T. Franquicia</th>
-                  <th className="p-2 text-left font-medium text-muted-foreground w-[15%]">Inicio Curso</th>
-                </tr>
-              </thead>
-              <tbody>
-                {precontratosModulares.map((modulo) => (
-                  <React.Fragment key={modulo.modulo}>
-                    <tr className="bg-muted/20 border-b">
-                      <td className="p-2">
-                        <Checkbox
-                          checked={modulo.cursos.every(c => selectedModulares.includes(c.sc))}
-                          onCheckedChange={(checked) => handleSelectModulo(modulo.modulo, !!checked)}
-                        />
-                      </td>
-                      <td colSpan={6} className="p-2 font-semibold text-primary text-xs">
-                        {modulo.modulo} - Seleccionar todos ({modulo.cursos.length} cursos)
-                      </td>
-                    </tr>
-                    {modulo.cursos.map((curso, idx) => (
-                      <tr key={curso.sc} className={`border-b ${idx % 2 === 0 ? '' : 'bg-muted/10'} hover:bg-muted/20`}>
-                        <td className="p-2">
-                          <Checkbox
-                            checked={selectedModulares.includes(curso.sc)}
-                            onCheckedChange={(checked) => handleSelectModular(curso.sc, !!checked)}
-                          />
-                        </td>
-                        <td className="p-2 text-muted-foreground">{curso.moduloRef}</td>
-                        <td className="p-2 font-medium">{curso.sc}</td>
-                        <td className="p-2 text-muted-foreground">{curso.cliente}</td>
-                        <td className="p-2 text-center">{curso.nroPart}</td>
-                        <td className="p-2">{curso.mtFranquicia}</td>
-                        <td className="p-2">{curso.inicioCurso}</td>
-                      </tr>
-                    ))}
-                  </React.Fragment>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </TabsContent>
       </Tabs>
     </div>
   );
