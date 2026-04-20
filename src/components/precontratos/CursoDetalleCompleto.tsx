@@ -29,6 +29,7 @@ import {
 interface CursoDetalleCompletoProps {
   numeroSC: string;
   onBack: () => void;
+  idModular?: string;
 }
 
 const InfoItem: React.FC<{ label: string; value: React.ReactNode; mono?: boolean }> = ({
@@ -63,7 +64,7 @@ const SectionCard: React.FC<{
   </Card>
 );
 
-const CursoDetalleCompleto: React.FC<CursoDetalleCompletoProps> = ({ numeroSC, onBack }) => {
+const CursoDetalleCompleto: React.FC<CursoDetalleCompletoProps> = ({ numeroSC, onBack, idModular }) => {
   // Mock data basado en la imagen
   const curso = {
     idSence: '6751520',
@@ -177,7 +178,15 @@ const CursoDetalleCompleto: React.FC<CursoDetalleCompletoProps> = ({ numeroSC, o
                 </div>
 
                 {/* Bloque inferior: identificadores en grilla */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 pt-2 border-t border-border">
+                <div className={`grid grid-cols-2 ${idModular ? 'md:grid-cols-5' : 'md:grid-cols-4'} gap-2 pt-2 border-t border-border`}>
+                  {idModular && (
+                    <div className="rounded-md border border-primary/30 bg-primary/5 px-3 py-2">
+                      <p className="text-[11px] uppercase tracking-wide text-muted-foreground font-semibold">
+                        ID Modular
+                      </p>
+                      <p className="text-sm font-bold text-primary font-mono">{idModular}</p>
+                    </div>
+                  )}
                   {[
                     { label: 'Id Inscripción', value: curso.idInscripcion },
                     { label: 'Código Sence', value: curso.codigoSence },
