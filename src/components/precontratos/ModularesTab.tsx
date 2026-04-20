@@ -507,7 +507,15 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true }) =
                                           <tr key={pIdx} className={`border-b last:border-0 ${pIdx % 2 === 0 ? '' : 'bg-muted/10'}`}>
                                             <td className="p-2 pl-4 text-foreground">{part.nombre}</td>
                                             <td className="p-2">
-                                              <button className="text-primary hover:underline text-xs font-medium">Descargar</button>
+                                              <button 
+                                                className="text-primary hover:underline text-xs font-medium"
+                                                onClick={() => {
+                                                  toast({
+                                                    title: "Descargando precontrato",
+                                                    description: `Generando precontrato de ${part.nombre}...`,
+                                                  });
+                                                }}
+                                              >Descargar</button>
                                             </td>
                                           </tr>
                                         ))}
