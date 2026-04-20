@@ -527,7 +527,9 @@ const PrecontratosNuevo: React.FC = () => {
               </div>
               <div className="flex items-center justify-between p-3 border-t flex-wrap gap-2">
                 <p className="text-xs text-muted-foreground">
-                  Mostrando {(page - 1) * PAGE_SIZE + 1}-{Math.min(page * PAGE_SIZE, mockCursos.length)} de {mockCursos.length} registros
+                  {filteredCursos.length === 0
+                    ? 'Sin registros'
+                    : `Mostrando ${(safePage - 1) * PAGE_SIZE + 1}-${Math.min(safePage * PAGE_SIZE, filteredCursos.length)} de ${filteredCursos.length} registros`}
                 </p>
                 <Pagination className="mx-0 w-auto justify-end">
                   <PaginationContent>
