@@ -11,9 +11,53 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
-import { AlertCircle, Ban, EyeOff, PlusCircle, Download } from 'lucide-react';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { AlertCircle, Ban, EyeOff, PlusCircle, Download, ChevronDown, ChevronRight, Users } from 'lucide-react';
 import AddCourseToModuleModal from './AddCourseToModuleModal';
 import { toast } from 'sonner';
+
+interface Participante {
+  nombre: string;
+  rut: string;
+}
+
+const mockParticipantesByCurso: Record<string, Participante[]> = {
+  '2160101': [
+    { nombre: 'Alejandro Elías Jesús Castillo Rodríguez', rut: '21.826.390-9' },
+    { nombre: 'Bryan Tomás Villagra Núñez', rut: '19.543.221-7' },
+    { nombre: 'Camila Fernanda Flores Pizarro', rut: '20.112.445-3' },
+    { nombre: 'Claudia Alejandra Chacana Cabrera', rut: '18.765.890-K' },
+    { nombre: 'Cristian Luis Vergara Tobar', rut: '17.234.567-1' },
+    { nombre: 'Cristofer Ignacio Martínez Jiménez', rut: '22.345.678-2' },
+    { nombre: 'Daniel Esteban Rojas Medina', rut: '19.876.543-3' },
+    { nombre: 'Daniela Andrea Soto Espinoza', rut: '20.567.890-4' },
+    { nombre: 'Diego Alejandro Morales Tapia', rut: '21.234.567-5' },
+    { nombre: 'Eduardo Antonio Ramírez López', rut: '18.345.678-6' },
+    { nombre: 'Esteban Felipe Guzmán Araya', rut: '19.456.789-7' },
+    { nombre: 'Fernanda Beatriz Muñoz Contreras', rut: '20.678.901-8' },
+  ],
+  '2160107': [
+    { nombre: 'Gabriel Andrés Herrera Fuentes', rut: '21.789.012-9' },
+    { nombre: 'Héctor Mauricio Paredes Vega', rut: '18.901.234-0' },
+    { nombre: 'Ignacio José Navarro Bravo', rut: '19.012.345-1' },
+    { nombre: 'Javiera Constanza Reyes Aguilar', rut: '20.123.456-2' },
+    { nombre: 'Karen Lorena Figueroa Díaz', rut: '21.234.567-3' },
+    { nombre: 'Leonardo Pablo Sepúlveda Castro', rut: '17.345.678-4' },
+    { nombre: 'María Isabel Contreras Riquelme', rut: '22.456.789-5' },
+  ],
+};
+
+// Generate default participants for courses not in the map
+const getParticipantes = (sc: string, nroPart: number): Participante[] => {
+  if (mockParticipantesByCurso[sc]) return mockParticipantesByCurso[sc];
+  const nombres = ['Ana María González Pérez', 'Carlos Alberto Muñoz Silva', 'Patricia Elena Rojas Vargas', 'Miguel Ángel Torres Fernández', 'Rosa Emilia Díaz Soto', 'Francisco Javier López Cruz', 'Valentina Paz Herrera Mora', 'Rodrigo Esteban Castillo Ruiz'];
+  return Array.from({ length: Math.min(nroPart, nombres.length) }, (_, i) => ({
+    nombre: nombres[i % nombres.length],
+    rut: `${17 + (i % 6)}.${String(100 + i * 111).slice(0, 3)}.${String(200 + i * 77).slice(0, 3)}-${i % 10}`,
+  }));
+};
+
+const PART_PAGE_SIZE = 5;
 
 interface Props {
   onVerDetalle: (nroInscripcion: string, idModular: string) => void;
