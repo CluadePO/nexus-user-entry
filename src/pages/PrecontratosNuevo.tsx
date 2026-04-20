@@ -370,6 +370,50 @@ const PrecontratosNuevo: React.FC = () => {
             </CardContent>
           </Card>
         </TabsContent>
+
+        <TabsContent value="parcial" className="mt-4">
+          <p className="text-muted-foreground mb-4">
+            Listado de precontratos parciales complementarios. Seleccione una SC para ver el detalle.
+          </p>
+          <Card>
+            <CardContent className="p-0">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="bg-muted/50 border-b">
+                      <th className="p-3 text-left font-medium">N° SC</th>
+                      <th className="p-3 text-left font-medium">Nombre del Curso</th>
+                      <th className="p-3 text-left font-medium">SC Original</th>
+                      <th className="p-3 text-left font-medium">Fecha Complemento</th>
+                      <th className="p-3 text-left font-medium">Participantes Adic.</th>
+                      <th className="p-3 text-left font-medium">Estado</th>
+                      <th className="p-3 text-left font-medium">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      { numeroSC: '2032050-C1', nombreCurso: 'Excel Avanzado para Gestión', scOriginal: '2032050', fecha: '25/10/2024', participantes: 2, estado: 'Pendiente' as const },
+                      { numeroSC: '2032051-C1', nombreCurso: 'Liderazgo y Gestión de Equipos', scOriginal: '2032051', fecha: '12/11/2024', participantes: 3, estado: 'En Proceso' as const },
+                      { numeroSC: '2032052-C1', nombreCurso: 'Prevención de Riesgos Laborales', scOriginal: '2032052', fecha: '08/10/2024', participantes: 1, estado: 'Firmado' as const },
+                    ].map((c) => (
+                      <tr key={c.numeroSC} className="border-b hover:bg-muted/30">
+                        <td className="p-3 font-mono text-foreground">{c.numeroSC}</td>
+                        <td className="p-3">{c.nombreCurso}</td>
+                        <td className="p-3 font-mono text-muted-foreground">{c.scOriginal}</td>
+                        <td className="p-3">{c.fecha}</td>
+                        <td className="p-3">{c.participantes}</td>
+                        <td className="p-3">{estadoBadge(c.estado)}</td>
+                        <td className="p-3">
+                          <Button variant="outline" size="sm">Ver detalle</Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
       </Tabs>
     </div>
   );
