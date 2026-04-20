@@ -66,46 +66,80 @@ const mockResultados: PrecontratoDetalle[] = [
 interface CursoPrecontrato {
   numeroSC: string;
   nombreCurso: string;
+  sencenet: string;
+  ssc: string;
+  montoTotalOtec: number;
+  otec: string;
+  oc: string;
+  estadoCurso: 'Activo' | 'Cerrado' | 'Suspendido' | 'Programado';
+  celula: string;
+  analistaResponsable: string;
+  edcACargo: string;
+  jefeComercial: string;
+  fechaCreacionPC: string;
+  estadoSence: 'Aprobado' | 'En Revisión' | 'Rechazado' | 'Pendiente';
+  modalidad: 'Presencial' | 'E-learning' | 'Distancia';
+  partActivos: number;
   fechaInicio: string;
   fechaTermino: string;
   participantes: number;
   estado: 'Pendiente' | 'En Proceso' | 'Firmado';
 }
 
-const mockCursos: CursoPrecontrato[] = [
-  {
-    numeroSC: '2032050',
-    nombreCurso: 'Excel Avanzado para Gestión',
-    fechaInicio: '20/10/2024',
-    fechaTermino: '15/11/2024',
-    participantes: 5,
-    estado: 'Pendiente',
-  },
-  {
-    numeroSC: '2032051',
-    nombreCurso: 'Liderazgo y Gestión de Equipos',
-    fechaInicio: '05/11/2024',
-    fechaTermino: '20/12/2024',
-    participantes: 12,
-    estado: 'En Proceso',
-  },
-  {
-    numeroSC: '2032052',
-    nombreCurso: 'Prevención de Riesgos Laborales',
-    fechaInicio: '01/10/2024',
-    fechaTermino: '30/10/2024',
-    participantes: 8,
-    estado: 'Firmado',
-  },
-  {
-    numeroSC: '2032053',
-    nombreCurso: 'Atención al Cliente Premium',
-    fechaInicio: '10/11/2024',
-    fechaTermino: '05/12/2024',
-    participantes: 15,
-    estado: 'Pendiente',
-  },
+const otecs = ['EDUCAPRO Ltda.', 'Capacita Chile S.A.', 'Formación Total', 'Pro Training SpA', 'Aprende+ Ltda.'];
+const celulas = ['Célula Norte', 'Célula Sur', 'Célula Centro', 'Célula Oriente', 'Célula Poniente'];
+const analistas = ['María González', 'Juan Pérez', 'Carla Soto', 'Luis Ramírez', 'Pamela Díaz'];
+const edcs = ['Roberto Muñoz', 'Andrea Lagos', 'Felipe Torres', 'Sofía Vega'];
+const jefesComerciales = ['Patricia Rojas', 'Diego Salas', 'Marcela Castro'];
+const cursos = [
+  'Excel Avanzado para Gestión',
+  'Liderazgo y Gestión de Equipos',
+  'Prevención de Riesgos Laborales',
+  'Atención al Cliente Premium',
+  'Power BI para Analistas',
+  'Comunicación Efectiva',
+  'Gestión del Cambio',
+  'Inglés de Negocios',
+  'Trabajo en Equipo',
+  'Manejo Defensivo',
 ];
+const estadosCurso: CursoPrecontrato['estadoCurso'][] = ['Activo', 'Cerrado', 'Suspendido', 'Programado'];
+const estadosSence: CursoPrecontrato['estadoSence'][] = ['Aprobado', 'En Revisión', 'Rechazado', 'Pendiente'];
+const modalidades: CursoPrecontrato['modalidad'][] = ['Presencial', 'E-learning', 'Distancia'];
+const estadosPC: CursoPrecontrato['estado'][] = ['Pendiente', 'En Proceso', 'Firmado'];
+
+const pad = (n: number) => String(n).padStart(2, '0');
+const randomDate = (year: number) => {
+  const m = Math.floor(Math.random() * 12) + 1;
+  const d = Math.floor(Math.random() * 28) + 1;
+  return `${pad(d)}/${pad(m)}/${year}`;
+};
+
+const mockCursos: CursoPrecontrato[] = Array.from({ length: 87 }, (_, i) => {
+  const sc = String(2032050 + i);
+  return {
+    numeroSC: sc,
+    nombreCurso: cursos[i % cursos.length],
+    sencenet: `SN-${100000 + i}`,
+    ssc: `SSC-${50000 + i}`,
+    montoTotalOtec: 500000 + (i * 37500) % 4500000,
+    otec: otecs[i % otecs.length],
+    oc: `OC-${800000 + i}`,
+    estadoCurso: estadosCurso[i % estadosCurso.length],
+    celula: celulas[i % celulas.length],
+    analistaResponsable: analistas[i % analistas.length],
+    edcACargo: edcs[i % edcs.length],
+    jefeComercial: jefesComerciales[i % jefesComerciales.length],
+    fechaCreacionPC: randomDate(2024),
+    estadoSence: estadosSence[i % estadosSence.length],
+    modalidad: modalidades[i % modalidades.length],
+    partActivos: 5 + (i * 3) % 25,
+    fechaInicio: randomDate(2024),
+    fechaTermino: randomDate(2024),
+    participantes: 5 + (i * 3) % 25,
+    estado: estadosPC[i % estadosPC.length],
+  };
+});
 
 const PrecontratosNuevo: React.FC = () => {
   const [busqueda, setBusqueda] = useState('');
