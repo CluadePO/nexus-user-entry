@@ -156,6 +156,14 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true }) =
     setAddModalOpen(true);
   };
 
+  const [expandedCourses, setExpandedCourses] = useState<Record<string, boolean>>({});
+  const [partPages, setPartPages] = useState<Record<string, number>>({});
+
+  const toggleCourseExpand = (sc: string) => {
+    setExpandedCourses(prev => ({ ...prev, [sc]: !prev[sc] }));
+    if (!partPages[sc]) setPartPages(prev => ({ ...prev, [sc]: 1 }));
+  };
+
   const handleAddCourse = (sc: string) => {
     const newCurso: CursoModular = {
       idModular: addModalModuleId,
