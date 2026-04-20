@@ -407,28 +407,52 @@ const PrecontratosNuevo: React.FC = () => {
           <Card>
             <CardContent className="p-0">
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-xs whitespace-nowrap">
                   <thead>
                     <tr className="bg-muted/50 border-b">
-                      <th className="p-3 text-left font-medium">N° SC</th>
-                      <th className="p-3 text-left font-medium">Nombre del Curso</th>
-                      <th className="p-3 text-left font-medium">Fecha Inicio</th>
-                      <th className="p-3 text-left font-medium">Fecha Término</th>
-                      <th className="p-3 text-left font-medium">Participantes</th>
-                      <th className="p-3 text-left font-medium">Estado</th>
-                      <th className="p-3 text-left font-medium">Acciones</th>
+                      <th className="p-2 text-left font-medium">N° SC</th>
+                      <th className="p-2 text-left font-medium">Nombre del Curso</th>
+                      <th className="p-2 text-left font-medium">Sencenet</th>
+                      <th className="p-2 text-left font-medium">SSC</th>
+                      <th className="p-2 text-right font-medium">Monto Total OTEC</th>
+                      <th className="p-2 text-left font-medium">OTEC</th>
+                      <th className="p-2 text-left font-medium">OC</th>
+                      <th className="p-2 text-left font-medium">Estado del Curso</th>
+                      <th className="p-2 text-left font-medium">Célula</th>
+                      <th className="p-2 text-left font-medium">Analista Responsable</th>
+                      <th className="p-2 text-left font-medium">EDC a Cargo</th>
+                      <th className="p-2 text-left font-medium">Jefe Comercial</th>
+                      <th className="p-2 text-left font-medium">Fecha Creación PC</th>
+                      <th className="p-2 text-left font-medium">Estado Sence</th>
+                      <th className="p-2 text-left font-medium">Modalidad</th>
+                      <th className="p-2 text-right font-medium">N° Part. Activos</th>
+                      <th className="p-2 text-left font-medium">Fecha Inicio</th>
+                      <th className="p-2 text-left font-medium">Fecha Término</th>
+                      <th className="p-2 text-left font-medium sticky right-0 bg-muted/50">Acciones</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {mockCursos.map((c) => (
+                    {paginatedCursos.map((c) => (
                       <tr key={c.numeroSC} className="border-b hover:bg-muted/30">
-                        <td className="p-3 font-mono text-foreground">{c.numeroSC}</td>
-                        <td className="p-3">{c.nombreCurso}</td>
-                        <td className="p-3">{c.fechaInicio}</td>
-                        <td className="p-3">{c.fechaTermino}</td>
-                        <td className="p-3">{c.participantes}</td>
-                        <td className="p-3">{estadoBadge(c.estado)}</td>
-                        <td className="p-3">
+                        <td className="p-2 font-mono text-foreground">{c.numeroSC}</td>
+                        <td className="p-2">{c.nombreCurso}</td>
+                        <td className="p-2 font-mono text-muted-foreground">{c.sencenet}</td>
+                        <td className="p-2 font-mono text-muted-foreground">{c.ssc}</td>
+                        <td className="p-2 text-right font-mono">{formatCLP(c.montoTotalOtec)}</td>
+                        <td className="p-2">{c.otec}</td>
+                        <td className="p-2 font-mono text-muted-foreground">{c.oc}</td>
+                        <td className="p-2">{estadoCursoBadge(c.estadoCurso)}</td>
+                        <td className="p-2">{c.celula}</td>
+                        <td className="p-2">{c.analistaResponsable}</td>
+                        <td className="p-2">{c.edcACargo}</td>
+                        <td className="p-2">{c.jefeComercial}</td>
+                        <td className="p-2">{c.fechaCreacionPC}</td>
+                        <td className="p-2">{estadoSenceBadge(c.estadoSence)}</td>
+                        <td className="p-2">{c.modalidad}</td>
+                        <td className="p-2 text-right">{c.partActivos}</td>
+                        <td className="p-2">{c.fechaInicio}</td>
+                        <td className="p-2">{c.fechaTermino}</td>
+                        <td className="p-2 sticky right-0 bg-background">
                           <Button
                             variant="outline"
                             size="sm"
@@ -450,9 +474,51 @@ const PrecontratosNuevo: React.FC = () => {
                   </tbody>
                 </table>
               </div>
+              <div className="flex items-center justify-between p-3 border-t flex-wrap gap-2">
+                <p className="text-xs text-muted-foreground">
+                  Mostrando {(page - 1) * PAGE_SIZE + 1}-{Math.min(page * PAGE_SIZE, mockCursos.length)} de {mockCursos.length} registros
+                </p>
+                <Pagination className="mx-0 w-auto justify-end">
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious
+                        href="#"
+                        onClick={(e) => { e.preventDefault(); setPage((p) => Math.max(1, p - 1)); }}
+                        className={page === 1 ? 'pointer-events-none opacity-50' : ''}
+                      />
+                    </PaginationItem>
+                    {Array.from({ length: totalPages }, (_, i) => i + 1)
+                      .filter((p) => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
+                      .map((p, idx, arr) => (
+                        <React.Fragment key={p}>
+                          {idx > 0 && p - arr[idx - 1] > 1 && (
+                            <PaginationItem><PaginationEllipsis /></PaginationItem>
+                          )}
+                          <PaginationItem>
+                            <PaginationLink
+                              href="#"
+                              isActive={p === page}
+                              onClick={(e) => { e.preventDefault(); setPage(p); }}
+                            >
+                              {p}
+                            </PaginationLink>
+                          </PaginationItem>
+                        </React.Fragment>
+                      ))}
+                    <PaginationItem>
+                      <PaginationNext
+                        href="#"
+                        onClick={(e) => { e.preventDefault(); setPage((p) => Math.min(totalPages, p + 1)); }}
+                        className={page === totalPages ? 'pointer-events-none opacity-50' : ''}
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
+
 
         <TabsContent value="parcial" className="mt-4">
           <p className="text-muted-foreground mb-4">
