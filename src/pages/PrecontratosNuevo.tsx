@@ -1,8 +1,14 @@
 import React, { useState, useMemo } from 'react';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Label } from '@/components/ui/label';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -20,8 +26,9 @@ import {
   PaginationPrevious,
   PaginationEllipsis,
 } from '@/components/ui/pagination';
-import { ArrowLeft, Search, Download, Home } from 'lucide-react';
+import { ArrowLeft, Search, Download, Home, CalendarIcon, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { cn } from '@/lib/utils';
 
 interface ParticipantePrecontrato {
   nombre: string;
@@ -149,6 +156,15 @@ const PrecontratosNuevo: React.FC = () => {
   const [tab, setTab] = useState('buscador');
   const [page, setPage] = useState(1);
 
+  // Filtros grilla "Precontrato Normal"
+  const [fSencenet, setFSencenet] = useState('');
+  const [fEstadoSence, setFEstadoSence] = useState<string>('all');
+  const [fCelula, setFCelula] = useState<string>('all');
+  const [fLiderEdc, setFLiderEdc] = useState<string>('all');
+  const [fFechaCreacionPC, setFFechaCreacionPC] = useState<Date | undefined>();
+  const [fFechaInicio, setFFechaInicio] = useState<Date | undefined>();
+  const [fFechaTermino, setFFechaTermino] = useState<Date | undefined>();
+
   const handleBuscar = () => {
     const resultado = mockResultados.find((r) => r.numeroSC === busqueda.trim());
     setDetalle(resultado || null);
@@ -158,11 +174,46 @@ const PrecontratosNuevo: React.FC = () => {
     if (e.key === 'Enter') handleBuscar();
   };
 
-  const totalPages = Math.ceil(mockCursos.length / PAGE_SIZE);
+  const parseDMY = (s: string) => {
+    const [d, m, y] = s.split('/').map(Number);
+    return new Date(y, m - 1, d);
+  };
+  const sameDay = (a: Date, b: Date) =>
+    a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+
+  const filteredCursos = useMemo(() => {
+    return mockCursos.filter((c) => {
+      if (fSencenet && !c.sencenet.toLowerCase().includes(fSencenet.toLowerCase())) return false;
+      if (fEstadoSence !== 'all' && c.estadoSence !== fEstadoSence) return false;
+      if (fCelula !== 'all' && c.celula !== fCelula) return false;
+      if (fLiderEdc !== 'all' && c.edcACargo !== fLiderEdc) return false;
+      if (fFechaCreacionPC && !sameDay(parseDMY(c.fechaCreacionPC), fFechaCreacionPC)) return false;
+      if (fFechaInicio && !sameDay(parseDMY(c.fechaInicio), fFechaInicio)) return false;
+      if (fFechaTermino && !sameDay(parseDMY(c.fechaTermino), fFechaTermino)) return false;
+      return true;
+    });
+  }, [fSencenet, fEstadoSence, fCelula, fLiderEdc, fFechaCreacionPC, fFechaInicio, fFechaTermino]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredCursos.length / PAGE_SIZE));
+  const safePage = Math.min(page, totalPages);
   const paginatedCursos = useMemo(
-    () => mockCursos.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
-    [page]
+    () => filteredCursos.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE),
+    [filteredCursos, safePage]
   );
+
+  const limpiarFiltros = () => {
+    setFSencenet('');
+    setFEstadoSence('all');
+    setFCelula('all');
+    setFLiderEdc('all');
+    setFFechaCreacionPC(undefined);
+    setFFechaInicio(undefined);
+    setFFechaTermino(undefined);
+    setPage(1);
+  };
+
+  React.useEffect(() => { setPage(1); }, [fSencenet, fEstadoSence, fCelula, fLiderEdc, fFechaCreacionPC, fFechaInicio, fFechaTermino]);
+
 
   const formatCLP = (n: number) =>
     new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 }).format(n);
@@ -404,6 +455,152 @@ const PrecontratosNuevo: React.FC = () => {
           <p className="text-muted-foreground mb-4">
             Listado de cursos asociados a precontratos. Seleccione una SC para ver el detalle.
           </p>
+
+          <Card className="mb-4">
+            <CardContent className="p-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                <div className="space-y-1">
+                  <Label className="text-xs">Sencenet</Label>
+                  <Input
+                    placeholder="Ej: SN-100000"
+                    value={fSencenet}
+                    onChange={(e) => setFSencenet(e.target.value)}
+                    className="h-9"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <Label className="text-xs">Estado Sence</Label>
+                  <Select value={fEstadoSence} onValueChange={setFEstadoSence}>
+                    <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todos</SelectItem>
+                      {estadosSence.map((s) => (
+                        <SelectItem key={s} value={s}>{s}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-1">
+                  <Label className="text-xs">Célula</Label>
+                  <Select value={fCelula} onValueChange={setFCelula}>
+                    <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todas</SelectItem>
+                      {celulas.map((s) => (
+                        <SelectItem key={s} value={s}>{s}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-1">
+                  <Label className="text-xs">Líder EDC</Label>
+                  <Select value={fLiderEdc} onValueChange={setFLiderEdc}>
+                    <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todos</SelectItem>
+                      {edcs.map((s) => (
+                        <SelectItem key={s} value={s}>{s}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-1">
+                  <Label className="text-xs">Fecha Creación PC</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          'h-9 w-full justify-start text-left font-normal',
+                          !fFechaCreacionPC && 'text-muted-foreground'
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {fFechaCreacionPC ? format(fFechaCreacionPC, 'dd/MM/yyyy', { locale: es }) : <span>Seleccionar</span>}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={fFechaCreacionPC}
+                        onSelect={setFFechaCreacionPC}
+                        initialFocus
+                        locale={es}
+                        className={cn('p-3 pointer-events-auto')}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+
+                <div className="space-y-1">
+                  <Label className="text-xs">Fecha Inicio</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          'h-9 w-full justify-start text-left font-normal',
+                          !fFechaInicio && 'text-muted-foreground'
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {fFechaInicio ? format(fFechaInicio, 'dd/MM/yyyy', { locale: es }) : <span>Seleccionar</span>}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={fFechaInicio}
+                        onSelect={setFFechaInicio}
+                        initialFocus
+                        locale={es}
+                        className={cn('p-3 pointer-events-auto')}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+
+                <div className="space-y-1">
+                  <Label className="text-xs">Fecha Término</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          'h-9 w-full justify-start text-left font-normal',
+                          !fFechaTermino && 'text-muted-foreground'
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {fFechaTermino ? format(fFechaTermino, 'dd/MM/yyyy', { locale: es }) : <span>Seleccionar</span>}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={fFechaTermino}
+                        onSelect={setFFechaTermino}
+                        initialFocus
+                        locale={es}
+                        className={cn('p-3 pointer-events-auto')}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+
+                <div className="flex items-end">
+                  <Button variant="outline" className="h-9 w-full" onClick={limpiarFiltros}>
+                    <X className="w-4 h-4 mr-1" /> Limpiar filtros
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           <Card>
             <CardContent className="p-0">
               <div className="overflow-x-auto">
@@ -476,7 +673,9 @@ const PrecontratosNuevo: React.FC = () => {
               </div>
               <div className="flex items-center justify-between p-3 border-t flex-wrap gap-2">
                 <p className="text-xs text-muted-foreground">
-                  Mostrando {(page - 1) * PAGE_SIZE + 1}-{Math.min(page * PAGE_SIZE, mockCursos.length)} de {mockCursos.length} registros
+                  {filteredCursos.length === 0
+                    ? 'Sin registros'
+                    : `Mostrando ${(safePage - 1) * PAGE_SIZE + 1}-${Math.min(safePage * PAGE_SIZE, filteredCursos.length)} de ${filteredCursos.length} registros`}
                 </p>
                 <Pagination className="mx-0 w-auto justify-end">
                   <PaginationContent>
@@ -484,11 +683,11 @@ const PrecontratosNuevo: React.FC = () => {
                       <PaginationPrevious
                         href="#"
                         onClick={(e) => { e.preventDefault(); setPage((p) => Math.max(1, p - 1)); }}
-                        className={page === 1 ? 'pointer-events-none opacity-50' : ''}
+                        className={safePage === 1 ? 'pointer-events-none opacity-50' : ''}
                       />
                     </PaginationItem>
                     {Array.from({ length: totalPages }, (_, i) => i + 1)
-                      .filter((p) => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
+                      .filter((p) => p === 1 || p === totalPages || Math.abs(p - safePage) <= 1)
                       .map((p, idx, arr) => (
                         <React.Fragment key={p}>
                           {idx > 0 && p - arr[idx - 1] > 1 && (
@@ -497,7 +696,7 @@ const PrecontratosNuevo: React.FC = () => {
                           <PaginationItem>
                             <PaginationLink
                               href="#"
-                              isActive={p === page}
+                              isActive={p === safePage}
                               onClick={(e) => { e.preventDefault(); setPage(p); }}
                             >
                               {p}
@@ -509,7 +708,7 @@ const PrecontratosNuevo: React.FC = () => {
                       <PaginationNext
                         href="#"
                         onClick={(e) => { e.preventDefault(); setPage((p) => Math.min(totalPages, p + 1)); }}
-                        className={page === totalPages ? 'pointer-events-none opacity-50' : ''}
+                        className={safePage === totalPages ? 'pointer-events-none opacity-50' : ''}
                       />
                     </PaginationItem>
                   </PaginationContent>
