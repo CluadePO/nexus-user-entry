@@ -264,6 +264,7 @@ const ComunicacionSence: React.FC = () => {
 
         <TabsContent value="modulares" className="mt-4">
           <ModularesTab
+            showAddCourse={false}
             onVerDetalle={(nroInscripcion, idModular) => {
               setCursoDetalleSC(nroInscripcion);
               setCursoDetalleIdModular(idModular);

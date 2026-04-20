@@ -16,6 +16,7 @@ import AddCourseToModuleModal from './AddCourseToModuleModal';
 
 interface Props {
   onVerDetalle: (nroInscripcion: string, idModular: string) => void;
+  showAddCourse?: boolean;
 }
 
 export interface CursoModular {
@@ -69,7 +70,7 @@ const isProximoAVencer = (vencimiento: string) => {
   return diffDias >= 0 && diffDias <= 10;
 };
 
-const ModularesTab: React.FC<Props> = ({ onVerDetalle }) => {
+const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true }) => {
   const [pageModulares, setPageModulares] = useState(1);
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [noComunicar, setNoComunicar] = useState<string[]>([]);
@@ -152,15 +153,17 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle }) => {
                 </span>
                 <span className="text-sm font-medium text-foreground">{cursos[0].cliente}</span>
                 <Badge variant="secondary" className="text-xs">{cursos.length} {cursos.length === 1 ? 'curso' : 'cursos'}</Badge>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="ml-auto mr-2 gap-1 text-xs h-7 px-2 text-primary border-primary/30 hover:bg-primary/10"
-                  onClick={(e) => handleOpenAddModal(modId, cursos[0].cliente, e)}
-                >
-                  <PlusCircle className="w-3.5 h-3.5" />
-                  Agregar curso
-                </Button>
+                {showAddCourse && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="ml-auto mr-2 gap-1 text-xs h-7 px-2 text-primary border-primary/30 hover:bg-primary/10"
+                    onClick={(e) => handleOpenAddModal(modId, cursos[0].cliente, e)}
+                  >
+                    <PlusCircle className="w-3.5 h-3.5" />
+                    Agregar curso
+                  </Button>
+                )}
               </div>
             </AccordionTrigger>
             <AccordionContent className="p-0">
