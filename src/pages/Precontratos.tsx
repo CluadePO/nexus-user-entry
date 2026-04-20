@@ -1450,6 +1450,51 @@ const Precontratos: React.FC = () => {
             </table>
           </div>
         </TabsContent>
+
+        {/* ── Tab: Modulares (cursos inscritos como precontrato modular) ── */}
+        <TabsContent value="inscritos-modulares" className="space-y-4 mt-4">
+          <div className="border rounded-lg p-4 bg-background space-y-1">
+            <p className="text-sm font-medium text-foreground">Cursos inscritos como Precontrato Modular</p>
+            <p className="text-xs text-muted-foreground">
+              Listado de cursos generados desde el módulo de Inscripción del sistema con tipo de precontrato Modular (MOD-00X).
+            </p>
+          </div>
+
+          <div className="border rounded-lg overflow-hidden">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="border-b bg-muted/30">
+                  <th className="p-2 text-center font-medium text-muted-foreground w-[10%]">ID Modular</th>
+                  <th className="p-2 text-center font-medium text-muted-foreground w-[10%]">Nº<br/>Inscripción</th>
+                  <th className="p-2 text-center font-medium text-muted-foreground w-[8%]">Sencenet</th>
+                  <th className="p-2 text-left font-medium text-muted-foreground w-[26%]">Curso</th>
+                  <th className="p-2 text-left font-medium text-muted-foreground w-[20%]">Empresa</th>
+                  <th className="p-2 text-center font-medium text-muted-foreground w-[8%]">Nº Part.</th>
+                  <th className="p-2 text-left font-medium text-muted-foreground w-[12%]">Inicio - Término</th>
+                  <th className="p-2 text-center font-medium text-muted-foreground w-[6%]">Célula</th>
+                </tr>
+              </thead>
+              <tbody>
+                {cursosInscritosModulares.map((c, idx) => (
+                  <tr key={c.nroInscripcion} className={`border-b ${idx % 2 === 0 ? '' : 'bg-muted/10'} hover:bg-muted/20 cursor-pointer`}>
+                    <td className="p-2 text-center">
+                      <span className="inline-block border rounded-full px-2 py-0.5 text-[10px] font-bold text-primary bg-primary/10 border-primary/20">
+                        {c.idModular}
+                      </span>
+                    </td>
+                    <td className="p-2 text-center">{c.nroInscripcion}</td>
+                    <td className="p-2 text-center">{c.sencenet}</td>
+                    <td className="p-2">{c.curso}</td>
+                    <td className="p-2 text-muted-foreground">{c.empresa}</td>
+                    <td className="p-2 text-center">{c.nroParticipantes}</td>
+                    <td className="p-2 text-muted-foreground">{c.inicioTermino}</td>
+                    <td className="p-2 text-center text-muted-foreground">{c.celula}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </TabsContent>
       </Tabs>
     </div>
   );
