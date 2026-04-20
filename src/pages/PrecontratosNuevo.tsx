@@ -801,6 +801,7 @@ const PrecontratosNuevo: React.FC = () => {
                       <th className="p-3 text-left font-medium">Inicio - Término</th>
                       <th className="p-3 text-center font-medium">Célula</th>
                       <th className="p-3 text-center font-medium">Acciones</th>
+                    </tr>
                   </thead>
                   <tbody>
                     {[
@@ -827,6 +828,7 @@ const PrecontratosNuevo: React.FC = () => {
                         <td className="p-3 text-center">
                           <Button variant="outline" size="sm" onClick={() => { setCursoDetalleSC(c.nroInscripcion); setCursoDetalleIdModular(c.idModular); }}>Ver Detalle</Button>
                         </td>
+                      </tr>
                     ))}
                   </tbody>
                 </table>
