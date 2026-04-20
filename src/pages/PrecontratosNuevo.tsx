@@ -541,7 +541,7 @@ const PrecontratosNuevo: React.FC = () => {
                       />
                     </PaginationItem>
                     {Array.from({ length: totalPages }, (_, i) => i + 1)
-                      .filter((p) => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
+                      .filter((p) => p === 1 || p === totalPages || Math.abs(p - safePage) <= 1)
                       .map((p, idx, arr) => (
                         <React.Fragment key={p}>
                           {idx > 0 && p - arr[idx - 1] > 1 && (
@@ -550,7 +550,7 @@ const PrecontratosNuevo: React.FC = () => {
                           <PaginationItem>
                             <PaginationLink
                               href="#"
-                              isActive={p === page}
+                              isActive={p === safePage}
                               onClick={(e) => { e.preventDefault(); setPage(p); }}
                             >
                               {p}
@@ -562,7 +562,7 @@ const PrecontratosNuevo: React.FC = () => {
                       <PaginationNext
                         href="#"
                         onClick={(e) => { e.preventDefault(); setPage((p) => Math.min(totalPages, p + 1)); }}
-                        className={page === totalPages ? 'pointer-events-none opacity-50' : ''}
+                        className={safePage === totalPages ? 'pointer-events-none opacity-50' : ''}
                       />
                     </PaginationItem>
                   </PaginationContent>
