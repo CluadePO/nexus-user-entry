@@ -192,27 +192,6 @@ const precontratosModulares: ModuloGroup[] = [
   },
 ];
 
-// ── Cursos inscritos como Precontrato Modular (provienen del módulo Inscripción) ──
-interface CursoInscritoModular {
-  idModular: string;
-  nroInscripcion: string;
-  sencenet: string;
-  curso: string;
-  empresa: string;
-  nroParticipantes: number;
-  inicioTermino: string;
-  celula: string;
-}
-
-const cursosInscritosModulares: CursoInscritoModular[] = [
-  { idModular: 'MOD-001', nroInscripcion: '2160101', sencenet: '6790101', curso: 'Operación Segura de Equipos Mineros', empresa: '76.081.590-K – Sierra Gorda S.c.m.', nroParticipantes: 18, inicioTermino: '05/05/2026 - 05/06/2026', celula: 'Cel1' },
-  { idModular: 'MOD-002', nroInscripcion: '2160102', sencenet: '6790102', curso: 'Mantenimiento Predictivo Industrial', empresa: '85.066.600-8 – Albemarle Limitada', nroParticipantes: 22, inicioTermino: '07/05/2026 - 07/06/2026', celula: 'Cel2' },
-  { idModular: 'MOD-003', nroInscripcion: '2160103', sencenet: '6790103', curso: 'Liderazgo y Gestión de Equipos', empresa: '93.770.000-8 – Goodyear de Chile S.a.i.c.', nroParticipantes: 15, inicioTermino: '10/05/2026 - 10/06/2026', celula: 'Cel3' },
-  { idModular: 'MOD-004', nroInscripcion: '2160104', sencenet: '6790104', curso: 'Excel Avanzado para Gestión', empresa: '78.163.829-3 – Gestiones y Servicios Los Álamos S.A.', nroParticipantes: 25, inicioTermino: '12/05/2026 - 12/06/2026', celula: 'Cel4' },
-  { idModular: 'MOD-005', nroInscripcion: '2160105', sencenet: '6790105', curso: 'Inglés Técnico Nivel Intermedio', empresa: '93.077.000-0 – Metso Chile SPA', nroParticipantes: 12, inicioTermino: '15/05/2026 - 15/06/2026', celula: 'Cel5' },
-  { idModular: 'MOD-006', nroInscripcion: '2160106', sencenet: '6790106', curso: 'Gestión Documental Digital', empresa: '76.727.040-2 – Minera Centinela', nroParticipantes: 20, inicioTermino: '18/05/2026 - 18/06/2026', celula: 'Cel6' },
-];
-
 // ── Detail View Component ──
 
 const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: () => void }> = ({ precontrato, onBack }) => {
