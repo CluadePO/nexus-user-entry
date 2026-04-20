@@ -283,7 +283,8 @@ const PrecontratosNuevo: React.FC = () => {
       <Tabs value={tab} onValueChange={setTab} className="w-full">
         <TabsList>
           <TabsTrigger value="buscador">Buscador</TabsTrigger>
-          <TabsTrigger value="cursos">Cursos Precontratos</TabsTrigger>
+          <TabsTrigger value="cursos">Precontrato Normal</TabsTrigger>
+          <TabsTrigger value="parcial">Parcial Complementario</TabsTrigger>
         </TabsList>
 
         <TabsContent value="buscador" className="mt-4">
