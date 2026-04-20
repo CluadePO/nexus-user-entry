@@ -432,50 +432,24 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true }) =
             </AccordionTrigger>
             <AccordionContent className="p-0">
               <div className="overflow-x-auto">
-                <table className="w-full text-xs table-fixed">
+                <table className="w-full text-xs">
                   <thead>
                     <tr className="border-b bg-muted/30">
-                      <th className="p-2 w-8">
-                        <Checkbox disabled />
-                      </th>
-                      <th className="p-2 text-left font-medium text-muted-foreground w-[7%]">
-                        S.C <span className="text-xs">▾</span>
-                      </th>
-                      <th className="p-2 text-left font-medium text-muted-foreground w-[18%]">
-                        Cliente <span className="text-xs">▾</span>
-                      </th>
-                      <th className="p-2 text-center font-medium text-muted-foreground w-[5%]">
-                        Nro. Part. <span className="text-xs">▾</span>
-                      </th>
-                      <th className="p-2 text-left font-medium text-muted-foreground w-[10%]">
-                        M.T. Franquicia <span className="text-xs">▾</span>
-                      </th>
-                      <th className="p-2 text-left font-medium text-muted-foreground w-[9%]">
-                        Inicio Curso <span className="text-xs">▾</span>
-                      </th>
-                      <th className="p-2 text-left font-medium text-muted-foreground w-[10%]">
-                        Modalidad <span className="text-xs">▾</span>
-                      </th>
-                      <th className="p-2 text-left font-medium text-muted-foreground w-[10%]">
-                        Tipo Contrato <span className="text-xs">▾</span>
-                      </th>
-                      <th className="p-2 text-left font-medium text-muted-foreground w-[12%]">
-                        <span className="inline-flex items-center gap-1">
-                          <span>Vigencia <span className="text-xs">▾</span></span>
-                          <span className="inline-flex items-center rounded-full bg-blue-600 px-1 py-0.5 text-[8px] font-bold leading-none text-white shadow-sm">C1CCOM4</span>
-                        </span>
-                      </th>
-                      <th className="p-2 text-center font-medium text-muted-foreground w-[12%]">
-                        <span className="inline-flex items-center gap-1">
-                          <span>No comunicar</span>
-                          <span className="inline-flex items-center rounded-full bg-blue-600 px-1 py-0.5 text-[8px] font-bold leading-none text-white shadow-sm">C1CCOM5</span>
-                        </span>
-                      </th>
+                      <th className="p-2 text-left font-medium text-muted-foreground whitespace-nowrap">Sencenet</th>
+                      <th className="p-2 text-left font-medium text-muted-foreground whitespace-nowrap">SSC</th>
+                      <th className="p-2 text-left font-medium text-muted-foreground whitespace-nowrap">Monto Total OTEC</th>
+                      <th className="p-2 text-left font-medium text-muted-foreground whitespace-nowrap">OTEC</th>
+                      <th className="p-2 text-left font-medium text-muted-foreground whitespace-nowrap">OC</th>
+                      <th className="p-2 text-left font-medium text-muted-foreground whitespace-nowrap">Estado del Curso</th>
+                      <th className="p-2 text-left font-medium text-muted-foreground whitespace-nowrap">Célula</th>
+                      <th className="p-2 text-left font-medium text-muted-foreground whitespace-nowrap">Analista Responsable</th>
+                      <th className="p-2 text-left font-medium text-muted-foreground whitespace-nowrap">EDC a Cargo</th>
+                      <th className="p-2 text-left font-medium text-muted-foreground whitespace-nowrap">Jefe Comercial</th>
+                      <th className="p-2 text-left font-medium text-muted-foreground whitespace-nowrap">Fecha Creación</th>
                     </tr>
                   </thead>
                   <tbody>
                     {cursos.map((curso, idx) => {
-                      const excluido = noComunicar.includes(curso.sc);
                       const isExpanded = expandedCourses[curso.sc];
                       const participantes = getParticipantes(curso.sc, curso.nroPart);
                       const currentPartPage = partPages[curso.sc] || 1;
@@ -484,57 +458,37 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true }) =
 
                       return (
                         <React.Fragment key={curso.sc}>
-                          <tr className={`border-b ${excluido ? 'bg-red-50/50 opacity-60' : idx % 2 === 0 ? 'hover:bg-muted/20' : 'bg-muted/10 hover:bg-muted/20'}`}>
-                            <td className="p-2">
-                              <Checkbox
-                                checked={selectedRows.includes(curso.sc)}
-                                onCheckedChange={(checked) => handleSelectRow(curso.sc, !!checked)}
-                                disabled={excluido}
-                              />
-                            </td>
-                            <td className="p-2 font-medium">
+                          <tr className={`border-b ${idx % 2 === 0 ? 'hover:bg-muted/20' : 'bg-muted/10 hover:bg-muted/20'}`}>
+                            <td className="p-2 font-medium whitespace-nowrap">
                               <button
                                 className="flex items-center gap-1 hover:text-primary transition-colors"
                                 onClick={() => toggleCourseExpand(curso.sc)}
                               >
                                 {isExpanded ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
-                                {curso.sc}
+                                SN-{curso.sencenet}
                               </button>
                             </td>
-                            <td className="p-2 text-muted-foreground truncate">{curso.cliente}</td>
-                            <td className="p-2 text-center">{curso.nroPart}</td>
-                            <td className="p-2">{curso.mtFranquicia}</td>
-                            <td className="p-2">{curso.inicioCurso}</td>
-                            <td className="p-2">{curso.modalidad}</td>
-                            <td className="p-2">{curso.tipoContrato}</td>
-                            <td className="p-2">
-                              {isProximoAVencer(curso.vencimientoSence) ? (
-                                <Badge variant="destructive" className="gap-1 text-[10px] whitespace-nowrap px-2 py-0.5">
-                                  <AlertCircle className="w-3 h-3" />
-                                  Por vencer
-                                </Badge>
-                              ) : (
-                                <span className="text-muted-foreground text-xs">Vigente</span>
-                              )}
-                            </td>
-                            <td className="p-2 text-center">
-                              <Button
-                                variant={excluido ? 'destructive' : 'outline'}
-                                size="sm"
-                                className="gap-1 text-xs h-7 px-2"
-                                onClick={() => toggleNoComunicar(curso.sc)}
+                            <td className="p-2 whitespace-nowrap">SSC-{curso.sc}</td>
+                            <td className="p-2 font-medium whitespace-nowrap">{curso.mtFranquicia}</td>
+                            <td className="p-2 whitespace-nowrap">{curso.otec}</td>
+                            <td className="p-2 whitespace-nowrap">{curso.oc}</td>
+                            <td className="p-2 whitespace-nowrap">
+                              <Badge
+                                variant={curso.estadoCurso === 'Activo' ? 'default' : curso.estadoCurso === 'Pendiente' ? 'secondary' : 'outline'}
+                                className={`text-[10px] px-2 py-0.5 ${curso.estadoCurso === 'Activo' ? 'bg-primary/20 text-primary border-primary/30' : ''}`}
                               >
-                                {excluido ? (
-                                  <><EyeOff className="w-3 h-3" /> Excluido</>
-                                ) : (
-                                  <><Ban className="w-3 h-3" /> Excluir</>
-                                )}
-                              </Button>
+                                {curso.estadoCurso}
+                              </Badge>
                             </td>
+                            <td className="p-2 whitespace-nowrap">{curso.celula}</td>
+                            <td className="p-2 whitespace-nowrap">{curso.analistaResponsable}</td>
+                            <td className="p-2 whitespace-nowrap">{curso.edcACargo}</td>
+                            <td className="p-2 whitespace-nowrap">{curso.jefeComercial}</td>
+                            <td className="p-2 whitespace-nowrap">{curso.fechaCreacion}</td>
                           </tr>
                           {isExpanded && (
                             <tr>
-                              <td colSpan={10} className="p-0">
+                              <td colSpan={11} className="p-0">
                                 <div className="bg-muted/20 border-t border-b mx-4 my-1 rounded-md">
                                   <div className="flex items-center gap-2 px-3 py-2 border-b bg-muted/30 rounded-t-md">
                                     <Users className="w-3.5 h-3.5 text-primary" />
