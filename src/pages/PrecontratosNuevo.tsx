@@ -655,15 +655,7 @@ const PrecontratosNuevo: React.FC = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => {
-                              const r = mockResultados.find((m) => m.numeroSC === c.numeroSC);
-                              if (r) {
-                                setDetalle(r);
-                              } else {
-                                setBusqueda(c.numeroSC);
-                                setTab('buscador');
-                              }
-                            }}
+                            onClick={() => setCursoDetalleSC(c.numeroSC)}
                           >
                             Ver detalle
                           </Button>
