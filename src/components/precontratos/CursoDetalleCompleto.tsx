@@ -119,8 +119,26 @@ const CursoDetalleCompleto: React.FC<CursoDetalleCompletoProps> = ({ numeroSC, o
     ],
     validados: [{ nombre: 'MDA Rectificaciones' }],
     historial: [
-      { etapa: 'Requisitos', activa: true, items: [{ titulo: 'MDA Rectificaciones', fecha: '20 de abril de 2026', autor: 'sistema' }] },
-      { etapa: 'Inscripción', activa: false, items: [] },
+      {
+        etapa: 'Emisión OC',
+        items: [
+          { titulo: 'Fecha de Emisión OC', fecha: '20 de abril de 2026', autor: 'Natalia Veliz' },
+        ],
+      },
+      {
+        etapa: 'Requisitos',
+        items: [
+          { titulo: 'Ingreso de Asistencia', fecha: '20 de abril de 2026', autor: 'Natalia Veliz' },
+          { titulo: 'CI (Cédula de Identidad)', fecha: '20 de abril de 2026', autor: '' },
+        ],
+      },
+      {
+        etapa: 'Inscripción',
+        items: [
+          { titulo: 'Fecha de Inscripción', fecha: '27 de enero de 2026', autor: 'Valentina Carvacho' },
+          { titulo: 'Fecha de Comunicación Sence', fecha: '27 de enero de 2026', autor: 'Valentina Carvacho' },
+        ],
+      },
     ],
   };
 
