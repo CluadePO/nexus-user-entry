@@ -515,7 +515,81 @@ const CursoDetalleCompleto: React.FC<CursoDetalleCompletoProps> = ({ numeroSC, o
               icon={<History className="w-4 h-4" />}
               accent="bg-blue-100 text-blue-700"
             >
-              <p className="text-sm text-muted-foreground text-center py-2">Sin rectificaciones</p>
+              <div className="space-y-4">
+                {[
+                  {
+                    fecha: '20/04/2026',
+                    hora: '10:12 hrs.',
+                    etapa: 'Previo OC',
+                    accion: 'Eliminación de participantes',
+                    autor: 'Leslie Marlenne Herrera',
+                    participantes: [
+                      { nombre: 'Anais Paez Montenegro', rut: '19.774.822-2' },
+                      { nombre: 'Romina Quiñones Vergara', rut: '18.706.395-7' },
+                    ],
+                  },
+                ].map((cambio, idx) => (
+                  <div
+                    key={idx}
+                    className="rounded-lg border border-border bg-background overflow-hidden"
+                  >
+                    {/* Encabezado del cambio */}
+                    <div className="flex items-center justify-between gap-2 px-4 py-2.5 bg-muted/30 border-b border-border flex-wrap">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <Badge
+                          variant="outline"
+                          className="bg-primary/10 text-primary border-primary/30 font-mono text-[11px]"
+                        >
+                          {cambio.fecha} · {cambio.hora}
+                        </Badge>
+                        <Badge variant="outline" className="bg-amber-50 text-amber-800 border-amber-200 text-[11px]">
+                          {cambio.etapa}
+                        </Badge>
+                      </div>
+                    </div>
+
+                    {/* Acción */}
+                    <div className="px-4 py-3 border-b border-border">
+                      <p className="text-[11px] uppercase tracking-wide text-muted-foreground font-medium mb-0.5">
+                        Acción
+                      </p>
+                      <p className="text-sm font-semibold text-foreground">{cambio.accion}</p>
+                      <p className="text-[11px] text-muted-foreground mt-1">
+                        Por <span className="font-medium text-foreground">{cambio.autor}</span>
+                      </p>
+                    </div>
+
+                    {/* Detalle del cambio: participantes */}
+                    <div className="px-4 py-3">
+                      <p className="text-[11px] uppercase tracking-wide text-muted-foreground font-medium mb-2">
+                        Participantes afectados ({cambio.participantes.length})
+                      </p>
+                      <div className="space-y-1.5">
+                        {cambio.participantes.map((p, i) => (
+                          <div
+                            key={i}
+                            className="flex items-center justify-between gap-3 p-2 rounded-md bg-muted/40 border border-border"
+                          >
+                            <div className="flex items-center gap-2 min-w-0">
+                              <div className="w-7 h-7 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[11px] font-bold shrink-0">
+                                {p.nombre
+                                  .split(' ')
+                                  .map((n) => n[0])
+                                  .slice(0, 2)
+                                  .join('')}
+                              </div>
+                              <p className="text-sm font-medium text-foreground truncate">{p.nombre}</p>
+                            </div>
+                            <span className="text-[11px] font-mono text-muted-foreground shrink-0">
+                              {p.rut}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </SectionCard>
           </div>
         </div>
