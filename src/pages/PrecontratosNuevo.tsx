@@ -410,7 +410,7 @@ const PrecontratosNuevo: React.FC = () => {
                 <table className="w-full text-xs whitespace-nowrap">
                   <thead>
                     <tr className="bg-muted/50 border-b">
-                      <th className="p-2 text-left font-medium">N° SC</th>
+                      
                       
                       <th className="p-2 text-left font-medium">Sencenet</th>
                       <th className="p-2 text-left font-medium">SSC</th>
