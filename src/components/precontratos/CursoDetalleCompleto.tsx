@@ -213,24 +213,6 @@ const CursoDetalleCompleto: React.FC<CursoDetalleCompletoProps> = ({ numeroSC, o
             </div>
           </div>
 
-          {/* Barra de progreso de requisitos */}
-          <div className="px-5 py-4 border-t bg-background">
-            <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
-              <div className="flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 text-destructive" />
-                <span className="text-sm font-semibold text-foreground">
-                  {curso.pendientes} Pendientes ({curso.porcentajePendiente}%)
-                </span>
-                <span className="text-xs text-muted-foreground">
-                  · {curso.docsValidados} de {curso.docsRequeridos} documentos validados
-                </span>
-              </div>
-              <Button size="sm">
-                Actualizar requisitos pendientes <ChevronRight className="w-3.5 h-3.5 ml-1" />
-              </Button>
-            </div>
-            <Progress value={(curso.docsValidados / curso.docsRequeridos) * 100} className="h-2" />
-          </div>
         </CardContent>
       </Card>
 
@@ -653,6 +635,25 @@ const CursoDetalleCompleto: React.FC<CursoDetalleCompletoProps> = ({ numeroSC, o
               icon={<FileText className="w-4 h-4" />}
               accent="bg-primary/10 text-primary"
             >
+              {/* Resumen de progreso */}
+              <div className="mb-4 pb-4 border-b border-border space-y-2">
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <AlertCircle className="w-4 h-4 text-destructive shrink-0" />
+                    <span className="text-sm font-semibold text-foreground">
+                      {curso.pendientes} Pendientes ({curso.porcentajePendiente}%)
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      · {curso.docsValidados} de {curso.docsRequeridos} documentos validados
+                    </span>
+                  </div>
+                  <Button size="sm">
+                    Actualizar requisitos pendientes <ChevronRight className="w-3.5 h-3.5 ml-1" />
+                  </Button>
+                </div>
+                <Progress value={(curso.docsValidados / curso.docsRequeridos) * 100} className="h-2" />
+              </div>
+
               {(() => {
                 const requisitos: {
                   nombre: string;
