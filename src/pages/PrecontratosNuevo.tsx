@@ -411,7 +411,7 @@ const PrecontratosNuevo: React.FC = () => {
                   <thead>
                     <tr className="bg-muted/50 border-b">
                       <th className="p-2 text-left font-medium">N° SC</th>
-                      <th className="p-2 text-left font-medium">Nombre del Curso</th>
+                      
                       <th className="p-2 text-left font-medium">Sencenet</th>
                       <th className="p-2 text-left font-medium">SSC</th>
                       <th className="p-2 text-right font-medium">Monto Total OTEC</th>
