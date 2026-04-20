@@ -455,6 +455,152 @@ const PrecontratosNuevo: React.FC = () => {
           <p className="text-muted-foreground mb-4">
             Listado de cursos asociados a precontratos. Seleccione una SC para ver el detalle.
           </p>
+
+          <Card className="mb-4">
+            <CardContent className="p-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                <div className="space-y-1">
+                  <Label className="text-xs">Sencenet</Label>
+                  <Input
+                    placeholder="Ej: SN-100000"
+                    value={fSencenet}
+                    onChange={(e) => setFSencenet(e.target.value)}
+                    className="h-9"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <Label className="text-xs">Estado Sence</Label>
+                  <Select value={fEstadoSence} onValueChange={setFEstadoSence}>
+                    <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todos</SelectItem>
+                      {estadosSence.map((s) => (
+                        <SelectItem key={s} value={s}>{s}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-1">
+                  <Label className="text-xs">Célula</Label>
+                  <Select value={fCelula} onValueChange={setFCelula}>
+                    <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todas</SelectItem>
+                      {celulas.map((s) => (
+                        <SelectItem key={s} value={s}>{s}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-1">
+                  <Label className="text-xs">Líder EDC</Label>
+                  <Select value={fLiderEdc} onValueChange={setFLiderEdc}>
+                    <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todos</SelectItem>
+                      {edcs.map((s) => (
+                        <SelectItem key={s} value={s}>{s}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-1">
+                  <Label className="text-xs">Fecha Creación PC</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          'h-9 w-full justify-start text-left font-normal',
+                          !fFechaCreacionPC && 'text-muted-foreground'
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {fFechaCreacionPC ? format(fFechaCreacionPC, 'dd/MM/yyyy', { locale: es }) : <span>Seleccionar</span>}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={fFechaCreacionPC}
+                        onSelect={setFFechaCreacionPC}
+                        initialFocus
+                        locale={es}
+                        className={cn('p-3 pointer-events-auto')}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+
+                <div className="space-y-1">
+                  <Label className="text-xs">Fecha Inicio</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          'h-9 w-full justify-start text-left font-normal',
+                          !fFechaInicio && 'text-muted-foreground'
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {fFechaInicio ? format(fFechaInicio, 'dd/MM/yyyy', { locale: es }) : <span>Seleccionar</span>}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={fFechaInicio}
+                        onSelect={setFFechaInicio}
+                        initialFocus
+                        locale={es}
+                        className={cn('p-3 pointer-events-auto')}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+
+                <div className="space-y-1">
+                  <Label className="text-xs">Fecha Término</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          'h-9 w-full justify-start text-left font-normal',
+                          !fFechaTermino && 'text-muted-foreground'
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {fFechaTermino ? format(fFechaTermino, 'dd/MM/yyyy', { locale: es }) : <span>Seleccionar</span>}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={fFechaTermino}
+                        onSelect={setFFechaTermino}
+                        initialFocus
+                        locale={es}
+                        className={cn('p-3 pointer-events-auto')}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+
+                <div className="flex items-end">
+                  <Button variant="outline" className="h-9 w-full" onClick={limpiarFiltros}>
+                    <X className="w-4 h-4 mr-1" /> Limpiar filtros
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           <Card>
             <CardContent className="p-0">
               <div className="overflow-x-auto">
