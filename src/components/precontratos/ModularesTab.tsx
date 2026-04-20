@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import {
   Pagination,
@@ -10,42 +11,75 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
+import { AlertCircle, Ban, EyeOff } from 'lucide-react';
 
 interface Props {
   onVerDetalle: (nroInscripcion: string, idModular: string) => void;
 }
 
-const cursosModulares = [
-  { idModular: 'MOD-001', nroInscripcion: '2160101', sencenet: '6790101', curso: 'Operación Segura de Equipos Mineros', empresa: '76.081.590-K – Sierra Gorda S.c.m.', nroParticipantes: 18, inicioTermino: '05/05/2026 - 05/06/2026', celula: 'Cel1' },
-  { idModular: 'MOD-001', nroInscripcion: '2160107', sencenet: '6790107', curso: 'Manejo Defensivo en Faenas', empresa: '76.081.590-K – Sierra Gorda S.c.m.', nroParticipantes: 15, inicioTermino: '08/05/2026 - 08/06/2026', celula: 'Cel1' },
-  { idModular: 'MOD-001', nroInscripcion: '2160108', sencenet: '6790108', curso: 'Primeros Auxilios en Terreno', empresa: '76.081.590-K – Sierra Gorda S.c.m.', nroParticipantes: 20, inicioTermino: '10/05/2026 - 10/06/2026', celula: 'Cel1' },
-  { idModular: 'MOD-002', nroInscripcion: '2160102', sencenet: '6790102', curso: 'Mantenimiento Predictivo Industrial', empresa: '85.066.600-8 – Albemarle Limitada', nroParticipantes: 22, inicioTermino: '07/05/2026 - 07/06/2026', celula: 'Cel2' },
-  { idModular: 'MOD-002', nroInscripcion: '2160109', sencenet: '6790109', curso: 'Lubricación y Análisis de Aceites', empresa: '85.066.600-8 – Albemarle Limitada', nroParticipantes: 18, inicioTermino: '12/05/2026 - 12/06/2026', celula: 'Cel2' },
-  { idModular: 'MOD-003', nroInscripcion: '2160103', sencenet: '6790103', curso: 'Liderazgo y Gestión de Equipos', empresa: '93.770.000-8 – Goodyear de Chile S.a.i.c.', nroParticipantes: 15, inicioTermino: '10/05/2026 - 10/06/2026', celula: 'Cel3' },
-  { idModular: 'MOD-003', nroInscripcion: '2160110', sencenet: '6790110', curso: 'Comunicación Efectiva', empresa: '93.770.000-8 – Goodyear de Chile S.a.i.c.', nroParticipantes: 15, inicioTermino: '15/05/2026 - 15/06/2026', celula: 'Cel3' },
-  { idModular: 'MOD-004', nroInscripcion: '2160104', sencenet: '6790104', curso: 'Excel Avanzado para Gestión', empresa: '78.163.829-3 – Gestiones y Servicios Los Álamos S.A.', nroParticipantes: 25, inicioTermino: '12/05/2026 - 12/06/2026', celula: 'Cel4' },
-  { idModular: 'MOD-005', nroInscripcion: '2160105', sencenet: '6790105', curso: 'Inglés Técnico Nivel Intermedio', empresa: '93.077.000-0 – Metso Chile SPA', nroParticipantes: 12, inicioTermino: '15/05/2026 - 15/06/2026', celula: 'Cel5' },
-  { idModular: 'MOD-005', nroInscripcion: '2160111', sencenet: '6790111', curso: 'Inglés Técnico Nivel Avanzado', empresa: '93.077.000-0 – Metso Chile SPA', nroParticipantes: 10, inicioTermino: '20/06/2026 - 20/07/2026', celula: 'Cel5' },
-  { idModular: 'MOD-006', nroInscripcion: '2160106', sencenet: '6790106', curso: 'Gestión Documental Digital', empresa: '76.727.040-2 – Minera Centinela', nroParticipantes: 20, inicioTermino: '18/05/2026 - 18/06/2026', celula: 'Cel6' },
-  { idModular: 'MOD-007', nroInscripcion: '2160112', sencenet: '6790112', curso: 'Soldadura TIG Avanzada', empresa: '96.530.200-7 – CAP Acero S.A.', nroParticipantes: 14, inicioTermino: '20/05/2026 - 20/06/2026', celula: 'Cel1' },
-  { idModular: 'MOD-007', nroInscripcion: '2160113', sencenet: '6790113', curso: 'Soldadura MIG Industrial', empresa: '96.530.200-7 – CAP Acero S.A.', nroParticipantes: 14, inicioTermino: '25/05/2026 - 25/06/2026', celula: 'Cel1' },
-  { idModular: 'MOD-008', nroInscripcion: '2160114', sencenet: '6790114', curso: 'Gestión de Proyectos PMI', empresa: '76.196.556-2 – Bechtel Chile Ltda.', nroParticipantes: 16, inicioTermino: '01/06/2026 - 01/07/2026', celula: 'Cel2' },
-  { idModular: 'MOD-009', nroInscripcion: '2160115', sencenet: '6790115', curso: 'Control de Calidad ISO 9001', empresa: '90.266.000-3 – Nestlé Chile S.A.', nroParticipantes: 30, inicioTermino: '03/06/2026 - 03/07/2026', celula: 'Cel3' },
-  { idModular: 'MOD-009', nroInscripcion: '2160116', sencenet: '6790116', curso: 'Auditoría Interna ISO 19011', empresa: '90.266.000-3 – Nestlé Chile S.A.', nroParticipantes: 20, inicioTermino: '10/06/2026 - 10/07/2026', celula: 'Cel3' },
-  { idModular: 'MOD-010', nroInscripcion: '2160117', sencenet: '6790117', curso: 'Power BI para Analistas', empresa: '76.645.030-K – Falabella Tecnología', nroParticipantes: 28, inicioTermino: '05/06/2026 - 05/07/2026', celula: 'Cel4' },
-  { idModular: 'MOD-011', nroInscripcion: '2160118', sencenet: '6790118', curso: 'Prevención de Riesgos Eléctricos', empresa: '91.143.000-2 – CGE Distribución S.A.', nroParticipantes: 19, inicioTermino: '08/06/2026 - 08/07/2026', celula: 'Cel5' },
-  { idModular: 'MOD-011', nroInscripcion: '2160119', sencenet: '6790119', curso: 'Trabajo en Altura Física', empresa: '91.143.000-2 – CGE Distribución S.A.', nroParticipantes: 19, inicioTermino: '15/06/2026 - 15/07/2026', celula: 'Cel5' },
-  { idModular: 'MOD-012', nroInscripcion: '2160120', sencenet: '6790120', curso: 'Atención al Cliente Premium', empresa: '76.101.347-4 – Cencosud Retail S.A.', nroParticipantes: 35, inicioTermino: '10/06/2026 - 10/07/2026', celula: 'Cel6' },
-  { idModular: 'MOD-013', nroInscripcion: '2160121', sencenet: '6790121', curso: 'Logística y Cadena de Suministro', empresa: '96.989.940-0 – CSAV S.A.', nroParticipantes: 17, inicioTermino: '12/06/2026 - 12/07/2026', celula: 'Cel1' },
-  { idModular: 'MOD-014', nroInscripcion: '2160122', sencenet: '6790122', curso: 'Normativa Ambiental Vigente', empresa: '76.081.590-K – Sierra Gorda S.c.m.', nroParticipantes: 22, inicioTermino: '15/06/2026 - 15/07/2026', celula: 'Cel2' },
+interface CursoModular {
+  idModular: string;
+  sc: string;
+  sencenet: string;
+  curso: string;
+  cliente: string;
+  nroPart: number;
+  mtFranquicia: string;
+  inicioCurso: string;
+  modalidad: string;
+  tipoContrato: string;
+  codigoSence: string;
+  vencimientoSence: string;
+  celula: string;
+}
+
+const cursosModulares: CursoModular[] = [
+  { idModular: 'MOD-001', sc: '2160101', sencenet: '6790101', curso: 'Operación Segura de Equipos Mineros', cliente: 'Sierra Gorda S.c.m.', nroPart: 18, mtFranquicia: '$450.000', inicioCurso: '05/05/2026', modalidad: 'E-learning', tipoContrato: 'Precontrato', codigoSence: '1238050101', vencimientoSence: '2026-04-22', celula: 'Cel1' },
+  { idModular: 'MOD-001', sc: '2160107', sencenet: '6790107', curso: 'Manejo Defensivo en Faenas', cliente: 'Sierra Gorda S.c.m.', nroPart: 15, mtFranquicia: '$375.000', inicioCurso: '08/05/2026', modalidad: 'E-learning', tipoContrato: 'Precontrato', codigoSence: '1238050107', vencimientoSence: '2026-06-15', celula: 'Cel1' },
+  { idModular: 'MOD-001', sc: '2160108', sencenet: '6790108', curso: 'Primeros Auxilios en Terreno', cliente: 'Sierra Gorda S.c.m.', nroPart: 20, mtFranquicia: '$500.000', inicioCurso: '10/05/2026', modalidad: 'Presencial', tipoContrato: 'Precontrato', codigoSence: '1238050108', vencimientoSence: '2026-04-19', celula: 'Cel1' },
+  { idModular: 'MOD-002', sc: '2160102', sencenet: '6790102', curso: 'Mantenimiento Predictivo Industrial', cliente: 'Albemarle Limitada', nroPart: 22, mtFranquicia: '$550.000', inicioCurso: '07/05/2026', modalidad: 'E-learning', tipoContrato: 'Precontrato', codigoSence: '1238050102', vencimientoSence: '2026-07-30', celula: 'Cel2' },
+  { idModular: 'MOD-002', sc: '2160109', sencenet: '6790109', curso: 'Lubricación y Análisis de Aceites', cliente: 'Albemarle Limitada', nroPart: 18, mtFranquicia: '$360.000', inicioCurso: '12/05/2026', modalidad: 'E-learning', tipoContrato: 'Precontrato', codigoSence: '1238050109', vencimientoSence: '2026-08-10', celula: 'Cel2' },
+  { idModular: 'MOD-003', sc: '2160103', sencenet: '6790103', curso: 'Liderazgo y Gestión de Equipos', cliente: 'Goodyear de Chile S.a.i.c.', nroPart: 15, mtFranquicia: '$300.000', inicioCurso: '10/05/2026', modalidad: 'E-learning', tipoContrato: 'Precontrato', codigoSence: '1238050103', vencimientoSence: '2026-04-21', celula: 'Cel3' },
+  { idModular: 'MOD-003', sc: '2160110', sencenet: '6790110', curso: 'Comunicación Efectiva', cliente: 'Goodyear de Chile S.a.i.c.', nroPart: 15, mtFranquicia: '$300.000', inicioCurso: '15/05/2026', modalidad: 'E-learning', tipoContrato: 'Precontrato', codigoSence: '1238050110', vencimientoSence: '2026-09-01', celula: 'Cel3' },
+  { idModular: 'MOD-004', sc: '2160104', sencenet: '6790104', curso: 'Excel Avanzado para Gestión', cliente: 'Gestiones y Servicios Los Álamos S.A.', nroPart: 25, mtFranquicia: '$625.000', inicioCurso: '12/05/2026', modalidad: 'E-learning', tipoContrato: 'Precontrato', codigoSence: '1238050104', vencimientoSence: '2026-05-20', celula: 'Cel4' },
+  { idModular: 'MOD-005', sc: '2160105', sencenet: '6790105', curso: 'Inglés Técnico Nivel Intermedio', cliente: 'Metso Chile SPA', nroPart: 12, mtFranquicia: '$240.000', inicioCurso: '15/05/2026', modalidad: 'E-learning', tipoContrato: 'Precontrato', codigoSence: '1238050105', vencimientoSence: '2026-04-20', celula: 'Cel5' },
+  { idModular: 'MOD-005', sc: '2160111', sencenet: '6790111', curso: 'Inglés Técnico Nivel Avanzado', cliente: 'Metso Chile SPA', nroPart: 10, mtFranquicia: '$200.000', inicioCurso: '20/06/2026', modalidad: 'E-learning', tipoContrato: 'Precontrato', codigoSence: '1238050111', vencimientoSence: '2026-10-15', celula: 'Cel5' },
+  { idModular: 'MOD-006', sc: '2160106', sencenet: '6790106', curso: 'Gestión Documental Digital', cliente: 'Minera Centinela', nroPart: 20, mtFranquicia: '$400.000', inicioCurso: '18/05/2026', modalidad: 'E-learning', tipoContrato: 'Precontrato', codigoSence: '1238050106', vencimientoSence: '2026-04-18', celula: 'Cel6' },
+  { idModular: 'MOD-007', sc: '2160112', sencenet: '6790112', curso: 'Soldadura TIG Avanzada', cliente: 'CAP Acero S.A.', nroPart: 14, mtFranquicia: '$350.000', inicioCurso: '20/05/2026', modalidad: 'Presencial', tipoContrato: 'Precontrato', codigoSence: '1238050112', vencimientoSence: '2026-12-01', celula: 'Cel1' },
+  { idModular: 'MOD-007', sc: '2160113', sencenet: '6790113', curso: 'Soldadura MIG Industrial', cliente: 'CAP Acero S.A.', nroPart: 14, mtFranquicia: '$350.000', inicioCurso: '25/05/2026', modalidad: 'Presencial', tipoContrato: 'Precontrato', codigoSence: '1238050113', vencimientoSence: '2026-11-15', celula: 'Cel1' },
+  { idModular: 'MOD-008', sc: '2160114', sencenet: '6790114', curso: 'Gestión de Proyectos PMI', cliente: 'Bechtel Chile Ltda.', nroPart: 16, mtFranquicia: '$480.000', inicioCurso: '01/06/2026', modalidad: 'E-learning', tipoContrato: 'Precontrato', codigoSence: '1238050114', vencimientoSence: '2026-04-17', celula: 'Cel2' },
+  { idModular: 'MOD-009', sc: '2160115', sencenet: '6790115', curso: 'Control de Calidad ISO 9001', cliente: 'Nestlé Chile S.A.', nroPart: 30, mtFranquicia: '$750.000', inicioCurso: '03/06/2026', modalidad: 'E-learning', tipoContrato: 'Precontrato', codigoSence: '1238050115', vencimientoSence: '2026-07-01', celula: 'Cel3' },
+  { idModular: 'MOD-009', sc: '2160116', sencenet: '6790116', curso: 'Auditoría Interna ISO 19011', cliente: 'Nestlé Chile S.A.', nroPart: 20, mtFranquicia: '$500.000', inicioCurso: '10/06/2026', modalidad: 'E-learning', tipoContrato: 'Precontrato', codigoSence: '1238050116', vencimientoSence: '2026-08-20', celula: 'Cel3' },
+  { idModular: 'MOD-010', sc: '2160117', sencenet: '6790117', curso: 'Power BI para Analistas', cliente: 'Falabella Tecnología', nroPart: 28, mtFranquicia: '$700.000', inicioCurso: '05/06/2026', modalidad: 'E-learning', tipoContrato: 'Precontrato', codigoSence: '1238050117', vencimientoSence: '2026-04-22', celula: 'Cel4' },
+  { idModular: 'MOD-011', sc: '2160118', sencenet: '6790118', curso: 'Prevención de Riesgos Eléctricos', cliente: 'CGE Distribución S.A.', nroPart: 19, mtFranquicia: '$380.000', inicioCurso: '08/06/2026', modalidad: 'Presencial', tipoContrato: 'Precontrato', codigoSence: '1238050118', vencimientoSence: '2026-09-15', celula: 'Cel5' },
+  { idModular: 'MOD-011', sc: '2160119', sencenet: '6790119', curso: 'Trabajo en Altura Física', cliente: 'CGE Distribución S.A.', nroPart: 19, mtFranquicia: '$380.000', inicioCurso: '15/06/2026', modalidad: 'Presencial', tipoContrato: 'Precontrato', codigoSence: '1238050119', vencimientoSence: '2026-10-01', celula: 'Cel5' },
+  { idModular: 'MOD-012', sc: '2160120', sencenet: '6790120', curso: 'Atención al Cliente Premium', cliente: 'Cencosud Retail S.A.', nroPart: 35, mtFranquicia: '$875.000', inicioCurso: '10/06/2026', modalidad: 'E-learning', tipoContrato: 'Precontrato', codigoSence: '1238050120', vencimientoSence: '2026-04-19', celula: 'Cel6' },
+  { idModular: 'MOD-013', sc: '2160121', sencenet: '6790121', curso: 'Logística y Cadena de Suministro', cliente: 'CSAV S.A.', nroPart: 17, mtFranquicia: '$425.000', inicioCurso: '12/06/2026', modalidad: 'E-learning', tipoContrato: 'Precontrato', codigoSence: '1238050121', vencimientoSence: '2026-06-30', celula: 'Cel1' },
+  { idModular: 'MOD-014', sc: '2160122', sencenet: '6790122', curso: 'Normativa Ambiental Vigente', cliente: 'Sierra Gorda S.c.m.', nroPart: 22, mtFranquicia: '$550.000', inicioCurso: '15/06/2026', modalidad: 'E-learning', tipoContrato: 'Precontrato', codigoSence: '1238050122', vencimientoSence: '2026-04-21', celula: 'Cel2' },
 ];
 
 const MOD_PAGE_SIZE = 10;
 
+const isProximoAVencer = (vencimiento: string) => {
+  const hoy = new Date();
+  const fechaVenc = new Date(vencimiento);
+  const diffMs = fechaVenc.getTime() - hoy.getTime();
+  const diffDias = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+  return diffDias >= 0 && diffDias <= 10;
+};
+
 const ModularesTab: React.FC<Props> = ({ onVerDetalle }) => {
   const [pageModulares, setPageModulares] = useState(1);
+  const [selectedRows, setSelectedRows] = useState<string[]>([]);
+  const [noComunicar, setNoComunicar] = useState<string[]>([]);
 
-  const grouped = cursosModulares.reduce<Record<string, typeof cursosModulares>>((acc, c) => {
+  const toggleNoComunicar = (sc: string) => {
+    setNoComunicar(prev =>
+      prev.includes(sc) ? prev.filter(s => s !== sc) : [...prev, sc]
+    );
+  };
+
+  const grouped = cursosModulares.reduce<Record<string, CursoModular[]>>((acc, c) => {
     if (!acc[c.idModular]) acc[c.idModular] = [];
     acc[c.idModular].push(c);
     return acc;
@@ -55,6 +89,14 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle }) => {
   const totalPagesModulares = Math.max(1, Math.ceil(allGroups.length / MOD_PAGE_SIZE));
   const safePageMod = Math.min(pageModulares, totalPagesModulares);
   const paginatedGroups = allGroups.slice((safePageMod - 1) * MOD_PAGE_SIZE, safePageMod * MOD_PAGE_SIZE);
+
+  const handleSelectRow = (sc: string, checked: boolean) => {
+    if (checked) {
+      setSelectedRows(prev => [...prev, sc]);
+    } else {
+      setSelectedRows(prev => prev.filter(s => s !== sc));
+    }
+  };
 
   return (
     <>
@@ -77,38 +119,99 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle }) => {
                 <span className="inline-block border rounded-full px-3 py-0.5 text-xs font-bold text-primary bg-primary/10 border-primary/20">
                   {modId}
                 </span>
-                <span className="text-sm font-medium text-foreground">{cursos[0].empresa}</span>
+                <span className="text-sm font-medium text-foreground">{cursos[0].cliente}</span>
                 <Badge variant="secondary" className="text-xs">{cursos.length} {cursos.length === 1 ? 'curso' : 'cursos'}</Badge>
               </div>
             </AccordionTrigger>
             <AccordionContent className="p-0">
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-xs table-fixed">
                   <thead>
-                    <tr className="bg-muted/50 border-b">
-                      <th className="p-3 text-center font-medium">Nº Inscripción</th>
-                      <th className="p-3 text-center font-medium">Sencenet</th>
-                      <th className="p-3 text-left font-medium">Curso</th>
-                      <th className="p-3 text-center font-medium">Nº Part.</th>
-                      <th className="p-3 text-left font-medium">Inicio - Término</th>
-                      <th className="p-3 text-center font-medium">Célula</th>
-                      <th className="p-3 text-center font-medium">Acciones</th>
+                    <tr className="border-b bg-muted/30">
+                      <th className="p-2 w-8">
+                        <Checkbox disabled />
+                      </th>
+                      <th className="p-2 text-left font-medium text-muted-foreground w-[7%]">
+                        S.C <span className="text-xs">▾</span>
+                      </th>
+                      <th className="p-2 text-left font-medium text-muted-foreground w-[18%]">
+                        Cliente <span className="text-xs">▾</span>
+                      </th>
+                      <th className="p-2 text-center font-medium text-muted-foreground w-[5%]">
+                        Nro. Part. <span className="text-xs">▾</span>
+                      </th>
+                      <th className="p-2 text-left font-medium text-muted-foreground w-[10%]">
+                        M.T. Franquicia <span className="text-xs">▾</span>
+                      </th>
+                      <th className="p-2 text-left font-medium text-muted-foreground w-[9%]">
+                        Inicio Curso <span className="text-xs">▾</span>
+                      </th>
+                      <th className="p-2 text-left font-medium text-muted-foreground w-[10%]">
+                        Modalidad <span className="text-xs">▾</span>
+                      </th>
+                      <th className="p-2 text-left font-medium text-muted-foreground w-[10%]">
+                        Tipo Contrato <span className="text-xs">▾</span>
+                      </th>
+                      <th className="p-2 text-left font-medium text-muted-foreground w-[12%]">
+                        <span className="inline-flex items-center gap-1">
+                          <span>Vigencia <span className="text-xs">▾</span></span>
+                          <span className="inline-flex items-center rounded-full bg-blue-600 px-1 py-0.5 text-[8px] font-bold leading-none text-white shadow-sm">C1CCOM4</span>
+                        </span>
+                      </th>
+                      <th className="p-2 text-center font-medium text-muted-foreground w-[12%]">
+                        <span className="inline-flex items-center gap-1">
+                          <span>No comunicar</span>
+                          <span className="inline-flex items-center rounded-full bg-blue-600 px-1 py-0.5 text-[8px] font-bold leading-none text-white shadow-sm">C1CCOM5</span>
+                        </span>
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
-                    {cursos.map((c, idx) => (
-                      <tr key={c.nroInscripcion} className={`border-b hover:bg-muted/30 ${idx % 2 !== 0 ? 'bg-muted/10' : ''}`}>
-                        <td className="p-3 text-center font-mono">{c.nroInscripcion}</td>
-                        <td className="p-3 text-center font-mono">{c.sencenet}</td>
-                        <td className="p-3">{c.curso}</td>
-                        <td className="p-3 text-center">{c.nroParticipantes}</td>
-                        <td className="p-3 text-muted-foreground">{c.inicioTermino}</td>
-                        <td className="p-3 text-center text-muted-foreground">{c.celula}</td>
-                        <td className="p-3 text-center">
-                          <Button variant="outline" size="sm" onClick={() => onVerDetalle(c.nroInscripcion, c.idModular)}>Ver Detalle</Button>
-                        </td>
-                      </tr>
-                    ))}
+                    {cursos.map((curso, idx) => {
+                      const excluido = noComunicar.includes(curso.sc);
+                      return (
+                        <tr key={curso.sc} className={`border-b ${excluido ? 'bg-red-50/50 opacity-60' : idx % 2 === 0 ? 'hover:bg-muted/20' : 'bg-muted/10 hover:bg-muted/20'}`}>
+                          <td className="p-2">
+                            <Checkbox
+                              checked={selectedRows.includes(curso.sc)}
+                              onCheckedChange={(checked) => handleSelectRow(curso.sc, !!checked)}
+                              disabled={excluido}
+                            />
+                          </td>
+                          <td className="p-2 font-medium">{curso.sc}</td>
+                          <td className="p-2 text-muted-foreground truncate">{curso.cliente}</td>
+                          <td className="p-2 text-center">{curso.nroPart}</td>
+                          <td className="p-2">{curso.mtFranquicia}</td>
+                          <td className="p-2">{curso.inicioCurso}</td>
+                          <td className="p-2">{curso.modalidad}</td>
+                          <td className="p-2">{curso.tipoContrato}</td>
+                          <td className="p-2">
+                            {isProximoAVencer(curso.vencimientoSence) ? (
+                              <Badge variant="destructive" className="gap-1 text-[10px] whitespace-nowrap px-2 py-0.5">
+                                <AlertCircle className="w-3 h-3" />
+                                Por vencer
+                              </Badge>
+                            ) : (
+                              <span className="text-muted-foreground text-xs">Vigente</span>
+                            )}
+                          </td>
+                          <td className="p-2 text-center">
+                            <Button
+                              variant={excluido ? 'destructive' : 'outline'}
+                              size="sm"
+                              className="gap-1 text-xs h-7 px-2"
+                              onClick={() => toggleNoComunicar(curso.sc)}
+                            >
+                              {excluido ? (
+                                <><EyeOff className="w-3 h-3" /> Excluido</>
+                              ) : (
+                                <><Ban className="w-3 h-3" /> Excluir</>
+                              )}
+                            </Button>
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
