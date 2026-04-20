@@ -98,6 +98,64 @@ const ComunicacionSence: React.FC = () => {
         Comunicación SENCE
       </h1>
 
+      <h2 className="text-lg font-semibold text-foreground">
+        ¿Necesitas generar un archivo o cargar respuesta de comunicación?
+      </h2>
+
+      {/* Section 1: Upload */}
+      <div className="space-y-3">
+        <h3 className="text-base font-semibold text-muted-foreground">
+          Carga una respuesta de comunicación SENCE
+        </h3>
+        <Button variant="outline" className="border-primary text-primary hover:bg-primary/5 gap-2 rounded-full px-6">
+          <PlusCircle className="w-4 h-4" />
+          Carga comunicación
+        </Button>
+      </div>
+
+      {/* Section 2: Generate file */}
+      <div className="space-y-4">
+        <h3 className="text-base font-semibold text-muted-foreground">
+          O continua generando un archivo de comunicación SENCE
+        </h3>
+
+        <div className="flex items-center gap-4 flex-wrap">
+          <div className="relative">
+            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              type="date"
+              value={fechaInicio}
+              onChange={(e) => setFechaInicio(e.target.value)}
+              className="pl-10 w-[180px] rounded-full border-border"
+            />
+          </div>
+          <div className="relative">
+            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              type="date"
+              value={fechaFin}
+              onChange={(e) => setFechaFin(e.target.value)}
+              className="pl-10 w-[180px] rounded-full border-border"
+            />
+          </div>
+          <Button variant="secondary" className="gap-2 rounded-full px-6 bg-muted text-muted-foreground">
+            Generar Archivo <ArrowRight className="w-4 h-4" />
+          </Button>
+        </div>
+
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <span className="w-3 h-3 rounded-full bg-amber-400 inline-block" />
+          Deberías indicar los cursos que tienen fechas de inicio a partir del {formatDateDisplay(fechaInicio)}
+        </div>
+      </div>
+
+      {/* Results badge */}
+      <div>
+        <Badge className="bg-primary text-primary-foreground rounded-full px-4 py-1 text-sm font-medium">
+          {mockCursos.length} cursos cargados
+        </Badge>
+      </div>
+
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList>
           <TabsTrigger value="comunicacion">Cursos Normales</TabsTrigger>
@@ -106,64 +164,6 @@ const ComunicacionSence: React.FC = () => {
 
         <TabsContent value="comunicacion" className="mt-4">
           <div className="space-y-6">
-            <h2 className="text-lg font-semibold text-foreground">
-              ¿Necesitas generar un archivo o cargar respuesta de comunicación?
-            </h2>
-
-            {/* Section 1: Upload */}
-            <div className="space-y-3">
-              <h3 className="text-base font-semibold text-muted-foreground">
-                Carga una respuesta de comunicación SENCE
-              </h3>
-              <Button variant="outline" className="border-primary text-primary hover:bg-primary/5 gap-2 rounded-full px-6">
-                <PlusCircle className="w-4 h-4" />
-                Carga comunicación
-              </Button>
-            </div>
-
-            {/* Section 2: Generate file */}
-            <div className="space-y-4">
-              <h3 className="text-base font-semibold text-muted-foreground">
-                O continua generando un archivo de comunicación SENCE
-              </h3>
-
-              <div className="flex items-center gap-4 flex-wrap">
-                <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input
-                    type="date"
-                    value={fechaInicio}
-                    onChange={(e) => setFechaInicio(e.target.value)}
-                    className="pl-10 w-[180px] rounded-full border-border"
-                  />
-                </div>
-                <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input
-                    type="date"
-                    value={fechaFin}
-                    onChange={(e) => setFechaFin(e.target.value)}
-                    className="pl-10 w-[180px] rounded-full border-border"
-                  />
-                </div>
-                <Button variant="secondary" className="gap-2 rounded-full px-6 bg-muted text-muted-foreground">
-                  Generar Archivo <ArrowRight className="w-4 h-4" />
-                </Button>
-              </div>
-
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <span className="w-3 h-3 rounded-full bg-amber-400 inline-block" />
-                Deberías indicar los cursos que tienen fechas de inicio a partir del {formatDateDisplay(fechaInicio)}
-              </div>
-            </div>
-
-            {/* Results badge */}
-            <div>
-              <Badge className="bg-primary text-primary-foreground rounded-full px-4 py-1 text-sm font-medium">
-                {mockCursos.length} cursos cargados
-              </Badge>
-            </div>
-
             {/* Table */}
             <div className="border rounded-lg overflow-hidden">
               <table className="w-full text-xs table-fixed">
