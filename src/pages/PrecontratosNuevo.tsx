@@ -537,7 +537,7 @@ const PrecontratosNuevo: React.FC = () => {
                       <PaginationPrevious
                         href="#"
                         onClick={(e) => { e.preventDefault(); setPage((p) => Math.max(1, p - 1)); }}
-                        className={page === 1 ? 'pointer-events-none opacity-50' : ''}
+                        className={safePage === 1 ? 'pointer-events-none opacity-50' : ''}
                       />
                     </PaginationItem>
                     {Array.from({ length: totalPages }, (_, i) => i + 1)
