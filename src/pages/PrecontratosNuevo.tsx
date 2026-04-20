@@ -141,10 +141,13 @@ const mockCursos: CursoPrecontrato[] = Array.from({ length: 87 }, (_, i) => {
   };
 });
 
+const PAGE_SIZE = 20;
+
 const PrecontratosNuevo: React.FC = () => {
   const [busqueda, setBusqueda] = useState('');
   const [detalle, setDetalle] = useState<PrecontratoDetalle | null>(null);
   const [tab, setTab] = useState('buscador');
+  const [page, setPage] = useState(1);
 
   const handleBuscar = () => {
     const resultado = mockResultados.find((r) => r.numeroSC === busqueda.trim());
@@ -155,11 +158,48 @@ const PrecontratosNuevo: React.FC = () => {
     if (e.key === 'Enter') handleBuscar();
   };
 
+  const totalPages = Math.ceil(mockCursos.length / PAGE_SIZE);
+  const paginatedCursos = useMemo(
+    () => mockCursos.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
+    [page]
+  );
+
+  const formatCLP = (n: number) =>
+    new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 }).format(n);
+
   const estadoBadge = (estado: CursoPrecontrato['estado']) => {
     const styles: Record<CursoPrecontrato['estado'], string> = {
       Pendiente: 'bg-amber-100 text-amber-800 border-amber-200',
       'En Proceso': 'bg-blue-100 text-blue-800 border-blue-200',
       Firmado: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+    };
+    return (
+      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${styles[estado]}`}>
+        {estado}
+      </span>
+    );
+  };
+
+  const estadoCursoBadge = (estado: CursoPrecontrato['estadoCurso']) => {
+    const styles: Record<CursoPrecontrato['estadoCurso'], string> = {
+      Activo: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+      Cerrado: 'bg-slate-100 text-slate-800 border-slate-200',
+      Suspendido: 'bg-red-100 text-red-800 border-red-200',
+      Programado: 'bg-blue-100 text-blue-800 border-blue-200',
+    };
+    return (
+      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${styles[estado]}`}>
+        {estado}
+      </span>
+    );
+  };
+
+  const estadoSenceBadge = (estado: CursoPrecontrato['estadoSence']) => {
+    const styles: Record<CursoPrecontrato['estadoSence'], string> = {
+      Aprobado: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+      'En Revisión': 'bg-blue-100 text-blue-800 border-blue-200',
+      Rechazado: 'bg-red-100 text-red-800 border-red-200',
+      Pendiente: 'bg-amber-100 text-amber-800 border-amber-200',
     };
     return (
       <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${styles[estado]}`}>
