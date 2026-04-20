@@ -78,6 +78,13 @@ export interface CursoModular {
   codigoSence: string;
   vencimientoSence: string;
   celula: string;
+  otec: string;
+  oc: string;
+  estadoCurso: 'Activo' | 'Pendiente' | 'Finalizado';
+  analistaResponsable: string;
+  edcACargo: string;
+  jefeComercial: string;
+  fechaCreacion: string;
 }
 
 const initialCursosModulares: CursoModular[] = [
