@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -11,6 +11,15 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+  PaginationEllipsis,
+} from '@/components/ui/pagination';
 import { ArrowLeft, Search, Download, Home } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -57,51 +66,88 @@ const mockResultados: PrecontratoDetalle[] = [
 interface CursoPrecontrato {
   numeroSC: string;
   nombreCurso: string;
+  sencenet: string;
+  ssc: string;
+  montoTotalOtec: number;
+  otec: string;
+  oc: string;
+  estadoCurso: 'Activo' | 'Cerrado' | 'Suspendido' | 'Programado';
+  celula: string;
+  analistaResponsable: string;
+  edcACargo: string;
+  jefeComercial: string;
+  fechaCreacionPC: string;
+  estadoSence: 'Aprobado' | 'En Revisión' | 'Rechazado' | 'Pendiente';
+  modalidad: 'Presencial' | 'E-learning' | 'Distancia';
+  partActivos: number;
   fechaInicio: string;
   fechaTermino: string;
   participantes: number;
   estado: 'Pendiente' | 'En Proceso' | 'Firmado';
 }
 
-const mockCursos: CursoPrecontrato[] = [
-  {
-    numeroSC: '2032050',
-    nombreCurso: 'Excel Avanzado para Gestión',
-    fechaInicio: '20/10/2024',
-    fechaTermino: '15/11/2024',
-    participantes: 5,
-    estado: 'Pendiente',
-  },
-  {
-    numeroSC: '2032051',
-    nombreCurso: 'Liderazgo y Gestión de Equipos',
-    fechaInicio: '05/11/2024',
-    fechaTermino: '20/12/2024',
-    participantes: 12,
-    estado: 'En Proceso',
-  },
-  {
-    numeroSC: '2032052',
-    nombreCurso: 'Prevención de Riesgos Laborales',
-    fechaInicio: '01/10/2024',
-    fechaTermino: '30/10/2024',
-    participantes: 8,
-    estado: 'Firmado',
-  },
-  {
-    numeroSC: '2032053',
-    nombreCurso: 'Atención al Cliente Premium',
-    fechaInicio: '10/11/2024',
-    fechaTermino: '05/12/2024',
-    participantes: 15,
-    estado: 'Pendiente',
-  },
+const otecs = ['EDUCAPRO Ltda.', 'Capacita Chile S.A.', 'Formación Total', 'Pro Training SpA', 'Aprende+ Ltda.'];
+const celulas = ['Célula Norte', 'Célula Sur', 'Célula Centro', 'Célula Oriente', 'Célula Poniente'];
+const analistas = ['María González', 'Juan Pérez', 'Carla Soto', 'Luis Ramírez', 'Pamela Díaz'];
+const edcs = ['Roberto Muñoz', 'Andrea Lagos', 'Felipe Torres', 'Sofía Vega'];
+const jefesComerciales = ['Patricia Rojas', 'Diego Salas', 'Marcela Castro'];
+const cursos = [
+  'Excel Avanzado para Gestión',
+  'Liderazgo y Gestión de Equipos',
+  'Prevención de Riesgos Laborales',
+  'Atención al Cliente Premium',
+  'Power BI para Analistas',
+  'Comunicación Efectiva',
+  'Gestión del Cambio',
+  'Inglés de Negocios',
+  'Trabajo en Equipo',
+  'Manejo Defensivo',
 ];
+const estadosCurso: CursoPrecontrato['estadoCurso'][] = ['Activo', 'Cerrado', 'Suspendido', 'Programado'];
+const estadosSence: CursoPrecontrato['estadoSence'][] = ['Aprobado', 'En Revisión', 'Rechazado', 'Pendiente'];
+const modalidades: CursoPrecontrato['modalidad'][] = ['Presencial', 'E-learning', 'Distancia'];
+const estadosPC: CursoPrecontrato['estado'][] = ['Pendiente', 'En Proceso', 'Firmado'];
+
+const pad = (n: number) => String(n).padStart(2, '0');
+const randomDate = (year: number) => {
+  const m = Math.floor(Math.random() * 12) + 1;
+  const d = Math.floor(Math.random() * 28) + 1;
+  return `${pad(d)}/${pad(m)}/${year}`;
+};
+
+const mockCursos: CursoPrecontrato[] = Array.from({ length: 87 }, (_, i) => {
+  const sc = String(2032050 + i);
+  return {
+    numeroSC: sc,
+    nombreCurso: cursos[i % cursos.length],
+    sencenet: `SN-${100000 + i}`,
+    ssc: `SSC-${50000 + i}`,
+    montoTotalOtec: 500000 + (i * 37500) % 4500000,
+    otec: otecs[i % otecs.length],
+    oc: `OC-${800000 + i}`,
+    estadoCurso: estadosCurso[i % estadosCurso.length],
+    celula: celulas[i % celulas.length],
+    analistaResponsable: analistas[i % analistas.length],
+    edcACargo: edcs[i % edcs.length],
+    jefeComercial: jefesComerciales[i % jefesComerciales.length],
+    fechaCreacionPC: randomDate(2024),
+    estadoSence: estadosSence[i % estadosSence.length],
+    modalidad: modalidades[i % modalidades.length],
+    partActivos: 5 + (i * 3) % 25,
+    fechaInicio: randomDate(2024),
+    fechaTermino: randomDate(2024),
+    participantes: 5 + (i * 3) % 25,
+    estado: estadosPC[i % estadosPC.length],
+  };
+});
+
+const PAGE_SIZE = 20;
 
 const PrecontratosNuevo: React.FC = () => {
   const [busqueda, setBusqueda] = useState('');
   const [detalle, setDetalle] = useState<PrecontratoDetalle | null>(null);
   const [tab, setTab] = useState('buscador');
+  const [page, setPage] = useState(1);
 
   const handleBuscar = () => {
     const resultado = mockResultados.find((r) => r.numeroSC === busqueda.trim());
@@ -112,11 +158,48 @@ const PrecontratosNuevo: React.FC = () => {
     if (e.key === 'Enter') handleBuscar();
   };
 
+  const totalPages = Math.ceil(mockCursos.length / PAGE_SIZE);
+  const paginatedCursos = useMemo(
+    () => mockCursos.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
+    [page]
+  );
+
+  const formatCLP = (n: number) =>
+    new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 }).format(n);
+
   const estadoBadge = (estado: CursoPrecontrato['estado']) => {
     const styles: Record<CursoPrecontrato['estado'], string> = {
       Pendiente: 'bg-amber-100 text-amber-800 border-amber-200',
       'En Proceso': 'bg-blue-100 text-blue-800 border-blue-200',
       Firmado: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+    };
+    return (
+      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${styles[estado]}`}>
+        {estado}
+      </span>
+    );
+  };
+
+  const estadoCursoBadge = (estado: CursoPrecontrato['estadoCurso']) => {
+    const styles: Record<CursoPrecontrato['estadoCurso'], string> = {
+      Activo: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+      Cerrado: 'bg-slate-100 text-slate-800 border-slate-200',
+      Suspendido: 'bg-red-100 text-red-800 border-red-200',
+      Programado: 'bg-blue-100 text-blue-800 border-blue-200',
+    };
+    return (
+      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${styles[estado]}`}>
+        {estado}
+      </span>
+    );
+  };
+
+  const estadoSenceBadge = (estado: CursoPrecontrato['estadoSence']) => {
+    const styles: Record<CursoPrecontrato['estadoSence'], string> = {
+      Aprobado: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+      'En Revisión': 'bg-blue-100 text-blue-800 border-blue-200',
+      Rechazado: 'bg-red-100 text-red-800 border-red-200',
+      Pendiente: 'bg-amber-100 text-amber-800 border-amber-200',
     };
     return (
       <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${styles[estado]}`}>
@@ -324,28 +407,52 @@ const PrecontratosNuevo: React.FC = () => {
           <Card>
             <CardContent className="p-0">
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-xs whitespace-nowrap">
                   <thead>
                     <tr className="bg-muted/50 border-b">
-                      <th className="p-3 text-left font-medium">N° SC</th>
-                      <th className="p-3 text-left font-medium">Nombre del Curso</th>
-                      <th className="p-3 text-left font-medium">Fecha Inicio</th>
-                      <th className="p-3 text-left font-medium">Fecha Término</th>
-                      <th className="p-3 text-left font-medium">Participantes</th>
-                      <th className="p-3 text-left font-medium">Estado</th>
-                      <th className="p-3 text-left font-medium">Acciones</th>
+                      <th className="p-2 text-left font-medium">N° SC</th>
+                      <th className="p-2 text-left font-medium">Nombre del Curso</th>
+                      <th className="p-2 text-left font-medium">Sencenet</th>
+                      <th className="p-2 text-left font-medium">SSC</th>
+                      <th className="p-2 text-right font-medium">Monto Total OTEC</th>
+                      <th className="p-2 text-left font-medium">OTEC</th>
+                      <th className="p-2 text-left font-medium">OC</th>
+                      <th className="p-2 text-left font-medium">Estado del Curso</th>
+                      <th className="p-2 text-left font-medium">Célula</th>
+                      <th className="p-2 text-left font-medium">Analista Responsable</th>
+                      <th className="p-2 text-left font-medium">EDC a Cargo</th>
+                      <th className="p-2 text-left font-medium">Jefe Comercial</th>
+                      <th className="p-2 text-left font-medium">Fecha Creación PC</th>
+                      <th className="p-2 text-left font-medium">Estado Sence</th>
+                      <th className="p-2 text-left font-medium">Modalidad</th>
+                      <th className="p-2 text-right font-medium">N° Part. Activos</th>
+                      <th className="p-2 text-left font-medium">Fecha Inicio</th>
+                      <th className="p-2 text-left font-medium">Fecha Término</th>
+                      <th className="p-2 text-left font-medium sticky right-0 bg-muted/50">Acciones</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {mockCursos.map((c) => (
+                    {paginatedCursos.map((c) => (
                       <tr key={c.numeroSC} className="border-b hover:bg-muted/30">
-                        <td className="p-3 font-mono text-foreground">{c.numeroSC}</td>
-                        <td className="p-3">{c.nombreCurso}</td>
-                        <td className="p-3">{c.fechaInicio}</td>
-                        <td className="p-3">{c.fechaTermino}</td>
-                        <td className="p-3">{c.participantes}</td>
-                        <td className="p-3">{estadoBadge(c.estado)}</td>
-                        <td className="p-3">
+                        <td className="p-2 font-mono text-foreground">{c.numeroSC}</td>
+                        <td className="p-2">{c.nombreCurso}</td>
+                        <td className="p-2 font-mono text-muted-foreground">{c.sencenet}</td>
+                        <td className="p-2 font-mono text-muted-foreground">{c.ssc}</td>
+                        <td className="p-2 text-right font-mono">{formatCLP(c.montoTotalOtec)}</td>
+                        <td className="p-2">{c.otec}</td>
+                        <td className="p-2 font-mono text-muted-foreground">{c.oc}</td>
+                        <td className="p-2">{estadoCursoBadge(c.estadoCurso)}</td>
+                        <td className="p-2">{c.celula}</td>
+                        <td className="p-2">{c.analistaResponsable}</td>
+                        <td className="p-2">{c.edcACargo}</td>
+                        <td className="p-2">{c.jefeComercial}</td>
+                        <td className="p-2">{c.fechaCreacionPC}</td>
+                        <td className="p-2">{estadoSenceBadge(c.estadoSence)}</td>
+                        <td className="p-2">{c.modalidad}</td>
+                        <td className="p-2 text-right">{c.partActivos}</td>
+                        <td className="p-2">{c.fechaInicio}</td>
+                        <td className="p-2">{c.fechaTermino}</td>
+                        <td className="p-2 sticky right-0 bg-background">
                           <Button
                             variant="outline"
                             size="sm"
@@ -367,9 +474,51 @@ const PrecontratosNuevo: React.FC = () => {
                   </tbody>
                 </table>
               </div>
+              <div className="flex items-center justify-between p-3 border-t flex-wrap gap-2">
+                <p className="text-xs text-muted-foreground">
+                  Mostrando {(page - 1) * PAGE_SIZE + 1}-{Math.min(page * PAGE_SIZE, mockCursos.length)} de {mockCursos.length} registros
+                </p>
+                <Pagination className="mx-0 w-auto justify-end">
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious
+                        href="#"
+                        onClick={(e) => { e.preventDefault(); setPage((p) => Math.max(1, p - 1)); }}
+                        className={page === 1 ? 'pointer-events-none opacity-50' : ''}
+                      />
+                    </PaginationItem>
+                    {Array.from({ length: totalPages }, (_, i) => i + 1)
+                      .filter((p) => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
+                      .map((p, idx, arr) => (
+                        <React.Fragment key={p}>
+                          {idx > 0 && p - arr[idx - 1] > 1 && (
+                            <PaginationItem><PaginationEllipsis /></PaginationItem>
+                          )}
+                          <PaginationItem>
+                            <PaginationLink
+                              href="#"
+                              isActive={p === page}
+                              onClick={(e) => { e.preventDefault(); setPage(p); }}
+                            >
+                              {p}
+                            </PaginationLink>
+                          </PaginationItem>
+                        </React.Fragment>
+                      ))}
+                    <PaginationItem>
+                      <PaginationNext
+                        href="#"
+                        onClick={(e) => { e.preventDefault(); setPage((p) => Math.min(totalPages, p + 1)); }}
+                        className={page === totalPages ? 'pointer-events-none opacity-50' : ''}
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
+
 
         <TabsContent value="parcial" className="mt-4">
           <p className="text-muted-foreground mb-4">
