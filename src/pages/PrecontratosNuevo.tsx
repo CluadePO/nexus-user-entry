@@ -155,6 +155,7 @@ const PrecontratosNuevo: React.FC = () => {
   const [busqueda, setBusqueda] = useState('');
   const [detalle, setDetalle] = useState<PrecontratoDetalle | null>(null);
   const [cursoDetalleSC, setCursoDetalleSC] = useState<string | null>(null);
+  const [cursoDetalleIdModular, setCursoDetalleIdModular] = useState<string | undefined>();
   const [tab, setTab] = useState('buscador');
   const [page, setPage] = useState(1);
 
@@ -309,7 +310,7 @@ const PrecontratosNuevo: React.FC = () => {
         <div className="flex items-center gap-3">
           <h1 className="text-2xl font-bold text-foreground">Detalle del Curso</h1>
         </div>
-        <CursoDetalleCompleto numeroSC={cursoDetalleSC} onBack={() => setCursoDetalleSC(null)} />
+        <CursoDetalleCompleto numeroSC={cursoDetalleSC} onBack={() => { setCursoDetalleSC(null); setCursoDetalleIdModular(undefined); }} idModular={cursoDetalleIdModular} />
       </div>
     );
   }
@@ -799,7 +800,7 @@ const PrecontratosNuevo: React.FC = () => {
                       <th className="p-3 text-center font-medium">Nº Part.</th>
                       <th className="p-3 text-left font-medium">Inicio - Término</th>
                       <th className="p-3 text-center font-medium">Célula</th>
-                    </tr>
+                      <th className="p-3 text-center font-medium">Acciones</th>
                   </thead>
                   <tbody>
                     {[
@@ -823,7 +824,9 @@ const PrecontratosNuevo: React.FC = () => {
                         <td className="p-3 text-center">{c.nroParticipantes}</td>
                         <td className="p-3 text-muted-foreground">{c.inicioTermino}</td>
                         <td className="p-3 text-center text-muted-foreground">{c.celula}</td>
-                      </tr>
+                        <td className="p-3 text-center">
+                          <Button variant="outline" size="sm" onClick={() => { setCursoDetalleSC(c.nroInscripcion); setCursoDetalleIdModular(c.idModular); }}>Ver Detalle</Button>
+                        </td>
                     ))}
                   </tbody>
                 </table>
