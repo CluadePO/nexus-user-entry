@@ -203,6 +203,13 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true }) =
       codigoSence: '',
       vencimientoSence: '',
       celula: '',
+      otec: '',
+      oc: '',
+      estadoCurso: 'Pendiente',
+      analistaResponsable: '',
+      edcACargo: '',
+      jefeComercial: '',
+      fechaCreacion: new Date().toLocaleDateString('es-CL'),
     };
     setCursosModulares(prev => [...prev, newCurso]);
   };
