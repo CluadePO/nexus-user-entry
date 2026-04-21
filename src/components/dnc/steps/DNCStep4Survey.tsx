@@ -42,7 +42,7 @@ const DNCStep4Survey: React.FC<Props> = ({ onNext, onBack, config, onConfigChang
     }
   };
 
-  const canProceed = config.numAreas !== '' &&
+  const canProceed = config.numAreas !== null &&
     config.fechaInicio !== '' &&
     config.fechaCierre !== '' &&
     config.modalidades.length > 0 &&
