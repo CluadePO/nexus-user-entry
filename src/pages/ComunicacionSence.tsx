@@ -224,7 +224,10 @@ const ComunicacionSence: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {mockCursos.map((curso, idx) => {
+                  {mockCursos.filter(c => {
+                    const term = searchTerm.toLowerCase();
+                    return !term || c.sc.toLowerCase().includes(term) || c.cliente.toLowerCase().includes(term);
+                  }).map((curso, idx) => {
                     const excluido = noComunicar.includes(curso.sc);
                     return (
                       <tr key={curso.sc} className={`border-b ${excluido ? 'bg-red-50/50 opacity-60' : idx % 2 === 0 ? 'hover:bg-muted/20' : 'bg-muted/10 hover:bg-muted/20'}`}>
@@ -278,6 +281,7 @@ const ComunicacionSence: React.FC = () => {
         <TabsContent value="modulares" className="mt-4">
           <ModularesTab
             showAddCourse={false}
+            searchTerm={searchTerm}
             onVerDetalle={(nroInscripcion, idModular) => {
               setCursoDetalleSC(nroInscripcion);
               setCursoDetalleIdModular(idModular);
