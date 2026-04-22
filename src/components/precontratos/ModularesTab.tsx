@@ -62,6 +62,7 @@ const PART_PAGE_SIZE = 5;
 interface Props {
   onVerDetalle: (nroInscripcion: string, idModular: string) => void;
   showAddCourse?: boolean;
+  searchTerm?: string;
 }
 
 export interface CursoModular {
