@@ -155,7 +155,14 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true, sea
     );
   };
 
-  const grouped = cursosModulares.reduce<Record<string, CursoModular[]>>((acc, c) => {
+  const filteredCursos = searchTerm
+    ? cursosModulares.filter(c => {
+        const term = searchTerm.toLowerCase();
+        return c.sc.toLowerCase().includes(term) || c.cliente.toLowerCase().includes(term);
+      })
+    : cursosModulares;
+
+  const grouped = filteredCursos.reduce<Record<string, CursoModular[]>>((acc, c) => {
     if (!acc[c.idModular]) acc[c.idModular] = [];
     acc[c.idModular].push(c);
     return acc;
