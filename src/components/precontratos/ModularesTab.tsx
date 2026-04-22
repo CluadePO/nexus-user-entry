@@ -140,7 +140,7 @@ const isProximoAVencer = (vencimiento: string) => {
   return diffDias >= 0 && diffDias <= 10;
 };
 
-const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true }) => {
+const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true, searchTerm = '' }) => {
   const [pageModulares, setPageModulares] = useState(1);
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [noComunicar, setNoComunicar] = useState<string[]>([]);
