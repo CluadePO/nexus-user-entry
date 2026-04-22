@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
+import { Search } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Calendar, PlusCircle, ArrowRight, AlertCircle, Ban, Eye, EyeOff } from 'lucide-react';
 import ModularesTab from '@/components/precontratos/ModularesTab';
@@ -45,6 +46,7 @@ const ComunicacionSence: React.FC = () => {
   const [activeTab, setActiveTab] = useState('comunicacion');
   const [cursoDetalleSC, setCursoDetalleSC] = useState<string | null>(null);
   const [cursoDetalleIdModular, setCursoDetalleIdModular] = useState<string | undefined>();
+  const [searchTerm, setSearchTerm] = useState('');
 
   const toggleNoComunicar = (sc: string) => {
     setNoComunicar(prev =>
@@ -156,6 +158,17 @@ const ComunicacionSence: React.FC = () => {
         </Badge>
       </div>
 
+      {/* Search */}
+      <div className="relative max-w-sm">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        <Input
+          placeholder="Buscar por S.C o Cliente..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="pl-10 rounded-full border-border"
+        />
+      </div>
+
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList>
           <TabsTrigger value="comunicacion">Cursos Normales</TabsTrigger>
@@ -211,7 +224,10 @@ const ComunicacionSence: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {mockCursos.map((curso, idx) => {
+                  {mockCursos.filter(c => {
+                    const term = searchTerm.toLowerCase();
+                    return !term || c.sc.toLowerCase().includes(term) || c.cliente.toLowerCase().includes(term);
+                  }).map((curso, idx) => {
                     const excluido = noComunicar.includes(curso.sc);
                     return (
                       <tr key={curso.sc} className={`border-b ${excluido ? 'bg-red-50/50 opacity-60' : idx % 2 === 0 ? 'hover:bg-muted/20' : 'bg-muted/10 hover:bg-muted/20'}`}>
@@ -265,6 +281,7 @@ const ComunicacionSence: React.FC = () => {
         <TabsContent value="modulares" className="mt-4">
           <ModularesTab
             showAddCourse={false}
+            searchTerm={searchTerm}
             onVerDetalle={(nroInscripcion, idModular) => {
               setCursoDetalleSC(nroInscripcion);
               setCursoDetalleIdModular(idModular);

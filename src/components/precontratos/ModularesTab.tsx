@@ -62,6 +62,7 @@ const PART_PAGE_SIZE = 5;
 interface Props {
   onVerDetalle: (nroInscripcion: string, idModular: string) => void;
   showAddCourse?: boolean;
+  searchTerm?: string;
 }
 
 export interface CursoModular {
@@ -139,7 +140,7 @@ const isProximoAVencer = (vencimiento: string) => {
   return diffDias >= 0 && diffDias <= 10;
 };
 
-const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true }) => {
+const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true, searchTerm = '' }) => {
   const [pageModulares, setPageModulares] = useState(1);
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [noComunicar, setNoComunicar] = useState<string[]>([]);
@@ -154,7 +155,14 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true }) =
     );
   };
 
-  const grouped = cursosModulares.reduce<Record<string, CursoModular[]>>((acc, c) => {
+  const filteredCursos = searchTerm
+    ? cursosModulares.filter(c => {
+        const term = searchTerm.toLowerCase();
+        return c.sc.toLowerCase().includes(term) || c.cliente.toLowerCase().includes(term);
+      })
+    : cursosModulares;
+
+  const grouped = filteredCursos.reduce<Record<string, CursoModular[]>>((acc, c) => {
     if (!acc[c.idModular]) acc[c.idModular] = [];
     acc[c.idModular].push(c);
     return acc;
