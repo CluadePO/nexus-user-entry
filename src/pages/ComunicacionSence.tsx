@@ -46,6 +46,7 @@ const ComunicacionSence: React.FC = () => {
   const [activeTab, setActiveTab] = useState('comunicacion');
   const [cursoDetalleSC, setCursoDetalleSC] = useState<string | null>(null);
   const [cursoDetalleIdModular, setCursoDetalleIdModular] = useState<string | undefined>();
+  const [searchTerm, setSearchTerm] = useState('');
 
   const toggleNoComunicar = (sc: string) => {
     setNoComunicar(prev =>
