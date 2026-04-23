@@ -310,8 +310,8 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
       if (error) throw error;
 
       toast({
-        title: 'Usuario creado',
-        description: 'El usuario ha sido creado exitosamente.',
+        title: 'Usuario creado exitosamente',
+        description: `El usuario ${nombres} ${apellidos} ha sido registrado correctamente.`,
       });
 
       onSuccess();
