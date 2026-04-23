@@ -84,6 +84,20 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
+  const hasFormData = () => {
+    return !!(rut || nombres || apellidos || email || userProfile || userType || cargo ||
+      selectedCompany || selectedHolding || assignedCompanies.length ||
+      oticEmpresa || oticSelectedHoldings.length || oticAssignedCompanies.length);
+  };
+
+  const handleCloseAttempt = (openState: boolean) => {
+    if (!openState && hasFormData()) {
+      const confirmed = window.confirm('¿Estás seguro de que deseas cerrar? Se perderán los datos ingresados.');
+      if (!confirmed) return;
+    }
+    onOpenChange(openState);
+  };
+
   // Step 1: User Information
   const [userProfile, setUserProfile] = useState<string>('');
   const [rut, setRut] = useState('');
