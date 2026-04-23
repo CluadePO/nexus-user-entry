@@ -331,7 +331,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleCloseAttempt}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold">
@@ -1156,7 +1156,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
           </Button>
 
           <div className="flex gap-2">
-            <Button variant="ghost" onClick={() => onOpenChange(false)}>
+            <Button variant="ghost" onClick={() => handleCloseAttempt(false)}>
               Cancelar
             </Button>
             {currentStep < 3 ? (
