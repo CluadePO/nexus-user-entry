@@ -84,6 +84,8 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showCloseConfirm, setShowCloseConfirm] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [createdUserName, setCreatedUserName] = useState('');
   const { toast } = useToast();
 
   const hasFormData = () => {
@@ -309,13 +311,10 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
 
       if (error) throw error;
 
-      toast({
-        title: 'Usuario creado exitosamente',
-        description: `El usuario ${nombres} ${apellidos} ha sido registrado correctamente.`,
-      });
-
+      setCreatedUserName(`${nombres} ${apellidos}`);
       onSuccess();
       onOpenChange(false);
+      setShowSuccessModal(true);
     } catch (error) {
       console.error('Error creating user:', error);
       toast({
@@ -1205,6 +1204,27 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
         </div>
       </DialogContent>
     </Dialog>
+
+    {/* Success Modal */}
+    <Dialog open={showSuccessModal} onOpenChange={setShowSuccessModal}>
+      <DialogContent className="max-w-sm text-center">
+        <div className="flex flex-col items-center gap-4 py-4">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-green-100">
+            <Check className="h-7 w-7 text-green-600" />
+          </div>
+          <div>
+            <DialogTitle className="text-lg font-semibold">Usuario creado exitosamente</DialogTitle>
+            <p className="mt-1 text-sm text-muted-foreground">
+              El usuario <span className="font-medium">{createdUserName}</span> ha sido registrado correctamente.
+            </p>
+          </div>
+          <Button className="mt-2" onClick={() => setShowSuccessModal(false)}>
+            Aceptar
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+    </>
   );
 };
 
