@@ -84,6 +84,20 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
+  const hasFormData = () => {
+    return !!(rut || nombres || apellidos || email || userProfile || userType || cargo ||
+      selectedCompany || selectedHolding || assignedCompanies.length ||
+      oticEmpresa || oticSelectedHoldings.length || oticAssignedCompanies.length);
+  };
+
+  const handleCloseAttempt = (openState: boolean) => {
+    if (!openState && hasFormData()) {
+      const confirmed = window.confirm('¿Estás seguro de que deseas cerrar? Se perderán los datos ingresados.');
+      if (!confirmed) return;
+    }
+    onOpenChange(openState);
+  };
+
   // Step 1: User Information
   const [userProfile, setUserProfile] = useState<string>('');
   const [rut, setRut] = useState('');
@@ -317,7 +331,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleCloseAttempt}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold">
@@ -1142,7 +1156,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
           </Button>
 
           <div className="flex gap-2">
-            <Button variant="ghost" onClick={() => onOpenChange(false)}>
+            <Button variant="ghost" onClick={() => handleCloseAttempt(false)}>
               Cancelar
             </Button>
             {currentStep < 3 ? (
