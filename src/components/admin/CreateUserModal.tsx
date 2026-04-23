@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { AlertTriangle } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -345,6 +346,24 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
             Crear Nuevo Usuario
           </DialogTitle>
         </DialogHeader>
+
+        {/* Inline close confirmation */}
+        {showCloseConfirm && (
+          <div className="mx-1 mb-2 flex items-center justify-between gap-3 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 animate-in fade-in slide-in-from-top-2 duration-200">
+            <div className="flex items-center gap-2 text-sm text-amber-800">
+              <AlertTriangle className="h-4 w-4 shrink-0 text-amber-500" />
+              <span>¿Deseas cerrar? Se perderán los datos ingresados.</span>
+            </div>
+            <div className="flex gap-2 shrink-0">
+              <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => setShowCloseConfirm(false)}>
+                No, continuar
+              </Button>
+              <Button size="sm" variant="destructive" className="h-7 text-xs" onClick={confirmClose}>
+                Sí, cerrar
+              </Button>
+            </div>
+          </div>
+        )}
 
         {/* Step Indicator */}
         <div className="flex items-center justify-center gap-2 py-4">
