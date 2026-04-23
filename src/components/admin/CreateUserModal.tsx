@@ -338,6 +338,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
   };
 
   return (
+    <>
     <Dialog open={open} onOpenChange={handleCloseAttempt}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden">
         <DialogHeader>
