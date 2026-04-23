@@ -82,6 +82,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
 }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showCloseConfirm, setShowCloseConfirm] = useState(false);
   const { toast } = useToast();
 
   const hasFormData = () => {
@@ -92,10 +93,16 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({
 
   const handleCloseAttempt = (openState: boolean) => {
     if (!openState && hasFormData()) {
-      const confirmed = window.confirm('¿Estás seguro de que deseas cerrar? Se perderán los datos ingresados.');
-      if (!confirmed) return;
+      setShowCloseConfirm(true);
+      return;
     }
+    setShowCloseConfirm(false);
     onOpenChange(openState);
+  };
+
+  const confirmClose = () => {
+    setShowCloseConfirm(false);
+    onOpenChange(false);
   };
 
   // Step 1: User Information
