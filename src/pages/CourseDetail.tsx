@@ -748,22 +748,6 @@ const CourseDetail: React.FC = () => {
 
               <Separator className="my-6" />
 
-              {/* Pricing Section */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="p-4 rounded-lg bg-muted/50 text-center">
-                  <p className="text-sm text-muted-foreground mb-1">Valor del curso</p>
-                  <p className="text-xl font-bold text-foreground">{formatPrice(course.price)}</p>
-                </div>
-                <div className="p-4 rounded-lg bg-primary/10 text-center">
-                  <p className="text-sm text-muted-foreground mb-1">Valor efectivo por participante</p>
-                  <p className="text-xl font-bold text-primary">{formatPrice(course.effectiveValuePerParticipant)}</p>
-                </div>
-                <div className="p-4 rounded-lg bg-emerald-100 dark:bg-emerald-900/20 text-center">
-                  <p className="text-sm text-muted-foreground mb-1">Valor máximo imputable</p>
-                  <p className="text-xl font-bold text-emerald-700 dark:text-emerald-400">{formatPrice(course.maxImputableValue)}</p>
-                </div>
-              </div>
-
               {/* Action Buttons */}
               <div className="mt-6">
                 <Button 
