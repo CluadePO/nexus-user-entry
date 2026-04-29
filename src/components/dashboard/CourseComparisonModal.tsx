@@ -204,17 +204,6 @@ export const CourseComparisonModal: React.FC<CourseComparisonModalProps> = ({
                     <X className="h-4 w-4" />
                   </button>
 
-                  {/* Swap Button */}
-                  <button
-                    onClick={() => setSwappingSlot(swappingSlot === course.id ? null : course.id)}
-                    className={`absolute bottom-2 right-2 p-1.5 rounded-full transition-all z-10 ${
-                      swappingSlot === course.id
-                        ? 'bg-primary text-white'
-                        : 'bg-background/80 hover:bg-primary/10 opacity-0 group-hover:opacity-100'
-                    }`}
-                  >
-                    <ArrowLeftRight className="h-4 w-4" />
-                  </button>
 
                   {/* Course Image */}
                   <div className="relative h-32 overflow-hidden">
