@@ -633,14 +633,6 @@ const CourseDetail: React.FC = () => {
           </h1>
           <div className="flex flex-wrap items-center gap-4 text-white/90">
             <div className="flex items-center gap-1">
-              <Star className="h-5 w-5 text-yellow-400 fill-yellow-400" />
-              <span className="font-semibold">{course.rating}</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Users className="h-5 w-5" />
-              <span>{course.participants.toLocaleString()} participantes</span>
-            </div>
-            <div className="flex items-center gap-1">
               <Clock className="h-5 w-5" />
               <span>{course.hours} horas</span>
             </div>
@@ -650,9 +642,6 @@ const CourseDetail: React.FC = () => {
         <div className="absolute top-4 right-4 flex gap-2">
           <Button size="icon" variant="secondary" className="rounded-full bg-white/90 hover:bg-white">
             <Heart className="h-5 w-5" />
-          </Button>
-          <Button size="icon" variant="secondary" className="rounded-full bg-white/90 hover:bg-white">
-            <Share2 className="h-5 w-5" />
           </Button>
         </div>
       </div>
@@ -701,15 +690,11 @@ const CourseDetail: React.FC = () => {
 
           {/* Course Information */}
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
+            <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <BookOpen className="h-5 w-5 text-primary" />
                 Información del Curso
               </CardTitle>
-              <Button variant="link" className="gap-2" onClick={generateBrochure}>
-                <Download className="h-4 w-4" />
-                Descargar Brochure
-              </Button>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -762,22 +747,6 @@ const CourseDetail: React.FC = () => {
               </div>
 
               <Separator className="my-6" />
-
-              {/* Pricing Section */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="p-4 rounded-lg bg-muted/50 text-center">
-                  <p className="text-sm text-muted-foreground mb-1">Valor del curso</p>
-                  <p className="text-xl font-bold text-foreground">{formatPrice(course.price)}</p>
-                </div>
-                <div className="p-4 rounded-lg bg-primary/10 text-center">
-                  <p className="text-sm text-muted-foreground mb-1">Valor efectivo por participante</p>
-                  <p className="text-xl font-bold text-primary">{formatPrice(course.effectiveValuePerParticipant)}</p>
-                </div>
-                <div className="p-4 rounded-lg bg-emerald-100 dark:bg-emerald-900/20 text-center">
-                  <p className="text-sm text-muted-foreground mb-1">Valor máximo imputable</p>
-                  <p className="text-xl font-bold text-emerald-700 dark:text-emerald-400">{formatPrice(course.maxImputableValue)}</p>
-                </div>
-              </div>
 
               {/* Action Buttons */}
               <div className="mt-6">
@@ -860,29 +829,6 @@ const CourseDetail: React.FC = () => {
                     </div>
                   ))}
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Related Topics */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Tag className="h-5 w-5 text-primary" />
-                Ver temas relacionados
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-2">
-                {course.relatedTopics.map((topic, index) => (
-                  <Badge 
-                    key={index} 
-                    variant="outline" 
-                    className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors py-2 px-4"
-                  >
-                    {topic}
-                  </Badge>
-                ))}
               </div>
             </CardContent>
           </Card>
