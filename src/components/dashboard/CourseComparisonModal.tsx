@@ -90,10 +90,29 @@ export const CourseComparisonModal: React.FC<CourseComparisonModalProps> = ({
     course => !selectedCourses.find(sc => sc.id === course.id)
   ).slice(0, 6);
 
+  // Auto-close when no courses remain
+  React.useEffect(() => {
+    if (isOpen && selectedCourses.length === 0) {
+      onClose();
+    }
+  }, [isOpen, selectedCourses.length, onClose]);
+
   // Comparison metrics
   const comparisonRows = [
     {
-      label: 'Precio',
+      label: 'Modalidad',
+      icon: Monitor,
+      getValue: (course: Course) => course.modality,
+      compare: (courses: Course[]) => courses.map(() => 'normal'),
+    },
+    {
+      label: 'Horas curso',
+      icon: Clock,
+      getValue: (course: Course) => `${course.hours} horas`,
+      compare: (courses: Course[]) => courses.map(() => 'normal'),
+    },
+    {
+      label: 'Valor por participante',
       icon: DollarSign,
       getValue: (course: Course) => formatPrice(course.price),
       compare: (courses: Course[]) => {
@@ -102,46 +121,28 @@ export const CourseComparisonModal: React.FC<CourseComparisonModalProps> = ({
       },
     },
     {
-      label: 'Duración',
-      icon: Clock,
-      getValue: (course: Course) => `${course.hours} horas`,
+      label: 'Área de capacitación',
+      icon: Layers,
+      getValue: (course: Course) => course.area,
       compare: (courses: Course[]) => courses.map(() => 'normal'),
     },
     {
-      label: 'Valoración',
-      icon: Star,
-      getValue: (course: Course) => course.rating.toString(),
-      compare: (courses: Course[]) => {
-        const max = Math.max(...courses.map(c => c.rating));
-        return courses.map(c => c.rating === max ? 'best' : 'normal');
-      },
+      label: 'Requisitos',
+      icon: FileText,
+      getValue: (course: Course) => 'Sin requisitos previos',
+      compare: (courses: Course[]) => courses.map(() => 'normal'),
     },
     {
-      label: 'Participantes',
-      icon: Building2,
-      getValue: (course: Course) => course.participants.toLocaleString(),
-      compare: (courses: Course[]) => {
-        const max = Math.max(...courses.map(c => c.participants));
-        return courses.map(c => c.participants === max ? 'best' : 'normal');
-      },
+      label: 'Quorum mínimo',
+      icon: Users,
+      getValue: (course: Course) => '8 participantes',
+      compare: (courses: Course[]) => courses.map(() => 'normal'),
     },
     {
       label: 'Región',
       icon: MapPin,
       getValue: (course: Course) => course.region,
       compare: (courses: Course[]) => courses.map(() => 'normal'),
-    },
-    {
-      label: 'Modalidad',
-      icon: CheckCircle2,
-      getValue: (course: Course) => course.modality,
-      compare: (courses: Course[]) => courses.map(() => 'normal'),
-    },
-    {
-      label: 'Tipo',
-      icon: CheckCircle2,
-      getValue: (course: Course) => course.type,
-      compare: (courses: Course[]) => courses.map(c => c.type === 'Sence' ? 'best' : 'normal'),
     },
   ];
 
