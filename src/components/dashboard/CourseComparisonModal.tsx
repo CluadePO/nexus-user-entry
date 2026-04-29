@@ -22,6 +22,10 @@ import {
   ArrowLeftRight,
   GripVertical,
   Sparkles,
+  Monitor,
+  Layers,
+  FileText,
+  Users,
 } from 'lucide-react';
 
 interface Course {
@@ -90,10 +94,29 @@ export const CourseComparisonModal: React.FC<CourseComparisonModalProps> = ({
     course => !selectedCourses.find(sc => sc.id === course.id)
   ).slice(0, 6);
 
+  // Auto-close when no courses remain
+  React.useEffect(() => {
+    if (isOpen && selectedCourses.length === 0) {
+      onClose();
+    }
+  }, [isOpen, selectedCourses.length, onClose]);
+
   // Comparison metrics
   const comparisonRows = [
     {
-      label: 'Precio',
+      label: 'Modalidad',
+      icon: Monitor,
+      getValue: (course: Course) => course.modality,
+      compare: (courses: Course[]) => courses.map(() => 'normal'),
+    },
+    {
+      label: 'Horas curso',
+      icon: Clock,
+      getValue: (course: Course) => `${course.hours} horas`,
+      compare: (courses: Course[]) => courses.map(() => 'normal'),
+    },
+    {
+      label: 'Valor por participante',
       icon: DollarSign,
       getValue: (course: Course) => formatPrice(course.price),
       compare: (courses: Course[]) => {
@@ -102,46 +125,28 @@ export const CourseComparisonModal: React.FC<CourseComparisonModalProps> = ({
       },
     },
     {
-      label: 'Duración',
-      icon: Clock,
-      getValue: (course: Course) => `${course.hours} horas`,
+      label: 'Área de capacitación',
+      icon: Layers,
+      getValue: (course: Course) => course.area,
       compare: (courses: Course[]) => courses.map(() => 'normal'),
     },
     {
-      label: 'Valoración',
-      icon: Star,
-      getValue: (course: Course) => course.rating.toString(),
-      compare: (courses: Course[]) => {
-        const max = Math.max(...courses.map(c => c.rating));
-        return courses.map(c => c.rating === max ? 'best' : 'normal');
-      },
+      label: 'Requisitos',
+      icon: FileText,
+      getValue: (course: Course) => 'Sin requisitos previos',
+      compare: (courses: Course[]) => courses.map(() => 'normal'),
     },
     {
-      label: 'Participantes',
-      icon: Building2,
-      getValue: (course: Course) => course.participants.toLocaleString(),
-      compare: (courses: Course[]) => {
-        const max = Math.max(...courses.map(c => c.participants));
-        return courses.map(c => c.participants === max ? 'best' : 'normal');
-      },
+      label: 'Quorum mínimo',
+      icon: Users,
+      getValue: (course: Course) => '8 participantes',
+      compare: (courses: Course[]) => courses.map(() => 'normal'),
     },
     {
       label: 'Región',
       icon: MapPin,
       getValue: (course: Course) => course.region,
       compare: (courses: Course[]) => courses.map(() => 'normal'),
-    },
-    {
-      label: 'Modalidad',
-      icon: CheckCircle2,
-      getValue: (course: Course) => course.modality,
-      compare: (courses: Course[]) => courses.map(() => 'normal'),
-    },
-    {
-      label: 'Tipo',
-      icon: CheckCircle2,
-      getValue: (course: Course) => course.type,
-      compare: (courses: Course[]) => courses.map(c => c.type === 'Sence' ? 'best' : 'normal'),
     },
   ];
 
@@ -193,7 +198,8 @@ export const CourseComparisonModal: React.FC<CourseComparisonModalProps> = ({
                   {/* Remove Button */}
                   <button
                     onClick={() => onRemoveCourse(course.id)}
-                    className="absolute top-2 right-2 p-1.5 rounded-full bg-background/80 hover:bg-destructive hover:text-white transition-all opacity-0 group-hover:opacity-100 z-10"
+                    aria-label="Eliminar curso de la comparación"
+                    className="absolute top-2 right-2 p-1.5 rounded-full bg-background shadow-md border hover:bg-destructive hover:text-white hover:border-destructive transition-all z-10"
                   >
                     <X className="h-4 w-4" />
                   </button>
@@ -314,72 +320,6 @@ export const CourseComparisonModal: React.FC<CourseComparisonModalProps> = ({
                 </Button>
               </div>
             )}
-          </div>
-
-          {/* Sidebar - Recommended Courses */}
-          <div className="w-80 border-l bg-muted/20 flex flex-col">
-            <div className="p-4 border-b bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30">
-              <h4 className="font-semibold text-sm flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-amber-500" />
-                {swappingSlot ? 'Selecciona un curso para cambiar' : 'Cursos recomendados'}
-              </h4>
-              <p className="text-xs text-muted-foreground mt-1">
-                {swappingSlot
-                  ? 'Haz clic en un curso para intercambiarlo'
-                  : 'Haz clic para agregar a la comparación'}
-              </p>
-            </div>
-            <ScrollArea className="flex-1">
-              <div className="p-4 space-y-3">
-                {recommendedCourses.map((course) => (
-                  <Card
-                    key={course.id}
-                    className={`cursor-pointer transition-all duration-200 hover:shadow-md hover:border-primary/50 ${
-                      swappingSlot ? 'hover:scale-[1.02]' : ''
-                    } ${selectedCourses.length >= 3 && !swappingSlot ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    onClick={() => {
-                      if (selectedCourses.length < 3 || swappingSlot) {
-                        handleSelectForSwap(course);
-                      }
-                    }}
-                  >
-                    <CardContent className="p-3">
-                      <div className="flex gap-3">
-                        <img
-                          src={course.imageUrl}
-                          alt={course.name}
-                          className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
-                        />
-                        <div className="flex-1 min-w-0">
-                          <h5 className="font-medium text-sm line-clamp-2 mb-1">
-                            {course.name}
-                          </h5>
-                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                            <span className="flex items-center gap-0.5">
-                              <Star className="h-3 w-3 text-amber-500 fill-amber-500" />
-                              {course.rating}
-                            </span>
-                            <span>•</span>
-                            <span>{course.hours}h</span>
-                          </div>
-                          <p className="text-sm font-semibold text-primary mt-1">
-                            {formatPrice(course.price)}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex gap-1 mt-2">
-                        <Badge className={`${getTypeColor(course.type)} text-xs`} variant="outline">
-                          {course.type}
-                        </Badge>
-                        <Badge className={`${getModalityColor(course.modality)} text-xs`}>
-                          {course.modality}
-                        </Badge>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </ScrollArea>
           </div>
         </div>
       </DialogContent>
