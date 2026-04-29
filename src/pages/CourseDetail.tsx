@@ -636,6 +636,10 @@ const CourseDetail: React.FC = () => {
               <Clock className="h-5 w-5" />
               <span>{course.hours} horas</span>
             </div>
+            <div className="flex items-center gap-1">
+              <GraduationCap className="h-5 w-5" />
+              <span>Veces Impartido: 1</span>
+            </div>
           </div>
         </div>
         {/* Action buttons */}
@@ -652,10 +656,19 @@ const CourseDetail: React.FC = () => {
           {/* Contact Information */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Building2 className="h-5 w-5 text-primary" />
-                Información de Contacto
-              </CardTitle>
+              <div className="flex items-center justify-between gap-2 flex-wrap">
+                <CardTitle className="flex items-center gap-2">
+                  <Building2 className="h-5 w-5 text-primary" />
+                  Información del Proveedor
+                </CardTitle>
+                <Button
+                  className="gap-2"
+                  onClick={() => setQuoteModalOpen(true)}
+                >
+                  <FileText className="h-4 w-4" />
+                  Cotizar el curso
+                </Button>
+              </div>
             </CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
@@ -717,13 +730,6 @@ const CourseDetail: React.FC = () => {
                   </div>
                 )}
                 <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">Horas</p>
-                  <p className="font-medium flex items-center gap-1">
-                    <Clock className="h-4 w-4 text-muted-foreground" />
-                    {course.hours} horas
-                  </p>
-                </div>
-                <div className="space-y-1">
                   <p className="text-sm text-muted-foreground">Área</p>
                   <p className="font-medium flex items-center gap-1">
                     <Tag className="h-4 w-4 text-muted-foreground" />
@@ -737,6 +743,34 @@ const CourseDetail: React.FC = () => {
                     {course.specialty}
                   </p>
                 </div>
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground">Quorum Mínimo</p>
+                  <p className="font-medium flex items-center gap-1">
+                    <Users className="h-4 w-4 text-muted-foreground" />
+                    8 participantes
+                  </p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground">Valor por Participante</p>
+                  <p className="font-medium flex items-center gap-1">
+                    <DollarSign className="h-4 w-4 text-muted-foreground" />
+                    {formatPrice(course.effectiveValuePerParticipant)}
+                  </p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground">Valor Max. Imputable</p>
+                  <p className="font-medium flex items-center gap-1">
+                    <DollarSign className="h-4 w-4 text-muted-foreground" />
+                    {formatPrice(course.maxImputableValue)}
+                  </p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground">Horas</p>
+                  <p className="font-medium flex items-center gap-1">
+                    <Clock className="h-4 w-4 text-muted-foreground" />
+                    {course.hours} horas
+                  </p>
+                </div>
                 <div className="space-y-1 md:col-span-2">
                   <p className="text-sm text-muted-foreground">Lugar de ejecución</p>
                   <p className="font-medium flex items-center gap-1">
@@ -744,20 +778,6 @@ const CourseDetail: React.FC = () => {
                     {course.location}
                   </p>
                 </div>
-              </div>
-
-              <Separator className="my-6" />
-
-              {/* Action Buttons */}
-              <div className="mt-6">
-                <Button 
-                  className="w-full sm:w-auto gap-2" 
-                  size="lg"
-                  onClick={() => setQuoteModalOpen(true)}
-                >
-                  <FileText className="h-5 w-5" />
-                  Cotizar el curso
-                </Button>
               </div>
             </CardContent>
           </Card>
@@ -815,13 +835,26 @@ const CourseDetail: React.FC = () => {
 
               <Separator />
 
+              {/* Metodología */}
+              <div>
+                <h4 className="font-semibold text-foreground flex items-center gap-2 mb-2">
+                  <GraduationCap className="h-4 w-4 text-primary" />
+                  Metodología
+                </h4>
+                <p className="text-muted-foreground leading-relaxed">
+                  Metodología activo-participativa que combina clases expositivas, ejercicios prácticos, estudios de caso y trabajo colaborativo, permitiendo a los participantes aplicar inmediatamente los conocimientos adquiridos en situaciones reales de su entorno laboral.
+                </p>
+              </div>
+
+              <Separator />
+
               {/* Lo que aprenderás */}
               <div>
                 <h4 className="font-semibold text-foreground flex items-center gap-2 mb-3">
                   <Award className="h-4 w-4 text-primary" />
                   Lo que aprenderás
                 </h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 gap-2">
                   {course.learnings.map((learning, index) => (
                     <div key={index} className="flex items-start gap-2">
                       <CheckCircle className="h-5 w-5 text-emerald-500 flex-shrink-0 mt-0.5" />
@@ -829,6 +862,19 @@ const CourseDetail: React.FC = () => {
                     </div>
                   ))}
                 </div>
+              </div>
+
+              <Separator />
+
+              {/* Comentario Adicional */}
+              <div>
+                <h4 className="font-semibold text-foreground flex items-center gap-2 mb-2">
+                  <FileText className="h-4 w-4 text-primary" />
+                  Comentario Adicional
+                </h4>
+                <p className="text-muted-foreground leading-relaxed">
+                  Al finalizar el curso, los participantes recibirán un certificado de aprobación. El material didáctico y los recursos digitales estarán disponibles durante 6 meses posteriores al término del curso para refuerzo y consulta.
+                </p>
               </div>
             </CardContent>
           </Card>
