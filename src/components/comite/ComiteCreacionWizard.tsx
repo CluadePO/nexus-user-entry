@@ -262,7 +262,11 @@ const ComiteCreacionWizard = () => {
     setEmpresaRut('');
     setLogo(null);
     setCandidatos([]);
+    setCandidatosFileName(null);
+    setCandidatosError(null);
     setVotantes([]);
+    setVotantesFileName(null);
+    setVotantesError(null);
     setSearch('');
     setCopied1(false);
     setCopied2(false);
