@@ -14,6 +14,7 @@ import {
   Upload, FileText, BarChart3, Vote, ShieldCheck, RefreshCw,
   Building2, Image, FileCheck, Eye, Download, Play, Square
 } from 'lucide-react';
+import ComiteCreacionWizard from '@/components/comite/ComiteCreacionWizard';
 
 // Mock data
 const mockComites = [
