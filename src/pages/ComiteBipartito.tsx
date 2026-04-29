@@ -14,6 +14,7 @@ import {
   Upload, FileText, BarChart3, Vote, ShieldCheck, RefreshCw,
   Building2, Image, FileCheck, Eye, Download, Play, Square
 } from 'lucide-react';
+import ComiteCreacionWizard from '@/components/comite/ComiteCreacionWizard';
 
 // Mock data
 const mockComites = [
@@ -142,140 +143,7 @@ const ComiteBipartito = () => {
 
         {/* ===== CREACIÓN - WIZARD 4 PASOS ===== */}
         <TabsContent value="creacion" className="space-y-4">
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base">Comité Bipartito</CardTitle>
-              {/* Stepper */}
-              <div className="flex items-center gap-1 text-xs mt-2">
-                <span className={wizardStep === 1 ? 'font-bold text-foreground' : 'text-muted-foreground'}>
-                  1.- Crear Comité
-                </span>
-                <span className="text-muted-foreground">·</span>
-                <span className={wizardStep === 2 ? 'font-bold text-foreground' : 'text-muted-foreground'}>
-                  2. Ingresar Candidatos
-                </span>
-                <span className="text-muted-foreground">·</span>
-                <span className={wizardStep === 3 ? 'font-bold text-foreground' : 'text-muted-foreground'}>
-                  3. Ingresar Votantes
-                </span>
-                <span className="text-muted-foreground">·</span>
-                <span className={wizardStep === 4 || showResumen ? 'font-bold text-foreground' : 'text-muted-foreground'}>
-                  4. Opciones Finales
-                </span>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* PASO 1: Crear Comité */}
-              {wizardStep === 1 && !showResumen && (
-                <div className="space-y-6">
-                  <div className="flex items-center justify-center gap-3">
-                    <Label className="text-sm">Rut Empresa</Label>
-                    <Input
-                      placeholder="77762940-9"
-                      value={rutEmpresa}
-                      onChange={(e) => setRutEmpresa(e.target.value)}
-                      className="w-48 h-9 text-sm"
-                    />
-                    <Button size="sm" variant="destructive" onClick={handleCrearComiteWizard}>
-                      Crear
-                    </Button>
-                  </div>
-                  <div className="space-y-3">
-                    <a href="#" className="text-sm text-blue-600 underline hover:text-blue-800">Manual de Usuario</a>
-                    <div>
-                      <Button size="sm" variant="destructive">
-                        <Image className="h-3 w-3 mr-1" /> Adjuntar logo
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* PASO 2: Ingresar Candidatos */}
-              {wizardStep === 2 && !showResumen && (
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <input
-                      type="file"
-                      accept=".csv,.xlsx,.xls"
-                      onChange={(e) => setCandidatosFile(e.target.files?.[0] || null)}
-                      className="text-sm"
-                    />
-                    <Button size="sm" variant="destructive" onClick={handleCargarCandidatos}>
-                      Cargar
-                    </Button>
-                  </div>
-                  <a href="#" className="text-sm text-blue-600 underline hover:text-blue-800">Manual de Usuario</a>
-                </div>
-              )}
-
-              {/* PASO 3: Ingresar Votantes */}
-              {wizardStep === 3 && !showResumen && (
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <input
-                      type="file"
-                      accept=".csv,.xlsx,.xls"
-                      onChange={(e) => setVotantesFile(e.target.files?.[0] || null)}
-                      className="text-sm"
-                    />
-                    <Button size="sm" variant="destructive" onClick={handleCargarVotantes}>
-                      Cargar
-                    </Button>
-                  </div>
-                  <a href="#" className="text-sm text-blue-600 underline hover:text-blue-800">Manual de Usuario</a>
-                </div>
-              )}
-
-              {/* PASO 4: Opciones Finales */}
-              {wizardStep === 4 && !showResumen && (
-                <div className="space-y-6">
-                  <Button size="sm" variant="destructive">
-                    <Image className="h-3 w-3 mr-1" /> Adjuntar Imagenes
-                  </Button>
-
-                  {candidatosCargados.length > 0 && (
-                    <div className="space-y-2">
-                      <p className="text-sm text-muted-foreground">Seleccione una imagen, a los candidatos que les correspondan:</p>
-                      {candidatosCargados.map((c, idx) => (
-                        <div key={idx} className="flex items-center gap-4 text-sm">
-                          <span className="w-28">{c.nombre}</span>
-                          <span className="w-28">{c.apellidoPaterno}</span>
-                          <span className="w-28">{c.apellidoMaterno}</span>
-                          <input type="file" accept="image/*" className="text-xs" />
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  <Button variant="outline" size="sm" onClick={handleFinalizar}>
-                    Finalizar
-                  </Button>
-                  <div>
-                    <a href="#" className="text-sm text-blue-600 underline hover:text-blue-800">Manual de Usuario</a>
-                  </div>
-                </div>
-              )}
-
-              {/* RESUMEN */}
-              {showResumen && (
-                <div className="space-y-6">
-                  <div>
-                    <h3 className="text-base font-semibold mb-2">Resumen</h3>
-                    <p className="text-sm">Id Comité: <span className="font-medium">5352</span></p>
-                    <p className="text-sm">Total de Candidatos: <span className="font-medium">{candidatosCargados.length}</span></p>
-                    <p className="text-sm">Total de Votantes: <span className="font-medium">{votantesCargados}</span></p>
-                  </div>
-                  <div>
-                    <h3 className="text-base font-semibold mb-1">Link</h3>
-                    <a href="#" className="text-sm text-blue-600 underline">
-                      https://sistemas.capacinet.cl/comite/Voto/Index/5352/1
-                    </a>
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          <ComiteCreacionWizard />
         </TabsContent>
 
         {/* ===== MANTENEDOR DE VOTANTES ===== */}
