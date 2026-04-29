@@ -22,6 +22,10 @@ import {
   ArrowLeftRight,
   GripVertical,
   Sparkles,
+  Monitor,
+  Layers,
+  FileText,
+  Users,
 } from 'lucide-react';
 
 interface Course {
