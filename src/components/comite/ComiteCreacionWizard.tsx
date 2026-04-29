@@ -170,25 +170,26 @@ const ComiteCreacionWizard = () => {
     if (!file) return;
     setVotantesError(null);
     try {
-      const rows = await parseSpreadsheet(file);
-      const parsed: VotanteRow[] = rows.map(r => ({
-        id: newId(),
-        nombre: pick(r, ['Nombre', 'nombre']),
-        apPaterno: pick(r, ['Ap. Paterno', 'Apellido Paterno', 'apPaterno', 'apellido paterno']),
-        apMaterno: pick(r, ['Ap. Materno', 'Apellido Materno', 'apMaterno', 'apellido materno']),
-        rut: pick(r, ['RUT', 'Rut', 'rut']),
-        dv: pick(r, ['DV', 'Dv', 'dv']),
-        permisoInforme: pick(r, ['Permiso informe', 'Permiso Informe', 'permisoInforme']),
-        dobleRol: pick(r, ['Doble rol', 'Doble Rol', 'dobleRol']),
-      }));
-      const valid = parsed.filter(p => p.nombre || p.rut);
-      if (valid.length === 0) {
+      const rows = await parseSpreadsheetByIndex(file);
+      const parsed: VotanteRow[] = rows
+        .filter(cols => cols.length >= 7)
+        .map(cols => ({
+          id: newId(),
+          nombre: cols[0] ?? '',
+          apPaterno: cols[1] ?? '',
+          apMaterno: cols[2] ?? '',
+          rut: cols[3] ?? '',
+          dv: cols[4] ?? '',
+          permisoInforme: cols[5] ?? '',
+          dobleRol: cols[6] ?? '',
+        }));
+      if (parsed.length === 0) {
         setVotantes([]);
         setVotantesFileName(null);
         setVotantesError(ERROR_MSG);
         return;
       }
-      setVotantes(valid);
+      setVotantes(parsed);
       setVotantesFileName(file.name);
     } catch {
       setVotantes([]);
