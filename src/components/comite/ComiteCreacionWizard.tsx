@@ -140,12 +140,79 @@ const ComiteCreacionWizard = () => {
     setLogo({ name: file.name, url: URL.createObjectURL(file) });
   };
 
-  const handleCargarCandidatos = () => {
-    setCandidatos(mockCandidatos());
+  const handleCargarCandidatos = async (file: File | null) => {
+    if (!file) return;
+    setCandidatosError(null);
+    try {
+      const rows = await parseSpreadsheet(file);
+      const parsed: CandidatoRow[] = rows.map(r => ({
+        id: newId(),
+        nombre: pick(r, ['Nombre', 'nombre']),
+        apPaterno: pick(r, ['Ap. Paterno', 'Apellido Paterno', 'apPaterno', 'apellido paterno']),
+        apMaterno: pick(r, ['Ap. Materno', 'Apellido Materno', 'apMaterno', 'apellido materno']),
+        rut: pick(r, ['RUT', 'Rut', 'rut']),
+        dv: pick(r, ['DV', 'Dv', 'dv']),
+        foto: null,
+      }));
+      const valid = parsed.filter(p => p.nombre || p.rut);
+      if (valid.length === 0) {
+        setCandidatos([]);
+        setCandidatosFileName(null);
+        setCandidatosError(ERROR_MSG);
+        return;
+      }
+      setCandidatos(valid);
+      setCandidatosFileName(file.name);
+    } catch {
+      setCandidatos([]);
+      setCandidatosFileName(null);
+      setCandidatosError(ERROR_MSG);
+    }
   };
 
-  const handleCargarVotantes = () => {
-    setVotantes(mockVotantes());
+  const handleCargarVotantes = async (file: File | null) => {
+    if (!file) return;
+    setVotantesError(null);
+    try {
+      const rows = await parseSpreadsheet(file);
+      const parsed: VotanteRow[] = rows.map(r => ({
+        id: newId(),
+        nombre: pick(r, ['Nombre', 'nombre']),
+        apPaterno: pick(r, ['Ap. Paterno', 'Apellido Paterno', 'apPaterno', 'apellido paterno']),
+        apMaterno: pick(r, ['Ap. Materno', 'Apellido Materno', 'apMaterno', 'apellido materno']),
+        rut: pick(r, ['RUT', 'Rut', 'rut']),
+        dv: pick(r, ['DV', 'Dv', 'dv']),
+        permisoInforme: pick(r, ['Permiso informe', 'Permiso Informe', 'permisoInforme']),
+        dobleRol: pick(r, ['Doble rol', 'Doble Rol', 'dobleRol']),
+      }));
+      const valid = parsed.filter(p => p.nombre || p.rut);
+      if (valid.length === 0) {
+        setVotantes([]);
+        setVotantesFileName(null);
+        setVotantesError(ERROR_MSG);
+        return;
+      }
+      setVotantes(valid);
+      setVotantesFileName(file.name);
+    } catch {
+      setVotantes([]);
+      setVotantesFileName(null);
+      setVotantesError(ERROR_MSG);
+    }
+  };
+
+  const clearCandidatos = () => {
+    setCandidatos([]);
+    setCandidatosFileName(null);
+    setCandidatosError(null);
+    if (candidatosFileRef.current) candidatosFileRef.current.value = '';
+  };
+
+  const clearVotantes = () => {
+    setVotantes([]);
+    setVotantesFileName(null);
+    setVotantesError(null);
+    if (votantesFileRef.current) votantesFileRef.current.value = '';
   };
 
   const candidatosErrores = useMemo(() => {
