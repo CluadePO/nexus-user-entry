@@ -198,7 +198,8 @@ export const CourseComparisonModal: React.FC<CourseComparisonModalProps> = ({
                   {/* Remove Button */}
                   <button
                     onClick={() => onRemoveCourse(course.id)}
-                    className="absolute top-2 right-2 p-1.5 rounded-full bg-background/80 hover:bg-destructive hover:text-white transition-all opacity-0 group-hover:opacity-100 z-10"
+                    aria-label="Eliminar curso de la comparación"
+                    className="absolute top-2 right-2 p-1.5 rounded-full bg-background shadow-md border hover:bg-destructive hover:text-white hover:border-destructive transition-all z-10"
                   >
                     <X className="h-4 w-4" />
                   </button>
