@@ -96,7 +96,7 @@ export const CourseComparisonModal: React.FC<CourseComparisonModalProps> = ({
 
   // Auto-close when no courses remain
   React.useEffect(() => {
-    if (isOpen && selectedCourses.length === 0) {
+    if (isOpen && selectedCourses.length < 2) {
       onClose();
     }
   }, [isOpen, selectedCourses.length, onClose]);
@@ -232,10 +232,6 @@ export const CourseComparisonModal: React.FC<CourseComparisonModalProps> = ({
                     <Badge className={`${getModalityColor(course.modality)} text-xs mt-2`}>
                       {course.modality}
                     </Badge>
-                    <Button variant="link" size="sm" className="px-0 mt-2 gap-1 text-xs">
-                      <Sparkles className="h-3 w-3" />
-                      Solicitar cotización
-                    </Button>
                   </div>
                 </div>
               ))}
@@ -282,14 +278,6 @@ export const CourseComparisonModal: React.FC<CourseComparisonModalProps> = ({
               </div>
             )}
 
-            {/* Action Buttons */}
-            {selectedCourses.length >= 2 && (
-              <div className="flex justify-center mt-6 pt-6 border-t">
-                <Button variant="outline" size="lg">
-                  Descargar comparación
-                </Button>
-              </div>
-            )}
           </div>
         </div>
       </DialogContent>
