@@ -139,24 +139,25 @@ const ComiteCreacionWizard = () => {
     if (!file) return;
     setCandidatosError(null);
     try {
-      const rows = await parseSpreadsheet(file);
-      const parsed: CandidatoRow[] = rows.map(r => ({
-        id: newId(),
-        nombre: pick(r, ['Nombre', 'nombre']),
-        apPaterno: pick(r, ['Ap. Paterno', 'Apellido Paterno', 'apPaterno', 'apellido paterno']),
-        apMaterno: pick(r, ['Ap. Materno', 'Apellido Materno', 'apMaterno', 'apellido materno']),
-        rut: pick(r, ['RUT', 'Rut', 'rut']),
-        dv: pick(r, ['DV', 'Dv', 'dv']),
-        foto: null,
-      }));
-      const valid = parsed.filter(p => p.nombre || p.rut);
-      if (valid.length === 0) {
+      const rows = await parseSpreadsheetByIndex(file);
+      const parsed: CandidatoRow[] = rows
+        .filter(cols => cols.length >= 5)
+        .map(cols => ({
+          id: newId(),
+          nombre: cols[0] ?? '',
+          apPaterno: cols[1] ?? '',
+          apMaterno: cols[2] ?? '',
+          rut: cols[3] ?? '',
+          dv: cols[4] ?? '',
+          foto: null,
+        }));
+      if (parsed.length === 0) {
         setCandidatos([]);
         setCandidatosFileName(null);
         setCandidatosError(ERROR_MSG);
         return;
       }
-      setCandidatos(valid);
+      setCandidatos(parsed);
       setCandidatosFileName(file.name);
     } catch {
       setCandidatos([]);
