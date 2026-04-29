@@ -50,21 +50,47 @@ const STEPS = [
 
 const newId = () => Math.random().toString(36).slice(2, 9);
 
-const mockCandidatos = (): CandidatoRow[] => [
-  { id: newId(), nombre: 'Daniela', apPaterno: 'Muñoz', apMaterno: 'Oyarzo', rut: '22795498', dv: '1', foto: null },
-  { id: newId(), nombre: 'Cristian', apPaterno: 'Maturana', apMaterno: 'Troncoso', rut: '18972327', dv: '5', foto: null },
-  { id: newId(), nombre: 'Didier', apPaterno: 'Paredes', apMaterno: 'Vargas', rut: '8285001', dv: '8', foto: null },
-  { id: newId(), nombre: 'Mauricio', apPaterno: 'Vergara', apMaterno: 'Cartes', rut: '9196610', dv: 'K', foto: null },
-  { id: newId(), nombre: 'Angie', apPaterno: 'Vielma', apMaterno: 'Vielma', rut: '22631028', dv: '3', foto: null },
-];
+const ERROR_MSG = 'El archivo no tiene el formato correcto. Verifica que las columnas estén en el orden indicado.';
 
-const mockVotantes = (): VotanteRow[] => [
-  { id: newId(), nombre: 'Patricia', apPaterno: 'Soto', apMaterno: 'Pérez', rut: '15234876', dv: '2', permisoInforme: '0', dobleRol: '0' },
-  { id: newId(), nombre: 'Juan', apPaterno: 'Ramírez', apMaterno: 'Lara', rut: '17654321', dv: '9', permisoInforme: '1', dobleRol: '0' },
-  { id: newId(), nombre: 'Carla', apPaterno: 'Bravo', apMaterno: 'Núñez', rut: '19876543', dv: '4', permisoInforme: '0', dobleRol: '1' },
-  { id: newId(), nombre: 'Luis', apPaterno: 'Fuentes', apMaterno: 'Castro', rut: '20123456', dv: '7', permisoInforme: '0', dobleRol: '0' },
-  { id: newId(), nombre: 'Marcela', apPaterno: 'Tapia', apMaterno: 'Solís', rut: '21987654', dv: '6', permisoInforme: '1', dobleRol: '1' },
-];
+const pick = (row: Record<string, any>, keys: string[]): string => {
+  for (const k of keys) {
+    const found = Object.keys(row).find(
+      rk => rk.toLowerCase().trim() === k.toLowerCase().trim(),
+    );
+    if (found && row[found] != null) return String(row[found]).trim();
+  }
+  return '';
+};
+
+async function parseSpreadsheet(file: File): Promise<Record<string, string>[]> {
+  const name = file.name.toLowerCase();
+  if (name.endsWith('.csv')) {
+    const text = await file.text();
+    const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
+    if (lines.length < 2) throw new Error('empty');
+    const headers = lines[0].split(/[,;]/).map(h => h.trim());
+    return lines.slice(1).map(line => {
+      const values = line.split(/[,;]/);
+      const obj: Record<string, string> = {};
+      headers.forEach((h, i) => { obj[h] = (values[i] ?? '').trim(); });
+      return obj;
+    });
+  }
+  if (name.endsWith('.xlsx') || name.endsWith('.xls')) {
+    const buf = await file.arrayBuffer();
+    const wb = XLSX.read(buf, { type: 'array' });
+    const sheet = wb.Sheets[wb.SheetNames[0]];
+    if (!sheet) throw new Error('empty');
+    const rows = XLSX.utils.sheet_to_json<Record<string, any>>(sheet, { defval: '' });
+    if (!rows.length) throw new Error('empty');
+    return rows.map(r => {
+      const o: Record<string, string> = {};
+      Object.keys(r).forEach(k => { o[k] = String(r[k] ?? '').trim(); });
+      return o;
+    });
+  }
+  throw new Error('format');
+}
 
 // Validation helpers
 const validateNombre = (v: string) => v.trim().length > 0;
