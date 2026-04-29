@@ -633,14 +633,6 @@ const CourseDetail: React.FC = () => {
           </h1>
           <div className="flex flex-wrap items-center gap-4 text-white/90">
             <div className="flex items-center gap-1">
-              <Star className="h-5 w-5 text-yellow-400 fill-yellow-400" />
-              <span className="font-semibold">{course.rating}</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Users className="h-5 w-5" />
-              <span>{course.participants.toLocaleString()} participantes</span>
-            </div>
-            <div className="flex items-center gap-1">
               <Clock className="h-5 w-5" />
               <span>{course.hours} horas</span>
             </div>
@@ -650,9 +642,6 @@ const CourseDetail: React.FC = () => {
         <div className="absolute top-4 right-4 flex gap-2">
           <Button size="icon" variant="secondary" className="rounded-full bg-white/90 hover:bg-white">
             <Heart className="h-5 w-5" />
-          </Button>
-          <Button size="icon" variant="secondary" className="rounded-full bg-white/90 hover:bg-white">
-            <Share2 className="h-5 w-5" />
           </Button>
         </div>
       </div>
