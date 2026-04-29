@@ -250,25 +250,6 @@ export const CourseComparisonModal: React.FC<CourseComparisonModalProps> = ({
                   </div>
                 </div>
               ))}
-
-              {/* Empty Slots */}
-              {Array.from({ length: emptySlots }).map((_, index) => (
-                <div
-                  key={`empty-${index}`}
-                  className="rounded-xl border-2 border-dashed border-muted-foreground/30 flex flex-col items-center justify-center min-h-[200px] bg-muted/20 hover:border-primary/50 hover:bg-primary/5 transition-all cursor-pointer group"
-                  onClick={() => setSwappingSlot(null)}
-                >
-                  <div className="p-3 rounded-full bg-muted group-hover:bg-primary/10 transition-colors mb-2">
-                    <Plus className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors" />
-                  </div>
-                  <p className="text-sm text-muted-foreground group-hover:text-primary transition-colors">
-                    Agregar curso
-                  </p>
-                  <p className="text-xs text-muted-foreground/60 mt-1">
-                    Selecciona del panel derecho
-                  </p>
-                </div>
-              ))}
             </div>
 
             {/* Comparison Table */}
