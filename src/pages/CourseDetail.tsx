@@ -636,6 +636,10 @@ const CourseDetail: React.FC = () => {
               <Clock className="h-5 w-5" />
               <span>{course.hours} horas</span>
             </div>
+            <div className="flex items-center gap-1">
+              <GraduationCap className="h-5 w-5" />
+              <span>Veces Impartido: 1</span>
+            </div>
           </div>
         </div>
         {/* Action buttons */}
