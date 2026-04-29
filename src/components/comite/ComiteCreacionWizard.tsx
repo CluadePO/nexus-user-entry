@@ -446,27 +446,62 @@ const ComiteCreacionWizard = () => {
             <input
               ref={candidatosFileRef}
               type="file"
-              accept=".xlsx,.xls"
+              accept=".xlsx,.xls,.csv"
               className="hidden"
-              onChange={() => handleCargarCandidatos()}
+              onChange={(e) => handleCargarCandidatos(e.target.files?.[0] ?? null)}
             />
-            <div
-              onClick={() => candidatosFileRef.current?.click()}
-              className="border-2 border-dashed border-[#E5E7EB] rounded-md p-6 flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-primary/50 transition-colors"
-            >
-              <FileSpreadsheet className="h-8 w-8 text-primary" />
-              <p className="text-sm font-medium">Arrastra el archivo de candidatos aquí</p>
-              <p className="text-xs text-muted-foreground text-center">
-                Columnas requeridas: Nombre*, Ap. Paterno, Ap. Materno, RUT* (sin puntos ni DV, máx 8 chars), DV* (máx 1 char)
-              </p>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={(e) => { e.stopPropagation(); handleCargarCandidatos(); }}
+            {candidatos.length === 0 ? (
+              <div
+                onClick={() => candidatosFileRef.current?.click()}
+                onDragOver={(e) => { e.preventDefault(); setCandidatosDragOver(true); }}
+                onDragLeave={() => setCandidatosDragOver(false)}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setCandidatosDragOver(false);
+                  handleCargarCandidatos(e.dataTransfer.files?.[0] ?? null);
+                }}
+                className={cn(
+                  'border-2 border-dashed rounded-md p-6 flex flex-col items-center justify-center gap-2 cursor-pointer transition-colors',
+                  candidatosDragOver ? 'border-primary bg-primary/5' : 'border-[#E5E7EB] hover:border-primary/50',
+                )}
               >
-                Seleccionar archivo
-              </Button>
-            </div>
+                <FileSpreadsheet className="h-8 w-8 text-primary" />
+                <p className="text-sm font-medium">Arrastra el archivo de candidatos aquí</p>
+                <p className="text-xs text-muted-foreground text-center">
+                  Columnas requeridas: Nombre*, Ap. Paterno, Ap. Materno, RUT* (sin puntos ni DV, máx 8 chars), DV* (máx 1 char). Formatos: .xlsx, .xls, .csv
+                </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={(e) => { e.stopPropagation(); candidatosFileRef.current?.click(); }}
+                >
+                  Seleccionar archivo
+                </Button>
+              </div>
+            ) : (
+              <div className="flex items-center justify-between p-3 border border-[#E5E7EB] rounded-md bg-emerald-50/40">
+                <div className="flex items-center gap-2 text-sm">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                  <span className="font-medium">{candidatosFileName}</span>
+                  <span className="text-muted-foreground">· {candidatos.length} filas</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" size="sm" onClick={() => candidatosFileRef.current?.click()}>
+                    Reemplazar
+                  </Button>
+                  <Button variant="ghost" size="sm" className="text-destructive" onClick={clearCandidatos}>
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {candidatosError && (
+              <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 rounded-md p-3 text-sm">
+                <AlertTriangle className="h-4 w-4 shrink-0" />
+                {candidatosError}
+              </div>
+            )}
 
             {candidatos.length > 0 && (
               <>
