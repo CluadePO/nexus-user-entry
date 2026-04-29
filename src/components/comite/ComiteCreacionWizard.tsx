@@ -12,6 +12,7 @@ import {
   ArrowRight, ArrowLeft, Copy, CheckCircle2, X, Image as ImageIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import * as XLSX from 'xlsx';
 
 const EMPRESAS = [
   { rut: '70.200.800-K', nombre: 'Constructora Diamante S.A.' },
@@ -49,21 +50,47 @@ const STEPS = [
 
 const newId = () => Math.random().toString(36).slice(2, 9);
 
-const mockCandidatos = (): CandidatoRow[] => [
-  { id: newId(), nombre: 'Daniela', apPaterno: 'Muñoz', apMaterno: 'Oyarzo', rut: '22795498', dv: '1', foto: null },
-  { id: newId(), nombre: 'Cristian', apPaterno: 'Maturana', apMaterno: 'Troncoso', rut: '18972327', dv: '5', foto: null },
-  { id: newId(), nombre: 'Didier', apPaterno: 'Paredes', apMaterno: 'Vargas', rut: '8285001', dv: '8', foto: null },
-  { id: newId(), nombre: 'Mauricio', apPaterno: 'Vergara', apMaterno: 'Cartes', rut: '9196610', dv: 'K', foto: null },
-  { id: newId(), nombre: 'Angie', apPaterno: 'Vielma', apMaterno: 'Vielma', rut: '22631028', dv: '3', foto: null },
-];
+const ERROR_MSG = 'El archivo no tiene el formato correcto. Verifica que las columnas estén en el orden indicado.';
 
-const mockVotantes = (): VotanteRow[] => [
-  { id: newId(), nombre: 'Patricia', apPaterno: 'Soto', apMaterno: 'Pérez', rut: '15234876', dv: '2', permisoInforme: '0', dobleRol: '0' },
-  { id: newId(), nombre: 'Juan', apPaterno: 'Ramírez', apMaterno: 'Lara', rut: '17654321', dv: '9', permisoInforme: '1', dobleRol: '0' },
-  { id: newId(), nombre: 'Carla', apPaterno: 'Bravo', apMaterno: 'Núñez', rut: '19876543', dv: '4', permisoInforme: '0', dobleRol: '1' },
-  { id: newId(), nombre: 'Luis', apPaterno: 'Fuentes', apMaterno: 'Castro', rut: '20123456', dv: '7', permisoInforme: '0', dobleRol: '0' },
-  { id: newId(), nombre: 'Marcela', apPaterno: 'Tapia', apMaterno: 'Solís', rut: '21987654', dv: '6', permisoInforme: '1', dobleRol: '1' },
-];
+const pick = (row: Record<string, any>, keys: string[]): string => {
+  for (const k of keys) {
+    const found = Object.keys(row).find(
+      rk => rk.toLowerCase().trim() === k.toLowerCase().trim(),
+    );
+    if (found && row[found] != null) return String(row[found]).trim();
+  }
+  return '';
+};
+
+async function parseSpreadsheet(file: File): Promise<Record<string, string>[]> {
+  const name = file.name.toLowerCase();
+  if (name.endsWith('.csv')) {
+    const text = await file.text();
+    const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
+    if (lines.length < 2) throw new Error('empty');
+    const headers = lines[0].split(/[,;]/).map(h => h.trim());
+    return lines.slice(1).map(line => {
+      const values = line.split(/[,;]/);
+      const obj: Record<string, string> = {};
+      headers.forEach((h, i) => { obj[h] = (values[i] ?? '').trim(); });
+      return obj;
+    });
+  }
+  if (name.endsWith('.xlsx') || name.endsWith('.xls')) {
+    const buf = await file.arrayBuffer();
+    const wb = XLSX.read(buf, { type: 'array' });
+    const sheet = wb.Sheets[wb.SheetNames[0]];
+    if (!sheet) throw new Error('empty');
+    const rows = XLSX.utils.sheet_to_json<Record<string, any>>(sheet, { defval: '' });
+    if (!rows.length) throw new Error('empty');
+    return rows.map(r => {
+      const o: Record<string, string> = {};
+      Object.keys(r).forEach(k => { o[k] = String(r[k] ?? '').trim(); });
+      return o;
+    });
+  }
+  throw new Error('format');
+}
 
 // Validation helpers
 const validateNombre = (v: string) => v.trim().length > 0;
@@ -82,10 +109,16 @@ const ComiteCreacionWizard = () => {
 
   // Step 2
   const [candidatos, setCandidatos] = useState<CandidatoRow[]>([]);
+  const [candidatosFileName, setCandidatosFileName] = useState<string | null>(null);
+  const [candidatosError, setCandidatosError] = useState<string | null>(null);
+  const [candidatosDragOver, setCandidatosDragOver] = useState(false);
   const candidatosFileRef = useRef<HTMLInputElement>(null);
 
   // Step 3
   const [votantes, setVotantes] = useState<VotanteRow[]>([]);
+  const [votantesFileName, setVotantesFileName] = useState<string | null>(null);
+  const [votantesError, setVotantesError] = useState<string | null>(null);
+  const [votantesDragOver, setVotantesDragOver] = useState(false);
   const votantesFileRef = useRef<HTMLInputElement>(null);
 
   // Step 4
@@ -107,12 +140,79 @@ const ComiteCreacionWizard = () => {
     setLogo({ name: file.name, url: URL.createObjectURL(file) });
   };
 
-  const handleCargarCandidatos = () => {
-    setCandidatos(mockCandidatos());
+  const handleCargarCandidatos = async (file: File | null) => {
+    if (!file) return;
+    setCandidatosError(null);
+    try {
+      const rows = await parseSpreadsheet(file);
+      const parsed: CandidatoRow[] = rows.map(r => ({
+        id: newId(),
+        nombre: pick(r, ['Nombre', 'nombre']),
+        apPaterno: pick(r, ['Ap. Paterno', 'Apellido Paterno', 'apPaterno', 'apellido paterno']),
+        apMaterno: pick(r, ['Ap. Materno', 'Apellido Materno', 'apMaterno', 'apellido materno']),
+        rut: pick(r, ['RUT', 'Rut', 'rut']),
+        dv: pick(r, ['DV', 'Dv', 'dv']),
+        foto: null,
+      }));
+      const valid = parsed.filter(p => p.nombre || p.rut);
+      if (valid.length === 0) {
+        setCandidatos([]);
+        setCandidatosFileName(null);
+        setCandidatosError(ERROR_MSG);
+        return;
+      }
+      setCandidatos(valid);
+      setCandidatosFileName(file.name);
+    } catch {
+      setCandidatos([]);
+      setCandidatosFileName(null);
+      setCandidatosError(ERROR_MSG);
+    }
   };
 
-  const handleCargarVotantes = () => {
-    setVotantes(mockVotantes());
+  const handleCargarVotantes = async (file: File | null) => {
+    if (!file) return;
+    setVotantesError(null);
+    try {
+      const rows = await parseSpreadsheet(file);
+      const parsed: VotanteRow[] = rows.map(r => ({
+        id: newId(),
+        nombre: pick(r, ['Nombre', 'nombre']),
+        apPaterno: pick(r, ['Ap. Paterno', 'Apellido Paterno', 'apPaterno', 'apellido paterno']),
+        apMaterno: pick(r, ['Ap. Materno', 'Apellido Materno', 'apMaterno', 'apellido materno']),
+        rut: pick(r, ['RUT', 'Rut', 'rut']),
+        dv: pick(r, ['DV', 'Dv', 'dv']),
+        permisoInforme: pick(r, ['Permiso informe', 'Permiso Informe', 'permisoInforme']),
+        dobleRol: pick(r, ['Doble rol', 'Doble Rol', 'dobleRol']),
+      }));
+      const valid = parsed.filter(p => p.nombre || p.rut);
+      if (valid.length === 0) {
+        setVotantes([]);
+        setVotantesFileName(null);
+        setVotantesError(ERROR_MSG);
+        return;
+      }
+      setVotantes(valid);
+      setVotantesFileName(file.name);
+    } catch {
+      setVotantes([]);
+      setVotantesFileName(null);
+      setVotantesError(ERROR_MSG);
+    }
+  };
+
+  const clearCandidatos = () => {
+    setCandidatos([]);
+    setCandidatosFileName(null);
+    setCandidatosError(null);
+    if (candidatosFileRef.current) candidatosFileRef.current.value = '';
+  };
+
+  const clearVotantes = () => {
+    setVotantes([]);
+    setVotantesFileName(null);
+    setVotantesError(null);
+    if (votantesFileRef.current) votantesFileRef.current.value = '';
   };
 
   const candidatosErrores = useMemo(() => {
@@ -162,7 +262,11 @@ const ComiteCreacionWizard = () => {
     setEmpresaRut('');
     setLogo(null);
     setCandidatos([]);
+    setCandidatosFileName(null);
+    setCandidatosError(null);
     setVotantes([]);
+    setVotantesFileName(null);
+    setVotantesError(null);
     setSearch('');
     setCopied1(false);
     setCopied2(false);
@@ -346,27 +450,62 @@ const ComiteCreacionWizard = () => {
             <input
               ref={candidatosFileRef}
               type="file"
-              accept=".xlsx,.xls"
+              accept=".xlsx,.xls,.csv"
               className="hidden"
-              onChange={() => handleCargarCandidatos()}
+              onChange={(e) => handleCargarCandidatos(e.target.files?.[0] ?? null)}
             />
-            <div
-              onClick={() => candidatosFileRef.current?.click()}
-              className="border-2 border-dashed border-[#E5E7EB] rounded-md p-6 flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-primary/50 transition-colors"
-            >
-              <FileSpreadsheet className="h-8 w-8 text-primary" />
-              <p className="text-sm font-medium">Arrastra el archivo de candidatos aquí</p>
-              <p className="text-xs text-muted-foreground text-center">
-                Columnas requeridas: Nombre*, Ap. Paterno, Ap. Materno, RUT* (sin puntos ni DV, máx 8 chars), DV* (máx 1 char)
-              </p>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={(e) => { e.stopPropagation(); handleCargarCandidatos(); }}
+            {candidatos.length === 0 ? (
+              <div
+                onClick={() => candidatosFileRef.current?.click()}
+                onDragOver={(e) => { e.preventDefault(); setCandidatosDragOver(true); }}
+                onDragLeave={() => setCandidatosDragOver(false)}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setCandidatosDragOver(false);
+                  handleCargarCandidatos(e.dataTransfer.files?.[0] ?? null);
+                }}
+                className={cn(
+                  'border-2 border-dashed rounded-md p-6 flex flex-col items-center justify-center gap-2 cursor-pointer transition-colors',
+                  candidatosDragOver ? 'border-primary bg-primary/5' : 'border-[#E5E7EB] hover:border-primary/50',
+                )}
               >
-                Seleccionar archivo
-              </Button>
-            </div>
+                <FileSpreadsheet className="h-8 w-8 text-primary" />
+                <p className="text-sm font-medium">Arrastra el archivo de candidatos aquí</p>
+                <p className="text-xs text-muted-foreground text-center">
+                  Columnas requeridas: Nombre*, Ap. Paterno, Ap. Materno, RUT* (sin puntos ni DV, máx 8 chars), DV* (máx 1 char). Formatos: .xlsx, .xls, .csv
+                </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={(e) => { e.stopPropagation(); candidatosFileRef.current?.click(); }}
+                >
+                  Seleccionar archivo
+                </Button>
+              </div>
+            ) : (
+              <div className="flex items-center justify-between p-3 border border-[#E5E7EB] rounded-md bg-emerald-50/40">
+                <div className="flex items-center gap-2 text-sm">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                  <span className="font-medium">{candidatosFileName}</span>
+                  <span className="text-muted-foreground">· {candidatos.length} filas</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" size="sm" onClick={() => candidatosFileRef.current?.click()}>
+                    Reemplazar
+                  </Button>
+                  <Button variant="ghost" size="sm" className="text-destructive" onClick={clearCandidatos}>
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {candidatosError && (
+              <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 rounded-md p-3 text-sm">
+                <AlertTriangle className="h-4 w-4 shrink-0" />
+                {candidatosError}
+              </div>
+            )}
 
             {candidatos.length > 0 && (
               <>
@@ -481,27 +620,62 @@ const ComiteCreacionWizard = () => {
             <input
               ref={votantesFileRef}
               type="file"
-              accept=".xlsx,.xls"
+              accept=".xlsx,.xls,.csv"
               className="hidden"
-              onChange={() => handleCargarVotantes()}
+              onChange={(e) => handleCargarVotantes(e.target.files?.[0] ?? null)}
             />
-            <div
-              onClick={() => votantesFileRef.current?.click()}
-              className="border-2 border-dashed border-[#E5E7EB] rounded-md p-6 flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-primary/50 transition-colors"
-            >
-              <FileSpreadsheet className="h-8 w-8 text-primary" />
-              <p className="text-sm font-medium">Arrastra el archivo de votantes aquí</p>
-              <p className="text-xs text-muted-foreground text-center">
-                Columnas requeridas: Nombre*, Ap. Paterno, Ap. Materno, RUT* (máx 8 chars), DV* (máx 1 char), Permiso informe* (0/1), Doble rol* (0/1)
-              </p>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={(e) => { e.stopPropagation(); handleCargarVotantes(); }}
+            {votantes.length === 0 ? (
+              <div
+                onClick={() => votantesFileRef.current?.click()}
+                onDragOver={(e) => { e.preventDefault(); setVotantesDragOver(true); }}
+                onDragLeave={() => setVotantesDragOver(false)}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setVotantesDragOver(false);
+                  handleCargarVotantes(e.dataTransfer.files?.[0] ?? null);
+                }}
+                className={cn(
+                  'border-2 border-dashed rounded-md p-6 flex flex-col items-center justify-center gap-2 cursor-pointer transition-colors',
+                  votantesDragOver ? 'border-primary bg-primary/5' : 'border-[#E5E7EB] hover:border-primary/50',
+                )}
               >
-                Seleccionar archivo
-              </Button>
-            </div>
+                <FileSpreadsheet className="h-8 w-8 text-primary" />
+                <p className="text-sm font-medium">Arrastra el archivo de votantes aquí</p>
+                <p className="text-xs text-muted-foreground text-center">
+                  Columnas requeridas: Nombre*, Ap. Paterno, Ap. Materno, RUT* (máx 8 chars), DV* (máx 1 char), Permiso informe* (0/1), Doble rol* (0/1). Formatos: .xlsx, .xls, .csv
+                </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={(e) => { e.stopPropagation(); votantesFileRef.current?.click(); }}
+                >
+                  Seleccionar archivo
+                </Button>
+              </div>
+            ) : (
+              <div className="flex items-center justify-between p-3 border border-[#E5E7EB] rounded-md bg-emerald-50/40">
+                <div className="flex items-center gap-2 text-sm">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                  <span className="font-medium">{votantesFileName}</span>
+                  <span className="text-muted-foreground">· {votantes.length} filas</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" size="sm" onClick={() => votantesFileRef.current?.click()}>
+                    Reemplazar
+                  </Button>
+                  <Button variant="ghost" size="sm" className="text-destructive" onClick={clearVotantes}>
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {votantesError && (
+              <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 rounded-md p-3 text-sm">
+                <AlertTriangle className="h-4 w-4 shrink-0" />
+                {votantesError}
+              </div>
+            )}
 
             {votantes.length > 0 && (
               <>
