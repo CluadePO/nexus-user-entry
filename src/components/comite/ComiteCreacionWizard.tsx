@@ -12,6 +12,7 @@ import {
   ArrowRight, ArrowLeft, Copy, CheckCircle2, X, Image as ImageIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import * as XLSX from 'xlsx';
 
 const EMPRESAS = [
   { rut: '70.200.800-K', nombre: 'Constructora Diamante S.A.' },
