@@ -62,35 +62,30 @@ const pick = (row: Record<string, any>, keys: string[]): string => {
   return '';
 };
 
-async function parseSpreadsheet(file: File): Promise<Record<string, string>[]> {
+async function parseCSVByIndex(file: File): Promise<string[][]> {
+  const buffer = await file.arrayBuffer();
+  const decoder = new TextDecoder('latin1');
+  const text = decoder.decode(buffer);
+  const lines = text.split(/\r?\n/).filter(line => line.trim() !== '');
+  return lines.map(line => line.split(';').map(c => c.trim()));
+}
+
+async function parseSpreadsheetByIndex(file: File): Promise<string[][]> {
   const name = file.name.toLowerCase();
   if (name.endsWith('.csv')) {
-    const text = await file.text();
-    const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
-    if (lines.length < 2) throw new Error('empty');
-    const headers = lines[0].split(/[,;]/).map(h => h.trim());
-    return lines.slice(1).map(line => {
-      const values = line.split(/[,;]/);
-      const obj: Record<string, string> = {};
-      headers.forEach((h, i) => { obj[h] = (values[i] ?? '').trim(); });
-      return obj;
-    });
+    return parseCSVByIndex(file);
   }
   if (name.endsWith('.xlsx') || name.endsWith('.xls')) {
     const buf = await file.arrayBuffer();
     const wb = XLSX.read(buf, { type: 'array' });
     const sheet = wb.Sheets[wb.SheetNames[0]];
     if (!sheet) throw new Error('empty');
-    const rows = XLSX.utils.sheet_to_json<Record<string, any>>(sheet, { defval: '' });
-    if (!rows.length) throw new Error('empty');
-    return rows.map(r => {
-      const o: Record<string, string> = {};
-      Object.keys(r).forEach(k => { o[k] = String(r[k] ?? '').trim(); });
-      return o;
-    });
+    const rows = XLSX.utils.sheet_to_json<any[]>(sheet, { header: 1, defval: '' });
+    return (rows as any[][]).map(r => r.map(c => String(c ?? '').trim()));
   }
   throw new Error('format');
 }
+
 
 // Validation helpers
 const validateNombre = (v: string) => v.trim().length > 0;
@@ -144,24 +139,25 @@ const ComiteCreacionWizard = () => {
     if (!file) return;
     setCandidatosError(null);
     try {
-      const rows = await parseSpreadsheet(file);
-      const parsed: CandidatoRow[] = rows.map(r => ({
-        id: newId(),
-        nombre: pick(r, ['Nombre', 'nombre']),
-        apPaterno: pick(r, ['Ap. Paterno', 'Apellido Paterno', 'apPaterno', 'apellido paterno']),
-        apMaterno: pick(r, ['Ap. Materno', 'Apellido Materno', 'apMaterno', 'apellido materno']),
-        rut: pick(r, ['RUT', 'Rut', 'rut']),
-        dv: pick(r, ['DV', 'Dv', 'dv']),
-        foto: null,
-      }));
-      const valid = parsed.filter(p => p.nombre || p.rut);
-      if (valid.length === 0) {
+      const rows = await parseSpreadsheetByIndex(file);
+      const parsed: CandidatoRow[] = rows
+        .filter(cols => cols.length >= 5)
+        .map(cols => ({
+          id: newId(),
+          nombre: cols[0] ?? '',
+          apPaterno: cols[1] ?? '',
+          apMaterno: cols[2] ?? '',
+          rut: cols[3] ?? '',
+          dv: cols[4] ?? '',
+          foto: null,
+        }));
+      if (parsed.length === 0) {
         setCandidatos([]);
         setCandidatosFileName(null);
         setCandidatosError(ERROR_MSG);
         return;
       }
-      setCandidatos(valid);
+      setCandidatos(parsed);
       setCandidatosFileName(file.name);
     } catch {
       setCandidatos([]);
@@ -174,25 +170,26 @@ const ComiteCreacionWizard = () => {
     if (!file) return;
     setVotantesError(null);
     try {
-      const rows = await parseSpreadsheet(file);
-      const parsed: VotanteRow[] = rows.map(r => ({
-        id: newId(),
-        nombre: pick(r, ['Nombre', 'nombre']),
-        apPaterno: pick(r, ['Ap. Paterno', 'Apellido Paterno', 'apPaterno', 'apellido paterno']),
-        apMaterno: pick(r, ['Ap. Materno', 'Apellido Materno', 'apMaterno', 'apellido materno']),
-        rut: pick(r, ['RUT', 'Rut', 'rut']),
-        dv: pick(r, ['DV', 'Dv', 'dv']),
-        permisoInforme: pick(r, ['Permiso informe', 'Permiso Informe', 'permisoInforme']),
-        dobleRol: pick(r, ['Doble rol', 'Doble Rol', 'dobleRol']),
-      }));
-      const valid = parsed.filter(p => p.nombre || p.rut);
-      if (valid.length === 0) {
+      const rows = await parseSpreadsheetByIndex(file);
+      const parsed: VotanteRow[] = rows
+        .filter(cols => cols.length >= 7)
+        .map(cols => ({
+          id: newId(),
+          nombre: cols[0] ?? '',
+          apPaterno: cols[1] ?? '',
+          apMaterno: cols[2] ?? '',
+          rut: cols[3] ?? '',
+          dv: cols[4] ?? '',
+          permisoInforme: cols[5] ?? '',
+          dobleRol: cols[6] ?? '',
+        }));
+      if (parsed.length === 0) {
         setVotantes([]);
         setVotantesFileName(null);
         setVotantesError(ERROR_MSG);
         return;
       }
-      setVotantes(valid);
+      setVotantes(parsed);
       setVotantesFileName(file.name);
     } catch {
       setVotantes([]);
