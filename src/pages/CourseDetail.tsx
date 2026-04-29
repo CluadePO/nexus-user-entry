@@ -656,10 +656,19 @@ const CourseDetail: React.FC = () => {
           {/* Contact Information */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Building2 className="h-5 w-5 text-primary" />
-                Información de Contacto
-              </CardTitle>
+              <div className="flex items-center justify-between gap-2 flex-wrap">
+                <CardTitle className="flex items-center gap-2">
+                  <Building2 className="h-5 w-5 text-primary" />
+                  Información del Proveedor
+                </CardTitle>
+                <Button
+                  className="gap-2"
+                  onClick={() => setQuoteModalOpen(true)}
+                >
+                  <FileText className="h-4 w-4" />
+                  Cotizar el curso
+                </Button>
+              </div>
             </CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
