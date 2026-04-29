@@ -832,29 +832,6 @@ const CourseDetail: React.FC = () => {
               </div>
             </CardContent>
           </Card>
-
-          {/* Related Topics */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Tag className="h-5 w-5 text-primary" />
-                Ver temas relacionados
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-2">
-                {course.relatedTopics.map((topic, index) => (
-                  <Badge 
-                    key={index} 
-                    variant="outline" 
-                    className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors py-2 px-4"
-                  >
-                    {topic}
-                  </Badge>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </div>
 
