@@ -109,10 +109,16 @@ const ComiteCreacionWizard = () => {
 
   // Step 2
   const [candidatos, setCandidatos] = useState<CandidatoRow[]>([]);
+  const [candidatosFileName, setCandidatosFileName] = useState<string | null>(null);
+  const [candidatosError, setCandidatosError] = useState<string | null>(null);
+  const [candidatosDragOver, setCandidatosDragOver] = useState(false);
   const candidatosFileRef = useRef<HTMLInputElement>(null);
 
   // Step 3
   const [votantes, setVotantes] = useState<VotanteRow[]>([]);
+  const [votantesFileName, setVotantesFileName] = useState<string | null>(null);
+  const [votantesError, setVotantesError] = useState<string | null>(null);
+  const [votantesDragOver, setVotantesDragOver] = useState(false);
   const votantesFileRef = useRef<HTMLInputElement>(null);
 
   // Step 4
