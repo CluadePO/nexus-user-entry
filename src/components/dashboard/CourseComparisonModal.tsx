@@ -96,7 +96,7 @@ export const CourseComparisonModal: React.FC<CourseComparisonModalProps> = ({
 
   // Auto-close when no courses remain
   React.useEffect(() => {
-    if (isOpen && selectedCourses.length === 0) {
+    if (isOpen && selectedCourses.length < 2) {
       onClose();
     }
   }, [isOpen, selectedCourses.length, onClose]);
