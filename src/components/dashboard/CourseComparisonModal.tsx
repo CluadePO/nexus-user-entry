@@ -163,7 +163,7 @@ export const CourseComparisonModal: React.FC<CourseComparisonModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-[95vw] w-full max-h-[90vh] overflow-hidden p-0">
+      <DialogContent className="max-w-[95vw] w-full max-h-[90vh] p-0 flex flex-col overflow-hidden">
         <DialogHeader className="p-6 pb-4 border-b bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5">
           <DialogTitle className="flex items-center gap-3 text-xl">
             <div className="p-2 bg-primary/10 rounded-lg">
