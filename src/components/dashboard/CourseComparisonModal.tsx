@@ -163,7 +163,7 @@ export const CourseComparisonModal: React.FC<CourseComparisonModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-[95vw] w-full max-h-[90vh] overflow-hidden p-0">
+      <DialogContent className="max-w-[95vw] w-full max-h-[90vh] p-0 flex flex-col overflow-hidden">
         <DialogHeader className="p-6 pb-4 border-b bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5">
           <DialogTitle className="flex items-center gap-3 text-xl">
             <div className="p-2 bg-primary/10 rounded-lg">
@@ -180,7 +180,7 @@ export const CourseComparisonModal: React.FC<CourseComparisonModalProps> = ({
           {/* Main Comparison Area */}
           <div className="flex-1 overflow-auto p-6">
             {/* Course Headers */}
-            <div className="grid gap-4 mb-6" style={{ gridTemplateColumns: `repeat(${Math.max(selectedCourses.length, 2)}, minmax(200px, 1fr))` }}>
+            <div className="grid gap-4 mb-6" style={{ gridTemplateColumns: `repeat(${Math.max(selectedCourses.length, 1)}, minmax(200px, 1fr))` }}>
               {selectedCourses.map((course, index) => (
                 <div
                   key={course.id}
@@ -204,17 +204,6 @@ export const CourseComparisonModal: React.FC<CourseComparisonModalProps> = ({
                     <X className="h-4 w-4" />
                   </button>
 
-                  {/* Swap Button */}
-                  <button
-                    onClick={() => setSwappingSlot(swappingSlot === course.id ? null : course.id)}
-                    className={`absolute bottom-2 right-2 p-1.5 rounded-full transition-all z-10 ${
-                      swappingSlot === course.id
-                        ? 'bg-primary text-white'
-                        : 'bg-background/80 hover:bg-primary/10 opacity-0 group-hover:opacity-100'
-                    }`}
-                  >
-                    <ArrowLeftRight className="h-4 w-4" />
-                  </button>
 
                   {/* Course Image */}
                   <div className="relative h-32 overflow-hidden">
@@ -248,25 +237,6 @@ export const CourseComparisonModal: React.FC<CourseComparisonModalProps> = ({
                       Solicitar cotización
                     </Button>
                   </div>
-                </div>
-              ))}
-
-              {/* Empty Slots */}
-              {Array.from({ length: emptySlots }).map((_, index) => (
-                <div
-                  key={`empty-${index}`}
-                  className="rounded-xl border-2 border-dashed border-muted-foreground/30 flex flex-col items-center justify-center min-h-[200px] bg-muted/20 hover:border-primary/50 hover:bg-primary/5 transition-all cursor-pointer group"
-                  onClick={() => setSwappingSlot(null)}
-                >
-                  <div className="p-3 rounded-full bg-muted group-hover:bg-primary/10 transition-colors mb-2">
-                    <Plus className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors" />
-                  </div>
-                  <p className="text-sm text-muted-foreground group-hover:text-primary transition-colors">
-                    Agregar curso
-                  </p>
-                  <p className="text-xs text-muted-foreground/60 mt-1">
-                    Selecciona del panel derecho
-                  </p>
                 </div>
               ))}
             </div>
