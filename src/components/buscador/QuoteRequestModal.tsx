@@ -213,60 +213,53 @@ const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
 
                 <Separator />
 
-                {/* Franchise Tier Participants */}
+                {/* Participants Selector */}
                 <div className="space-y-3">
                   <h3 className="font-semibold text-foreground flex items-center gap-2">
                     <Users className="h-4 w-4 text-primary" />
-                    Participantes por tramo de franquicia
+                    Número de participantes <span className="text-destructive">*</span>
                   </h3>
-                  <p className="text-xs text-muted-foreground">
-                    Ingresa la cantidad de participantes según el tramo de franquicia tributaria que aplique.
-                  </p>
-                  <div className="space-y-3">
-                    {franchiseTiers.map((tier) => {
-                      const colors = getColorClasses(tier.color);
-                      const tierCoverage = ((baseValuePerParticipant * tier.percentage) / 100) * tierParticipants[tier.percentage];
+                  <div className="flex flex-wrap gap-2">
+                    {[1, 2, 3, 4, 5, 6, 7].map((n) => {
+                      const active = !customMode && participants === n;
                       return (
-                        <div key={tier.percentage} className={`p-3 rounded-lg border ${colors.bg} space-y-2`}>
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                              <div className={`w-3 h-3 rounded-full ${colors.dot}`} />
-                              <span className="text-sm font-semibold">Tramo {tier.label}</span>
-                            </div>
-                            <span className={`font-bold text-sm ${colors.text}`}>
-                              {formatPrice(tierCoverage)}
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Button
-                              type="button"
-                              variant="outline"
-                              size="icon"
-                              className="h-8 w-8 shrink-0"
-                              onClick={() => handleTierChange(tier.percentage, tierParticipants[tier.percentage] - 1)}
-                            >
-                              -
-                            </Button>
-                            <input
-                              type="number"
-                              min="0"
-                              value={tierParticipants[tier.percentage]}
-                              onChange={(e) => handleTierChange(tier.percentage, parseInt(e.target.value) || 0)}
-                              className="flex h-8 w-full rounded-md border border-input bg-background px-3 py-1 text-center text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                            />
-                            <Button
-                              type="button"
-                              variant="outline"
-                              size="icon"
-                              className="h-8 w-8 shrink-0"
-                              onClick={() => handleTierChange(tier.percentage, tierParticipants[tier.percentage] + 1)}
-                            >
-                              +
-                            </Button>
-                          </div>
-                        </div>
+                        <button
+                          key={n}
+                          type="button"
+                          onClick={() => handleSelectParticipants(n)}
+                          className={`h-11 w-11 rounded-md border text-sm font-medium transition-colors ${
+                            active
+                              ? 'border-primary bg-primary text-primary-foreground'
+                              : 'border-input bg-background hover:border-primary hover:text-primary'
+                          }`}
+                        >
+                          {n}
+                        </button>
                       );
                     })}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCustomMode(true);
+                        if (participants < 8) setParticipants(8);
+                      }}
+                      className={`h-11 px-4 rounded-md border text-sm font-medium transition-colors ${
+                        customMode
+                          ? 'border-primary bg-primary text-primary-foreground'
+                          : 'border-input bg-background hover:border-primary hover:text-primary'
+                      }`}
+                    >
+                      8+
+                    </button>
+                    {customMode && (
+                      <input
+                        type="number"
+                        min={8}
+                        value={participants}
+                        onChange={(e) => setParticipants(Math.max(8, parseInt(e.target.value) || 8))}
+                        className="h-11 w-24 rounded-md border border-input bg-background px-3 text-center text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      />
+                    )}
                   </div>
                 </div>
 
@@ -280,15 +273,6 @@ const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Valor efectivo total</span>
                       <span className="font-medium">{formatPrice(calculations.totalEffective)}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Total franquicia</span>
-                      <span className="font-medium text-primary">{formatPrice(calculations.totalFranchise)}</span>
-                    </div>
-                    <Separator />
-                    <div className="flex justify-between text-sm font-semibold">
-                      <span className="text-foreground">Costo empresa</span>
-                      <span className="text-destructive">{formatPrice(calculations.companyCost)}</span>
                     </div>
                   </div>
                 )}
