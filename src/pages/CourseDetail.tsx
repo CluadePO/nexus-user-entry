@@ -730,13 +730,6 @@ const CourseDetail: React.FC = () => {
                   </div>
                 )}
                 <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">Horas</p>
-                  <p className="font-medium flex items-center gap-1">
-                    <Clock className="h-4 w-4 text-muted-foreground" />
-                    {course.hours} horas
-                  </p>
-                </div>
-                <div className="space-y-1">
                   <p className="text-sm text-muted-foreground">Área</p>
                   <p className="font-medium flex items-center gap-1">
                     <Tag className="h-4 w-4 text-muted-foreground" />
@@ -750,6 +743,34 @@ const CourseDetail: React.FC = () => {
                     {course.specialty}
                   </p>
                 </div>
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground">Quorum Mínimo</p>
+                  <p className="font-medium flex items-center gap-1">
+                    <Users className="h-4 w-4 text-muted-foreground" />
+                    8 participantes
+                  </p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground">Valor por Participante</p>
+                  <p className="font-medium flex items-center gap-1">
+                    <DollarSign className="h-4 w-4 text-muted-foreground" />
+                    {formatPrice(course.effectiveValuePerParticipant)}
+                  </p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground">Valor Max. Imputable</p>
+                  <p className="font-medium flex items-center gap-1">
+                    <DollarSign className="h-4 w-4 text-muted-foreground" />
+                    {formatPrice(course.maxImputableValue)}
+                  </p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground">Horas</p>
+                  <p className="font-medium flex items-center gap-1">
+                    <Clock className="h-4 w-4 text-muted-foreground" />
+                    {course.hours} horas
+                  </p>
+                </div>
                 <div className="space-y-1 md:col-span-2">
                   <p className="text-sm text-muted-foreground">Lugar de ejecución</p>
                   <p className="font-medium flex items-center gap-1">
@@ -757,20 +778,6 @@ const CourseDetail: React.FC = () => {
                     {course.location}
                   </p>
                 </div>
-              </div>
-
-              <Separator className="my-6" />
-
-              {/* Action Buttons */}
-              <div className="mt-6">
-                <Button 
-                  className="w-full sm:w-auto gap-2" 
-                  size="lg"
-                  onClick={() => setQuoteModalOpen(true)}
-                >
-                  <FileText className="h-5 w-5" />
-                  Cotizar el curso
-                </Button>
               </div>
             </CardContent>
           </Card>
