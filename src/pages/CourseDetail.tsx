@@ -835,13 +835,26 @@ const CourseDetail: React.FC = () => {
 
               <Separator />
 
+              {/* Metodología */}
+              <div>
+                <h4 className="font-semibold text-foreground flex items-center gap-2 mb-2">
+                  <GraduationCap className="h-4 w-4 text-primary" />
+                  Metodología
+                </h4>
+                <p className="text-muted-foreground leading-relaxed">
+                  Metodología activo-participativa que combina clases expositivas, ejercicios prácticos, estudios de caso y trabajo colaborativo, permitiendo a los participantes aplicar inmediatamente los conocimientos adquiridos en situaciones reales de su entorno laboral.
+                </p>
+              </div>
+
+              <Separator />
+
               {/* Lo que aprenderás */}
               <div>
                 <h4 className="font-semibold text-foreground flex items-center gap-2 mb-3">
                   <Award className="h-4 w-4 text-primary" />
                   Lo que aprenderás
                 </h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 gap-2">
                   {course.learnings.map((learning, index) => (
                     <div key={index} className="flex items-start gap-2">
                       <CheckCircle className="h-5 w-5 text-emerald-500 flex-shrink-0 mt-0.5" />
@@ -849,6 +862,19 @@ const CourseDetail: React.FC = () => {
                     </div>
                   ))}
                 </div>
+              </div>
+
+              <Separator />
+
+              {/* Comentario Adicional */}
+              <div>
+                <h4 className="font-semibold text-foreground flex items-center gap-2 mb-2">
+                  <FileText className="h-4 w-4 text-primary" />
+                  Comentario Adicional
+                </h4>
+                <p className="text-muted-foreground leading-relaxed">
+                  Al finalizar el curso, los participantes recibirán un certificado de aprobación. El material didáctico y los recursos digitales estarán disponibles durante 6 meses posteriores al término del curso para refuerzo y consulta.
+                </p>
               </div>
             </CardContent>
           </Card>
