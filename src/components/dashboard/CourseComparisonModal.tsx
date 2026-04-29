@@ -180,7 +180,7 @@ export const CourseComparisonModal: React.FC<CourseComparisonModalProps> = ({
           {/* Main Comparison Area */}
           <div className="flex-1 overflow-auto p-6">
             {/* Course Headers */}
-            <div className="grid gap-4 mb-6" style={{ gridTemplateColumns: `repeat(${Math.max(selectedCourses.length, 2)}, minmax(200px, 1fr))` }}>
+            <div className="grid gap-4 mb-6" style={{ gridTemplateColumns: `repeat(${Math.max(selectedCourses.length, 1)}, minmax(200px, 1fr))` }}>
               {selectedCourses.map((course, index) => (
                 <div
                   key={course.id}
