@@ -278,14 +278,6 @@ export const CourseComparisonModal: React.FC<CourseComparisonModalProps> = ({
               </div>
             )}
 
-            {/* Action Buttons */}
-            {selectedCourses.length >= 2 && (
-              <div className="flex justify-center mt-6 pt-6 border-t">
-                <Button variant="outline" size="lg">
-                  Descargar comparación
-                </Button>
-              </div>
-            )}
           </div>
         </div>
       </DialogContent>
