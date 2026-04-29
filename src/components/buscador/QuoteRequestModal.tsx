@@ -63,37 +63,33 @@ const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
     company: '',
     message: '',
   });
-  const [tierParticipants, setTierParticipants] = useState<Record<number, number>>({
-    15: 0,
-    50: 0,
-    100: 0,
-  });
+  const [participants, setParticipants] = useState<number>(1);
+  const [customMode, setCustomMode] = useState<boolean>(false);
 
   // Sync from calculator when modal opens
   useEffect(() => {
     if (open && initialTierParticipants) {
-      setTierParticipants(initialTierParticipants);
+      const total = Object.values(initialTierParticipants).reduce((a, b) => a + b, 0);
+      if (total > 0) {
+        setParticipants(total);
+        setCustomMode(total >= 8);
+      }
     }
   }, [open, initialTierParticipants]);
 
-  const baseValuePerParticipant = Math.min(courseInfo.effectiveValuePerParticipant, courseInfo.maxImputableValue);
-  
   const calculations = useMemo(() => {
-    const totalParticipants = Object.values(tierParticipants).reduce((a, b) => a + b, 0);
+    const totalParticipants = participants;
     const totalEffective = courseInfo.effectiveValuePerParticipant * totalParticipants;
-    const totalFranchise = franchiseTiers.reduce((sum, tier) => {
-      return sum + ((baseValuePerParticipant * tier.percentage) / 100) * tierParticipants[tier.percentage];
-    }, 0);
-    const companyCost = Math.max(0, totalEffective - totalFranchise);
-    return { totalParticipants, totalEffective, totalFranchise, companyCost };
-  }, [tierParticipants, courseInfo.effectiveValuePerParticipant, baseValuePerParticipant]);
+    return { totalParticipants, totalEffective };
+  }, [participants, courseInfo.effectiveValuePerParticipant]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleTierChange = (percentage: number, value: number) => {
-    setTierParticipants((prev) => ({ ...prev, [percentage]: Math.max(0, value) }));
+  const handleSelectParticipants = (n: number) => {
+    setCustomMode(false);
+    setParticipants(n);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -102,9 +98,10 @@ const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
       toast({ title: "Debes ingresar al menos 1 participante", variant: "destructive" });
       return;
     }
-    console.log('Quote request submitted:', { ...formData, tierParticipants, ...calculations });
+    console.log('Quote request submitted:', { ...formData, participants, ...calculations });
     setFormData({ name: '', email: '', company: '', message: '' });
-    setTierParticipants({ 15: 0, 50: 0, 100: 0 });
+    setParticipants(1);
+    setCustomMode(false);
     onOpenChange(false);
     toast({
       title: "¡Solicitud enviada con éxito!",
