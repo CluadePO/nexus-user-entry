@@ -384,7 +384,7 @@ const ComiteBipartito = () => {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Card className="cursor-pointer hover:shadow-md transition-shadow border-primary/20" onClick={() => toast({ title: 'Generando resumen del comité...' })}>
+                <Card className="cursor-pointer hover:shadow-md transition-shadow border-primary/20" onClick={() => { setResumenStep(1); setResumenIdInput(''); setResumenIdConsultado(''); setShowResumenModal(true); }}>
                   <CardContent className="p-4 text-center space-y-2">
                     <FileCheck className="h-8 w-8 mx-auto text-primary" />
                     <p className="text-sm font-medium">Obtener Resumen Comité</p>
