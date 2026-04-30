@@ -7,6 +7,7 @@ import {
   CheckCircle,
   SignOut,
   Warning,
+  ChartBar,
 } from '@phosphor-icons/react';
 
 const candidatos = [
@@ -140,7 +141,8 @@ const PantallaRUT: React.FC<{ onContinue: () => void }> = ({ onContinue }) => {
   );
 };
 
-const PantallaVoto: React.FC = () => {
+const PantallaVoto: React.FC<{ tipo: 1 | 2 }> = ({ tipo }) => {
+  const navigate = useNavigate();
   const [radioSelected, setRadioSelected] = useState<string | null>(null);
   const [dropdownSelected, setDropdownSelected] = useState<string | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -176,6 +178,23 @@ const PantallaVoto: React.FC = () => {
           Tu participación ha sido registrada. Gracias por contribuir a la formación del Comité
           Bipartito.
         </p>
+        {tipo === 2 && (
+          <Button
+            type="default"
+            size="large"
+            icon={<ChartBar size={18} />}
+            onClick={() => navigate('/cursos/comite-bipartito?tab=reportes')}
+            style={{
+              marginTop: 24,
+              fontFamily: 'Poppins',
+              fontWeight: 600,
+              borderColor: '#65BFB1',
+              color: '#65BFB1',
+            }}
+          >
+            Ver resultados del comité
+          </Button>
+        )}
       </div>
     );
   }
@@ -313,9 +332,9 @@ const PantallaVoto: React.FC = () => {
   );
 };
 
-const ComiteVoto: React.FC<{ tipo: 1 | 2 }> = () => {
+const ComiteVoto: React.FC<{ tipo: 1 | 2 }> = ({ tipo }) => {
   const [step, setStep] = useState<'rut' | 'voto'>('rut');
-  // tipo and comiteId are visual-only in this prototype
+  // comiteId is visual-only in this prototype
   useParams();
 
   return (
@@ -341,7 +360,7 @@ const ComiteVoto: React.FC<{ tipo: 1 | 2 }> = () => {
         {step === 'rut' ? (
           <PantallaRUT onContinue={() => setStep('voto')} />
         ) : (
-          <PantallaVoto />
+          <PantallaVoto tipo={tipo} />
         )}
       </main>
       <Footer />
