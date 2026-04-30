@@ -735,11 +735,42 @@ const VotantesTab: React.FC = () => {
               <div style={{ textAlign: 'center', fontSize: 13, color: '#6B7280', marginTop: 2 }}>
                 {selected.rut}
               </div>
-              <div style={{ marginTop: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: 13, color: '#6B7280' }}>Id Comité</span>
-                <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#111827' }}>
-                  {selected.comite}
-                </span>
+              <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: 13, color: '#6B7280' }}>Id Comité</span>
+                  <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#111827' }}>
+                    {selected.comite}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: 13, color: '#6B7280' }}>Nombre</span>
+                  <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#111827' }}>
+                    {(() => {
+                      const ap = selected.apellidoPaterno;
+                      const am = selected.apellidoMaterno;
+                      if (ap !== undefined || am !== undefined) return selected.nombre.split(' ')[0] || selected.nombre;
+                      return selected.nombre;
+                    })()}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: 13, color: '#6B7280' }}>Apellido Paterno</span>
+                  <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#111827' }}>
+                    {selected.apellidoPaterno && selected.apellidoPaterno.trim() ? selected.apellidoPaterno : '—'}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: 13, color: '#6B7280' }}>Apellido Materno</span>
+                  <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#111827' }}>
+                    {selected.apellidoMaterno && selected.apellidoMaterno.trim() ? selected.apellidoMaterno : '—'}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: 13, color: '#6B7280' }}>RUT</span>
+                  <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#111827' }}>
+                    {selected.rutNumero && selected.rutDv ? `${selected.rutNumero}-${selected.rutDv}` : selected.rut}
+                  </span>
+                </div>
               </div>
               <div style={{ borderTop: '1px solid #E5E7EB', margin: '16px 0' }} />
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
