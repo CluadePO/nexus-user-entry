@@ -363,7 +363,7 @@ const ComiteBipartito = () => {
         </div>)}
 
         {/* ===== MANTENEDOR DE REPORTES ===== */}
-        <TabsContent value="reportes" className="space-y-4">
+        {activeTab === 'reportes' && (<div className="space-y-4">
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
