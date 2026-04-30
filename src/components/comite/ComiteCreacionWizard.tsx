@@ -865,7 +865,14 @@ const ComiteCreacionWizard = () => {
                         <th className="text-left p-2">Ap. Paterno</th>
                         <th className="text-left p-2">Ap. Materno</th>
                         <th className="text-left p-2">RUT*</th>
-                        <th className="text-left p-2">DV*</th>
+                        <th className="text-left p-2">
+                          <span className="inline-flex items-center gap-1">
+                            DV*
+                            <span title="El DV se calcula automáticamente según el algoritmo del Servicio de Impuestos Internos (SII). Puede ser un número del 0 al 9 o la letra K." className="inline-flex cursor-help" aria-label="Ayuda DV">
+                              <Info className="h-3.5 w-3.5 text-muted-foreground" />
+                            </span>
+                          </span>
+                        </th>
                         <th className="text-left p-2" title="0 = solo vota · 1 = vota y ve informes">Permiso informe*</th>
                         <th className="text-left p-2" title="0 = solo votante · 1 = votante y candidato">Doble rol*</th>
                         <th className="text-right p-2 w-16">Acciones</th>
