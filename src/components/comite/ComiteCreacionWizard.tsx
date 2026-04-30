@@ -213,15 +213,37 @@ const ComiteCreacionWizard = () => {
     if (votantesFileRef.current) votantesFileRef.current.value = '';
   };
 
+  // Build set of duplicate keys (rut+dv) — only keys that appear in 2+ rows count.
+  const computeDuplicateKeys = (rows: { rut: string; dv: string }[]): Set<string> => {
+    const counts = new Map<string, number>();
+    rows.forEach(r => {
+      const key = `${r.rut.trim().toLowerCase()}|${r.dv.trim().toLowerCase()}`;
+      if (!r.rut.trim() || !r.dv.trim()) return;
+      counts.set(key, (counts.get(key) ?? 0) + 1);
+    });
+    const dups = new Set<string>();
+    counts.forEach((count, key) => { if (count > 1) dups.add(key); });
+    return dups;
+  };
+
+  const candidatosDuplicateKeys = useMemo(() => computeDuplicateKeys(candidatos), [candidatos]);
+  const votantesDuplicateKeys = useMemo(() => computeDuplicateKeys(votantes), [votantes]);
+
+  const isDuplicate = (rut: string, dv: string, dupSet: Set<string>) => {
+    if (!rut.trim() || !dv.trim()) return false;
+    return dupSet.has(`${rut.trim().toLowerCase()}|${dv.trim().toLowerCase()}`);
+  };
+
   const candidatosErrores = useMemo(() => {
     let errors = 0;
     candidatos.forEach(c => {
       if (!validateNombre(c.nombre)) errors++;
       if (!validateRut(c.rut)) errors++;
       if (!validateDv(c.dv)) errors++;
+      if (isDuplicate(c.rut, c.dv, candidatosDuplicateKeys)) errors++;
     });
     return errors;
-  }, [candidatos]);
+  }, [candidatos, candidatosDuplicateKeys]);
 
   const votantesErrores = useMemo(() => {
     let errors = 0;
@@ -231,9 +253,13 @@ const ComiteCreacionWizard = () => {
       if (!validateDv(v.dv)) errors++;
       if (!validateBinario(v.permisoInforme)) errors++;
       if (!validateBinario(v.dobleRol)) errors++;
+      if (isDuplicate(v.rut, v.dv, votantesDuplicateKeys)) errors++;
     });
     return errors;
-  }, [votantes]);
+  }, [votantes, votantesDuplicateKeys]);
+
+  const candidatosHasDup = candidatosDuplicateKeys.size > 0;
+  const votantesHasDup = votantesDuplicateKeys.size > 0;
 
   const updateCandidato = (id: string, field: keyof CandidatoRow, value: string) => {
     setCandidatos(prev => prev.map(c => (c.id === id ? { ...c, [field]: value } : c)));
