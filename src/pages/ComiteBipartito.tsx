@@ -289,7 +289,7 @@ const ComiteBipartito = () => {
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
+        </div>)}
 
         {/* ===== MANTENEDOR DE COMITÉS ===== */}
         <TabsContent value="comites" className="space-y-4">
