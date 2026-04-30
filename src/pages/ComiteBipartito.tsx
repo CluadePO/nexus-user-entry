@@ -18,6 +18,7 @@ import {
   Building2, Image, FileCheck, Eye, Download, Play, Square
 } from 'lucide-react';
 import ComiteCreacionWizard from "@/components/comite/ComiteCreacionWizard";
+import VotantesTab from "@/components/comite/VotantesTab";
 
 // Mock data
 const mockComites = [
@@ -183,66 +184,7 @@ const ComiteBipartito = () => {
 
 
         {/* ===== MANTENEDOR DE VOTANTES ===== */}
-        {activeTab === 'votantes' && (<div className="space-y-4">
-          <Card>
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-base flex items-center gap-2">
-                  <Users className="h-4 w-4 text-primary" />
-                  Mantenedor de Votantes
-                </CardTitle>
-                <div className="flex gap-2">
-                  <div className="relative">
-                    <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
-                    <Input placeholder="Buscar votante..." className="pl-7 h-8 text-xs w-48" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
-                  </div>
-                  <Button size="sm" className="text-xs" onClick={() => setShowAgregarVotante(true)}>
-                    <UserPlus className="h-3 w-3 mr-1" /> Agregar Votante
-                  </Button>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="text-xs">RUT</TableHead>
-                      <TableHead className="text-xs">Nombre</TableHead>
-                      <TableHead className="text-xs">Email</TableHead>
-                      <TableHead className="text-xs">Estado</TableHead>
-                      <TableHead className="text-xs text-right">Acciones</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {mockVotantes.filter(v => v.nombre.toLowerCase().includes(searchTerm.toLowerCase())).map(votante => (
-                      <TableRow key={votante.id}>
-                        <TableCell className="text-xs font-mono">{votante.rut}</TableCell>
-                        <TableCell className="text-xs">{votante.nombre}</TableCell>
-                        <TableCell className="text-xs text-muted-foreground">{votante.email}</TableCell>
-                        <TableCell>
-                          <Badge variant={votante.habilitado ? 'default' : 'destructive'} className="text-[10px]">
-                            {votante.habilitado ? 'Habilitado' : 'No Habilitado'}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-1">
-                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={() => toast({ title: `Verificando votante: ${votante.nombre}` })}>
-                              <Eye className="h-3 w-3" />
-                            </Button>
-                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0 text-destructive" onClick={() => toast({ title: `Votante ${votante.nombre} eliminado` })}>
-                              <Trash2 className="h-3 w-3" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </CardContent>
-          </Card>
-        </div>)}
+        {activeTab === 'votantes' && <VotantesTab />}
 
         {/* ===== MANTENEDOR DE CANDIDATOS ===== */}
         {activeTab === 'candidatos' && (<div className="space-y-4">
@@ -430,23 +372,7 @@ const ComiteBipartito = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Dialog: Agregar Votante */}
-      <Dialog open={showAgregarVotante} onOpenChange={setShowAgregarVotante}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Agregar Votante</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-3">
-            <div><Label className="text-xs">RUT</Label><Input className="h-8 text-xs" placeholder="12.345.678-9" /></div>
-            <div><Label className="text-xs">Nombre</Label><Input className="h-8 text-xs" placeholder="Nombre completo" /></div>
-            <div><Label className="text-xs">Email</Label><Input className="h-8 text-xs" placeholder="correo@empresa.cl" /></div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" size="sm" onClick={() => setShowAgregarVotante(false)}>Cancelar</Button>
-            <Button size="sm" onClick={() => { setShowAgregarVotante(false); toast({ title: 'Votante agregado exitosamente' }); }}>Agregar</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+
 
       {/* Dialog: Agregar Candidato */}
       <Dialog open={showAgregarCandidato} onOpenChange={setShowAgregarCandidato}>
