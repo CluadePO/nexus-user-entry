@@ -292,7 +292,7 @@ const ComiteBipartito = () => {
         </div>)}
 
         {/* ===== MANTENEDOR DE COMITÉS ===== */}
-        <TabsContent value="comites" className="space-y-4">
+        {activeTab === 'comites' && (<div className="space-y-4">
           <Card>
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
