@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import {
   ConfigProvider,
   Input as AntInput,
@@ -10,6 +10,7 @@ import {
   Tooltip as AntTooltip,
   Form as AntForm,
 } from 'antd';
+import type { InputRef } from 'antd';
 import {
   Users,
   MagnifyingGlass,
@@ -20,6 +21,7 @@ import {
   FileXls,
   FilePdf,
   UsersThree,
+  Buildings,
 } from '@phosphor-icons/react';
 import { toast as sonnerToast } from 'sonner';
 
@@ -34,20 +36,29 @@ interface Votante {
   dobleRol: 0 | 1;
 }
 
-const initialVotantes: Votante[] = [
-  { id: 1, rut: '10035838-7', nombre: 'María José González Pérez', estado: 'Habilitado', permisoInforme: 1, dobleRol: 0 },
-  { id: 2, rut: '12456789-K', nombre: 'Juan Carlos Muñoz Rojas', estado: 'Habilitado', permisoInforme: 0, dobleRol: 1 },
-  { id: 3, rut: '14897321-5', nombre: 'Camila Andrea Soto Vargas', estado: 'Habilitado', permisoInforme: 1, dobleRol: 0 },
-  { id: 4, rut: '15678234-2', nombre: 'Felipe Esteban Reyes Castro', estado: 'Inhabilitado', permisoInforme: 0, dobleRol: 0 },
-  { id: 5, rut: '16234567-8', nombre: 'Catalina Belén Fuentes Tapia', estado: 'Habilitado', permisoInforme: 0, dobleRol: 0 },
-  { id: 6, rut: '17345876-3', nombre: 'Diego Ignacio Morales Silva', estado: 'Habilitado', permisoInforme: 1, dobleRol: 1 },
-  { id: 7, rut: '18456987-9', nombre: 'Valentina Paz Herrera Núñez', estado: 'Habilitado', permisoInforme: 0, dobleRol: 0 },
-  { id: 8, rut: '19567432-1', nombre: 'Sebastián Andrés Carrasco Lagos', estado: 'Inhabilitado', permisoInforme: 0, dobleRol: 0 },
-  { id: 9, rut: '20678321-4', nombre: 'Francisca Antonia Vega Espinoza', estado: 'Habilitado', permisoInforme: 1, dobleRol: 0 },
-  { id: 10, rut: '21789654-6', nombre: 'Matías Alejandro Pizarro Bravo', estado: 'Habilitado', permisoInforme: 0, dobleRol: 0 },
-  { id: 11, rut: '22890345-0', nombre: 'Isidora Constanza Araya Ortiz', estado: 'Habilitado', permisoInforme: 0, dobleRol: 1 },
-  { id: 12, rut: '23901234-7', nombre: 'Benjamín Tomás Donoso Pino', estado: 'Habilitado', permisoInforme: 1, dobleRol: 0 },
-];
+const VOTANTES_POR_COMITE: Record<string, Votante[]> = {
+  '644': [
+    { id: 6441, rut: '10035838-7', nombre: 'Soraya Katherine Lagos Lagos', estado: 'Habilitado', permisoInforme: 0, dobleRol: 1 },
+    { id: 6442, rut: '10108875-8', nombre: 'Sandra Maritza Aravena Duguet', estado: 'Inhabilitado', permisoInforme: 1, dobleRol: 0 },
+    { id: 6443, rut: '10213203-3', nombre: 'Jaime Pascual Garcia Soto', estado: 'Habilitado', permisoInforme: 0, dobleRol: 1 },
+    { id: 6444, rut: '10461505-8', nombre: 'Gustavo Lehnebach Yovanovich', estado: 'Habilitado', permisoInforme: 1, dobleRol: 1 },
+    { id: 6445, rut: '10697688-0', nombre: 'Richard Raul Villalobos Vasquez', estado: 'Habilitado', permisoInforme: 0, dobleRol: 0 },
+  ],
+  '645': [
+    { id: 6451, rut: '12345678-9', nombre: 'Juan Pablo Morales Fuentes', estado: 'Habilitado', permisoInforme: 1, dobleRol: 1 },
+    { id: 6452, rut: '13456789-0', nombre: 'María José Contreras Pinto', estado: 'Habilitado', permisoInforme: 0, dobleRol: 0 },
+    { id: 6453, rut: '14567890-1', nombre: 'Carlos Andrés Muñoz Rojas', estado: 'Inhabilitado', permisoInforme: 1, dobleRol: 0 },
+    { id: 6454, rut: '15678901-2', nombre: 'Ana Belén Torres Soto', estado: 'Habilitado', permisoInforme: 0, dobleRol: 1 },
+    { id: 6455, rut: '16789012-3', nombre: 'Pedro Ignacio Vargas León', estado: 'Habilitado', permisoInforme: 1, dobleRol: 1 },
+  ],
+  '646': [
+    { id: 6461, rut: '17890123-4', nombre: 'Francisca Andrea Silva Araya', estado: 'Habilitado', permisoInforme: 0, dobleRol: 1 },
+    { id: 6462, rut: '18901234-5', nombre: 'Diego Sebastián Pérez Vega', estado: 'Habilitado', permisoInforme: 1, dobleRol: 0 },
+    { id: 6463, rut: '19012345-6', nombre: 'Valentina Paz Rojas Castro', estado: 'Inhabilitado', permisoInforme: 0, dobleRol: 0 },
+    { id: 6464, rut: '20123456-7', nombre: 'Rodrigo Alejandro Díaz Meza', estado: 'Habilitado', permisoInforme: 1, dobleRol: 1 },
+    { id: 6465, rut: '21234567-8', nombre: 'Camila Fernanda Núñez Reyes', estado: 'Habilitado', permisoInforme: 0, dobleRol: 1 },
+  ],
+};
 
 const getInitials = (name: string) => {
   const parts = name.trim().split(/\s+/);
@@ -106,12 +117,35 @@ const FlagBadge: React.FC<{ value: 0 | 1 }> = ({ value }) => {
   );
 };
 
+const ComiteContextBadge: React.FC<{ id: string }> = ({ id }) => (
+  <span
+    style={{
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: 6,
+      background: 'rgba(101,191,177,0.15)',
+      color: TEAL,
+      fontFamily: 'Poppins',
+      fontSize: 12,
+      fontWeight: 600,
+      padding: '4px 12px',
+      borderRadius: 999,
+    }}
+  >
+    <Buildings size={14} weight="duotone" />
+    Comité activo: {id}
+  </span>
+);
+
 const VotantesTab: React.FC = () => {
-  const [votantes, setVotantes] = useState<Votante[]>(initialVotantes);
+  const [votantes, setVotantes] = useState<Votante[]>([]);
+  const [comiteActivo, setComiteActivo] = useState<string>('');
   const [idComite, setIdComite] = useState('');
+  const [idComiteError, setIdComiteError] = useState<string>('');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [pageSize] = useState(10);
+  const idComiteRef = useRef<InputRef>(null);
 
   const [showAdd, setShowAdd] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
@@ -133,11 +167,31 @@ const VotantesTab: React.FC = () => {
 
   const handleConsultar = () => {
     if (!idComite) return;
-    sonnerToast.success(`Consultando votantes del comité ${idComite}`);
+    setIdComiteError('');
+    const data = VOTANTES_POR_COMITE[idComite];
+    if (data) {
+      setVotantes(data);
+      setComiteActivo(idComite);
+      setPage(1);
+      sonnerToast.success(`Comité ${idComite} cargado`);
+    } else {
+      setVotantes([]);
+      setComiteActivo('');
+      sonnerToast.error(`No se encontraron votantes para el comité ${idComite}`);
+    }
   };
 
   const handleExport = (formato: string) => {
     sonnerToast.success(`Exportando ${formato}...`);
+  };
+
+  const handleClickAgregar = () => {
+    if (!comiteActivo) {
+      setIdComiteError('Debes consultar un comité antes de agregar votantes');
+      setTimeout(() => idComiteRef.current?.focus(), 0);
+      return;
+    }
+    setShowAdd(true);
   };
 
   const handleAdd = () => {
@@ -257,25 +311,38 @@ const VotantesTab: React.FC = () => {
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
             {/* Grupo izquierdo */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <AntInput
-                placeholder="Id Comité"
-                value={idComite}
-                onChange={(e) => setIdComite(e.target.value.replace(/\D/g, ''))}
-                style={{ width: 160, fontFamily: 'Poppins' }}
-              />
-              <AntButton
-                type="primary"
-                icon={<MagnifyingGlass size={16} />}
-                onClick={handleConsultar}
-                style={{ fontFamily: 'Poppins', fontWeight: 500 }}
-              >
-                Consultar
-              </AntButton>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <AntInput
+                  ref={idComiteRef}
+                  placeholder="Id Comité"
+                  value={idComite}
+                  status={idComiteError ? 'error' : ''}
+                  onChange={(e) => {
+                    setIdComite(e.target.value.replace(/\D/g, ''));
+                    if (idComiteError) setIdComiteError('');
+                  }}
+                  onPressEnter={handleConsultar}
+                  style={{ width: 160, fontFamily: 'Poppins' }}
+                />
+                <AntButton
+                  type="primary"
+                  icon={<MagnifyingGlass size={16} />}
+                  onClick={handleConsultar}
+                  style={{ fontFamily: 'Poppins', fontWeight: 500 }}
+                >
+                  Consultar
+                </AntButton>
+              </div>
+              {idComiteError && (
+                <div style={{ fontFamily: 'Poppins', fontSize: 12, color: '#ff4d4f' }}>
+                  {idComiteError}
+                </div>
+              )}
             </div>
 
             {/* Grupo derecho */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
               <AntInput
                 placeholder="Buscar votante..."
                 prefix={<MagnifyingGlass size={14} color="#9CA3AF" />}
@@ -290,7 +357,7 @@ const VotantesTab: React.FC = () => {
               <AntButton
                 type="primary"
                 icon={<UserPlus size={16} />}
-                onClick={() => setShowAdd(true)}
+                onClick={handleClickAgregar}
                 style={{ fontFamily: 'Poppins', fontWeight: 500 }}
               >
                 Agregar Votante
@@ -334,6 +401,13 @@ const VotantesTab: React.FC = () => {
           </div>
         </div>
 
+        {/* Contexto activo */}
+        {comiteActivo && votantes.length > 0 && (
+          <div>
+            <ComiteContextBadge id={comiteActivo} />
+          </div>
+        )}
+
         {/* Tabla */}
         <div
           style={{
@@ -347,7 +421,9 @@ const VotantesTab: React.FC = () => {
             <div style={{ padding: '48px 24px', textAlign: 'center' }}>
               <UsersThree size={48} color="#D1D5DB" weight="duotone" style={{ display: 'inline-block' }} />
               <div style={{ fontFamily: 'Poppins', fontSize: 14, color: '#6B7280', marginTop: 12 }}>
-                No se encontraron votantes
+                {idComite && !comiteActivo
+                  ? `No se encontraron votantes para el comité ${idComite}`
+                  : 'No se encontraron votantes'}
               </div>
               <div style={{ fontFamily: 'Poppins', fontSize: 12, color: '#9CA3AF', marginTop: 4 }}>
                 Intenta con otro Id de comité o término de búsqueda
@@ -409,6 +485,21 @@ const VotantesTab: React.FC = () => {
             </AntButton>,
           ]}
         >
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '10px 12px',
+              background: '#F9FAFB',
+              border: '1px solid #E5E7EB',
+              borderRadius: 8,
+              marginBottom: 16,
+            }}
+          >
+            <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>Id Comité</span>
+            <ComiteContextBadge id={comiteActivo} />
+          </div>
           <AntForm form={form} layout="vertical" initialValues={{ estado: 'Habilitado' }} style={{ fontFamily: 'Poppins' }}>
             <AntForm.Item
               label="RUT"
@@ -471,6 +562,12 @@ const VotantesTab: React.FC = () => {
               </div>
               <div style={{ textAlign: 'center', fontSize: 13, color: '#6B7280', marginTop: 2 }}>
                 {selected.rut}
+              </div>
+              <div style={{ marginTop: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: 13, color: '#6B7280' }}>Id Comité</span>
+                <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#111827' }}>
+                  {comiteActivo || '—'}
+                </span>
               </div>
               <div style={{ borderTop: '1px solid #E5E7EB', margin: '16px 0' }} />
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
