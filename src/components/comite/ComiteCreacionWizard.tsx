@@ -766,6 +766,7 @@ const ComiteCreacionWizard = () => {
                         const errDv = !validateDv(v.dv);
                         const errPI = !validateBinario(v.permisoInforme);
                         const errDR = !validateBinario(v.dobleRol);
+                        const isDup = isDuplicate(v.rut, v.dv, votantesDuplicateKeys);
                         return (
                           <tr key={v.id} className="border-t border-[#E5E7EB]">
                             <td className="p-2 text-muted-foreground">{idx + 1}</td>
