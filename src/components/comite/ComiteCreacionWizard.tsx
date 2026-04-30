@@ -707,7 +707,7 @@ const ComiteCreacionWizard = () => {
               </Button>
               <Button
                 disabled={candidatos.length === 0 || candidatosErrores > 0}
-                onClick={() => setStep(3)}
+                onClick={handleConfirmCandidatos}
                 className="bg-primary hover:bg-primary/90"
               >
                 Continuar con votantes <ArrowRight className="h-4 w-4 ml-1" />
@@ -910,7 +910,7 @@ const ComiteCreacionWizard = () => {
               </Button>
               <Button
                 disabled={votantes.length === 0 || votantesErrores > 0}
-                onClick={() => setStep(4)}
+                onClick={handleConfirmVotantes}
                 className="bg-primary hover:bg-primary/90"
               >
                 Finalizar carga <ArrowRight className="h-4 w-4 ml-1" />
