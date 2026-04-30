@@ -745,12 +745,9 @@ const VotantesTab: React.FC = () => {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ fontSize: 13, color: '#6B7280' }}>Nombre</span>
                   <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#111827' }}>
-                    {(() => {
-                      const ap = selected.apellidoPaterno;
-                      const am = selected.apellidoMaterno;
-                      if (ap !== undefined || am !== undefined) return selected.nombre.split(' ')[0] || selected.nombre;
-                      return selected.nombre;
-                    })()}
+                    {selected.apellidoPaterno !== undefined || selected.apellidoMaterno !== undefined
+                      ? (selected.nombre.split(/\s+/)[0] || selected.nombre)
+                      : selected.nombre}
                   </span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
