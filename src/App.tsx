@@ -26,6 +26,7 @@ import Precontratos from "./pages/Precontratos";
 import PrecontratosNuevo from "./pages/PrecontratosNuevo";
 import LiquidacionSence from "./pages/LiquidacionSence";
 import ComiteBipartito from "./pages/ComiteBipartito";
+import ComiteVoto from "./pages/ComiteVoto";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
