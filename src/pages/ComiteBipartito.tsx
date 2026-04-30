@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -47,7 +48,12 @@ interface CandidatoCreacion {
 }
 
 const ComiteBipartito = () => {
-  const [activeTab, setActiveTab] = useState('creacion');
+  const [searchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'creacion');
+  useEffect(() => {
+    const t = searchParams.get('tab');
+    if (t) setActiveTab(t);
+  }, [searchParams]);
   const [searchTerm, setSearchTerm] = useState('');
   const [showCrearComite, setShowCrearComite] = useState(false);
   const [showAgregarVotante, setShowAgregarVotante] = useState(false);
