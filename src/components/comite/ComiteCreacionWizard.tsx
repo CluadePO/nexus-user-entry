@@ -579,6 +579,7 @@ const ComiteCreacionWizard = () => {
                         const errNombre = !validateNombre(c.nombre);
                         const errRut = !validateRut(c.rut);
                         const errDv = !validateDv(c.dv);
+                        const isDup = isDuplicate(c.rut, c.dv, candidatosDuplicateKeys);
                         return (
                           <tr key={c.id} className="border-t border-[#E5E7EB]">
                             <td className="p-2 text-muted-foreground">{idx + 1}</td>
