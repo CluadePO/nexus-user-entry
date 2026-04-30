@@ -508,12 +508,15 @@ const ComiteCreacionWizard = () => {
               <>
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-muted-foreground">
-                    {candidatos.length} candidatos cargados · {candidatosErrores} errores
+                    {candidatos.length} registros cargados · <span className={candidatosErrores > 0 ? 'text-destructive font-medium' : ''}>{candidatosErrores} errores</span>
                   </span>
                 </div>
 
                 {candidatosErrores > 0 && (
-                  <div className="flex items-center gap-2 bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-md p-3 text-sm">
+                  <div
+                    className="flex items-center gap-2 border rounded-md p-3 text-sm text-yellow-900"
+                    style={{ backgroundColor: '#FEF3C7', borderColor: '#FDE68A' }}
+                  >
                     <AlertTriangle className="h-4 w-4 shrink-0" />
                     Corrige los errores antes de continuar
                   </div>
@@ -541,11 +544,16 @@ const ComiteCreacionWizard = () => {
                           <tr key={c.id} className="border-t border-[#E5E7EB]">
                             <td className="p-2 text-muted-foreground">{idx + 1}</td>
                             <td className="p-1">
-                              <Input
-                                value={c.nombre}
-                                onChange={(e) => updateCandidato(c.id, 'nombre', e.target.value)}
-                                className={cn('h-8 text-xs', errNombre && 'border-destructive')}
-                              />
+                              <div className="relative">
+                                <Input
+                                  value={c.nombre}
+                                  onChange={(e) => updateCandidato(c.id, 'nombre', e.target.value)}
+                                  className={cn('h-8 text-xs', errNombre && 'border-destructive pr-7')}
+                                />
+                                {errNombre && (
+                                  <AlertTriangle className="h-3.5 w-3.5 text-destructive absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+                                )}
+                              </div>
                             </td>
                             <td className="p-1">
                               <Input
@@ -678,12 +686,15 @@ const ComiteCreacionWizard = () => {
               <>
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-muted-foreground">
-                    {votantes.length} votantes cargados · {votantesErrores} errores
+                    {votantes.length} registros cargados · <span className={votantesErrores > 0 ? 'text-destructive font-medium' : ''}>{votantesErrores} errores</span>
                   </span>
                 </div>
 
                 {votantesErrores > 0 && (
-                  <div className="flex items-center gap-2 bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-md p-3 text-sm">
+                  <div
+                    className="flex items-center gap-2 border rounded-md p-3 text-sm text-yellow-900"
+                    style={{ backgroundColor: '#FEF3C7', borderColor: '#FDE68A' }}
+                  >
                     <AlertTriangle className="h-4 w-4 shrink-0" />
                     Corrige los errores antes de continuar
                   </div>
@@ -700,7 +711,7 @@ const ComiteCreacionWizard = () => {
                         <th className="text-left p-2">RUT*</th>
                         <th className="text-left p-2">DV*</th>
                         <th className="text-left p-2" title="0 = solo vota · 1 = vota y ve informes">Permiso informe*</th>
-                        <th className="text-left p-2" title="0 = solo votante · 1 = votante y candidato opcional">Doble rol*</th>
+                        <th className="text-left p-2" title="0 = solo votante · 1 = votante y candidato">Doble rol*</th>
                         <th className="text-right p-2 w-16">Acciones</th>
                       </tr>
                     </thead>
@@ -715,11 +726,16 @@ const ComiteCreacionWizard = () => {
                           <tr key={v.id} className="border-t border-[#E5E7EB]">
                             <td className="p-2 text-muted-foreground">{idx + 1}</td>
                             <td className="p-1">
-                              <Input
-                                value={v.nombre}
-                                onChange={(e) => updateVotante(v.id, 'nombre', e.target.value)}
-                                className={cn('h-8 text-xs', errNombre && 'border-destructive')}
-                              />
+                              <div className="relative">
+                                <Input
+                                  value={v.nombre}
+                                  onChange={(e) => updateVotante(v.id, 'nombre', e.target.value)}
+                                  className={cn('h-8 text-xs', errNombre && 'border-destructive pr-7')}
+                                />
+                                {errNombre && (
+                                  <AlertTriangle className="h-3.5 w-3.5 text-destructive absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+                                )}
+                              </div>
                             </td>
                             <td className="p-1">
                               <Input
