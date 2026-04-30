@@ -261,6 +261,63 @@ const ComiteCreacionWizard = () => {
   const candidatosHasDup = candidatosDuplicateKeys.size > 0;
   const votantesHasDup = votantesDuplicateKeys.size > 0;
 
+  // ---------- External RUT validation (simulated) ----------
+  // Hardcoded RUTs already registered in other comités
+  const EXTERNAL_RUT_REGISTRY: Record<string, number> = {
+    '10035838': 644,
+    '12345678': 645,
+  };
+  type ExternalConflict = { nombre: string; rut: string; dv: string; comiteId: number };
+  const [externalWarning, setExternalWarning] = useState<{
+    open: boolean;
+    origen: 'candidatos' | 'votantes' | null;
+    conflicts: ExternalConflict[];
+  }>({ open: false, origen: null, conflicts: [] });
+
+  const findExternalConflicts = (
+    rows: Array<{ nombre: string; apPaterno?: string; apMaterno?: string; rut: string; dv: string }>
+  ): ExternalConflict[] => {
+    const out: ExternalConflict[] = [];
+    rows.forEach(r => {
+      const key = (r.rut || '').trim();
+      if (key && EXTERNAL_RUT_REGISTRY[key] !== undefined) {
+        const fullName = [r.nombre, r.apPaterno, r.apMaterno].filter(Boolean).join(' ').trim();
+        out.push({
+          nombre: fullName || '—',
+          rut: key,
+          dv: r.dv,
+          comiteId: EXTERNAL_RUT_REGISTRY[key],
+        });
+      }
+    });
+    return out;
+  };
+
+  const handleConfirmCandidatos = () => {
+    const conflicts = findExternalConflicts(candidatos);
+    if (conflicts.length > 0) {
+      setExternalWarning({ open: true, origen: 'candidatos', conflicts });
+      return;
+    }
+    setStep(3);
+  };
+
+  const handleConfirmVotantes = () => {
+    const conflicts = findExternalConflicts(votantes);
+    if (conflicts.length > 0) {
+      setExternalWarning({ open: true, origen: 'votantes', conflicts });
+      return;
+    }
+    setStep(4);
+  };
+
+  const proceedAfterWarning = () => {
+    const origen = externalWarning.origen;
+    setExternalWarning({ open: false, origen: null, conflicts: [] });
+    if (origen === 'candidatos') setStep(3);
+    else if (origen === 'votantes') setStep(4);
+  };
+
   const updateCandidato = (id: string, field: keyof CandidatoRow, value: string) => {
     setCandidatos(prev => prev.map(c => (c.id === id ? { ...c, [field]: value } : c)));
   };
@@ -650,7 +707,7 @@ const ComiteCreacionWizard = () => {
               </Button>
               <Button
                 disabled={candidatos.length === 0 || candidatosErrores > 0}
-                onClick={() => setStep(3)}
+                onClick={handleConfirmCandidatos}
                 className="bg-primary hover:bg-primary/90"
               >
                 Continuar con votantes <ArrowRight className="h-4 w-4 ml-1" />
@@ -853,7 +910,7 @@ const ComiteCreacionWizard = () => {
               </Button>
               <Button
                 disabled={votantes.length === 0 || votantesErrores > 0}
-                onClick={() => setStep(4)}
+                onClick={handleConfirmVotantes}
                 className="bg-primary hover:bg-primary/90"
               >
                 Finalizar carga <ArrowRight className="h-4 w-4 ml-1" />
@@ -966,6 +1023,71 @@ const ComiteCreacionWizard = () => {
               onClick={() => { setConfirmOpen(false); setShowResult(true); }}
             >
               Sí, activar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* External RUT validation warning */}
+      <Dialog
+        open={externalWarning.open}
+        onOpenChange={(o) => !o && setExternalWarning({ open: false, origen: null, conflicts: [] })}
+      >
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <div className="flex items-center gap-2">
+              <div
+                className="h-9 w-9 rounded-full flex items-center justify-center shrink-0"
+                style={{ backgroundColor: '#FEF3C7' }}
+              >
+                <AlertTriangle className="h-5 w-5" style={{ color: '#B45309' }} />
+              </div>
+              <DialogTitle>RUTs ya registrados en otro comité</DialogTitle>
+            </div>
+            <DialogDescription>
+              Los siguientes {externalWarning.origen === 'candidatos' ? 'candidatos' : 'votantes'} ya
+              figuran como participantes activos en otro comité. Verifica si corresponde mantenerlos
+              antes de continuar.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="border border-[#E5E7EB] rounded-md overflow-hidden">
+            <table className="w-full text-xs">
+              <thead className="bg-muted/50">
+                <tr>
+                  <th className="text-left p-2">Nombre</th>
+                  <th className="text-left p-2">RUT</th>
+                  <th className="text-left p-2">Comité existente</th>
+                </tr>
+              </thead>
+              <tbody>
+                {externalWarning.conflicts.map((c, i) => (
+                  <tr key={i} className="border-t border-[#E5E7EB]">
+                    <td className="p-2">{c.nombre}</td>
+                    <td className="p-2 font-mono">{c.rut}-{c.dv}</td>
+                    <td className="p-2">
+                      <span
+                        className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium"
+                        style={{ backgroundColor: '#FEF3C7', color: '#92400E' }}
+                      >
+                        Comité #{c.comiteId}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setExternalWarning({ open: false, origen: null, conflicts: [] })}
+            >
+              Volver a revisar
+            </Button>
+            <Button className="bg-primary hover:bg-primary/90" onClick={proceedAfterWarning}>
+              Continuar de todas formas
             </Button>
           </DialogFooter>
         </DialogContent>
