@@ -70,6 +70,10 @@ const ComiteBipartito = () => {
   const [candidatosCargados, setCandidatosCargados] = useState<CandidatoCreacion[]>([]);
   const [votantesCargados, setVotantesCargados] = useState<number>(0);
   const [showResumen, setShowResumen] = useState(false);
+  const [showResumenModal, setShowResumenModal] = useState(false);
+  const [resumenStep, setResumenStep] = useState<1 | 2>(1);
+  const [resumenIdInput, setResumenIdInput] = useState('');
+  const [resumenIdConsultado, setResumenIdConsultado] = useState('');
 
   const handleCrearComiteWizard = () => {
     if (!rutEmpresa) {
