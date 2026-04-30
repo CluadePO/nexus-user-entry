@@ -5,12 +5,13 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Tabs as AntTabs, ConfigProvider } from 'antd';
-import { PlusCircle, Users as PhUsers, UserList, Buildings, ChartBar } from '@phosphor-icons/react';
+import { Tabs as AntTabs, ConfigProvider, Modal as AntModal, Input as AntInput, Button as AntButton } from 'antd';
+import { PlusCircle, Users as PhUsers, UserList, Buildings, ChartBar, FileText as PhFileText } from '@phosphor-icons/react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
+import { toast as sonnerToast } from 'sonner';
 import { 
   Users, UserPlus, Search, Plus, Trash2, CheckCircle, XCircle, 
   Upload, FileText, BarChart3, Vote, ShieldCheck, RefreshCw,
@@ -69,6 +70,10 @@ const ComiteBipartito = () => {
   const [candidatosCargados, setCandidatosCargados] = useState<CandidatoCreacion[]>([]);
   const [votantesCargados, setVotantesCargados] = useState<number>(0);
   const [showResumen, setShowResumen] = useState(false);
+  const [showResumenModal, setShowResumenModal] = useState(false);
+  const [resumenStep, setResumenStep] = useState<1 | 2>(1);
+  const [resumenIdInput, setResumenIdInput] = useState('');
+  const [resumenIdConsultado, setResumenIdConsultado] = useState('');
 
   const handleCrearComiteWizard = () => {
     if (!rutEmpresa) {
@@ -379,7 +384,7 @@ const ComiteBipartito = () => {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Card className="cursor-pointer hover:shadow-md transition-shadow border-primary/20" onClick={() => toast({ title: 'Generando resumen del comité...' })}>
+                <Card className="cursor-pointer hover:shadow-md transition-shadow border-primary/20" onClick={() => { setResumenStep(1); setResumenIdInput(''); setResumenIdConsultado(''); setShowResumenModal(true); }}>
                   <CardContent className="p-4 text-center space-y-2">
                     <FileCheck className="h-8 w-8 mx-auto text-primary" />
                     <p className="text-sm font-medium">Obtener Resumen Comité</p>
@@ -460,6 +465,92 @@ const ComiteBipartito = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Modal: Resumen Comité (Reportes) */}
+      <AntModal
+        open={showResumenModal}
+        onCancel={() => setShowResumenModal(false)}
+        footer={null}
+        title={null}
+        centered
+        width={480}
+        styles={{ body: { fontFamily: 'Poppins, sans-serif', padding: '24px 8px 8px' } }}
+      >
+        <div style={{ textAlign: 'center', marginBottom: 16 }}>
+          <ChartBar size={32} color="#65BFB1" weight="duotone" style={{ display: 'inline-block' }} />
+        </div>
+        <h2 style={{ fontFamily: 'Poppins', fontSize: 20, fontWeight: 600, color: '#111827', textAlign: 'center', margin: 0, marginBottom: 24 }}>
+          Resultados del Comité
+        </h2>
+
+        {resumenStep === 1 ? (
+          <div>
+            <label style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 500, color: '#374151', display: 'block', marginBottom: 6 }}>
+              Id Comité
+            </label>
+            <AntInput
+              size="large"
+              placeholder="Ingresa el ID"
+              value={resumenIdInput}
+              onChange={(e) => setResumenIdInput(e.target.value.replace(/\D/g, ''))}
+              style={{ fontFamily: 'Poppins' }}
+            />
+            <AntButton
+              type="primary"
+              size="large"
+              block
+              disabled={!resumenIdInput}
+              onClick={() => { setResumenIdConsultado(resumenIdInput); setResumenStep(2); }}
+              style={{ marginTop: 24, fontFamily: 'Poppins', fontWeight: 600 }}
+            >
+              Consultar
+            </AntButton>
+          </div>
+        ) : (
+          <div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {[
+                { label: 'Id Comité', value: resumenIdConsultado },
+                { label: 'Empresa', value: 'Constructora Diamante S.A.' },
+                { label: 'Rut Empresa', value: '70.200.800-K' },
+                { label: 'Total de Votantes', value: '45' },
+                { label: 'Total de Votos', value: '32' },
+                { label: 'Total sin Votar', value: '13' },
+              ].map((d) => (
+                <div key={d.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>{d.label}</span>
+                  <span style={{ fontFamily: 'Poppins', fontWeight: 600, color: '#111827', fontSize: 14 }}>{d.value}</span>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ borderTop: '1px solid #E5E7EB', margin: '16px 0' }} />
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <AntButton
+                type="primary"
+                size="large"
+                block
+                icon={<PhFileText size={18} />}
+                onClick={() => sonnerToast.success('Informe generado exitosamente')}
+                style={{ fontFamily: 'Poppins', fontWeight: 600 }}
+              >
+                Descargar Informe Resultados Votación
+              </AntButton>
+              <AntButton
+                type="default"
+                size="large"
+                block
+                icon={<PhUsers size={18} />}
+                onClick={() => sonnerToast.success('Informe generado exitosamente')}
+                style={{ fontFamily: 'Poppins', fontWeight: 600, borderColor: '#65BFB1', color: '#65BFB1' }}
+              >
+                Descargar Informe Resultados Votantes
+              </AntButton>
+            </div>
+          </div>
+        )}
+      </AntModal>
     </div>
   );
 };
