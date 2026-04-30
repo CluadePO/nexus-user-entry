@@ -261,6 +261,63 @@ const ComiteCreacionWizard = () => {
   const candidatosHasDup = candidatosDuplicateKeys.size > 0;
   const votantesHasDup = votantesDuplicateKeys.size > 0;
 
+  // ---------- External RUT validation (simulated) ----------
+  // Hardcoded RUTs already registered in other comités
+  const EXTERNAL_RUT_REGISTRY: Record<string, number> = {
+    '10035838': 644,
+    '12345678': 645,
+  };
+  type ExternalConflict = { nombre: string; rut: string; dv: string; comiteId: number };
+  const [externalWarning, setExternalWarning] = useState<{
+    open: boolean;
+    origen: 'candidatos' | 'votantes' | null;
+    conflicts: ExternalConflict[];
+  }>({ open: false, origen: null, conflicts: [] });
+
+  const findExternalConflicts = (
+    rows: Array<{ nombre: string; apPaterno?: string; apMaterno?: string; rut: string; dv: string }>
+  ): ExternalConflict[] => {
+    const out: ExternalConflict[] = [];
+    rows.forEach(r => {
+      const key = (r.rut || '').trim();
+      if (key && EXTERNAL_RUT_REGISTRY[key] !== undefined) {
+        const fullName = [r.nombre, r.apPaterno, r.apMaterno].filter(Boolean).join(' ').trim();
+        out.push({
+          nombre: fullName || '—',
+          rut: key,
+          dv: r.dv,
+          comiteId: EXTERNAL_RUT_REGISTRY[key],
+        });
+      }
+    });
+    return out;
+  };
+
+  const handleConfirmCandidatos = () => {
+    const conflicts = findExternalConflicts(candidatos);
+    if (conflicts.length > 0) {
+      setExternalWarning({ open: true, origen: 'candidatos', conflicts });
+      return;
+    }
+    setStep(3);
+  };
+
+  const handleConfirmVotantes = () => {
+    const conflicts = findExternalConflicts(votantes);
+    if (conflicts.length > 0) {
+      setExternalWarning({ open: true, origen: 'votantes', conflicts });
+      return;
+    }
+    setStep(4);
+  };
+
+  const proceedAfterWarning = () => {
+    const origen = externalWarning.origen;
+    setExternalWarning({ open: false, origen: null, conflicts: [] });
+    if (origen === 'candidatos') setStep(3);
+    else if (origen === 'votantes') setStep(4);
+  };
+
   const updateCandidato = (id: string, field: keyof CandidatoRow, value: string) => {
     setCandidatos(prev => prev.map(c => (c.id === id ? { ...c, [field]: value } : c)));
   };
