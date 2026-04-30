@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import * as XLSX from 'xlsx';
+import { message as antdMessage } from 'antd';
 
 const EMPRESAS = [
   { rut: '70.200.800-K', nombre: 'Constructora Diamante S.A.' },
@@ -384,7 +385,17 @@ const ComiteCreacionWizard = () => {
           <CardContent className="p-6 space-y-6">
             <div className="space-y-2">
               <Label className="text-sm">Empresa <span className="text-destructive">*</span></Label>
-              <Select value={empresaRut} onValueChange={setEmpresaRut}>
+              <Select value={empresaRut} onValueChange={(value) => {
+                setEmpresaRut(value);
+                if (logo) {
+                  setLogo(null);
+                  if (logoInputRef.current) logoInputRef.current.value = '';
+                  antdMessage.info({
+                    content: 'El logo anterior fue eliminado al cambiar de empresa',
+                    duration: 3,
+                  });
+                }
+              }}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Selecciona una empresa" />
                 </SelectTrigger>
