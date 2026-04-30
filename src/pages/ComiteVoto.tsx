@@ -11,6 +11,7 @@ import {
   FileText,
   Users,
   Buildings,
+  UserList,
 } from '@phosphor-icons/react';
 
 const getInitials = (fullName: string) => {
@@ -244,6 +245,21 @@ const PantallaVoto: React.FC<{ tipo: 1 | 2 }> = ({ tipo }) => {
         Favor selecciona el participante de tu elección.
       </p>
 
+      <div
+        style={{
+          width: 72,
+          height: 72,
+          borderRadius: 12,
+          background: '#F0FDF9',
+          border: '1px solid #99F6E4',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          margin: '0 auto 12px',
+        }}
+      >
+        <UserList size={36} color="#65BFB1" />
+      </div>
       <h3
         style={{
           fontSize: 16,
