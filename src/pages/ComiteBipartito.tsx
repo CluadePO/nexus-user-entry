@@ -184,66 +184,7 @@ const ComiteBipartito = () => {
 
 
         {/* ===== MANTENEDOR DE VOTANTES ===== */}
-        {activeTab === 'votantes' && (<div className="space-y-4">
-          <Card>
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-base flex items-center gap-2">
-                  <Users className="h-4 w-4 text-primary" />
-                  Mantenedor de Votantes
-                </CardTitle>
-                <div className="flex gap-2">
-                  <div className="relative">
-                    <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
-                    <Input placeholder="Buscar votante..." className="pl-7 h-8 text-xs w-48" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
-                  </div>
-                  <Button size="sm" className="text-xs" onClick={() => setShowAgregarVotante(true)}>
-                    <UserPlus className="h-3 w-3 mr-1" /> Agregar Votante
-                  </Button>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="text-xs">RUT</TableHead>
-                      <TableHead className="text-xs">Nombre</TableHead>
-                      <TableHead className="text-xs">Email</TableHead>
-                      <TableHead className="text-xs">Estado</TableHead>
-                      <TableHead className="text-xs text-right">Acciones</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {mockVotantes.filter(v => v.nombre.toLowerCase().includes(searchTerm.toLowerCase())).map(votante => (
-                      <TableRow key={votante.id}>
-                        <TableCell className="text-xs font-mono">{votante.rut}</TableCell>
-                        <TableCell className="text-xs">{votante.nombre}</TableCell>
-                        <TableCell className="text-xs text-muted-foreground">{votante.email}</TableCell>
-                        <TableCell>
-                          <Badge variant={votante.habilitado ? 'default' : 'destructive'} className="text-[10px]">
-                            {votante.habilitado ? 'Habilitado' : 'No Habilitado'}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-1">
-                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={() => toast({ title: `Verificando votante: ${votante.nombre}` })}>
-                              <Eye className="h-3 w-3" />
-                            </Button>
-                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0 text-destructive" onClick={() => toast({ title: `Votante ${votante.nombre} eliminado` })}>
-                              <Trash2 className="h-3 w-3" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </CardContent>
-          </Card>
-        </div>)}
+        {activeTab === 'votantes' && <VotantesTab />}
 
         {/* ===== MANTENEDOR DE CANDIDATOS ===== */}
         {activeTab === 'candidatos' && (<div className="space-y-4">
