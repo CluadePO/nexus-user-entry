@@ -726,11 +726,16 @@ const ComiteCreacionWizard = () => {
                           <tr key={v.id} className="border-t border-[#E5E7EB]">
                             <td className="p-2 text-muted-foreground">{idx + 1}</td>
                             <td className="p-1">
-                              <Input
-                                value={v.nombre}
-                                onChange={(e) => updateVotante(v.id, 'nombre', e.target.value)}
-                                className={cn('h-8 text-xs', errNombre && 'border-destructive')}
-                              />
+                              <div className="relative">
+                                <Input
+                                  value={v.nombre}
+                                  onChange={(e) => updateVotante(v.id, 'nombre', e.target.value)}
+                                  className={cn('h-8 text-xs', errNombre && 'border-destructive pr-7')}
+                                />
+                                {errNombre && (
+                                  <AlertTriangle className="h-3.5 w-3.5 text-destructive absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+                                )}
+                              </div>
                             </td>
                             <td className="p-1">
                               <Input
