@@ -265,26 +265,53 @@ const PantallaVoto: React.FC<{ tipo: 1 | 2 }> = ({ tipo }) => {
         style={{ width: '100%' }}
       >
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          {candidatos.map((c, i) => (
-            <label
-              key={c.id}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 12,
-                padding: '12px 8px',
-                background: '#fff',
-                borderBottom: i < candidatos.length - 1 ? '1px solid #E5E7EB' : 'none',
-                cursor: 'pointer',
-                transition: 'background 0.15s',
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = '#F9FAFB')}
-              onMouseLeave={(e) => (e.currentTarget.style.background = '#fff')}
-            >
-              <Radio value={c.id} />
-              <span style={{ fontSize: 14, color: '#111827' }}>{c.nombre}</span>
-            </label>
-          ))}
+          {candidatos.map((c, i) => {
+            const isSelected = radioSelected === c.id;
+            return (
+              <label
+                key={c.id}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 12,
+                  padding: '12px 8px',
+                  paddingLeft: isSelected ? 5 : 8,
+                  background: isSelected ? '#F0FDF9' : '#fff',
+                  borderLeft: isSelected ? '3px solid #65BFB1' : '3px solid transparent',
+                  borderBottom: i < candidatos.length - 1 ? '1px solid #E5E7EB' : 'none',
+                  cursor: 'pointer',
+                  transition: 'background 0.15s',
+                }}
+                onMouseEnter={(e) => {
+                  if (!isSelected) e.currentTarget.style.background = '#F9FAFB';
+                }}
+                onMouseLeave={(e) => {
+                  if (!isSelected) e.currentTarget.style.background = '#fff';
+                }}
+              >
+                <Radio value={c.id} />
+                <div
+                  style={{
+                    width: 36,
+                    height: 36,
+                    borderRadius: '50%',
+                    background: '#65BFB1',
+                    color: '#fff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontFamily: 'Poppins, sans-serif',
+                    fontSize: 13,
+                    fontWeight: 600,
+                    flexShrink: 0,
+                  }}
+                >
+                  {getInitials(c.nombre)}
+                </div>
+                <span style={{ fontSize: 14, color: '#111827' }}>{c.nombre}</span>
+              </label>
+            );
+          })}
         </div>
       </Radio.Group>
 
