@@ -213,15 +213,37 @@ const ComiteCreacionWizard = () => {
     if (votantesFileRef.current) votantesFileRef.current.value = '';
   };
 
+  // Build set of duplicate keys (rut+dv) — only keys that appear in 2+ rows count.
+  const computeDuplicateKeys = (rows: { rut: string; dv: string }[]): Set<string> => {
+    const counts = new Map<string, number>();
+    rows.forEach(r => {
+      const key = `${r.rut.trim().toLowerCase()}|${r.dv.trim().toLowerCase()}`;
+      if (!r.rut.trim() || !r.dv.trim()) return;
+      counts.set(key, (counts.get(key) ?? 0) + 1);
+    });
+    const dups = new Set<string>();
+    counts.forEach((count, key) => { if (count > 1) dups.add(key); });
+    return dups;
+  };
+
+  const candidatosDuplicateKeys = useMemo(() => computeDuplicateKeys(candidatos), [candidatos]);
+  const votantesDuplicateKeys = useMemo(() => computeDuplicateKeys(votantes), [votantes]);
+
+  const isDuplicate = (rut: string, dv: string, dupSet: Set<string>) => {
+    if (!rut.trim() || !dv.trim()) return false;
+    return dupSet.has(`${rut.trim().toLowerCase()}|${dv.trim().toLowerCase()}`);
+  };
+
   const candidatosErrores = useMemo(() => {
     let errors = 0;
     candidatos.forEach(c => {
       if (!validateNombre(c.nombre)) errors++;
       if (!validateRut(c.rut)) errors++;
       if (!validateDv(c.dv)) errors++;
+      if (isDuplicate(c.rut, c.dv, candidatosDuplicateKeys)) errors++;
     });
     return errors;
-  }, [candidatos]);
+  }, [candidatos, candidatosDuplicateKeys]);
 
   const votantesErrores = useMemo(() => {
     let errors = 0;
@@ -231,9 +253,13 @@ const ComiteCreacionWizard = () => {
       if (!validateDv(v.dv)) errors++;
       if (!validateBinario(v.permisoInforme)) errors++;
       if (!validateBinario(v.dobleRol)) errors++;
+      if (isDuplicate(v.rut, v.dv, votantesDuplicateKeys)) errors++;
     });
     return errors;
-  }, [votantes]);
+  }, [votantes, votantesDuplicateKeys]);
+
+  const candidatosHasDup = candidatosDuplicateKeys.size > 0;
+  const votantesHasDup = votantesDuplicateKeys.size > 0;
 
   const updateCandidato = (id: string, field: keyof CandidatoRow, value: string) => {
     setCandidatos(prev => prev.map(c => (c.id === id ? { ...c, [field]: value } : c)));
@@ -529,7 +555,9 @@ const ComiteCreacionWizard = () => {
                     style={{ backgroundColor: '#FEF3C7', borderColor: '#FDE68A' }}
                   >
                     <AlertTriangle className="h-4 w-4 shrink-0" />
-                    Corrige los errores antes de continuar
+                    {candidatosHasDup
+                      ? 'Existen RUTs duplicados. Revisa y elimina los registros repetidos antes de continuar.'
+                      : 'Corrige los errores antes de continuar'}
                   </div>
                 )}
 
@@ -551,6 +579,7 @@ const ComiteCreacionWizard = () => {
                         const errNombre = !validateNombre(c.nombre);
                         const errRut = !validateRut(c.rut);
                         const errDv = !validateDv(c.dv);
+                        const isDup = isDuplicate(c.rut, c.dv, candidatosDuplicateKeys);
                         return (
                           <tr key={c.id} className="border-t border-[#E5E7EB]">
                             <td className="p-2 text-muted-foreground">{idx + 1}</td>
@@ -584,14 +613,16 @@ const ComiteCreacionWizard = () => {
                               <Input
                                 value={c.rut}
                                 onChange={(e) => updateCandidato(c.id, 'rut', e.target.value)}
-                                className={cn('h-8 text-xs', errRut && 'border-destructive')}
+                                title={isDup ? 'RUT duplicado. Este registro ya existe en el listado.' : undefined}
+                                className={cn('h-8 text-xs', (errRut || isDup) && 'border-destructive')}
                               />
                             </td>
                             <td className="p-1">
                               <Input
                                 value={c.dv}
                                 onChange={(e) => updateCandidato(c.id, 'dv', e.target.value)}
-                                className={cn('h-8 text-xs w-14', errDv && 'border-destructive')}
+                                title={isDup ? 'RUT duplicado. Este registro ya existe en el listado.' : undefined}
+                                className={cn('h-8 text-xs w-14', (errDv || isDup) && 'border-destructive')}
                               />
                             </td>
                             <td className="p-1 text-right">
@@ -707,7 +738,9 @@ const ComiteCreacionWizard = () => {
                     style={{ backgroundColor: '#FEF3C7', borderColor: '#FDE68A' }}
                   >
                     <AlertTriangle className="h-4 w-4 shrink-0" />
-                    Corrige los errores antes de continuar
+                    {votantesHasDup
+                      ? 'Existen RUTs duplicados. Revisa y elimina los registros repetidos antes de continuar.'
+                      : 'Corrige los errores antes de continuar'}
                   </div>
                 )}
 
@@ -733,6 +766,7 @@ const ComiteCreacionWizard = () => {
                         const errDv = !validateDv(v.dv);
                         const errPI = !validateBinario(v.permisoInforme);
                         const errDR = !validateBinario(v.dobleRol);
+                        const isDup = isDuplicate(v.rut, v.dv, votantesDuplicateKeys);
                         return (
                           <tr key={v.id} className="border-t border-[#E5E7EB]">
                             <td className="p-2 text-muted-foreground">{idx + 1}</td>
@@ -766,14 +800,16 @@ const ComiteCreacionWizard = () => {
                               <Input
                                 value={v.rut}
                                 onChange={(e) => updateVotante(v.id, 'rut', e.target.value)}
-                                className={cn('h-8 text-xs', errRut && 'border-destructive')}
+                                title={isDup ? 'RUT duplicado. Este registro ya existe en el listado.' : undefined}
+                                className={cn('h-8 text-xs', (errRut || isDup) && 'border-destructive')}
                               />
                             </td>
                             <td className="p-1">
                               <Input
                                 value={v.dv}
                                 onChange={(e) => updateVotante(v.id, 'dv', e.target.value)}
-                                className={cn('h-8 text-xs w-14', errDv && 'border-destructive')}
+                                title={isDup ? 'RUT duplicado. Este registro ya existe en el listado.' : undefined}
+                                className={cn('h-8 text-xs w-14', (errDv || isDup) && 'border-destructive')}
                               />
                             </td>
                             <td className="p-1">
