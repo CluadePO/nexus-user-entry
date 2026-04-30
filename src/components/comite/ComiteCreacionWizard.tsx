@@ -668,9 +668,23 @@ const ComiteCreacionWizard = () => {
                     <tbody>
                       {candidatos.map((c, idx) => {
                         const errNombre = !validateNombre(c.nombre);
-                        const errRut = !validateRut(c.rut);
-                        const errDv = !validateDv(c.dv);
+                        const rutErr = getRutError(c.rut, c.dv);
+                        const dvErr = getDvError(c.rut, c.dv);
                         const isDup = isDuplicate(c.rut, c.dv, candidatosDuplicateKeys);
+                        const dvCalc = /^[0-9]+$/.test(c.rut) && c.rut.length > 0 && c.rut.length <= 8 ? calcularDV(c.rut) : '';
+                        const rutTooltip = isDup
+                          ? 'RUT duplicado. Este registro ya existe en el listado.'
+                          : rutErr === 'empty' ? 'RUT obligatorio.'
+                          : rutErr === 'format' ? 'RUT inválido. Solo se permiten dígitos numéricos.'
+                          : rutErr === 'length' ? 'RUT inválido. Máximo 8 dígitos.'
+                          : rutErr === 'dv' ? `DV incorrecto. El dígito verificador para este RUT debería ser ${dvCalc}`
+                          : undefined;
+                        const dvTooltip = isDup
+                          ? 'RUT duplicado. Este registro ya existe en el listado.'
+                          : dvErr === 'empty' ? 'DV obligatorio.'
+                          : dvErr === 'format' ? 'DV inválido. Debe ser un número 0-9 o la letra K.'
+                          : dvErr === 'dv' ? `DV incorrecto. El dígito verificador para este RUT debería ser ${dvCalc}`
+                          : undefined;
                         return (
                           <tr key={c.id} className="border-t border-[#E5E7EB]">
                             <td className="p-2 text-muted-foreground">{idx + 1}</td>
@@ -704,16 +718,16 @@ const ComiteCreacionWizard = () => {
                               <Input
                                 value={c.rut}
                                 onChange={(e) => updateCandidato(c.id, 'rut', e.target.value)}
-                                title={isDup ? 'RUT duplicado. Este registro ya existe en el listado.' : undefined}
-                                className={cn('h-8 text-xs', (errRut || isDup) && 'border-destructive')}
+                                title={rutTooltip}
+                                className={cn('h-8 text-xs', (rutErr || isDup) && 'border-destructive')}
                               />
                             </td>
                             <td className="p-1">
                               <Input
                                 value={c.dv}
                                 onChange={(e) => updateCandidato(c.id, 'dv', e.target.value)}
-                                title={isDup ? 'RUT duplicado. Este registro ya existe en el listado.' : undefined}
-                                className={cn('h-8 text-xs w-14', (errDv || isDup) && 'border-destructive')}
+                                title={dvTooltip}
+                                className={cn('h-8 text-xs w-14', (dvErr || isDup) && 'border-destructive')}
                               />
                             </td>
                             <td className="p-1 text-right">
