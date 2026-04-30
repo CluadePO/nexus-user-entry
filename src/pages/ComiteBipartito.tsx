@@ -372,23 +372,7 @@ const ComiteBipartito = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Dialog: Agregar Votante */}
-      <Dialog open={showAgregarVotante} onOpenChange={setShowAgregarVotante}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Agregar Votante</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-3">
-            <div><Label className="text-xs">RUT</Label><Input className="h-8 text-xs" placeholder="12.345.678-9" /></div>
-            <div><Label className="text-xs">Nombre</Label><Input className="h-8 text-xs" placeholder="Nombre completo" /></div>
-            <div><Label className="text-xs">Email</Label><Input className="h-8 text-xs" placeholder="correo@empresa.cl" /></div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" size="sm" onClick={() => setShowAgregarVotante(false)}>Cancelar</Button>
-            <Button size="sm" onClick={() => { setShowAgregarVotante(false); toast({ title: 'Votante agregado exitosamente' }); }}>Agregar</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+
 
       {/* Dialog: Agregar Candidato */}
       <Dialog open={showAgregarCandidato} onOpenChange={setShowAgregarCandidato}>
