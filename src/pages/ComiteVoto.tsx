@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Button, Input, Radio, Select, Modal } from 'antd';
+import { Button, Input, Radio, Select, Modal, message } from 'antd';
 import {
   IdentificationCard,
   ArrowRight,
@@ -8,6 +8,8 @@ import {
   SignOut,
   Warning,
   ChartBar,
+  FileText,
+  Users,
 } from '@phosphor-icons/react';
 
 const candidatos = [
