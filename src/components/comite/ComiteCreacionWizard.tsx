@@ -1097,11 +1097,6 @@ const ComiteCreacionWizard = () => {
 };
 
 // ---------- subcomponent ----------
-// ... keep existing code (CandidatoFotoRow component)
-
-export default ComiteCreacionWizard;
-
-// ---------- subcomponent ----------
 interface CandidatoFotoRowProps {
   candidato: CandidatoRow;
   onPick: (file: File) => void;
