@@ -711,7 +711,7 @@ const ComiteCreacionWizard = () => {
                         <th className="text-left p-2">RUT*</th>
                         <th className="text-left p-2">DV*</th>
                         <th className="text-left p-2" title="0 = solo vota · 1 = vota y ve informes">Permiso informe*</th>
-                        <th className="text-left p-2" title="0 = solo votante · 1 = votante y candidato opcional">Doble rol*</th>
+                        <th className="text-left p-2" title="0 = solo votante · 1 = votante y candidato">Doble rol*</th>
                         <th className="text-right p-2 w-16">Acciones</th>
                       </tr>
                     </thead>
