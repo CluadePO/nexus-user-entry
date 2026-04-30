@@ -800,14 +800,16 @@ const ComiteCreacionWizard = () => {
                               <Input
                                 value={v.rut}
                                 onChange={(e) => updateVotante(v.id, 'rut', e.target.value)}
-                                className={cn('h-8 text-xs', errRut && 'border-destructive')}
+                                title={isDup ? 'RUT duplicado. Este registro ya existe en el listado.' : undefined}
+                                className={cn('h-8 text-xs', (errRut || isDup) && 'border-destructive')}
                               />
                             </td>
                             <td className="p-1">
                               <Input
                                 value={v.dv}
                                 onChange={(e) => updateVotante(v.id, 'dv', e.target.value)}
-                                className={cn('h-8 text-xs w-14', errDv && 'border-destructive')}
+                                title={isDup ? 'RUT duplicado. Este registro ya existe en el listado.' : undefined}
+                                className={cn('h-8 text-xs w-14', (errDv || isDup) && 'border-destructive')}
                               />
                             </td>
                             <td className="p-1">
