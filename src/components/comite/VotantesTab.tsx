@@ -36,10 +36,17 @@ interface Votante {
   comite: number;
   rut: string;
   nombre: string;
+  apellidoPaterno?: string;
+  apellidoMaterno?: string;
+  rutNumero?: string;
+  rutDv?: string;
   estado: 'Habilitado' | 'Inhabilitado';
   permisoInforme: 0 | 1;
   dobleRol: 0 | 1;
 }
+
+const buildNombreCompleto = (n: string, ap?: string, am?: string) =>
+  [n, ap, am].filter((s) => s && s.trim()).join(' ').trim();
 
 const INITIAL_VOTANTES: Votante[] = [
   { id: 1, comite: 644, rut: '10035838-7', nombre: 'Soraya Katherine Lagos Lagos', estado: 'Habilitado', permisoInforme: 0, dobleRol: 1 },
