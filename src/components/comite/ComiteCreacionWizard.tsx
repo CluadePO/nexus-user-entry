@@ -88,10 +88,44 @@ async function parseSpreadsheetByIndex(file: File): Promise<string[][]> {
 }
 
 
-// Validation helpers
+// Chilean DV calculator (SII algorithm)
+const calcularDV = (rut: string): string => {
+  let suma = 0;
+  let multiplicador = 2;
+  const rutStr = String(rut).replace(/\D/g, '');
+  if (!rutStr) return '';
+  for (let i = rutStr.length - 1; i >= 0; i--) {
+    suma += parseInt(rutStr[i], 10) * multiplicador;
+    multiplicador = multiplicador === 7 ? 2 : multiplicador + 1;
+  }
+  const resto = 11 - (suma % 11);
+  if (resto === 11) return '0';
+  if (resto === 10) return 'K';
+  return String(resto);
+};
+
+// Ordered RUT validation. Returns null if OK, otherwise error code.
+// 'empty' | 'format' | 'length' | 'dv'
+const getRutError = (rut: string, dv: string): null | 'empty' | 'format' | 'length' | 'dv' => {
+  if (!rut || rut.trim().length === 0) return 'empty';
+  if (!/^[0-9]+$/.test(rut)) return 'format';
+  if (rut.length > 8) return 'length';
+  // Only check DV match when DV itself has a valid format
+  if (/^[0-9Kk]$/.test(dv) && calcularDV(rut).toUpperCase() !== dv.toUpperCase()) return 'dv';
+  return null;
+};
+
+// Ordered DV validation. 'empty' | 'format' | 'dv'
+const getDvError = (rut: string, dv: string): null | 'empty' | 'format' | 'dv' => {
+  if (!dv || dv.trim().length === 0) return 'empty';
+  if (!/^[0-9Kk]$/.test(dv)) return 'format';
+  if (/^[0-9]+$/.test(rut) && rut.length > 0 && rut.length <= 8) {
+    if (calcularDV(rut).toUpperCase() !== dv.toUpperCase()) return 'dv';
+  }
+  return null;
+};
+
 const validateNombre = (v: string) => v.trim().length > 0;
-const validateRut = (v: string) => v.length > 0 && v.length <= 8 && /^[a-zA-Z0-9]+$/.test(v);
-const validateDv = (v: string) => v.length === 1;
 const validateBinario = (v: string) => v === '0' || v === '1';
 
 const ComiteCreacionWizard = () => {
