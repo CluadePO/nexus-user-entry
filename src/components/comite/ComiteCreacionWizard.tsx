@@ -867,11 +867,25 @@ const ComiteCreacionWizard = () => {
                     <tbody>
                       {votantes.map((v, idx) => {
                         const errNombre = !validateNombre(v.nombre);
-                        const errRut = !validateRut(v.rut);
-                        const errDv = !validateDv(v.dv);
+                        const rutErr = getRutError(v.rut, v.dv);
+                        const dvErr = getDvError(v.rut, v.dv);
                         const errPI = !validateBinario(v.permisoInforme);
                         const errDR = !validateBinario(v.dobleRol);
                         const isDup = isDuplicate(v.rut, v.dv, votantesDuplicateKeys);
+                        const dvCalc = /^[0-9]+$/.test(v.rut) && v.rut.length > 0 && v.rut.length <= 8 ? calcularDV(v.rut) : '';
+                        const rutTooltip = isDup
+                          ? 'RUT duplicado. Este registro ya existe en el listado.'
+                          : rutErr === 'empty' ? 'RUT obligatorio.'
+                          : rutErr === 'format' ? 'RUT inválido. Solo se permiten dígitos numéricos.'
+                          : rutErr === 'length' ? 'RUT inválido. Máximo 8 dígitos.'
+                          : rutErr === 'dv' ? `DV incorrecto. El dígito verificador para este RUT debería ser ${dvCalc}`
+                          : undefined;
+                        const dvTooltip = isDup
+                          ? 'RUT duplicado. Este registro ya existe en el listado.'
+                          : dvErr === 'empty' ? 'DV obligatorio.'
+                          : dvErr === 'format' ? 'DV inválido. Debe ser un número 0-9 o la letra K.'
+                          : dvErr === 'dv' ? `DV incorrecto. El dígito verificador para este RUT debería ser ${dvCalc}`
+                          : undefined;
                         return (
                           <tr key={v.id} className="border-t border-[#E5E7EB]">
                             <td className="p-2 text-muted-foreground">{idx + 1}</td>
@@ -905,16 +919,16 @@ const ComiteCreacionWizard = () => {
                               <Input
                                 value={v.rut}
                                 onChange={(e) => updateVotante(v.id, 'rut', e.target.value)}
-                                title={isDup ? 'RUT duplicado. Este registro ya existe en el listado.' : undefined}
-                                className={cn('h-8 text-xs', (errRut || isDup) && 'border-destructive')}
+                                title={rutTooltip}
+                                className={cn('h-8 text-xs', (rutErr || isDup) && 'border-destructive')}
                               />
                             </td>
                             <td className="p-1">
                               <Input
                                 value={v.dv}
                                 onChange={(e) => updateVotante(v.id, 'dv', e.target.value)}
-                                title={isDup ? 'RUT duplicado. Este registro ya existe en el listado.' : undefined}
-                                className={cn('h-8 text-xs w-14', (errDv || isDup) && 'border-destructive')}
+                                title={dvTooltip}
+                                className={cn('h-8 text-xs w-14', (dvErr || isDup) && 'border-destructive')}
                               />
                             </td>
                             <td className="p-1">
