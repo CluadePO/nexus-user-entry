@@ -249,11 +249,18 @@ const VotantesTab: React.FC = () => {
     form
       .validateFields()
       .then((vals) => {
+        const nombreCompleto = buildNombreCompleto(vals.nombre, vals.apellidoPaterno, vals.apellidoMaterno);
+        const rutNumero = String(vals.rut || '').trim();
+        const rutDv = String(vals.dv || '').trim().toUpperCase();
         const next: Votante = {
           id: Date.now(),
           comite: Number(comiteFiltro),
-          rut: vals.rut,
-          nombre: vals.nombre,
+          rut: `${rutNumero}-${rutDv}`,
+          rutNumero,
+          rutDv,
+          nombre: nombreCompleto,
+          apellidoPaterno: vals.apellidoPaterno || '',
+          apellidoMaterno: vals.apellidoMaterno || '',
           estado: vals.estado,
           permisoInforme: (vals.permisoInforme ?? 0) as 0 | 1,
           dobleRol: (vals.dobleRol ?? 0) as 0 | 1,
