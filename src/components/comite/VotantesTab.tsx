@@ -599,7 +599,12 @@ const VotantesTab: React.FC = () => {
             <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>Id Comité</span>
             <ComiteContextBadge id={comiteFiltro} />
           </div>
-          <AntForm form={form} layout="vertical" initialValues={{ estado: 'Habilitado' }} style={{ fontFamily: 'Poppins' }}>
+          <AntForm
+            form={form}
+            layout="vertical"
+            initialValues={{ estado: 'Habilitado', permisoInforme: 0, dobleRol: 0 }}
+            style={{ fontFamily: 'Poppins' }}
+          >
             <AntForm.Item
               label="RUT"
               name="rut"
@@ -618,6 +623,42 @@ const VotantesTab: React.FC = () => {
                 options={[
                   { value: 'Habilitado', label: 'Habilitado' },
                   { value: 'Inhabilitado', label: 'Inhabilitado' },
+                ]}
+              />
+            </AntForm.Item>
+            <AntForm.Item
+              label={
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                  Permiso informe
+                  <AntTooltip title="0 = el votante solo puede emitir su voto. 1 = puede votar y además ver el informe de resultados.">
+                    <Info size={14} color="#6B7280" style={{ cursor: 'help' }} />
+                  </AntTooltip>
+                </span>
+              }
+              name="permisoInforme"
+            >
+              <AntSelect
+                options={[
+                  { value: 0, label: '0 — Solo vota' },
+                  { value: 1, label: '1 — Vota y ve informes' },
+                ]}
+              />
+            </AntForm.Item>
+            <AntForm.Item
+              label={
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                  Doble rol
+                  <AntTooltip title="0 = participa únicamente como votante. 1 = puede votar y además aparece como candidato opcional.">
+                    <Info size={14} color="#6B7280" style={{ cursor: 'help' }} />
+                  </AntTooltip>
+                </span>
+              }
+              name="dobleRol"
+            >
+              <AntSelect
+                options={[
+                  { value: 0, label: '0 — Solo votante' },
+                  { value: 1, label: '1 — Votante y candidato' },
                 ]}
               />
             </AntForm.Item>
