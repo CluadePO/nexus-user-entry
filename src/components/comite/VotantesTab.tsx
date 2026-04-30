@@ -36,10 +36,17 @@ interface Votante {
   comite: number;
   rut: string;
   nombre: string;
+  apellidoPaterno?: string;
+  apellidoMaterno?: string;
+  rutNumero?: string;
+  rutDv?: string;
   estado: 'Habilitado' | 'Inhabilitado';
   permisoInforme: 0 | 1;
   dobleRol: 0 | 1;
 }
+
+const buildNombreCompleto = (n: string, ap?: string, am?: string) =>
+  [n, ap, am].filter((s) => s && s.trim()).join(' ').trim();
 
 const INITIAL_VOTANTES: Votante[] = [
   { id: 1, comite: 644, rut: '10035838-7', nombre: 'Soraya Katherine Lagos Lagos', estado: 'Habilitado', permisoInforme: 0, dobleRol: 1 },
@@ -242,11 +249,18 @@ const VotantesTab: React.FC = () => {
     form
       .validateFields()
       .then((vals) => {
+        const nombreCompleto = buildNombreCompleto(vals.nombre, vals.apellidoPaterno, vals.apellidoMaterno);
+        const rutNumero = String(vals.rut || '').trim();
+        const rutDv = String(vals.dv || '').trim().toUpperCase();
         const next: Votante = {
           id: Date.now(),
           comite: Number(comiteFiltro),
-          rut: vals.rut,
-          nombre: vals.nombre,
+          rut: `${rutNumero}-${rutDv}`,
+          rutNumero,
+          rutDv,
+          nombre: nombreCompleto,
+          apellidoPaterno: vals.apellidoPaterno || '',
+          apellidoMaterno: vals.apellidoMaterno || '',
           estado: vals.estado,
           permisoInforme: (vals.permisoInforme ?? 0) as 0 | 1,
           dobleRol: (vals.dobleRol ?? 0) as 0 | 1,
@@ -605,20 +619,36 @@ const VotantesTab: React.FC = () => {
             initialValues={{ estado: 'Habilitado', permisoInforme: 0, dobleRol: 0 }}
             style={{ fontFamily: 'Poppins' }}
           >
-            <AntForm.Item
-              label="RUT"
-              name="rut"
-              rules={[
-                { required: true, message: 'Ingresa el RUT' },
-                { pattern: /^\d{7,8}-[\dkK]$/, message: 'Formato inválido (ej: 11111111-1)' },
-              ]}
-            >
-              <AntInput placeholder="11111111-1" />
+            <AntForm.Item label="Nombre" name="nombre" rules={[{ required: true, message: 'Campo obligatorio' }]}>
+              <AntInput placeholder="Nombre(s)" />
             </AntForm.Item>
-            <AntForm.Item label="Nombre" name="nombre" rules={[{ required: true, message: 'Ingresa el nombre' }]}>
-              <AntInput placeholder="Nombre completo" />
+            <AntForm.Item label="Apellido Paterno" name="apellidoPaterno">
+              <AntInput placeholder="Apellido paterno" />
             </AntForm.Item>
-            <AntForm.Item label="Estado" name="estado">
+            <AntForm.Item label="Apellido Materno" name="apellidoMaterno">
+              <AntInput placeholder="Apellido materno" />
+            </AntForm.Item>
+            <div style={{ display: 'flex', gap: 12 }}>
+              <AntForm.Item
+                label="RUT"
+                name="rut"
+                style={{ flex: '0 0 70%' }}
+                rules={[{ required: true, message: 'Campo obligatorio' }]}
+                normalize={(v: string) => (v || '').replace(/[^a-zA-Z0-9]/g, '').slice(0, 8)}
+              >
+                <AntInput placeholder="Ej: 11111111" maxLength={8} />
+              </AntForm.Item>
+              <AntForm.Item
+                label="DV"
+                name="dv"
+                style={{ flex: '1 1 30%' }}
+                rules={[{ required: true, message: 'Campo obligatorio' }]}
+                normalize={(v: string) => (v || '').replace(/[^a-zA-Z0-9]/g, '').slice(0, 1).toUpperCase()}
+              >
+                <AntInput placeholder="Ej: K" maxLength={1} />
+              </AntForm.Item>
+            </div>
+            <AntForm.Item label="Estado" name="estado" rules={[{ required: true, message: 'Campo obligatorio' }]}>
               <AntSelect
                 options={[
                   { value: 'Habilitado', label: 'Habilitado' },
@@ -630,12 +660,13 @@ const VotantesTab: React.FC = () => {
               label={
                 <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
                   Permiso informe
-                  <AntTooltip title="0 = el votante solo puede emitir su voto. 1 = puede votar y además ver el informe de resultados.">
+                  <AntTooltip title="0 = solo puede emitir su voto. 1 = puede votar y ver el informe de resultados.">
                     <Info size={14} color="#6B7280" style={{ cursor: 'help' }} />
                   </AntTooltip>
                 </span>
               }
               name="permisoInforme"
+              rules={[{ required: true, message: 'Campo obligatorio' }]}
             >
               <AntSelect
                 options={[
@@ -648,12 +679,13 @@ const VotantesTab: React.FC = () => {
               label={
                 <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
                   Doble rol
-                  <AntTooltip title="0 = participa únicamente como votante. 1 = puede votar y además aparece como candidato opcional.">
+                  <AntTooltip title="0 = participa únicamente como votante. 1 = puede votar y aparecer como candidato opcional.">
                     <Info size={14} color="#6B7280" style={{ cursor: 'help' }} />
                   </AntTooltip>
                 </span>
               }
               name="dobleRol"
+              rules={[{ required: true, message: 'Campo obligatorio' }]}
             >
               <AntSelect
                 options={[
@@ -703,11 +735,39 @@ const VotantesTab: React.FC = () => {
               <div style={{ textAlign: 'center', fontSize: 13, color: '#6B7280', marginTop: 2 }}>
                 {selected.rut}
               </div>
-              <div style={{ marginTop: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: 13, color: '#6B7280' }}>Id Comité</span>
-                <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#111827' }}>
-                  {selected.comite}
-                </span>
+              <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: 13, color: '#6B7280' }}>Id Comité</span>
+                  <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#111827' }}>
+                    {selected.comite}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: 13, color: '#6B7280' }}>Nombre</span>
+                  <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#111827' }}>
+                    {selected.apellidoPaterno !== undefined || selected.apellidoMaterno !== undefined
+                      ? (selected.nombre.split(/\s+/)[0] || selected.nombre)
+                      : selected.nombre}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: 13, color: '#6B7280' }}>Apellido Paterno</span>
+                  <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#111827' }}>
+                    {selected.apellidoPaterno && selected.apellidoPaterno.trim() ? selected.apellidoPaterno : '—'}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: 13, color: '#6B7280' }}>Apellido Materno</span>
+                  <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#111827' }}>
+                    {selected.apellidoMaterno && selected.apellidoMaterno.trim() ? selected.apellidoMaterno : '—'}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: 13, color: '#6B7280' }}>RUT</span>
+                  <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#111827' }}>
+                    {selected.rutNumero && selected.rutDv ? `${selected.rutNumero}-${selected.rutDv}` : selected.rut}
+                  </span>
+                </div>
               </div>
               <div style={{ borderTop: '1px solid #E5E7EB', margin: '16px 0' }} />
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
