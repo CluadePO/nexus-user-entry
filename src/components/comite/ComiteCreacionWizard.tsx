@@ -738,7 +738,9 @@ const ComiteCreacionWizard = () => {
                     style={{ backgroundColor: '#FEF3C7', borderColor: '#FDE68A' }}
                   >
                     <AlertTriangle className="h-4 w-4 shrink-0" />
-                    Corrige los errores antes de continuar
+                    {votantesHasDup
+                      ? 'Existen RUTs duplicados. Revisa y elimina los registros repetidos antes de continuar.'
+                      : 'Corrige los errores antes de continuar'}
                   </div>
                 )}
 
