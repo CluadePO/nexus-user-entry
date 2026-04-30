@@ -1027,9 +1027,79 @@ const ComiteCreacionWizard = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* External RUT validation warning */}
+      <Dialog
+        open={externalWarning.open}
+        onOpenChange={(o) => !o && setExternalWarning({ open: false, origen: null, conflicts: [] })}
+      >
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <div className="flex items-center gap-2">
+              <div
+                className="h-9 w-9 rounded-full flex items-center justify-center shrink-0"
+                style={{ backgroundColor: '#FEF3C7' }}
+              >
+                <AlertTriangle className="h-5 w-5" style={{ color: '#B45309' }} />
+              </div>
+              <DialogTitle>RUTs ya registrados en otro comité</DialogTitle>
+            </div>
+            <DialogDescription>
+              Los siguientes {externalWarning.origen === 'candidatos' ? 'candidatos' : 'votantes'} ya
+              figuran como participantes activos en otro comité. Verifica si corresponde mantenerlos
+              antes de continuar.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="border border-[#E5E7EB] rounded-md overflow-hidden">
+            <table className="w-full text-xs">
+              <thead className="bg-muted/50">
+                <tr>
+                  <th className="text-left p-2">Nombre</th>
+                  <th className="text-left p-2">RUT</th>
+                  <th className="text-left p-2">Comité existente</th>
+                </tr>
+              </thead>
+              <tbody>
+                {externalWarning.conflicts.map((c, i) => (
+                  <tr key={i} className="border-t border-[#E5E7EB]">
+                    <td className="p-2">{c.nombre}</td>
+                    <td className="p-2 font-mono">{c.rut}-{c.dv}</td>
+                    <td className="p-2">
+                      <span
+                        className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium"
+                        style={{ backgroundColor: '#FEF3C7', color: '#92400E' }}
+                      >
+                        Comité #{c.comiteId}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setExternalWarning({ open: false, origen: null, conflicts: [] })}
+            >
+              Volver a revisar
+            </Button>
+            <Button className="bg-primary hover:bg-primary/90" onClick={proceedAfterWarning}>
+              Continuar de todas formas
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
+
+// ---------- subcomponent ----------
+// ... keep existing code (CandidatoFotoRow component)
+
+export default ComiteCreacionWizard;
 
 // ---------- subcomponent ----------
 interface CandidatoFotoRowProps {
