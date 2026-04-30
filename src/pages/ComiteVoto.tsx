@@ -334,6 +334,109 @@ const PantallaVoto: React.FC<{ tipo: 1 | 2 }> = ({ tipo }) => {
   );
 };
 
+const PantallaInforme: React.FC = () => {
+  const { comiteId } = useParams();
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const handleDescargar = () => {
+    messageApi.success('Informe generado exitosamente');
+  };
+
+  const datos = [
+    { label: 'Id Comité', value: comiteId ?? '' },
+    { label: 'Empresa', value: 'Constructora Diamante S.A.' },
+    { label: 'Rut Empresa', value: '70.200.800-K' },
+    { label: 'Total de Votantes', value: '45' },
+    { label: 'Total de Votos', value: '32' },
+    { label: 'Total sin Votar', value: '13' },
+  ];
+
+  return (
+    <div
+      style={{
+        background: '#fff',
+        maxWidth: 560,
+        width: '100%',
+        borderRadius: 12,
+        boxShadow: '0 4px 24px rgba(0,0,0,0.08)',
+        padding: 40,
+        fontFamily: 'Poppins, sans-serif',
+      }}
+    >
+      {contextHolder}
+      <div className="flex justify-center mb-4">
+        <ChartBar size={48} color="#65BFB1" weight="duotone" />
+      </div>
+      <h1
+        style={{
+          fontSize: 20,
+          fontWeight: 600,
+          color: '#111827',
+          textAlign: 'center',
+          margin: 0,
+        }}
+      >
+        Resultados del Comité
+      </h1>
+      <p
+        style={{
+          fontSize: 13,
+          color: '#6B7280',
+          textAlign: 'center',
+          marginTop: 8,
+          marginBottom: 32,
+        }}
+      >
+        Consulta el resumen de votación de tu comité
+      </p>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        {datos.map((d) => (
+          <div
+            key={d.label}
+            style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+          >
+            <span style={{ fontSize: 13, color: '#6B7280' }}>{d.label}</span>
+            <span style={{ fontFamily: 'Poppins', fontWeight: 600, color: '#111827', fontSize: 14 }}>
+              {d.value}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ borderTop: '1px solid #E5E7EB', margin: '24px 0' }} />
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <Button
+          type="primary"
+          size="large"
+          block
+          icon={<FileText size={18} />}
+          onClick={handleDescargar}
+          style={{ fontFamily: 'Poppins', fontWeight: 600 }}
+        >
+          Descargar Informe Resultados Votación
+        </Button>
+        <Button
+          type="default"
+          size="large"
+          block
+          icon={<Users size={18} />}
+          onClick={handleDescargar}
+          style={{
+            fontFamily: 'Poppins',
+            fontWeight: 600,
+            borderColor: '#65BFB1',
+            color: '#65BFB1',
+          }}
+        >
+          Descargar Informe Resultados Votantes
+        </Button>
+      </div>
+    </div>
+  );
+};
+
 const ComiteVoto: React.FC<{ tipo: 1 | 2 }> = ({ tipo }) => {
   const [step, setStep] = useState<'rut' | 'voto'>('rut');
   // comiteId is visual-only in this prototype
@@ -359,7 +462,9 @@ const ComiteVoto: React.FC<{ tipo: 1 | 2 }> = ({ tipo }) => {
           padding: '96px 16px 80px',
         }}
       >
-        {step === 'rut' ? (
+        {tipo === 2 ? (
+          <PantallaInforme />
+        ) : step === 'rut' ? (
           <PantallaRUT onContinue={() => setStep('voto')} />
         ) : (
           <PantallaVoto tipo={tipo} />
