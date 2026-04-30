@@ -43,7 +43,20 @@ const Header: React.FC = () => (
     style={{ borderBottom: '1px solid #E5E7EB', height: 64, fontFamily: 'Poppins, sans-serif' }}
   >
     <div className="flex items-center gap-3">
-      <div style={{ width: 80, height: 32, background: '#E5E7EB', borderRadius: 4 }} />
+      <div
+        style={{
+          width: 80,
+          height: 32,
+          background: '#F3F4F6',
+          borderRadius: 6,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Buildings size={16} color="#6B7280" />
+      </div>
+      <div style={{ width: 1, height: 24, background: '#E5E7EB' }} />
       <span style={{ fontSize: 16, fontWeight: 600, color: '#111827' }}>
         Sistema Comité Bipartito
       </span>
