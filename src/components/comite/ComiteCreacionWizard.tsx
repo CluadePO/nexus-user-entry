@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/dialog';
 import {
   Upload, Trash2, Check, AlertTriangle, FileSpreadsheet, Search,
-  ArrowRight, ArrowLeft, Copy, CheckCircle2, X, Image as ImageIcon,
+  ArrowRight, ArrowLeft, Copy, CheckCircle2, X, Image as ImageIcon, Info,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import * as XLSX from 'xlsx';
