@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs as AntTabs, ConfigProvider } from 'antd';
+import { PlusCircle, Users as PhUsers, UserList, Buildings, ChartBar } from '@phosphor-icons/react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -131,23 +132,47 @@ const ComiteBipartito = () => {
       </div>
 
       {/* Tabs por Submódulo */}
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid grid-cols-6 w-full">
-          <TabsTrigger value="creacion" className="text-xs">Creación</TabsTrigger>
-          <TabsTrigger value="votantes" className="text-xs">Votantes</TabsTrigger>
-          <TabsTrigger value="candidatos" className="text-xs">Candidatos</TabsTrigger>
-          <TabsTrigger value="comites" className="text-xs">Comités</TabsTrigger>
-          <TabsTrigger value="reportes" className="text-xs">Reportes</TabsTrigger>
-          <TabsTrigger value="voto" className="text-xs">Voto</TabsTrigger>
-        </TabsList>
+      <ConfigProvider
+        theme={{
+          token: { fontFamily: 'Poppins, sans-serif', colorPrimary: '#65BFB1' },
+          components: {
+            Tabs: {
+              itemColor: '#6B7280',
+              itemSelectedColor: '#65BFB1',
+              itemHoverColor: '#65BFB1',
+              inkBarColor: '#65BFB1',
+              titleFontSize: 14,
+            },
+          },
+        }}
+      >
+        <div style={{ background: '#FFFFFF', borderBottom: '1px solid #E5E7EB' }} className="px-2">
+          <AntTabs
+            type="line"
+            activeKey={activeTab}
+            onChange={setActiveTab}
+            tabBarStyle={{ margin: 0, fontWeight: 500 }}
+            items={[
+              { key: 'creacion', label: <span className="flex items-center gap-2"><PlusCircle size={16} /> Creación</span> },
+              { key: 'votantes', label: <span className="flex items-center gap-2"><PhUsers size={16} /> Votantes</span> },
+              { key: 'candidatos', label: <span className="flex items-center gap-2"><UserList size={16} /> Candidatos</span> },
+              { key: 'comites', label: <span className="flex items-center gap-2"><Buildings size={16} /> Comités</span> },
+              { key: 'reportes', label: <span className="flex items-center gap-2"><ChartBar size={16} /> Reportes</span> },
+            ]}
+          />
+        </div>
+      </ConfigProvider>
 
-        {/* ===== CREACIÓN - WIZARD 4 PASOS ===== */}
-        <TabsContent value="creacion" className="space-y-4">
+      <div className="space-y-4">
+        {activeTab === 'creacion' && (
+          <div className="space-y-4">
           <ComiteCreacionWizard />
-        </TabsContent>
+          </div>
+        )}
+
 
         {/* ===== MANTENEDOR DE VOTANTES ===== */}
-        <TabsContent value="votantes" className="space-y-4">
+        {activeTab === 'votantes' && (<div className="space-y-4">
           <Card>
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
@@ -206,10 +231,10 @@ const ComiteBipartito = () => {
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
+        </div>)}
 
         {/* ===== MANTENEDOR DE CANDIDATOS ===== */}
-        <TabsContent value="candidatos" className="space-y-4">
+        {activeTab === 'candidatos' && (<div className="space-y-4">
           <Card>
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
@@ -264,10 +289,10 @@ const ComiteBipartito = () => {
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
+        </div>)}
 
         {/* ===== MANTENEDOR DE COMITÉS ===== */}
-        <TabsContent value="comites" className="space-y-4">
+        {activeTab === 'comites' && (<div className="space-y-4">
           <Card>
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
@@ -335,10 +360,10 @@ const ComiteBipartito = () => {
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
+        </div>)}
 
         {/* ===== MANTENEDOR DE REPORTES ===== */}
-        <TabsContent value="reportes" className="space-y-4">
+        {activeTab === 'reportes' && (<div className="space-y-4">
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
@@ -372,84 +397,10 @@ const ComiteBipartito = () => {
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
+        </div>)}
 
-        {/* ===== MANTENEDOR VOTO ===== */}
-        <TabsContent value="voto" className="space-y-4">
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base flex items-center gap-2">
-                <Vote className="h-4 w-4 text-primary" />
-                Mantenedor de Voto
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Card className="border-primary/20">
-                  <CardContent className="p-4 space-y-3">
-                    <div className="flex items-center gap-2">
-                      <Vote className="h-5 w-5 text-primary" />
-                      <p className="text-sm font-medium">Registrar Voto</p>
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-xs">RUT Votante</Label>
-                      <Input placeholder="Ej: 12.345.678-9" className="h-8 text-xs" />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-xs">Candidato</Label>
-                      <Select>
-                        <SelectTrigger className="h-8 text-xs">
-                          <SelectValue placeholder="Seleccionar candidato" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {mockCandidatos.filter(c => c.habilitado).map(c => (
-                            <SelectItem key={c.id} value={c.id.toString()} className="text-xs">{c.nombre}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <Button size="sm" className="w-full text-xs" onClick={() => toast({ title: 'Voto registrado exitosamente' })}>
-                      Registrar Voto
-                    </Button>
-                  </CardContent>
-                </Card>
+      </div>
 
-                <Card className="border-blue-200">
-                  <CardContent className="p-4 space-y-3">
-                    <div className="flex items-center gap-2">
-                      <Search className="h-5 w-5 text-blue-600" />
-                      <p className="text-sm font-medium">Verificar Voto</p>
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-xs">RUT Votante</Label>
-                      <Input placeholder="Ej: 12.345.678-9" className="h-8 text-xs" />
-                    </div>
-                    <Button size="sm" variant="secondary" className="w-full text-xs" onClick={() => toast({ title: 'Voto verificado', description: 'El votante ya emitió su voto.' })}>
-                      Verificar
-                    </Button>
-                  </CardContent>
-                </Card>
-
-                <Card className="border-amber-200">
-                  <CardContent className="p-4 space-y-3">
-                    <div className="flex items-center gap-2">
-                      <ShieldCheck className="h-5 w-5 text-amber-600" />
-                      <p className="text-sm font-medium">Verificar si es Admin</p>
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-xs">RUT Usuario</Label>
-                      <Input placeholder="Ej: 12.345.678-9" className="h-8 text-xs" />
-                    </div>
-                    <Button size="sm" variant="secondary" className="w-full text-xs" onClick={() => toast({ title: 'Verificación completada', description: 'El usuario tiene permisos de administrador.' })}>
-                      Verificar Admin
-                    </Button>
-                  </CardContent>
-                </Card>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
 
       {/* Dialog: Crear Comité */}
       <Dialog open={showCrearComite} onOpenChange={setShowCrearComite}>
