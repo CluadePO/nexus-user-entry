@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import * as XLSX from 'xlsx';
+import { message as antdMessage } from 'antd';
 
 const EMPRESAS = [
   { rut: '70.200.800-K', nombre: 'Constructora Diamante S.A.' },
