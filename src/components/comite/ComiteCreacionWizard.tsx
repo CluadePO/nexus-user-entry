@@ -508,12 +508,15 @@ const ComiteCreacionWizard = () => {
               <>
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-muted-foreground">
-                    {candidatos.length} candidatos cargados · {candidatosErrores} errores
+                    {candidatos.length} registros cargados · <span className={candidatosErrores > 0 ? 'text-destructive font-medium' : ''}>{candidatosErrores} errores</span>
                   </span>
                 </div>
 
                 {candidatosErrores > 0 && (
-                  <div className="flex items-center gap-2 bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-md p-3 text-sm">
+                  <div
+                    className="flex items-center gap-2 border rounded-md p-3 text-sm text-yellow-900"
+                    style={{ backgroundColor: '#FEF3C7', borderColor: '#FDE68A' }}
+                  >
                     <AlertTriangle className="h-4 w-4 shrink-0" />
                     Corrige los errores antes de continuar
                   </div>
