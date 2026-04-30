@@ -465,6 +465,92 @@ const ComiteBipartito = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Modal: Resumen Comité (Reportes) */}
+      <AntModal
+        open={showResumenModal}
+        onCancel={() => setShowResumenModal(false)}
+        footer={null}
+        title={null}
+        centered
+        width={480}
+        styles={{ body: { fontFamily: 'Poppins, sans-serif', padding: '24px 8px 8px' } }}
+      >
+        <div style={{ textAlign: 'center', marginBottom: 16 }}>
+          <ChartBar size={32} color="#65BFB1" weight="duotone" style={{ display: 'inline-block' }} />
+        </div>
+        <h2 style={{ fontFamily: 'Poppins', fontSize: 20, fontWeight: 600, color: '#111827', textAlign: 'center', margin: 0, marginBottom: 24 }}>
+          Resultados del Comité
+        </h2>
+
+        {resumenStep === 1 ? (
+          <div>
+            <label style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 500, color: '#374151', display: 'block', marginBottom: 6 }}>
+              Id Comité
+            </label>
+            <AntInput
+              size="large"
+              placeholder="Ingresa el ID"
+              value={resumenIdInput}
+              onChange={(e) => setResumenIdInput(e.target.value.replace(/\D/g, ''))}
+              style={{ fontFamily: 'Poppins' }}
+            />
+            <AntButton
+              type="primary"
+              size="large"
+              block
+              disabled={!resumenIdInput}
+              onClick={() => { setResumenIdConsultado(resumenIdInput); setResumenStep(2); }}
+              style={{ marginTop: 24, fontFamily: 'Poppins', fontWeight: 600 }}
+            >
+              Consultar
+            </AntButton>
+          </div>
+        ) : (
+          <div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {[
+                { label: 'Id Comité', value: resumenIdConsultado },
+                { label: 'Empresa', value: 'Constructora Diamante S.A.' },
+                { label: 'Rut Empresa', value: '70.200.800-K' },
+                { label: 'Total de Votantes', value: '45' },
+                { label: 'Total de Votos', value: '32' },
+                { label: 'Total sin Votar', value: '13' },
+              ].map((d) => (
+                <div key={d.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>{d.label}</span>
+                  <span style={{ fontFamily: 'Poppins', fontWeight: 600, color: '#111827', fontSize: 14 }}>{d.value}</span>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ borderTop: '1px solid #E5E7EB', margin: '16px 0' }} />
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <AntButton
+                type="primary"
+                size="large"
+                block
+                icon={<PhFileText size={18} />}
+                onClick={() => sonnerToast.success('Informe generado exitosamente')}
+                style={{ fontFamily: 'Poppins', fontWeight: 600 }}
+              >
+                Descargar Informe Resultados Votación
+              </AntButton>
+              <AntButton
+                type="default"
+                size="large"
+                block
+                icon={<PhUsers size={18} />}
+                onClick={() => sonnerToast.success('Informe generado exitosamente')}
+                style={{ fontFamily: 'Poppins', fontWeight: 600, borderColor: '#65BFB1', color: '#65BFB1' }}
+              >
+                Descargar Informe Resultados Votantes
+              </AntButton>
+            </div>
+          </div>
+        )}
+      </AntModal>
     </div>
   );
 };
