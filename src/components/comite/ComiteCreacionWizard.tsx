@@ -286,8 +286,8 @@ const ComiteCreacionWizard = () => {
 
   // ---------- result screen ----------
   if (showResult) {
-    const link1 = `https://sistemas.capacinet.cl/comite/Voto/Index/${comiteId}/1`;
-    const link2 = `https://sistemas.capacinet.cl/comite/Voto/Index/${comiteId}/2`;
+    const link1 = `${window.location.origin}/comite/voto/644/1`;
+    const link2 = `${window.location.origin}/comite/voto/644/2`;
     return (
       <div className="space-y-6">
         <Card className="border-[#E5E7EB]">
