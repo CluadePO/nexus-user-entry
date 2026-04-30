@@ -619,20 +619,36 @@ const VotantesTab: React.FC = () => {
             initialValues={{ estado: 'Habilitado', permisoInforme: 0, dobleRol: 0 }}
             style={{ fontFamily: 'Poppins' }}
           >
-            <AntForm.Item
-              label="RUT"
-              name="rut"
-              rules={[
-                { required: true, message: 'Ingresa el RUT' },
-                { pattern: /^\d{7,8}-[\dkK]$/, message: 'Formato inválido (ej: 11111111-1)' },
-              ]}
-            >
-              <AntInput placeholder="11111111-1" />
+            <AntForm.Item label="Nombre" name="nombre" rules={[{ required: true, message: 'Campo obligatorio' }]}>
+              <AntInput placeholder="Nombre(s)" />
             </AntForm.Item>
-            <AntForm.Item label="Nombre" name="nombre" rules={[{ required: true, message: 'Ingresa el nombre' }]}>
-              <AntInput placeholder="Nombre completo" />
+            <AntForm.Item label="Apellido Paterno" name="apellidoPaterno">
+              <AntInput placeholder="Apellido paterno" />
             </AntForm.Item>
-            <AntForm.Item label="Estado" name="estado">
+            <AntForm.Item label="Apellido Materno" name="apellidoMaterno">
+              <AntInput placeholder="Apellido materno" />
+            </AntForm.Item>
+            <div style={{ display: 'flex', gap: 12 }}>
+              <AntForm.Item
+                label="RUT"
+                name="rut"
+                style={{ flex: '0 0 70%' }}
+                rules={[{ required: true, message: 'Campo obligatorio' }]}
+                normalize={(v: string) => (v || '').replace(/[^a-zA-Z0-9]/g, '').slice(0, 8)}
+              >
+                <AntInput placeholder="Ej: 11111111" maxLength={8} />
+              </AntForm.Item>
+              <AntForm.Item
+                label="DV"
+                name="dv"
+                style={{ flex: '1 1 30%' }}
+                rules={[{ required: true, message: 'Campo obligatorio' }]}
+                normalize={(v: string) => (v || '').replace(/[^a-zA-Z0-9]/g, '').slice(0, 1).toUpperCase()}
+              >
+                <AntInput placeholder="Ej: K" maxLength={1} />
+              </AntForm.Item>
+            </div>
+            <AntForm.Item label="Estado" name="estado" rules={[{ required: true, message: 'Campo obligatorio' }]}>
               <AntSelect
                 options={[
                   { value: 'Habilitado', label: 'Habilitado' },
@@ -644,12 +660,13 @@ const VotantesTab: React.FC = () => {
               label={
                 <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
                   Permiso informe
-                  <AntTooltip title="0 = el votante solo puede emitir su voto. 1 = puede votar y además ver el informe de resultados.">
+                  <AntTooltip title="0 = solo puede emitir su voto. 1 = puede votar y ver el informe de resultados.">
                     <Info size={14} color="#6B7280" style={{ cursor: 'help' }} />
                   </AntTooltip>
                 </span>
               }
               name="permisoInforme"
+              rules={[{ required: true, message: 'Campo obligatorio' }]}
             >
               <AntSelect
                 options={[
@@ -662,12 +679,13 @@ const VotantesTab: React.FC = () => {
               label={
                 <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
                   Doble rol
-                  <AntTooltip title="0 = participa únicamente como votante. 1 = puede votar y además aparece como candidato opcional.">
+                  <AntTooltip title="0 = participa únicamente como votante. 1 = puede votar y aparecer como candidato opcional.">
                     <Info size={14} color="#6B7280" style={{ cursor: 'help' }} />
                   </AntTooltip>
                 </span>
               }
               name="dobleRol"
+              rules={[{ required: true, message: 'Campo obligatorio' }]}
             >
               <AntSelect
                 options={[
