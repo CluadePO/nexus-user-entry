@@ -664,11 +664,9 @@ const ComiteCreacionWizard = () => {
                         <th className="text-left p-2">
                           <span className="inline-flex items-center gap-1">
                             DV*
-                            <Info
-                              className="h-3.5 w-3.5 text-muted-foreground cursor-help"
-                              aria-label="Ayuda DV"
-                              title="El DV se calcula automáticamente según el algoritmo del Servicio de Impuestos Internos (SII). Puede ser un número del 0 al 9 o la letra K."
-                            />
+                            <span title="El DV se calcula automáticamente según el algoritmo del Servicio de Impuestos Internos (SII). Puede ser un número del 0 al 9 o la letra K." className="inline-flex cursor-help" aria-label="Ayuda DV">
+                              <Info className="h-3.5 w-3.5 text-muted-foreground" />
+                            </span>
                           </span>
                         </th>
                         <th className="text-right p-2 w-16">Acciones</th>
