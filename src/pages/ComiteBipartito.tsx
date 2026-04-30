@@ -18,6 +18,7 @@ import {
   Building2, Image, FileCheck, Eye, Download, Play, Square
 } from 'lucide-react';
 import ComiteCreacionWizard from "@/components/comite/ComiteCreacionWizard";
+import VotantesTab from "@/components/comite/VotantesTab";
 
 // Mock data
 const mockComites = [
