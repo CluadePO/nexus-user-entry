@@ -10,7 +10,18 @@ import {
   ChartBar,
   FileText,
   Users,
+  Buildings,
 } from '@phosphor-icons/react';
+
+const getInitials = (fullName: string) => {
+  const parts = fullName.trim().split(/\s+/);
+  const first = parts[0]?.[0] ?? '';
+  // first surname is typically the 3rd token (Nombre Segundo Apellido...) but spec says first name + first surname
+  // Use first token initial + initial of token after first names. Heuristic: take parts[0] and parts[2] if exists, else parts[1]
+  const surname = parts[2] ?? parts[1] ?? '';
+  const second = surname[0] ?? '';
+  return (first + second).toUpperCase();
+};
 
 const candidatos = [
   { id: 'c1', nombre: 'María Fernanda González Pérez' },
