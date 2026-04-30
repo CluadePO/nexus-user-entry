@@ -25,6 +25,7 @@ import {
   Buildings,
   Warning,
   X,
+  Info,
 } from '@phosphor-icons/react';
 import { toast as sonnerToast } from 'sonner';
 
