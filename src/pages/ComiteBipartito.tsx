@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
+import { toast as sonnerToast } from 'sonner';
 import { 
   Users, UserPlus, Search, Plus, Trash2, CheckCircle, XCircle, 
   Upload, FileText, BarChart3, Vote, ShieldCheck, RefreshCw,
