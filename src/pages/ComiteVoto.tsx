@@ -10,7 +10,18 @@ import {
   ChartBar,
   FileText,
   Users,
+  Buildings,
 } from '@phosphor-icons/react';
+
+const getInitials = (fullName: string) => {
+  const parts = fullName.trim().split(/\s+/);
+  const first = parts[0]?.[0] ?? '';
+  // first surname is typically the 3rd token (Nombre Segundo Apellido...) but spec says first name + first surname
+  // Use first token initial + initial of token after first names. Heuristic: take parts[0] and parts[2] if exists, else parts[1]
+  const surname = parts[2] ?? parts[1] ?? '';
+  const second = surname[0] ?? '';
+  return (first + second).toUpperCase();
+};
 
 const candidatos = [
   { id: 'c1', nombre: 'María Fernanda González Pérez' },
@@ -32,7 +43,20 @@ const Header: React.FC = () => (
     style={{ borderBottom: '1px solid #E5E7EB', height: 64, fontFamily: 'Poppins, sans-serif' }}
   >
     <div className="flex items-center gap-3">
-      <div style={{ width: 80, height: 32, background: '#E5E7EB', borderRadius: 4 }} />
+      <div
+        style={{
+          width: 80,
+          height: 32,
+          background: '#F3F4F6',
+          borderRadius: 6,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Buildings size={16} color="#6B7280" />
+      </div>
+      <div style={{ width: 1, height: 24, background: '#E5E7EB' }} />
       <span style={{ fontSize: 16, fontWeight: 600, color: '#111827' }}>
         Sistema Comité Bipartito
       </span>
@@ -241,26 +265,53 @@ const PantallaVoto: React.FC<{ tipo: 1 | 2 }> = ({ tipo }) => {
         style={{ width: '100%' }}
       >
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          {candidatos.map((c, i) => (
-            <label
-              key={c.id}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 12,
-                padding: '12px 8px',
-                background: '#fff',
-                borderBottom: i < candidatos.length - 1 ? '1px solid #E5E7EB' : 'none',
-                cursor: 'pointer',
-                transition: 'background 0.15s',
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = '#F9FAFB')}
-              onMouseLeave={(e) => (e.currentTarget.style.background = '#fff')}
-            >
-              <Radio value={c.id} />
-              <span style={{ fontSize: 14, color: '#111827' }}>{c.nombre}</span>
-            </label>
-          ))}
+          {candidatos.map((c, i) => {
+            const isSelected = radioSelected === c.id;
+            return (
+              <label
+                key={c.id}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 12,
+                  padding: '12px 8px',
+                  paddingLeft: isSelected ? 5 : 8,
+                  background: isSelected ? '#F0FDF9' : '#fff',
+                  borderLeft: isSelected ? '3px solid #65BFB1' : '3px solid transparent',
+                  borderBottom: i < candidatos.length - 1 ? '1px solid #E5E7EB' : 'none',
+                  cursor: 'pointer',
+                  transition: 'background 0.15s',
+                }}
+                onMouseEnter={(e) => {
+                  if (!isSelected) e.currentTarget.style.background = '#F9FAFB';
+                }}
+                onMouseLeave={(e) => {
+                  if (!isSelected) e.currentTarget.style.background = '#fff';
+                }}
+              >
+                <Radio value={c.id} />
+                <div
+                  style={{
+                    width: 36,
+                    height: 36,
+                    borderRadius: '50%',
+                    background: '#65BFB1',
+                    color: '#fff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontFamily: 'Poppins, sans-serif',
+                    fontSize: 13,
+                    fontWeight: 600,
+                    flexShrink: 0,
+                  }}
+                >
+                  {getInitials(c.nombre)}
+                </div>
+                <span style={{ fontSize: 14, color: '#111827' }}>{c.nombre}</span>
+              </label>
+            );
+          })}
         </div>
       </Radio.Group>
 
