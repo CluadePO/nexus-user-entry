@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/dialog';
 import {
   Upload, Trash2, Check, AlertTriangle, FileSpreadsheet, Search,
-  ArrowRight, ArrowLeft, Copy, CheckCircle2, X, Image as ImageIcon,
+  ArrowRight, ArrowLeft, Copy, CheckCircle2, X, Image as ImageIcon, Info,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import * as XLSX from 'xlsx';
@@ -88,10 +88,44 @@ async function parseSpreadsheetByIndex(file: File): Promise<string[][]> {
 }
 
 
-// Validation helpers
+// Chilean DV calculator (SII algorithm)
+const calcularDV = (rut: string): string => {
+  let suma = 0;
+  let multiplicador = 2;
+  const rutStr = String(rut).replace(/\D/g, '');
+  if (!rutStr) return '';
+  for (let i = rutStr.length - 1; i >= 0; i--) {
+    suma += parseInt(rutStr[i], 10) * multiplicador;
+    multiplicador = multiplicador === 7 ? 2 : multiplicador + 1;
+  }
+  const resto = 11 - (suma % 11);
+  if (resto === 11) return '0';
+  if (resto === 10) return 'K';
+  return String(resto);
+};
+
+// Ordered RUT validation. Returns null if OK, otherwise error code.
+// 'empty' | 'format' | 'length' | 'dv'
+const getRutError = (rut: string, dv: string): null | 'empty' | 'format' | 'length' | 'dv' => {
+  if (!rut || rut.trim().length === 0) return 'empty';
+  if (!/^[0-9]+$/.test(rut)) return 'format';
+  if (rut.length > 8) return 'length';
+  // Only check DV match when DV itself has a valid format
+  if (/^[0-9Kk]$/.test(dv) && calcularDV(rut).toUpperCase() !== dv.toUpperCase()) return 'dv';
+  return null;
+};
+
+// Ordered DV validation. 'empty' | 'format' | 'dv'
+const getDvError = (rut: string, dv: string): null | 'empty' | 'format' | 'dv' => {
+  if (!dv || dv.trim().length === 0) return 'empty';
+  if (!/^[0-9Kk]$/.test(dv)) return 'format';
+  if (/^[0-9]+$/.test(rut) && rut.length > 0 && rut.length <= 8) {
+    if (calcularDV(rut).toUpperCase() !== dv.toUpperCase()) return 'dv';
+  }
+  return null;
+};
+
 const validateNombre = (v: string) => v.trim().length > 0;
-const validateRut = (v: string) => v.length > 0 && v.length <= 8 && /^[a-zA-Z0-9]+$/.test(v);
-const validateDv = (v: string) => v.length === 1;
 const validateBinario = (v: string) => v === '0' || v === '1';
 
 const ComiteCreacionWizard = () => {
@@ -238,8 +272,8 @@ const ComiteCreacionWizard = () => {
     let errors = 0;
     candidatos.forEach(c => {
       if (!validateNombre(c.nombre)) errors++;
-      if (!validateRut(c.rut)) errors++;
-      if (!validateDv(c.dv)) errors++;
+      if (getRutError(c.rut, c.dv) !== null) errors++;
+      if (getDvError(c.rut, c.dv) !== null) errors++;
       if (isDuplicate(c.rut, c.dv, candidatosDuplicateKeys)) errors++;
     });
     return errors;
@@ -249,8 +283,8 @@ const ComiteCreacionWizard = () => {
     let errors = 0;
     votantes.forEach(v => {
       if (!validateNombre(v.nombre)) errors++;
-      if (!validateRut(v.rut)) errors++;
-      if (!validateDv(v.dv)) errors++;
+      if (getRutError(v.rut, v.dv) !== null) errors++;
+      if (getDvError(v.rut, v.dv) !== null) errors++;
       if (!validateBinario(v.permisoInforme)) errors++;
       if (!validateBinario(v.dobleRol)) errors++;
       if (isDuplicate(v.rut, v.dv, votantesDuplicateKeys)) errors++;
@@ -627,16 +661,37 @@ const ComiteCreacionWizard = () => {
                         <th className="text-left p-2">Ap. Paterno</th>
                         <th className="text-left p-2">Ap. Materno</th>
                         <th className="text-left p-2">RUT*</th>
-                        <th className="text-left p-2">DV*</th>
+                        <th className="text-left p-2">
+                          <span className="inline-flex items-center gap-1">
+                            DV*
+                            <span title="El DV se calcula automáticamente según el algoritmo del Servicio de Impuestos Internos (SII). Puede ser un número del 0 al 9 o la letra K." className="inline-flex cursor-help" aria-label="Ayuda DV">
+                              <Info className="h-3.5 w-3.5 text-muted-foreground" />
+                            </span>
+                          </span>
+                        </th>
                         <th className="text-right p-2 w-16">Acciones</th>
                       </tr>
                     </thead>
                     <tbody>
                       {candidatos.map((c, idx) => {
                         const errNombre = !validateNombre(c.nombre);
-                        const errRut = !validateRut(c.rut);
-                        const errDv = !validateDv(c.dv);
+                        const rutErr = getRutError(c.rut, c.dv);
+                        const dvErr = getDvError(c.rut, c.dv);
                         const isDup = isDuplicate(c.rut, c.dv, candidatosDuplicateKeys);
+                        const dvCalc = /^[0-9]+$/.test(c.rut) && c.rut.length > 0 && c.rut.length <= 8 ? calcularDV(c.rut) : '';
+                        const rutTooltip = isDup
+                          ? 'RUT duplicado. Este registro ya existe en el listado.'
+                          : rutErr === 'empty' ? 'RUT obligatorio.'
+                          : rutErr === 'format' ? 'RUT inválido. Solo se permiten dígitos numéricos.'
+                          : rutErr === 'length' ? 'RUT inválido. Máximo 8 dígitos.'
+                          : rutErr === 'dv' ? `DV incorrecto. El dígito verificador para este RUT debería ser ${dvCalc}`
+                          : undefined;
+                        const dvTooltip = isDup
+                          ? 'RUT duplicado. Este registro ya existe en el listado.'
+                          : dvErr === 'empty' ? 'DV obligatorio.'
+                          : dvErr === 'format' ? 'DV inválido. Debe ser un número 0-9 o la letra K.'
+                          : dvErr === 'dv' ? `DV incorrecto. El dígito verificador para este RUT debería ser ${dvCalc}`
+                          : undefined;
                         return (
                           <tr key={c.id} className="border-t border-[#E5E7EB]">
                             <td className="p-2 text-muted-foreground">{idx + 1}</td>
@@ -670,16 +725,16 @@ const ComiteCreacionWizard = () => {
                               <Input
                                 value={c.rut}
                                 onChange={(e) => updateCandidato(c.id, 'rut', e.target.value)}
-                                title={isDup ? 'RUT duplicado. Este registro ya existe en el listado.' : undefined}
-                                className={cn('h-8 text-xs', (errRut || isDup) && 'border-destructive')}
+                                title={rutTooltip}
+                                className={cn('h-8 text-xs', (rutErr || isDup) && 'border-destructive')}
                               />
                             </td>
                             <td className="p-1">
                               <Input
                                 value={c.dv}
                                 onChange={(e) => updateCandidato(c.id, 'dv', e.target.value)}
-                                title={isDup ? 'RUT duplicado. Este registro ya existe en el listado.' : undefined}
-                                className={cn('h-8 text-xs w-14', (errDv || isDup) && 'border-destructive')}
+                                title={dvTooltip}
+                                className={cn('h-8 text-xs w-14', (dvErr || isDup) && 'border-destructive')}
                               />
                             </td>
                             <td className="p-1 text-right">
@@ -810,7 +865,14 @@ const ComiteCreacionWizard = () => {
                         <th className="text-left p-2">Ap. Paterno</th>
                         <th className="text-left p-2">Ap. Materno</th>
                         <th className="text-left p-2">RUT*</th>
-                        <th className="text-left p-2">DV*</th>
+                        <th className="text-left p-2">
+                          <span className="inline-flex items-center gap-1">
+                            DV*
+                            <span title="El DV se calcula automáticamente según el algoritmo del Servicio de Impuestos Internos (SII). Puede ser un número del 0 al 9 o la letra K." className="inline-flex cursor-help" aria-label="Ayuda DV">
+                              <Info className="h-3.5 w-3.5 text-muted-foreground" />
+                            </span>
+                          </span>
+                        </th>
                         <th className="text-left p-2" title="0 = solo vota · 1 = vota y ve informes">Permiso informe*</th>
                         <th className="text-left p-2" title="0 = solo votante · 1 = votante y candidato">Doble rol*</th>
                         <th className="text-right p-2 w-16">Acciones</th>
@@ -819,11 +881,25 @@ const ComiteCreacionWizard = () => {
                     <tbody>
                       {votantes.map((v, idx) => {
                         const errNombre = !validateNombre(v.nombre);
-                        const errRut = !validateRut(v.rut);
-                        const errDv = !validateDv(v.dv);
+                        const rutErr = getRutError(v.rut, v.dv);
+                        const dvErr = getDvError(v.rut, v.dv);
                         const errPI = !validateBinario(v.permisoInforme);
                         const errDR = !validateBinario(v.dobleRol);
                         const isDup = isDuplicate(v.rut, v.dv, votantesDuplicateKeys);
+                        const dvCalc = /^[0-9]+$/.test(v.rut) && v.rut.length > 0 && v.rut.length <= 8 ? calcularDV(v.rut) : '';
+                        const rutTooltip = isDup
+                          ? 'RUT duplicado. Este registro ya existe en el listado.'
+                          : rutErr === 'empty' ? 'RUT obligatorio.'
+                          : rutErr === 'format' ? 'RUT inválido. Solo se permiten dígitos numéricos.'
+                          : rutErr === 'length' ? 'RUT inválido. Máximo 8 dígitos.'
+                          : rutErr === 'dv' ? `DV incorrecto. El dígito verificador para este RUT debería ser ${dvCalc}`
+                          : undefined;
+                        const dvTooltip = isDup
+                          ? 'RUT duplicado. Este registro ya existe en el listado.'
+                          : dvErr === 'empty' ? 'DV obligatorio.'
+                          : dvErr === 'format' ? 'DV inválido. Debe ser un número 0-9 o la letra K.'
+                          : dvErr === 'dv' ? `DV incorrecto. El dígito verificador para este RUT debería ser ${dvCalc}`
+                          : undefined;
                         return (
                           <tr key={v.id} className="border-t border-[#E5E7EB]">
                             <td className="p-2 text-muted-foreground">{idx + 1}</td>
@@ -857,16 +933,16 @@ const ComiteCreacionWizard = () => {
                               <Input
                                 value={v.rut}
                                 onChange={(e) => updateVotante(v.id, 'rut', e.target.value)}
-                                title={isDup ? 'RUT duplicado. Este registro ya existe en el listado.' : undefined}
-                                className={cn('h-8 text-xs', (errRut || isDup) && 'border-destructive')}
+                                title={rutTooltip}
+                                className={cn('h-8 text-xs', (rutErr || isDup) && 'border-destructive')}
                               />
                             </td>
                             <td className="p-1">
                               <Input
                                 value={v.dv}
                                 onChange={(e) => updateVotante(v.id, 'dv', e.target.value)}
-                                title={isDup ? 'RUT duplicado. Este registro ya existe en el listado.' : undefined}
-                                className={cn('h-8 text-xs w-14', (errDv || isDup) && 'border-destructive')}
+                                title={dvTooltip}
+                                className={cn('h-8 text-xs w-14', (dvErr || isDup) && 'border-destructive')}
                               />
                             </td>
                             <td className="p-1">
