@@ -272,8 +272,8 @@ const ComiteCreacionWizard = () => {
     let errors = 0;
     candidatos.forEach(c => {
       if (!validateNombre(c.nombre)) errors++;
-      if (!validateRut(c.rut)) errors++;
-      if (!validateDv(c.dv)) errors++;
+      if (getRutError(c.rut, c.dv) !== null) errors++;
+      if (getDvError(c.rut, c.dv) !== null) errors++;
       if (isDuplicate(c.rut, c.dv, candidatosDuplicateKeys)) errors++;
     });
     return errors;
@@ -283,8 +283,8 @@ const ComiteCreacionWizard = () => {
     let errors = 0;
     votantes.forEach(v => {
       if (!validateNombre(v.nombre)) errors++;
-      if (!validateRut(v.rut)) errors++;
-      if (!validateDv(v.dv)) errors++;
+      if (getRutError(v.rut, v.dv) !== null) errors++;
+      if (getDvError(v.rut, v.dv) !== null) errors++;
       if (!validateBinario(v.permisoInforme)) errors++;
       if (!validateBinario(v.dobleRol)) errors++;
       if (isDuplicate(v.rut, v.dv, votantesDuplicateKeys)) errors++;
