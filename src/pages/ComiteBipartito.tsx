@@ -360,7 +360,7 @@ const ComiteBipartito = () => {
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
+        </div>)}
 
         {/* ===== MANTENEDOR DE REPORTES ===== */}
         <TabsContent value="reportes" className="space-y-4">
