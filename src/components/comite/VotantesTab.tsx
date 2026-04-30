@@ -248,8 +248,8 @@ const VotantesTab: React.FC = () => {
           rut: vals.rut,
           nombre: vals.nombre,
           estado: vals.estado,
-          permisoInforme: 0,
-          dobleRol: 0,
+          permisoInforme: (vals.permisoInforme ?? 0) as 0 | 1,
+          dobleRol: (vals.dobleRol ?? 0) as 0 | 1,
         };
         setVotantes((prev) => [next, ...prev]);
         sonnerToast.success('Votante agregado exitosamente');
