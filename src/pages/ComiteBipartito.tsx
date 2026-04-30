@@ -132,20 +132,44 @@ const ComiteBipartito = () => {
       </div>
 
       {/* Tabs por Submódulo */}
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid grid-cols-6 w-full">
-          <TabsTrigger value="creacion" className="text-xs">Creación</TabsTrigger>
-          <TabsTrigger value="votantes" className="text-xs">Votantes</TabsTrigger>
-          <TabsTrigger value="candidatos" className="text-xs">Candidatos</TabsTrigger>
-          <TabsTrigger value="comites" className="text-xs">Comités</TabsTrigger>
-          <TabsTrigger value="reportes" className="text-xs">Reportes</TabsTrigger>
-          <TabsTrigger value="voto" className="text-xs">Voto</TabsTrigger>
-        </TabsList>
+      <ConfigProvider
+        theme={{
+          token: { fontFamily: 'Poppins, sans-serif', colorPrimary: '#65BFB1' },
+          components: {
+            Tabs: {
+              itemColor: '#6B7280',
+              itemSelectedColor: '#65BFB1',
+              itemHoverColor: '#65BFB1',
+              inkBarColor: '#65BFB1',
+              titleFontSize: 14,
+            },
+          },
+        }}
+      >
+        <div style={{ background: '#FFFFFF', borderBottom: '1px solid #E5E7EB' }} className="px-2">
+          <AntTabs
+            type="line"
+            activeKey={activeTab}
+            onChange={setActiveTab}
+            tabBarStyle={{ margin: 0, fontWeight: 500 }}
+            items={[
+              { key: 'creacion', label: <span className="flex items-center gap-2"><PlusCircle size={16} /> Creación</span> },
+              { key: 'votantes', label: <span className="flex items-center gap-2"><PhUsers size={16} /> Votantes</span> },
+              { key: 'candidatos', label: <span className="flex items-center gap-2"><UserList size={16} /> Candidatos</span> },
+              { key: 'comites', label: <span className="flex items-center gap-2"><Buildings size={16} /> Comités</span> },
+              { key: 'reportes', label: <span className="flex items-center gap-2"><ChartBar size={16} /> Reportes</span> },
+            ]}
+          />
+        </div>
+      </ConfigProvider>
 
-        {/* ===== CREACIÓN - WIZARD 4 PASOS ===== */}
-        <TabsContent value="creacion" className="space-y-4">
+      <div className="space-y-4">
+        {activeTab === 'creacion' && (
+          <div className="space-y-4">
           <ComiteCreacionWizard />
-        </TabsContent>
+          </div>
+        )}
+
 
         {/* ===== MANTENEDOR DE VOTANTES ===== */}
         <TabsContent value="votantes" className="space-y-4">
