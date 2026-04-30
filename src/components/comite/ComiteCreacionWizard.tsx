@@ -306,7 +306,7 @@ const ComiteCreacionWizard = () => {
             <div className="space-y-2">
               <p className="text-xs text-muted-foreground">Link votantes estándar (Col F = 0)</p>
               <div className="flex items-center gap-2 bg-[#F3F4F6] rounded-md p-2.5">
-                <span className="text-xs font-mono flex-1 break-all">{link1}</span>
+                <a href={link1} target="_blank" rel="noopener noreferrer" className="text-xs font-mono flex-1 break-all text-primary hover:underline">{link1}</a>
                 <Button
                   size="sm"
                   variant="ghost"
