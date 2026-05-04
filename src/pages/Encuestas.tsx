@@ -337,7 +337,7 @@ const PreviewModal: React.FC<{ open: boolean; onClose: () => void; encuesta: Enc
 };
 
 const AdministrarEncuestasTab: React.FC = () => {
-  const { selectedCompany } = useOTICFilter();
+  const { selectedCompany, selectedCompanyId } = useOTICFilter();
   const clienteName = selectedCompany
     ? (selectedCompany.name.includes('|') ? selectedCompany.name.split('|').pop()!.trim() : selectedCompany.name)
     : '';
@@ -347,23 +347,29 @@ const AdministrarEncuestasTab: React.FC = () => {
   const [page, setPage] = useState(1);
   const [previewRow, setPreviewRow] = useState<EncuestaRow | null>(null);
 
+  const dataset = useMemo<EncuestaRow[]>(
+    () => (selectedCompanyId ? (ENCUESTAS_BY_COMPANY[selectedCompanyId] || []) : []),
+    [selectedCompanyId]
+  );
+
   // Compute max version per group
   const maxVersionByGroup = useMemo(() => {
     const m = new Map<string, number>();
-    ENCUESTAS_DATA.forEach((r) => {
+    dataset.forEach((r) => {
       const k = groupKeyOf(r.nombre);
       m.set(k, Math.max(m.get(k) ?? 0, r.version));
     });
     return m;
-  }, []);
+  }, [dataset]);
 
   const searched = useMemo(() => {
-    if (!search.trim()) return ENCUESTAS_DATA;
+    if (!search.trim()) return dataset;
     const q = search.toLowerCase();
-    return ENCUESTAS_DATA.filter((r) =>
+    return dataset.filter((r) =>
       [r.nombre, r.tipo, r.cliente].some((v) => v.toLowerCase().includes(q))
     );
-  }, [search]);
+  }, [dataset, search]);
+
 
   const counts = useMemo(() => ({
     all: searched.length,
