@@ -380,7 +380,7 @@ const Encuestas: React.FC = () => {
       ),
     },
     {
-      title: 'Acciones',
+      title: nowrapTitle('Acciones'),
       width: 80,
       align: 'center' as const,
       render: (_: any, row: EvalRow) => (
