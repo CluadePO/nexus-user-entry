@@ -1310,6 +1310,19 @@ const AsignarEncuestasTab: React.FC = () => {
   const [rows, setRows] = useState<AsignarCursoRow[]>(ASIGNAR_DATA);
   const [asignModal, setAsignModal] = useState<{ kind: AsignKind; row: AsignarCursoRow } | null>(null);
   const [previewModal, setPreviewModal] = useState<{ kind: AsignKind; row: AsignarCursoRow } | null>(null);
+  // Per-row asign form state, keyed by `${inscripcion}-${kind}`
+  const [asignForms, setAsignForms] = useState<Record<string, AsignFormState>>({});
+  // Per-row participants state
+  const [satisParts, setSatisParts] = useState<Record<number, SatisParticipante[]>>({});
+  const [transParts, setTransParts] = useState<Record<number, TransParticipante[]>>({});
+  const [transEvaluador, setTransEvaluador] = useState<Record<number, boolean>>({});
+  const [participantsModal, setParticipantsModal] = useState<{ kind: AsignKind; row: AsignarCursoRow } | null>(null);
+
+  const formKey = (insc: number, kind: AsignKind) => `${insc}-${kind}`;
+  const getForm = (insc: number, kind: AsignKind): AsignFormState =>
+    asignForms[formKey(insc, kind)] ?? { relator: '', fecha: null, participantesCount: 0 };
+  const patchForm = (insc: number, kind: AsignKind, patch: Partial<AsignFormState>) =>
+    setAsignForms((prev) => ({ ...prev, [formKey(insc, kind)]: { ...getForm(insc, kind), ...patch } }));
 
   // Auto-load when both holding+company are selected
   useEffect(() => {
