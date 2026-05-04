@@ -360,7 +360,7 @@ const Encuestas: React.FC = () => {
     {
       title: nowrapTitle('Respondidas'),
       dataIndex: 'contestadas',
-      width: 120,
+      width: 100,
       align: 'center' as const,
       render: (v: number, row: EvalRow) => {
         const color = getContestadasColor(v, row.participantes);
