@@ -383,7 +383,7 @@ const Encuestas: React.FC = () => {
     },
     {
       title: nowrapTitle('Acciones'),
-      width: 80,
+      width: 70,
       align: 'center' as const,
       render: (_: any, row: EvalRow) => (
         <Popconfirm
