@@ -1489,7 +1489,7 @@ const AsignarEncuestasTab: React.FC = () => {
     {
       key: 'inscripcion',
       title: headerLabel('N° Inscripción'),
-      dataIndex: 'inscripcion', width: 120,
+      dataIndex: 'inscripcion', width: 110,
       render: (v: number) => <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 500, color: '#111827' }}>{v}</span>,
     },
     {
@@ -1505,16 +1505,14 @@ const AsignarEncuestasTab: React.FC = () => {
       render: (v: number | null) => <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>{v ?? '—'}</span>,
     },
     {
-      key: 'inicio',
-      title: headerLabel('Inicio'),
-      dataIndex: 'inicio', width: 100,
-      render: (v: string) => <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#374151' }}>{v.replace(/\//g, '-')}</span>,
-    },
-    {
-      key: 'termino',
-      title: headerLabel('Término'),
-      dataIndex: 'termino', width: 100,
-      render: (v: string) => <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#374151' }}>{v.replace(/\//g, '-')}</span>,
+      key: 'periodo',
+      title: headerLabel('Período'),
+      width: 130,
+      render: (_: unknown, row: AsignarCursoRow) => (
+        <span style={{ fontFamily: 'Poppins', fontSize: 12, color: '#374151', whiteSpace: 'nowrap' }}>
+          {row.inicio} → {row.termino}
+        </span>
+      ),
     },
     {
       key: 'curso',
@@ -1523,14 +1521,20 @@ const AsignarEncuestasTab: React.FC = () => {
       ellipsis: { showTitle: false },
       render: (v: string) => (
         <Tooltip title={v}>
-          <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#374151', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 220 }}>{v}</span>
+          <span
+            style={{
+              fontFamily: 'Poppins', fontSize: 13, color: '#374151',
+              display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
+              overflow: 'hidden', minWidth: 160, maxWidth: 280,
+            }}
+          >{v}</span>
         </Tooltip>
       ),
     },
     {
       key: 'tipo',
       title: headerLabel('Tipo'),
-      dataIndex: 'tipo', width: 110, align: 'center' as const,
+      dataIndex: 'tipo', width: 100, align: 'center' as const,
       render: (v: 'Sence' | 'Curso Interno') => {
         const sence = v === 'Sence';
         return (
@@ -1562,20 +1566,20 @@ const AsignarEncuestasTab: React.FC = () => {
     {
       key: 'participantes',
       title: headerLabel('Participantes'),
-      dataIndex: 'participantes', width: 90, align: 'center' as const,
+      dataIndex: 'participantes', width: 80, align: 'center' as const,
       render: (v: number) => <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#111827' }}>{v}</span>,
     },
     {
       key: 'satisfaccion',
       title: headerLabel('Satisfacción'),
-      dataIndex: 'satisfaccion', width: 110, align: 'center' as const,
+      dataIndex: 'satisfaccion', width: 90, align: 'center' as const,
       render: (v: 'sin_asignar' | 'asignada', row: AsignarCursoRow) =>
         renderActionCell(v, 'Satisfacción', row),
     },
     {
       key: 'transferencia',
       title: headerLabel('Transferencia'),
-      dataIndex: 'transferencia', width: 110, align: 'center' as const,
+      dataIndex: 'transferencia', width: 100, align: 'center' as const,
       render: (v: 'sin_asignar' | 'asignada', row: AsignarCursoRow) =>
         renderActionCell(v, 'Transferencia', row),
     },
