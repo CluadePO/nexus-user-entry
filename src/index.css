@@ -225,3 +225,15 @@
 ::-webkit-scrollbar-thumb:hover {
   background: hsl(var(--muted-foreground) / 0.5);
 }
+
+/* Encuestas Segmented (Jefe/Evaluador) — active item teal */
+.encuestas-segmented-teal .ant-segmented-item-selected {
+  background: #65BFB1 !important;
+}
+.encuestas-segmented-teal .ant-segmented-item-selected .ant-segmented-item-label,
+.encuestas-segmented-teal .ant-segmented-item-selected .ant-segmented-item-label * {
+  color: #ffffff !important;
+}
+.encuestas-segmented-teal .ant-segmented-item:not(.ant-segmented-item-selected) .ant-segmented-item-label {
+  color: #6B7280;
+}

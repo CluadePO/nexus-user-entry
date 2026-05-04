@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Button, Tabs, Select, Input, Table, Tooltip, Popconfirm, Pagination, Modal, message, DatePicker } from 'antd';
+import { Button, Tabs, Select, Input, Table, Tooltip, Popconfirm, Pagination, Modal, message, DatePicker, Segmented } from 'antd';
 import {
   Plus,
   ClipboardText,
@@ -26,6 +26,7 @@ import {
   UserMinus,
   ProhibitInset,
   UserFocus,
+  UserCircle,
 } from '@phosphor-icons/react';
 import { Switch, Checkbox } from 'antd';
 import { toast } from 'sonner';
@@ -1225,20 +1226,42 @@ const TransferenciaParticipantesModal: React.FC<{
           <div style={{ fontSize: 12, color: '#6B7280' }}>Encuesta: Encuesta de Transferencia Estándar v2.0</div>
         </div>
 
-        {/* Toggle */}
-        <div style={{ background: '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: 8, padding: '12px 16px', marginBottom: 16 }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
-            <UserFocus size={20} color={evaluador ? '#9CA3AF' : TEAL} weight="regular" />
-            <span style={{ fontFamily: 'Poppins', fontSize: 14, fontWeight: 600, color: !evaluador ? '#111827' : '#9CA3AF' }}>Jefe</span>
-            <Switch checked={evaluador} onChange={setEvaluador} style={{ background: evaluador ? TEAL : undefined }} />
-            <span style={{ fontFamily: 'Poppins', fontSize: 14, fontWeight: 600, color: evaluador ? '#111827' : '#9CA3AF' }}>Evaluador</span>
-          </div>
+        {/* Selector destinatario */}
+        <div style={{ marginBottom: 12 }}>
+          <Segmented
+            block
+            value={evaluador ? 'evaluador' : 'jefe'}
+            onChange={(v) => setEvaluador(v === 'evaluador')}
+            options={[
+              {
+                value: 'jefe',
+                label: (
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontFamily: 'Poppins', fontSize: 13, fontWeight: !evaluador ? 600 : 500 }}>
+                    <UserCircle size={16} weight="regular" />
+                    Jefe
+                  </span>
+                ),
+              },
+              {
+                value: 'evaluador',
+                label: (
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontFamily: 'Poppins', fontSize: 13, fontWeight: evaluador ? 600 : 500 }}>
+                    <UserFocus size={16} weight="regular" />
+                    Evaluador
+                  </span>
+                ),
+              },
+            ]}
+            style={{ background: '#F3F4F6' }}
+            className="encuestas-segmented-teal"
+          />
           <div style={{ textAlign: 'center', fontFamily: 'Poppins', fontSize: 12, color: '#6B7280', marginTop: 8 }}>
             {evaluador
               ? 'El correo se enviará al evaluador asignado al participante'
               : 'El correo se enviará al jefe directo del participante'}
           </div>
         </div>
+
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, gap: 8, flexWrap: 'wrap' }}>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
