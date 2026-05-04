@@ -18,6 +18,10 @@ import {
   PaperPlaneTilt,
   CheckCircle,
   Columns,
+  BookOpen,
+  WifiHigh,
+  Users,
+  FloppyDisk,
 } from '@phosphor-icons/react';
 import dayjs from 'dayjs';
 import * as XLSX from 'xlsx';
@@ -737,6 +741,165 @@ const ASIGNAR_DATA: AsignarCursoRow[] = [
 ];
 
 type PillKey = 'todos' | 'sin' | 'asig';
+type AsignKind = 'Satisfacción' | 'Transferencia';
+
+const ENCUESTA_INFO: Record<AsignKind, { nombre: string; id: number }> = {
+  'Satisfacción': { nombre: 'Encuesta de Satisfacción Estándar v2.0', id: 4728 },
+  'Transferencia': { nombre: 'Encuesta de Transferencia Estándar v2.0', id: 4484 },
+};
+
+const AsignarModal: React.FC<{
+  open: boolean;
+  kind: AsignKind | null;
+  row: AsignarCursoRow | null;
+  onClose: () => void;
+  onSave: (relator: string, fecha: any) => void;
+}> = ({ open, kind, row, onClose, onSave }) => {
+  const [relator, setRelator] = useState('');
+  const [fecha, setFecha] = useState<any>(null);
+  const [errRelator, setErrRelator] = useState(false);
+  const [errFecha, setErrFecha] = useState(false);
+
+  useEffect(() => {
+    if (open) {
+      setRelator(''); setFecha(null); setErrRelator(false); setErrFecha(false);
+    }
+  }, [open, row, kind]);
+
+  if (!kind || !row) return null;
+  const info = ENCUESTA_INFO[kind];
+  const isSatis = kind === 'Satisfacción';
+  const badgeBg = isSatis ? '#EFF6FF' : '#F0FDF4';
+  const badgeColor = isSatis ? '#1D4ED8' : '#15803D';
+
+  const handleSave = () => {
+    const eR = !relator.trim();
+    const eF = !fecha;
+    setErrRelator(eR); setErrFecha(eF);
+    if (eR || eF) return;
+    onSave(relator.trim(), fecha);
+  };
+
+  return (
+    <Modal
+      open={open}
+      onCancel={onClose}
+      width={580}
+      footer={null}
+      title={
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingRight: 24, fontFamily: 'Poppins' }}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+            <ClipboardText size={20} color={TEAL} weight="regular" />
+            <span style={{ fontSize: 16, fontWeight: 600, color: '#111827' }}>Asignar Encuesta</span>
+          </span>
+          <span style={{
+            display: 'inline-block', padding: '2px 10px', borderRadius: 999,
+            background: badgeBg, color: badgeColor, fontFamily: 'Poppins', fontSize: 12, fontWeight: 500,
+          }}>{kind}</span>
+        </div>
+      }
+    >
+      <div style={{ fontFamily: 'Poppins' }}>
+        {/* Header info */}
+        <div style={{ background: '#F0FDF9', border: '1px solid #99F6E4', borderRadius: 8, padding: '12px 16px', marginBottom: 20, display: 'flex', gap: 12 }}>
+          <BookOpen size={20} color={TEAL} weight="regular" style={{ flexShrink: 0, marginTop: 2 }} />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <span style={{ fontSize: 13, fontWeight: 600, color: '#111827' }}>N° Inscripción: {row.inscripcion}</span>
+            <span style={{ fontSize: 13, color: '#374151', wordBreak: 'break-word' }}>Curso: {row.curso}</span>
+          </div>
+        </div>
+
+        {/* Form */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          {/* Encuesta */}
+          <div>
+            <label style={{ fontSize: 13, fontWeight: 500, color: '#374151', display: 'block', marginBottom: 6 }}>Encuesta</label>
+            <Input disabled value={`${info.nombre} (ID ${info.id})`} style={{ background: '#F9FAFB', fontFamily: 'Poppins' }} />
+            <span style={{
+              display: 'inline-flex', alignItems: 'center', gap: 4, marginTop: 6,
+              background: '#F0FDF9', color: TEAL, borderRadius: 999, padding: '2px 10px', fontSize: 11, fontFamily: 'Poppins',
+            }}>
+              <Star size={12} weight="fill" />
+              Estándar vigente
+            </span>
+          </div>
+
+          {/* Relator */}
+          <div>
+            <label style={{ fontSize: 13, fontWeight: 500, color: '#374151', display: 'block', marginBottom: 6 }}>Relator *</label>
+            <Input
+              value={relator}
+              onChange={(e) => { setRelator(e.target.value); if (e.target.value.trim()) setErrRelator(false); }}
+              placeholder="Ingresa el nombre del relator"
+              status={errRelator ? 'error' : undefined}
+              style={{ fontFamily: 'Poppins' }}
+            />
+            {errRelator && <div style={{ color: '#DC2626', fontSize: 12, marginTop: 4 }}>El relator es obligatorio</div>}
+          </div>
+
+          {/* Fecha */}
+          <div>
+            <label style={{ fontSize: 13, fontWeight: 500, color: '#374151', display: 'block', marginBottom: 6 }}>Fecha de Evaluación *</label>
+            <DatePicker
+              value={fecha}
+              onChange={(v) => { setFecha(v); if (v) setErrFecha(false); }}
+              format="DD-MM-YYYY"
+              placeholder="Selecciona una fecha"
+              style={{ width: '100%' }}
+              status={errFecha ? 'error' : undefined}
+            />
+            {errFecha && <div style={{ color: '#DC2626', fontSize: 12, marginTop: 4 }}>La fecha de evaluación es obligatoria</div>}
+          </div>
+
+          {/* Tipo de Carga */}
+          <div>
+            <label style={{ fontSize: 13, fontWeight: 500, color: '#374151', display: 'block', marginBottom: 6 }}>Tipo de Carga</label>
+            <span style={{
+              display: 'inline-flex', alignItems: 'center', gap: 6,
+              background: '#F0FDF9', color: TEAL, borderRadius: 8, padding: '8px 12px',
+              fontSize: 13, fontWeight: 500, fontFamily: 'Poppins',
+            }}>
+              <WifiHigh size={16} weight="regular" />
+              On-line
+            </span>
+            <div style={{ fontSize: 11, color: '#9CA3AF', marginTop: 6 }}>
+              El tipo de carga siempre es On-line para este tipo de encuesta.
+            </div>
+          </div>
+
+          {/* Participantes */}
+          <div>
+            <Button
+              block
+              onClick={() => console.log(`Abrir modal participantes ${kind}`)}
+              style={{ borderColor: TEAL, color: TEAL, background: '#FFFFFF', fontFamily: 'Poppins', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
+              icon={<Users size={16} weight="regular" />}
+            >
+              Gestionar Participantes
+            </Button>
+            <div style={{ fontSize: 12, color: '#9CA3AF', marginTop: 6 }}>
+              Agrega el correo de los participantes del curso
+            </div>
+          </div>
+        </div>
+
+        <div style={{ borderTop: '1px solid #E5E7EB', margin: '20px 0 16px' }} />
+
+        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
+          <Button onClick={onClose} style={{ fontFamily: 'Poppins' }}>Cancelar</Button>
+          <Button
+            type="primary"
+            onClick={handleSave}
+            icon={<FloppyDisk size={16} weight="regular" />}
+            style={{ background: TEAL, borderColor: TEAL, fontFamily: 'Poppins', display: 'inline-flex', alignItems: 'center', gap: 6 }}
+          >
+            Guardar Configuración
+          </Button>
+        </div>
+      </div>
+    </Modal>
+  );
+};
 
 const AsignarEncuestasTab: React.FC = () => {
   const { selectedHoldingId, selectedCompanyId } = useOTICFilter();
@@ -749,6 +912,9 @@ const AsignarEncuestasTab: React.FC = () => {
   const [page, setPage] = useState(1);
   const [pill, setPill] = useState<PillKey>('todos');
   const [showTech, setShowTech] = useState(false);
+  const [rows, setRows] = useState<AsignarCursoRow[]>(ASIGNAR_DATA);
+  const [asignModal, setAsignModal] = useState<{ kind: AsignKind; row: AsignarCursoRow } | null>(null);
+  const [previewModal, setPreviewModal] = useState<{ kind: AsignKind; row: AsignarCursoRow } | null>(null);
 
   // Auto-load when both holding+company are selected
   useEffect(() => {
@@ -778,12 +944,12 @@ const AsignarEncuestasTab: React.FC = () => {
   const searched_rows = useMemo(() => {
     if (!searched) return [];
     const q = search.trim().toLowerCase();
-    if (!q) return ASIGNAR_DATA;
-    return ASIGNAR_DATA.filter((r) =>
+    if (!q) return rows;
+    return rows.filter((r) =>
       [r.curso, String(r.inscripcion), String(r.sc ?? ''), String(r.sencenet ?? '')]
         .some((v) => v.toLowerCase().includes(q))
     );
-  }, [searched, search]);
+  }, [searched, search, rows]);
 
   const isAsignado = (r: AsignarCursoRow) => r.satisfaccion === 'asignada' && r.transferencia === 'asignada';
   const isSinAsignar = (r: AsignarCursoRow) => r.satisfaccion === 'sin_asignar' || r.transferencia === 'sin_asignar';
@@ -795,10 +961,10 @@ const AsignarEncuestasTab: React.FC = () => {
   }), [searched_rows]);
 
   const totals = useMemo(() => ({
-    total: searched ? ASIGNAR_DATA.length : 0,
-    sin: searched ? ASIGNAR_DATA.filter(isSinAsignar).length : 0,
-    asig: searched ? ASIGNAR_DATA.filter(isAsignado).length : 0,
-  }), [searched]);
+    total: searched ? rows.length : 0,
+    sin: searched ? rows.filter(isSinAsignar).length : 0,
+    asig: searched ? rows.filter(isAsignado).length : 0,
+  }), [searched, rows]);
 
   const filtered = useMemo(() => {
     if (pill === 'sin') return searched_rows.filter(isSinAsignar);
@@ -811,16 +977,20 @@ const AsignarEncuestasTab: React.FC = () => {
     return filtered.slice(start, start + pageSize);
   }, [filtered, page, pageSize]);
 
+  const handleResend = (kind: AsignKind) => {
+    message.success('Encuesta reenviada exitosamente');
+  };
+
   const renderActionCell = (
     state: 'sin_asignar' | 'asignada',
-    kind: 'Satisfacción' | 'Transferencia',
-    inscripcion: number
+    kind: AsignKind,
+    row: AsignarCursoRow
   ) => {
     if (state === 'sin_asignar') {
       return (
         <Tooltip title="Sin asignar — clic para asignar">
           <button
-            onClick={() => console.log(`Abrir modal ${kind} ${inscripcion}`)}
+            onClick={() => setAsignModal({ kind, row })}
             style={{
               border: 'none', background: 'transparent', cursor: 'pointer',
               padding: 4, borderRadius: 6, display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
@@ -836,13 +1006,23 @@ const AsignarEncuestasTab: React.FC = () => {
     }
     return (
       <div style={{ display: 'inline-flex', gap: 8, alignItems: 'center', justifyContent: 'center' }}>
-        <Tooltip title="Reenviar encuesta a participantes">
-          <button onClick={() => console.log(`Reenviar ${kind}`)} style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: 4, display: 'inline-flex' }}>
-            <PaperPlaneTilt size={22} color={TEAL} weight="regular" />
-          </button>
-        </Tooltip>
+        <Popconfirm
+          title={<span style={{ fontFamily: 'Poppins', fontWeight: 600 }}>¿Reenviar encuesta?</span>}
+          description={<span style={{ fontFamily: 'Poppins', fontSize: 12, color: '#6B7280' }}>Se enviará la encuesta a todos los participantes seleccionados del curso.</span>}
+          icon={<Warning size={16} color="#F59E0B" weight="fill" />}
+          okText="Sí, reenviar"
+          cancelText="Cancelar"
+          okButtonProps={{ style: { background: TEAL, borderColor: TEAL } }}
+          onConfirm={() => handleResend(kind)}
+        >
+          <Tooltip title="Reenviar encuesta a participantes">
+            <button style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: 4, display: 'inline-flex' }}>
+              <PaperPlaneTilt size={22} color={TEAL} weight="regular" />
+            </button>
+          </Tooltip>
+        </Popconfirm>
         <Tooltip title="Ver previsualización">
-          <button onClick={() => console.log(`Preview ${kind}`)} style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: 4, display: 'inline-flex' }}>
+          <button onClick={() => setPreviewModal({ kind, row })} style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: 4, display: 'inline-flex' }}>
             <Eye size={22} color={TEAL} weight="regular" />
           </button>
         </Tooltip>
@@ -939,14 +1119,14 @@ const AsignarEncuestasTab: React.FC = () => {
       title: headerLabel('Satisfacción'),
       dataIndex: 'satisfaccion', width: 110, align: 'center' as const,
       render: (v: 'sin_asignar' | 'asignada', row: AsignarCursoRow) =>
-        renderActionCell(v, 'Satisfacción', row.inscripcion),
+        renderActionCell(v, 'Satisfacción', row),
     },
     {
       key: 'transferencia',
       title: headerLabel('Transferencia'),
       dataIndex: 'transferencia', width: 110, align: 'center' as const,
       render: (v: 'sin_asignar' | 'asignada', row: AsignarCursoRow) =>
-        renderActionCell(v, 'Transferencia', row.inscripcion),
+        renderActionCell(v, 'Transferencia', row),
     },
   ];
 
@@ -1172,6 +1352,38 @@ const AsignarEncuestasTab: React.FC = () => {
           )}
         </>
       )}
+
+      <AsignarModal
+        open={!!asignModal}
+        kind={asignModal?.kind ?? null}
+        row={asignModal?.row ?? null}
+        onClose={() => setAsignModal(null)}
+        onSave={(_relator, _fecha) => {
+          if (!asignModal) return;
+          const { kind, row } = asignModal;
+          setRows((prev) => prev.map((r) =>
+            r.inscripcion === row.inscripcion
+              ? { ...r, [kind === 'Satisfacción' ? 'satisfaccion' : 'transferencia']: 'asignada' as const }
+              : r
+          ));
+          setAsignModal(null);
+          message.success(`Encuesta de ${kind} asignada correctamente`);
+        }}
+      />
+
+      <PreviewModal
+        open={!!previewModal}
+        onClose={() => setPreviewModal(null)}
+        encuesta={previewModal ? {
+          id: ENCUESTA_INFO[previewModal.kind].id,
+          nombre: ENCUESTA_INFO[previewModal.kind].nombre,
+          origen: 'OTIC',
+          cliente: '',
+          tipo: previewModal.kind,
+          version: 2,
+          vigente: 'Si',
+        } : null}
+      />
     </div>
   );
 };
