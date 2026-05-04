@@ -25,6 +25,7 @@ export const AppHeader: React.FC = () => {
     if (path === '/dashboard') return 'Inicio';
     if (path.includes('/cursos')) return 'Cursos y Servicios';
     if (path.includes('/reportes')) return 'Reportes y Análisis';
+    if (path.includes('/encuestas')) return 'Reportes y Análisis';
     if (path.includes('/data360')) return 'Data 360';
     if (path.includes('/buscador')) return 'Mi Buscador';
     if (path.includes('/documentos')) return 'Gestión Documental';
