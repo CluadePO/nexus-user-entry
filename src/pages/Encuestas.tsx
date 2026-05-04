@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Button, Tabs, Select, Input, Table, Tooltip, Popconfirm, Pagination, message } from 'antd';
 import {
   Plus,
@@ -9,7 +9,13 @@ import {
   MagnifyingGlass,
   Trash,
   Warning,
+  FileCsv,
+  FileXls,
+  FilePdf,
 } from '@phosphor-icons/react';
+import * as XLSX from 'xlsx';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import { useOTICFilter } from '@/context/OTICFilterContext';
 
 interface EvalRow {
@@ -87,18 +93,77 @@ const DATA_BY_COMPANY: Record<string, EvalRow[]> = {
   ],
 };
 
+type TipoFilter = 'all' | 'Satisfacción' | 'Transferencia';
+
+const getPctColor = (pct: number) => {
+  if (pct === 0) return '#EF4444';
+  if (pct <= 50) return '#F59E0B';
+  if (pct <= 99) return '#3B82F6';
+  return '#10B981';
+};
+
+const slug = (s: string) =>
+  (s || 'todos')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+
+const todayStr = () => {
+  const d = new Date();
+  const p = (n: number) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}`;
+};
+
+const ProgressCell: React.FC<{ contestadas: number; participantes: number }> = ({ contestadas, participantes }) => {
+  const pct = participantes === 0 ? null : Math.round((contestadas / participantes) * 100);
+  const [animPct, setAnimPct] = useState(0);
+
+  useEffect(() => {
+    setAnimPct(0);
+    const t = window.setTimeout(() => setAnimPct(pct ?? 0), 50);
+    return () => window.clearTimeout(t);
+  }, [pct]);
+
+  if (pct === null) {
+    return <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#9CA3AF' }}>—</span>;
+  }
+  const color = getPctColor(pct);
+  return (
+    <Tooltip title={`${contestadas} de ${participantes} participantes han respondido (${pct}%)`}>
+      <div className="flex flex-col items-center gap-1">
+        <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color }}>{pct}%</span>
+        <div style={{ width: 80, height: 6, background: '#E5E7EB', borderRadius: 999, overflow: 'hidden' }}>
+          <div
+            style={{
+              width: `${animPct}%`,
+              height: '100%',
+              background: color,
+              borderRadius: 999,
+              transition: 'width 0.4s ease',
+            }}
+          />
+        </div>
+      </div>
+    </Tooltip>
+  );
+};
+
 const Encuestas: React.FC = () => {
-  const { selectedHoldingId, selectedCompanyId } = useOTICFilter();
+  const { selectedHoldingId, selectedCompanyId, selectedHolding, selectedCompany } = useOTICFilter();
   const [activeTab, setActiveTab] = useState('evaluaciones');
   const [search, setSearch] = useState('');
   const [pageSize, setPageSize] = useState(10);
   const [page, setPage] = useState(1);
   const [deletedKeys, setDeletedKeys] = useState<Set<number>>(new Set());
+  const [tipoFilter, setTipoFilter] = useState<TipoFilter>('all');
 
   const baseRows = selectedCompanyId ? (DATA_BY_COMPANY[selectedCompanyId] || []) : [];
   const rows = baseRows.filter((r) => !deletedKeys.has(r.inscripcion));
 
-  const filteredRows = useMemo(() => {
+  // Rows after text-search only (used to compute pill counts)
+  const searchedRows = useMemo(() => {
     if (!search.trim()) return rows;
     const q = search.toLowerCase();
     return rows.filter((r) =>
@@ -107,6 +172,17 @@ const Encuestas: React.FC = () => {
         .some((s) => s.includes(q))
     );
   }, [rows, search]);
+
+  const counts = useMemo(() => ({
+    all: searchedRows.length,
+    Satisfacción: searchedRows.filter((r) => r.tipologia === 'Satisfacción').length,
+    Transferencia: searchedRows.filter((r) => r.tipologia === 'Transferencia').length,
+  }), [searchedRows]);
+
+  const filteredRows = useMemo(() => {
+    if (tipoFilter === 'all') return searchedRows;
+    return searchedRows.filter((r) => r.tipologia === tipoFilter);
+  }, [searchedRows, tipoFilter]);
 
   const pagedRows = useMemo(() => {
     const start = (page - 1) * pageSize;
@@ -122,6 +198,89 @@ const Encuestas: React.FC = () => {
     if (contestadas === 0) return '#EF4444';
     if (contestadas / total <= 0.5) return '#F59E0B';
     return '#10B981';
+  };
+
+  const exportRows = filteredRows.map((r) => ({
+    'N° Inscripción': r.inscripcion,
+    'SC': r.sc ?? '',
+    'Sencenet': r.sencenet ?? '',
+    'Nombre Curso': r.curso,
+    'Nombre Encuesta': r.encuesta,
+    'Tipología': r.tipologia,
+    'Tipo Carga': r.tipoCarga,
+    'N° Participantes': r.participantes,
+    'N° Contestadas': r.contestadas,
+    '% Respuesta': r.participantes === 0 ? '—' : `${Math.round((r.contestadas / r.participantes) * 100)}%`,
+  }));
+
+  const fileBaseName = `evaluaciones_${slug(selectedHolding?.name || 'holding')}_${slug(selectedCompany?.name || 'empresa')}_${todayStr()}`;
+
+  const exportDisabled = filteredRows.length === 0;
+
+  const downloadBlob = (blob: Blob, name: string) => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleExportCSV = () => {
+    if (exportDisabled) return;
+    const headers = Object.keys(exportRows[0]);
+    const sep = ';';
+    const escape = (v: any) => {
+      const s = String(v ?? '');
+      if (s.includes(sep) || s.includes('"') || s.includes('\n')) {
+        return `"${s.replace(/"/g, '""')}"`;
+      }
+      return s;
+    };
+    const lines = [headers.join(sep)];
+    exportRows.forEach((row) => {
+      lines.push(headers.map((h) => escape((row as any)[h])).join(sep));
+    });
+    const bom = '\uFEFF';
+    const blob = new Blob([bom + lines.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+    downloadBlob(blob, `${fileBaseName}.csv`);
+  };
+
+  const handleExportExcel = () => {
+    if (exportDisabled) return;
+    message.info({ content: 'Generando Excel...', style: { fontFamily: 'Poppins, sans-serif' } });
+    setTimeout(() => {
+      const ws = XLSX.utils.json_to_sheet(exportRows);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Evaluaciones');
+      XLSX.writeFile(wb, `${fileBaseName}.xlsx`);
+    }, 1000);
+  };
+
+  const handleExportPDF = () => {
+    if (exportDisabled) return;
+    message.info({ content: 'Generando PDF...', style: { fontFamily: 'Poppins, sans-serif' } });
+    setTimeout(() => {
+      const doc = new jsPDF({ orientation: 'landscape' });
+      const now = new Date();
+      doc.setFontSize(14);
+      doc.text('Administrar Evaluaciones', 14, 14);
+      doc.setFontSize(10);
+      doc.text(`Holding: ${selectedHolding?.name || '—'}    Empresa: ${selectedCompany?.name || '—'}`, 14, 21);
+      doc.text(`Fecha: ${now.toLocaleString('es-CL')}    Total registros: ${exportRows.length}`, 14, 27);
+      const headers = Object.keys(exportRows[0]);
+      const body = exportRows.map((r) => headers.map((h) => String((r as any)[h] ?? '')));
+      autoTable(doc, {
+        head: [headers],
+        body,
+        startY: 32,
+        styles: { fontSize: 9 },
+        headStyles: { fillColor: [101, 191, 177] },
+      });
+      doc.save(`${fileBaseName}.pdf`);
+    }, 1500);
   };
 
   const columns = [
@@ -211,6 +370,15 @@ const Encuestas: React.FC = () => {
       },
     },
     {
+      title: '% Respuesta',
+      dataIndex: 'pct',
+      width: 110,
+      align: 'center' as const,
+      render: (_: any, row: EvalRow) => (
+        <ProgressCell contestadas={row.contestadas} participantes={row.participantes} />
+      ),
+    },
+    {
       title: 'Acciones',
       width: 80,
       align: 'center' as const,
@@ -242,8 +410,85 @@ const Encuestas: React.FC = () => {
     </div>
   );
 
+  // Pill renderer
+  const renderPill = (key: TipoFilter, label: string, count: number) => {
+    const active = tipoFilter === key;
+    let activeStyle: React.CSSProperties = {};
+    if (active) {
+      if (key === 'all') activeStyle = { background: '#111827', color: '#FFFFFF', borderColor: '#111827' };
+      else if (key === 'Satisfacción') activeStyle = { background: '#EFF6FF', color: '#1D4ED8', borderColor: '#BFDBFE' };
+      else activeStyle = { background: '#F0FDF4', color: '#15803D', borderColor: '#BBF7D0' };
+    }
+    return (
+      <button
+        key={key}
+        onClick={() => { setTipoFilter(key); setPage(1); }}
+        className="transition-colors"
+        style={{
+          fontFamily: 'Poppins',
+          fontSize: 13,
+          fontWeight: 500,
+          padding: '4px 16px',
+          borderRadius: 999,
+          border: '1px solid #E5E7EB',
+          background: '#F3F4F6',
+          color: '#6B7280',
+          cursor: 'pointer',
+          ...activeStyle,
+        }}
+        onMouseEnter={(e) => {
+          if (!active) (e.currentTarget.style.background = '#E5E7EB');
+        }}
+        onMouseLeave={(e) => {
+          if (!active) (e.currentTarget.style.background = '#F3F4F6');
+        }}
+      >
+        {label} ({count})
+      </button>
+    );
+  };
+
+  const exportBtnStyle: React.CSSProperties = {
+    background: '#FFFFFF',
+    border: '1px solid #E5E7EB',
+    color: '#374151',
+    fontFamily: 'Poppins',
+    fontSize: 12,
+    fontWeight: 500,
+    borderRadius: 6,
+    padding: '4px 12px',
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 6,
+    cursor: exportDisabled ? 'not-allowed' : 'pointer',
+    opacity: exportDisabled ? 0.5 : 1,
+  };
+
+  const ExportButton: React.FC<{ icon: React.ReactNode; label: string; onClick: () => void }> = ({ icon, label, onClick }) => (
+    <Tooltip title={exportDisabled ? 'Aplica filtros para exportar' : `Exportar ${label}`}>
+      <button
+        type="button"
+        disabled={exportDisabled}
+        onClick={onClick}
+        style={exportBtnStyle}
+        onMouseEnter={(e) => {
+          if (!exportDisabled) {
+            e.currentTarget.style.background = '#F9FAFB';
+            e.currentTarget.style.borderColor = '#D1D5DB';
+          }
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = '#FFFFFF';
+          e.currentTarget.style.borderColor = '#E5E7EB';
+        }}
+      >
+        {icon}
+        {label}
+      </button>
+    </Tooltip>
+  );
+
   const renderEvaluacionesTab = () => {
-    // State 1: nothing selected
     if (!selectedHoldingId && !selectedCompanyId) {
       return (
         <div className="flex flex-col items-center justify-center py-24 bg-white rounded-lg border border-[#E5E7EB]">
@@ -258,7 +503,6 @@ const Encuestas: React.FC = () => {
       );
     }
 
-    // State 2: holding selected, no company
     if (selectedHoldingId && !selectedCompanyId) {
       return (
         <div className="flex flex-col items-center justify-center py-24 bg-white rounded-lg border border-[#E5E7EB]">
@@ -273,14 +517,21 @@ const Encuestas: React.FC = () => {
       );
     }
 
-    // State 3: holding + company selected → table
     return (
       <div>
+        {/* Pills de tipología */}
+        <div className="flex items-center gap-2 mb-4 flex-wrap">
+          {renderPill('all', 'Todas', counts.all)}
+          {renderPill('Satisfacción', 'Satisfacción', counts.Satisfacción)}
+          {renderPill('Transferencia', 'Transferencia', counts.Transferencia)}
+        </div>
+
+        {/* Toolbar */}
         <div className="flex items-center justify-between mb-3 flex-wrap gap-3">
           <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>
             {filteredRows.length} evaluaciones encontradas
           </span>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
             <Input
               placeholder="Buscar..."
               prefix={<MagnifyingGlass size={14} color="#9CA3AF" />}
@@ -289,6 +540,11 @@ const Encuestas: React.FC = () => {
               style={{ width: 220, fontFamily: 'Poppins' }}
               allowClear
             />
+            <div className="flex items-center gap-2">
+              <ExportButton icon={<FileCsv size={16} weight="regular" />} label="CSV" onClick={handleExportCSV} />
+              <ExportButton icon={<FileXls size={16} weight="regular" />} label="Excel" onClick={handleExportExcel} />
+              <ExportButton icon={<FilePdf size={16} weight="regular" />} label="PDF" onClick={handleExportPDF} />
+            </div>
             <div className="flex items-center gap-2">
               <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>Mostrar</span>
               <Select
