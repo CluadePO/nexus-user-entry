@@ -334,7 +334,7 @@ const Encuestas: React.FC = () => {
           ? { background: '#EFF6FF', color: '#1D4ED8' }
           : { background: '#F0FDF4', color: '#15803D' };
         return (
-          <span style={{ ...styles, fontFamily: 'Poppins', fontSize: 12, fontWeight: 500, padding: '2px 10px', borderRadius: 999 }}>
+          <span style={{ ...styles, fontFamily: 'Poppins', fontSize: 12, fontWeight: 500, padding: '2px 10px', borderRadius: 999, whiteSpace: 'nowrap', display: 'inline-block' }}>
             {v}
           </span>
         );
