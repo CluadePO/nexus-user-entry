@@ -314,7 +314,7 @@ const Encuestas: React.FC = () => {
       ),
     },
     {
-      title: 'Nombre Encuesta',
+      title: nowrapTitle('Encuesta'),
       dataIndex: 'encuesta',
       ellipsis: true,
       render: (v: string) => (
