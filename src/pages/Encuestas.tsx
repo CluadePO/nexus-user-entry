@@ -1482,7 +1482,7 @@ const AsignarEncuestasTab: React.FC = () => {
   };
 
   const headerLabel = (text: string) => (
-    <span style={{ whiteSpace: 'nowrap', fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#374151' }}>{text}</span>
+    <span style={{ whiteSpace: 'nowrap', fontFamily: 'Poppins', fontSize: 12, fontWeight: 600, color: '#374151' }}>{text}</span>
   );
 
   const allColumns: any[] = [
