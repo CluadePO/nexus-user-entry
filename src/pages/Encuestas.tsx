@@ -356,7 +356,7 @@ const Encuestas: React.FC = () => {
       render: (v: number) => <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#111827' }}>{v}</span>,
     },
     {
-      title: 'N° Contestadas',
+      title: nowrapTitle('Respondidas'),
       dataIndex: 'contestadas',
       width: 120,
       align: 'center' as const,
