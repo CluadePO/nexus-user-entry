@@ -300,13 +300,14 @@ const Encuestas: React.FC = () => {
     {
       title: nowrapTitle('Código Sencenet'),
       dataIndex: 'sencenet',
-      width: 100,
+      width: 120,
       render: (v: number | null) => <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>{v ?? '—'}</span>,
     },
     {
       title: nowrapTitle('Curso'),
       dataIndex: 'curso',
       ellipsis: true,
+      minWidth: 140,
       render: (v: string) => (
         <Tooltip title={v}>
           <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#374151' }}>{v}</span>
@@ -317,6 +318,7 @@ const Encuestas: React.FC = () => {
       title: nowrapTitle('Encuesta'),
       dataIndex: 'encuesta',
       ellipsis: true,
+      minWidth: 140,
       render: (v: string) => (
         <Tooltip title={v}>
           <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#374151' }}>{v}</span>
@@ -332,7 +334,7 @@ const Encuestas: React.FC = () => {
           ? { background: '#EFF6FF', color: '#1D4ED8' }
           : { background: '#F0FDF4', color: '#15803D' };
         return (
-          <span style={{ ...styles, fontFamily: 'Poppins', fontSize: 12, fontWeight: 500, padding: '2px 10px', borderRadius: 999 }}>
+          <span style={{ ...styles, fontFamily: 'Poppins', fontSize: 12, fontWeight: 500, padding: '2px 10px', borderRadius: 999, whiteSpace: 'nowrap', display: 'inline-block' }}>
             {v}
           </span>
         );
@@ -341,7 +343,7 @@ const Encuestas: React.FC = () => {
     {
       title: nowrapTitle('Modalidad'),
       dataIndex: 'tipoCarga',
-      width: 110,
+      width: 90,
       render: (v: string) => (
         <span style={{ background: '#F3F4F6', color: '#374151', fontFamily: 'Poppins', fontSize: 12, padding: '2px 10px', borderRadius: 999 }}>
           {v}
@@ -351,14 +353,14 @@ const Encuestas: React.FC = () => {
     {
       title: nowrapTitle('Participantes'),
       dataIndex: 'participantes',
-      width: 110,
+      width: 100,
       align: 'center' as const,
       render: (v: number) => <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#111827' }}>{v}</span>,
     },
     {
       title: nowrapTitle('Respondidas'),
       dataIndex: 'contestadas',
-      width: 120,
+      width: 100,
       align: 'center' as const,
       render: (v: number, row: EvalRow) => {
         const color = getContestadasColor(v, row.participantes);
@@ -373,7 +375,7 @@ const Encuestas: React.FC = () => {
     {
       title: nowrapTitle('Tasa Respuesta'),
       dataIndex: 'pct',
-      width: 110,
+      width: 120,
       align: 'center' as const,
       render: (_: any, row: EvalRow) => (
         <ProgressCell contestadas={row.contestadas} participantes={row.participantes} />
@@ -381,7 +383,7 @@ const Encuestas: React.FC = () => {
     },
     {
       title: nowrapTitle('Acciones'),
-      width: 80,
+      width: 70,
       align: 'center' as const,
       render: (_: any, row: EvalRow) => (
         <Popconfirm
@@ -568,6 +570,7 @@ const Encuestas: React.FC = () => {
             dataSource={pagedRows}
             columns={columns as any}
             pagination={false}
+            scroll={{ x: 'max-content' }}
             locale={{
               emptyText: (
                 <div className="flex flex-col items-center justify-center py-12">
