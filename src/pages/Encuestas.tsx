@@ -18,6 +18,10 @@ import {
   PaperPlaneTilt,
   CheckCircle,
   Columns,
+  BookOpen,
+  WifiHigh,
+  Users,
+  FloppyDisk,
 } from '@phosphor-icons/react';
 import dayjs from 'dayjs';
 import * as XLSX from 'xlsx';
