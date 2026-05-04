@@ -1352,6 +1352,38 @@ const AsignarEncuestasTab: React.FC = () => {
           )}
         </>
       )}
+
+      <AsignarModal
+        open={!!asignModal}
+        kind={asignModal?.kind ?? null}
+        row={asignModal?.row ?? null}
+        onClose={() => setAsignModal(null)}
+        onSave={(_relator, _fecha) => {
+          if (!asignModal) return;
+          const { kind, row } = asignModal;
+          setRows((prev) => prev.map((r) =>
+            r.inscripcion === row.inscripcion
+              ? { ...r, [kind === 'Satisfacción' ? 'satisfaccion' : 'transferencia']: 'asignada' as const }
+              : r
+          ));
+          setAsignModal(null);
+          message.success(`Encuesta de ${kind} asignada correctamente`);
+        }}
+      />
+
+      <PreviewModal
+        open={!!previewModal}
+        onClose={() => setPreviewModal(null)}
+        encuesta={previewModal ? {
+          id: ENCUESTA_INFO[previewModal.kind].id,
+          nombre: ENCUESTA_INFO[previewModal.kind].nombre,
+          origen: 'OTIC',
+          cliente: '',
+          tipo: previewModal.kind,
+          version: 2,
+          vigente: 'Si',
+        } : null}
+      />
     </div>
   );
 };
