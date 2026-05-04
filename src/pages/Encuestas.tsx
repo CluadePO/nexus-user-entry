@@ -343,7 +343,7 @@ const Encuestas: React.FC = () => {
     {
       title: nowrapTitle('Modalidad'),
       dataIndex: 'tipoCarga',
-      width: 110,
+      width: 90,
       render: (v: string) => (
         <span style={{ background: '#F3F4F6', color: '#374151', fontFamily: 'Poppins', fontSize: 12, padding: '2px 10px', borderRadius: 999 }}>
           {v}
