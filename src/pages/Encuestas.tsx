@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Button, Tabs, Select, Input, Table, Tooltip, Popconfirm, Pagination, message } from 'antd';
+import { Button, Tabs, Select, Input, Table, Tooltip, Popconfirm, Pagination, Modal, message } from 'antd';
 import {
   Plus,
   ClipboardText,
@@ -12,6 +12,8 @@ import {
   FileCsv,
   FileXls,
   FilePdf,
+  Eye,
+  Star,
 } from '@phosphor-icons/react';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
@@ -147,6 +149,499 @@ const ProgressCell: React.FC<{ contestadas: number; participantes: number }> = (
         </div>
       </div>
     </Tooltip>
+  );
+};
+
+// ============================================================
+// Administrar Encuestas Tab
+// ============================================================
+type EncuestaTipo = 'Satisfacción' | 'Transferencia';
+interface EncuestaRow {
+  id: number;
+  nombre: string;
+  origen: string;
+  cliente: string;
+  tipo: EncuestaTipo;
+  version: number;
+  vigente: 'Si' | 'No';
+}
+
+const ENCUESTAS_DATA: EncuestaRow[] = [
+  { id: 1015, nombre: 'Encuesta de Satisfacción, CAPACITA (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 1, vigente: 'No' },
+  { id: 1028, nombre: 'Encuesta de Satisfacción, INACAP (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 1, vigente: 'No' },
+  { id: 1052, nombre: 'Encuesta de Satisfacción, INACAP III Relatores (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 1, vigente: 'No' },
+  { id: 1053, nombre: 'Encuesta de Satisfacción, INACAP IV Relatores (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 1, vigente: 'No' },
+  { id: 1054, nombre: 'Encuesta de Satisfacción, INACAP II Relatores (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 1, vigente: 'No' },
+  { id: 1093, nombre: 'Encuesta de Satisfacción, WTCS (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 1, vigente: 'No' },
+  { id: 1383, nombre: 'Encuesta de Satisfacción, CAPACITA V2 (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 1, vigente: 'No' },
+  { id: 3731, nombre: 'Encuesta de transferencia al puesto de trabajo, INACAP (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Transferencia', version: 1, vigente: 'No' },
+  { id: 3848, nombre: 'Encuesta de Satisfacción Presencial, INACAP (ver.2)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 2, vigente: 'No' },
+  { id: 3853, nombre: 'Encuesta de Satisfacción Sincrónica, INACAP (ver.2)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 2, vigente: 'No' },
+  { id: 3854, nombre: 'Encuesta de Satisfacción Asincrónica, INACAP (ver.2)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 2, vigente: 'No' },
+  { id: 3855, nombre: 'Encuesta de Satisfacción Presencial, INACAP (ver.3)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 3, vigente: 'No' },
+  { id: 3856, nombre: 'Encuesta de Satisfacción Sincrónica, INACAP (ver.3)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 3, vigente: 'No' },
+  { id: 3857, nombre: 'Encuesta de Satisfacción Asincrónica, INACAP (ver.3)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 3, vigente: 'No' },
+  { id: 3900, nombre: 'Encuesta de Transferencia Presencial, INACAP (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Transferencia', version: 1, vigente: 'No' },
+  { id: 3901, nombre: 'Encuesta de Transferencia Sincrónica, INACAP (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Transferencia', version: 1, vigente: 'No' },
+  { id: 4100, nombre: 'Encuesta de Satisfacción, CAPACITA V3 (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 1, vigente: 'No' },
+  { id: 4101, nombre: 'Encuesta de Satisfacción Estándar v1.0 (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 1, vigente: 'No' },
+  { id: 4200, nombre: 'Encuesta de Transferencia para Jefaturas (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Transferencia', version: 1, vigente: 'No' },
+  { id: 4302, nombre: 'Encuesta de Transferencia de la Capacitación para Jefaturas (ver.2)', origen: 'Holding', cliente: 'INACAP', tipo: 'Transferencia', version: 2, vigente: 'No' },
+  { id: 4303, nombre: 'Encuesta de Satisfacción Sincrónica, INACAP (ver.6)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 6, vigente: 'No' },
+  { id: 4304, nombre: 'Encuesta de Transferencia para Jefaturas Definitiva (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Transferencia', version: 1, vigente: 'No' },
+  { id: 4484, nombre: 'Encuesta de Transferencia Estándar v2.0 (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Transferencia', version: 1, vigente: 'Si' },
+  { id: 4728, nombre: 'Encuesta de Satisfacción Estándar v2.0 (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 1, vigente: 'Si' },
+  { id: 4729, nombre: 'Encuesta de Satisfacción Sincrónica Estándar v2.0 (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 1, vigente: 'Si' },
+];
+
+// Group key (everything before the "(ver.X)") to find max version per group
+const groupKeyOf = (n: string) => n.replace(/\s*\(ver\.\d+\)\s*$/i, '').trim().toLowerCase();
+
+const TEAL = '#65BFB1';
+
+const PreviewModal: React.FC<{ open: boolean; onClose: () => void; encuesta: EncuestaRow | null }> = ({ open, onClose, encuesta }) => {
+  if (!encuesta) return null;
+  const scaleHeader = (
+    <div className="flex gap-2 items-center" style={{ fontFamily: 'Poppins', fontSize: 11, color: '#6B7280' }}>
+      {['1', '2', '3', '4', '5', 'NA'].map((n) => (
+        <span key={n} style={{ width: 22, textAlign: 'center' }}>{n}</span>
+      ))}
+    </div>
+  );
+  const renderQuestion = (q: string) => (
+    <div key={q} className="flex items-center justify-between py-2 border-b border-[#F3F4F6] gap-4">
+      <span style={{ fontFamily: 'Poppins', fontSize: 12, color: '#374151', flex: 1 }}>{q}</span>
+      <div className="flex gap-2">
+        {[0, 1, 2, 3, 4, 5].map((i) => (
+          <div key={i} style={{ width: 22, height: 22, border: '1px solid #D1D5DB', borderRadius: 3, background: '#FFFFFF' }} />
+        ))}
+      </div>
+    </div>
+  );
+  return (
+    <Modal
+      open={open}
+      onCancel={onClose}
+      width={700}
+      footer={[
+        <Button key="close" onClick={onClose} block>
+          Cerrar
+        </Button>,
+      ]}
+      title={
+        <span className="flex items-center gap-2" style={{ fontFamily: 'Poppins' }}>
+          <Eye size={18} color={TEAL} weight="regular" />
+          Previsualización — {encuesta.nombre}
+        </span>
+      }
+    >
+      <div style={{ fontFamily: 'Poppins' }}>
+        {/* Header */}
+        <div className="flex items-center gap-3 mb-4">
+          <div style={{ width: 80, height: 32, background: '#F3F4F6', borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, color: '#9CA3AF' }}>OTIC</div>
+        </div>
+        <h2 style={{ fontFamily: 'Poppins', fontSize: 20, fontWeight: 700, color: '#111827', marginBottom: 12 }}>{encuesta.nombre}</h2>
+        <div className="space-y-2 mb-4">
+          {['Nombre:', 'Nombre del Curso:', 'Relator:'].map((label) => (
+            <div key={label} className="flex items-center gap-2">
+              <span style={{ fontSize: 12, color: '#6B7280', minWidth: 130 }}>{label}</span>
+              <div style={{ flex: 1, borderBottom: '1px solid #D1D5DB', height: 18 }} />
+            </div>
+          ))}
+        </div>
+        <p style={{ fontFamily: 'Poppins', fontSize: 13, color: '#374151', marginBottom: 20 }}>
+          El objetivo de esta evaluación es comprobar si se ha producido algún cambio o mejora en el desempeño de la persona trabajadora a partir de la capacitación realizada.
+        </p>
+
+        {/* Sección 1 */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between pb-2 mb-2" style={{ borderBottom: `2px solid ${TEAL}` }}>
+            <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: TEAL, textTransform: 'uppercase' }}>
+              APLICACIÓN DE CONOCIMIENTOS
+            </span>
+            {scaleHeader}
+          </div>
+          {[
+            'Los aprendizajes obtenidos son utilizados en el trabajo diario',
+            'La persona trabajadora demuestra mayor comprensión de sus funciones',
+            'Los conocimientos adquiridos tienen aplicación a corto y mediano plazo',
+            'La persona trabajadora se muestra más segura en el desempeño de sus labores',
+          ].map(renderQuestion)}
+        </div>
+
+        {/* Sección 2 */}
+        <div className="mb-4">
+          <div className="flex items-center justify-between pb-2 mb-2" style={{ borderBottom: `2px solid ${TEAL}` }}>
+            <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: TEAL, textTransform: 'uppercase' }}>
+              DESARROLLO DE HABILIDADES
+            </span>
+            {scaleHeader}
+          </div>
+          {[
+            'Las habilidades adquiridas han sido aplicadas de manera efectiva',
+            'Se observa una mejora en el desempeño relacionado con la capacitación',
+            'La persona trabajadora considera nuevas formas o estrategias de trabajo',
+          ].map(renderQuestion)}
+        </div>
+
+        <p style={{ fontFamily: 'Poppins', fontSize: 11, color: '#9CA3AF', fontStyle: 'italic', marginTop: 16 }}>
+          * Esta es una previsualización de referencia. El formulario real puede contener más secciones y preguntas según la versión seleccionada.
+        </p>
+      </div>
+    </Modal>
+  );
+};
+
+const AdministrarEncuestasTab: React.FC = () => {
+  const [search, setSearch] = useState('');
+  const [tipoFilter, setTipoFilter] = useState<'all' | EncuestaTipo>('all');
+  const [pageSize, setPageSize] = useState(10);
+  const [page, setPage] = useState(1);
+  const [previewRow, setPreviewRow] = useState<EncuestaRow | null>(null);
+
+  // Compute max version per group
+  const maxVersionByGroup = useMemo(() => {
+    const m = new Map<string, number>();
+    ENCUESTAS_DATA.forEach((r) => {
+      const k = groupKeyOf(r.nombre);
+      m.set(k, Math.max(m.get(k) ?? 0, r.version));
+    });
+    return m;
+  }, []);
+
+  const searched = useMemo(() => {
+    if (!search.trim()) return ENCUESTAS_DATA;
+    const q = search.toLowerCase();
+    return ENCUESTAS_DATA.filter((r) =>
+      [r.nombre, r.tipo, r.cliente].some((v) => v.toLowerCase().includes(q))
+    );
+  }, [search]);
+
+  const counts = useMemo(() => ({
+    all: searched.length,
+    Satisfacción: searched.filter((r) => r.tipo === 'Satisfacción').length,
+    Transferencia: searched.filter((r) => r.tipo === 'Transferencia').length,
+  }), [searched]);
+
+  const filtered = useMemo(() => {
+    if (tipoFilter === 'all') return searched;
+    return searched.filter((r) => r.tipo === tipoFilter);
+  }, [searched, tipoFilter]);
+
+  const paged = useMemo(() => {
+    const start = (page - 1) * pageSize;
+    return filtered.slice(start, start + pageSize);
+  }, [filtered, page, pageSize]);
+
+  const todayStrLocal = () => {
+    const d = new Date();
+    const p = (n: number) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}`;
+  };
+
+  const exportRows = filtered.map((r) => ({
+    ID: r.id,
+    'Nombre Encuesta': r.nombre,
+    Origen: r.origen,
+    Cliente: r.cliente,
+    'Tipo Encuesta': r.tipo,
+    Versión: r.version,
+    Estado: r.vigente === 'Si' ? 'Vigente' : 'No vigente',
+  }));
+
+  const exportDisabled = filtered.length === 0;
+  const fileBaseName = `encuestas_${todayStrLocal()}`;
+
+  const downloadBlob = (blob: Blob, name: string) => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleCSV = () => {
+    if (exportDisabled) return;
+    const headers = Object.keys(exportRows[0]);
+    const sep = ';';
+    const escape = (v: any) => {
+      const s = String(v ?? '');
+      if (s.includes(sep) || s.includes('"') || s.includes('\n')) return `"${s.replace(/"/g, '""')}"`;
+      return s;
+    };
+    const lines = [headers.join(sep), ...exportRows.map((r) => headers.map((h) => escape((r as any)[h])).join(sep))];
+    const blob = new Blob(['\uFEFF' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+    downloadBlob(blob, `${fileBaseName}.csv`);
+  };
+
+  const handleExcel = () => {
+    if (exportDisabled) return;
+    message.info({ content: 'Generando Excel...', style: { fontFamily: 'Poppins, sans-serif' } });
+    setTimeout(() => {
+      const ws = XLSX.utils.json_to_sheet(exportRows);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Encuestas');
+      XLSX.writeFile(wb, `${fileBaseName}.xlsx`);
+    }, 1000);
+  };
+
+  const handlePDF = () => {
+    if (exportDisabled) return;
+    message.info({ content: 'Generando PDF...', style: { fontFamily: 'Poppins, sans-serif' } });
+    setTimeout(() => {
+      const doc = new jsPDF({ orientation: 'landscape' });
+      doc.setFontSize(14);
+      doc.text('Administrar Encuestas', 14, 14);
+      doc.setFontSize(10);
+      doc.text(`Fecha: ${new Date().toLocaleString('es-CL')}    Total: ${exportRows.length}`, 14, 21);
+      const headers = Object.keys(exportRows[0]);
+      autoTable(doc, {
+        head: [headers],
+        body: exportRows.map((r) => headers.map((h) => String((r as any)[h] ?? ''))),
+        startY: 26,
+        styles: { fontSize: 9 },
+        headStyles: { fillColor: [101, 191, 177] },
+      });
+      doc.save(`${fileBaseName}.pdf`);
+    }, 1500);
+  };
+
+  const renderPill = (key: 'all' | EncuestaTipo, label: string, count: number) => {
+    const active = tipoFilter === key;
+    let activeStyle: React.CSSProperties = {};
+    if (active) {
+      if (key === 'all') activeStyle = { background: '#111827', color: '#FFFFFF', borderColor: '#111827' };
+      else if (key === 'Satisfacción') activeStyle = { background: '#EFF6FF', color: '#1D4ED8', borderColor: '#BFDBFE' };
+      else activeStyle = { background: '#F0FDF4', color: '#15803D', borderColor: '#BBF7D0' };
+    }
+    return (
+      <button
+        key={key}
+        onClick={() => { setTipoFilter(key); setPage(1); }}
+        className="transition-colors"
+        style={{
+          fontFamily: 'Poppins', fontSize: 13, fontWeight: 500,
+          padding: '4px 16px', borderRadius: 999,
+          border: '1px solid #E5E7EB', background: '#F3F4F6', color: '#6B7280',
+          cursor: 'pointer', ...activeStyle,
+        }}
+        onMouseEnter={(e) => { if (!active) e.currentTarget.style.background = '#E5E7EB'; }}
+        onMouseLeave={(e) => { if (!active) e.currentTarget.style.background = '#F3F4F6'; }}
+      >
+        {label} ({count})
+      </button>
+    );
+  };
+
+  const exportBtnStyle: React.CSSProperties = {
+    background: '#FFFFFF', border: '1px solid #E5E7EB', color: '#374151',
+    fontFamily: 'Poppins', fontSize: 12, fontWeight: 500, borderRadius: 6,
+    padding: '4px 12px', display: 'inline-flex', alignItems: 'center', gap: 6,
+    cursor: exportDisabled ? 'not-allowed' : 'pointer', opacity: exportDisabled ? 0.5 : 1,
+  };
+
+  const ExportBtn: React.FC<{ icon: React.ReactNode; label: string; onClick: () => void }> = ({ icon, label, onClick }) => (
+    <Tooltip title={exportDisabled ? 'Aplica filtros para exportar' : `Exportar ${label}`}>
+      <button type="button" disabled={exportDisabled} onClick={onClick} style={exportBtnStyle}
+        onMouseEnter={(e) => { if (!exportDisabled) { e.currentTarget.style.background = '#F9FAFB'; } }}
+        onMouseLeave={(e) => { e.currentTarget.style.background = '#FFFFFF'; }}
+      >{icon}{label}</button>
+    </Tooltip>
+  );
+
+  const nowrap = (t: string) => <span style={{ whiteSpace: 'nowrap' }}>{t}</span>;
+
+  const columns = [
+    {
+      title: nowrap('ID'), dataIndex: 'id', width: 70,
+      render: (v: number) => <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 500, color: '#111827' }}>{v}</span>,
+    },
+    {
+      title: nowrap('Nombre Encuesta'), dataIndex: 'nombre', minWidth: 200, ellipsis: true,
+      render: (v: string) => (
+        <Tooltip title={v}>
+          <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#374151' }}>{v}</span>
+        </Tooltip>
+      ),
+    },
+    {
+      title: nowrap('Origen'), dataIndex: 'origen', width: 90,
+      render: (v: string) => <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>{v}</span>,
+    },
+    {
+      title: nowrap('Cliente'), dataIndex: 'cliente', width: 100,
+      render: (v: string) => <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>{v}</span>,
+    },
+    {
+      title: nowrap('Tipo Encuesta'), dataIndex: 'tipo', width: 140,
+      render: (v: EncuestaTipo) => {
+        const styles = v === 'Satisfacción' ? { background: '#EFF6FF', color: '#1D4ED8' } : { background: '#F0FDF4', color: '#15803D' };
+        return (
+          <span style={{ ...styles, fontFamily: 'Poppins', fontSize: 12, fontWeight: 500, padding: '2px 10px', borderRadius: 999, whiteSpace: 'nowrap', display: 'inline-block' }}>
+            {v}
+          </span>
+        );
+      },
+    },
+    {
+      title: nowrap('Versión'), dataIndex: 'version', width: 90, align: 'center' as const,
+      render: (v: number, row: EncuestaRow) => {
+        const isMax = maxVersionByGroup.get(groupKeyOf(row.nombre)) === v;
+        if (isMax) {
+          return (
+            <Tooltip title="Versión más reciente">
+              <span style={{
+                background: '#F0FDF9', color: TEAL,
+                borderRadius: 999, padding: '2px 8px',
+                fontFamily: 'Poppins', fontSize: 12, fontWeight: 600,
+                display: 'inline-flex', alignItems: 'center', gap: 4,
+              }}>
+                <Star size={12} weight="fill" color={TEAL} /> {v}
+              </span>
+            </Tooltip>
+          );
+        }
+        return <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>{v}</span>;
+      },
+    },
+    {
+      title: nowrap('Estado'), dataIndex: 'vigente', width: 120,
+      render: (v: 'Si' | 'No') => {
+        const vigente = v === 'Si';
+        const styles = vigente
+          ? { background: '#D1FAE5', color: '#065F46', dot: '#10B981' }
+          : { background: '#F3F4F6', color: '#6B7280', dot: '#9CA3AF' };
+        return (
+          <span style={{
+            background: styles.background, color: styles.color,
+            fontFamily: 'Poppins', fontSize: 12, fontWeight: 500,
+            padding: '2px 10px', borderRadius: 999, whiteSpace: 'nowrap',
+            display: 'inline-flex', alignItems: 'center', gap: 6,
+          }}>
+            <span style={{ width: 6, height: 6, borderRadius: '50%', background: styles.dot, display: 'inline-block' }} />
+            {vigente ? 'Vigente' : 'No vigente'}
+          </span>
+        );
+      },
+    },
+    {
+      title: nowrap('Acción'), width: 80, align: 'center' as const,
+      render: (_: any, row: EncuestaRow) => {
+        const enabled = row.vigente === 'Si';
+        return (
+          <Tooltip title={enabled ? 'Ver previsualización' : 'Solo disponible para encuestas vigentes'}>
+            <button
+              onClick={() => { if (enabled) setPreviewRow(row); }}
+              style={{
+                background: 'transparent', border: 'none',
+                cursor: enabled ? 'pointer' : 'not-allowed',
+                padding: 4,
+              }}
+            >
+              <Eye size={18} color={enabled ? TEAL : '#D1D5DB'} weight="regular" />
+            </button>
+          </Tooltip>
+        );
+      },
+    },
+  ];
+
+  return (
+    <div>
+      <div className="mb-4">
+        <h2 style={{ fontFamily: 'Poppins', fontSize: 18, fontWeight: 600, color: '#111827', margin: 0 }}>
+          Administrar Encuestas
+        </h2>
+        <p style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280', marginTop: 4, marginBottom: 0 }}>
+          Consulta y previsualiza las encuestas disponibles según su estado de vigencia
+        </p>
+      </div>
+
+      {/* Pills */}
+      <div className="flex items-center gap-2 mb-4 flex-wrap">
+        {renderPill('all', 'Todas', counts.all)}
+        {renderPill('Satisfacción', 'Satisfacción', counts.Satisfacción)}
+        {renderPill('Transferencia', 'Transferencia', counts.Transferencia)}
+      </div>
+
+      {/* Toolbar */}
+      <div className="flex items-center justify-between mb-3 flex-wrap gap-3">
+        <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>
+          {filtered.length} encuestas encontradas
+        </span>
+        <div className="flex items-center gap-3 flex-wrap">
+          <Input
+            placeholder="Buscar por nombre, tipo o cliente..."
+            prefix={<MagnifyingGlass size={14} color="#9CA3AF" />}
+            value={search}
+            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+            style={{ width: 260, fontFamily: 'Poppins' }}
+            allowClear
+          />
+          <div className="flex items-center gap-2">
+            <ExportBtn icon={<FileCsv size={16} />} label="CSV" onClick={handleCSV} />
+            <ExportBtn icon={<FileXls size={16} />} label="Excel" onClick={handleExcel} />
+            <ExportBtn icon={<FilePdf size={16} />} label="PDF" onClick={handlePDF} />
+          </div>
+          <div className="flex items-center gap-2">
+            <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>Mostrar</span>
+            <Select
+              value={pageSize}
+              onChange={(v) => { setPageSize(v); setPage(1); }}
+              style={{ width: 80 }}
+              options={[
+                { value: 10, label: '10' },
+                { value: 25, label: '25' },
+                { value: 50, label: '50' },
+              ]}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div style={{ background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: 8, overflow: 'hidden' }}>
+        <Table
+          rowKey="id"
+          dataSource={paged}
+          columns={columns as any}
+          pagination={false}
+          scroll={{ x: 'max-content' }}
+          locale={{
+            emptyText: (
+              <div className="flex flex-col items-center justify-center py-12">
+                <MagnifyingGlass size={48} color="#D1D5DB" weight="regular" />
+                <p className="mt-3 mb-1" style={{ fontFamily: 'Poppins', fontSize: 14, color: '#6B7280' }}>
+                  No se encontraron encuestas
+                </p>
+                <p style={{ fontFamily: 'Poppins', fontSize: 13, color: '#9CA3AF' }}>
+                  Intenta con otro término de búsqueda
+                </p>
+              </div>
+            ),
+          }}
+        />
+      </div>
+
+      {filtered.length > 0 && (
+        <div className="flex items-center justify-between mt-4 flex-wrap gap-3">
+          <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>
+            Mostrando {(page - 1) * pageSize + 1} a {Math.min(page * pageSize, filtered.length)} de {filtered.length} encuestas
+          </span>
+          <Pagination
+            current={page}
+            pageSize={pageSize}
+            total={filtered.length}
+            onChange={setPage}
+            showSizeChanger={false}
+          />
+        </div>
+      )}
+
+      <PreviewModal open={!!previewRow} onClose={() => setPreviewRow(null)} encuesta={previewRow} />
+    </div>
   );
 };
 
@@ -624,7 +1119,7 @@ const Encuestas: React.FC = () => {
           Administrar Encuestas
         </span>
       ),
-      children: renderEmptyTab(Note, 'Administrar Encuestas'),
+      children: <AdministrarEncuestasTab />,
     },
     {
       key: 'asignar',
