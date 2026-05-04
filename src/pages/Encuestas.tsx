@@ -283,27 +283,28 @@ const Encuestas: React.FC = () => {
     }, 1500);
   };
 
+  const nowrapTitle = (text: string) => <span style={{ whiteSpace: 'nowrap' }}>{text}</span>;
   const columns = [
     {
-      title: 'N° Inscripción',
+      title: nowrapTitle('N° Inscripción'),
       dataIndex: 'inscripcion',
       width: 120,
       render: (v: number) => <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 500, color: '#111827' }}>{v}</span>,
     },
     {
-      title: 'SC',
+      title: nowrapTitle('Código SC'),
       dataIndex: 'sc',
       width: 100,
       render: (v: number | null) => <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>{v ?? '—'}</span>,
     },
     {
-      title: 'Sencenet',
+      title: nowrapTitle('Código Sencenet'),
       dataIndex: 'sencenet',
       width: 100,
       render: (v: number | null) => <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>{v ?? '—'}</span>,
     },
     {
-      title: 'Nombre Curso',
+      title: nowrapTitle('Curso'),
       dataIndex: 'curso',
       ellipsis: true,
       render: (v: string) => (
@@ -313,7 +314,7 @@ const Encuestas: React.FC = () => {
       ),
     },
     {
-      title: 'Nombre Encuesta',
+      title: nowrapTitle('Encuesta'),
       dataIndex: 'encuesta',
       ellipsis: true,
       render: (v: string) => (
@@ -323,7 +324,7 @@ const Encuestas: React.FC = () => {
       ),
     },
     {
-      title: 'Tipología',
+      title: nowrapTitle('Tipo Encuesta'),
       dataIndex: 'tipologia',
       width: 130,
       render: (v: 'Satisfacción' | 'Transferencia') => {
@@ -338,7 +339,7 @@ const Encuestas: React.FC = () => {
       },
     },
     {
-      title: 'Tipo Carga',
+      title: nowrapTitle('Modalidad'),
       dataIndex: 'tipoCarga',
       width: 110,
       render: (v: string) => (
@@ -348,14 +349,14 @@ const Encuestas: React.FC = () => {
       ),
     },
     {
-      title: 'N° Participantes',
+      title: nowrapTitle('Participantes'),
       dataIndex: 'participantes',
       width: 110,
       align: 'center' as const,
       render: (v: number) => <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#111827' }}>{v}</span>,
     },
     {
-      title: 'N° Contestadas',
+      title: nowrapTitle('Respondidas'),
       dataIndex: 'contestadas',
       width: 120,
       align: 'center' as const,
@@ -370,7 +371,7 @@ const Encuestas: React.FC = () => {
       },
     },
     {
-      title: '% Respuesta',
+      title: nowrapTitle('Tasa Respuesta'),
       dataIndex: 'pct',
       width: 110,
       align: 'center' as const,
@@ -379,7 +380,7 @@ const Encuestas: React.FC = () => {
       ),
     },
     {
-      title: 'Acciones',
+      title: nowrapTitle('Acciones'),
       width: 80,
       align: 'center' as const,
       render: (_: any, row: EvalRow) => (
