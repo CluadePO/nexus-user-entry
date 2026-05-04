@@ -22,7 +22,13 @@ import {
   WifiHigh,
   Users,
   FloppyDisk,
+  CheckSquare,
+  UserMinus,
+  ProhibitInset,
+  UserFocus,
 } from '@phosphor-icons/react';
+import { Switch, Checkbox } from 'antd';
+import { toast } from 'sonner';
 import dayjs from 'dayjs';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
@@ -748,23 +754,26 @@ const ENCUESTA_INFO: Record<AsignKind, { nombre: string; id: number }> = {
   'Transferencia': { nombre: 'Encuesta de Transferencia Estándar v2.0', id: 4484 },
 };
 
+interface AsignFormState {
+  relator: string;
+  fecha: any;
+  participantesCount: number;
+}
+
 const AsignarModal: React.FC<{
   open: boolean;
   kind: AsignKind | null;
   row: AsignarCursoRow | null;
+  form: AsignFormState;
+  onChange: (patch: Partial<AsignFormState>) => void;
   onClose: () => void;
-  onSave: (relator: string, fecha: any) => void;
-}> = ({ open, kind, row, onClose, onSave }) => {
-  const [relator, setRelator] = useState('');
-  const [fecha, setFecha] = useState<any>(null);
+  onSave: () => void;
+  onOpenParticipants: () => void;
+}> = ({ open, kind, row, form, onChange, onClose, onSave, onOpenParticipants }) => {
   const [errRelator, setErrRelator] = useState(false);
   const [errFecha, setErrFecha] = useState(false);
 
-  useEffect(() => {
-    if (open) {
-      setRelator(''); setFecha(null); setErrRelator(false); setErrFecha(false);
-    }
-  }, [open, row, kind]);
+  useEffect(() => { if (open) { setErrRelator(false); setErrFecha(false); } }, [open]);
 
   if (!kind || !row) return null;
   const info = ENCUESTA_INFO[kind];
@@ -773,11 +782,11 @@ const AsignarModal: React.FC<{
   const badgeColor = isSatis ? '#1D4ED8' : '#15803D';
 
   const handleSave = () => {
-    const eR = !relator.trim();
-    const eF = !fecha;
+    const eR = !form.relator.trim();
+    const eF = !form.fecha;
     setErrRelator(eR); setErrFecha(eF);
     if (eR || eF) return;
-    onSave(relator.trim(), fecha);
+    onSave();
   };
 
   return (
@@ -800,7 +809,6 @@ const AsignarModal: React.FC<{
       }
     >
       <div style={{ fontFamily: 'Poppins' }}>
-        {/* Header info */}
         <div style={{ background: '#F0FDF9', border: '1px solid #99F6E4', borderRadius: 8, padding: '12px 16px', marginBottom: 20, display: 'flex', gap: 12 }}>
           <BookOpen size={20} color={TEAL} weight="regular" style={{ flexShrink: 0, marginTop: 2 }} />
           <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -809,9 +817,7 @@ const AsignarModal: React.FC<{
           </div>
         </div>
 
-        {/* Form */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          {/* Encuesta */}
           <div>
             <label style={{ fontSize: 13, fontWeight: 500, color: '#374151', display: 'block', marginBottom: 6 }}>Encuesta</label>
             <Input disabled value={`${info.nombre} (ID ${info.id})`} style={{ background: '#F9FAFB', fontFamily: 'Poppins' }} />
@@ -824,12 +830,11 @@ const AsignarModal: React.FC<{
             </span>
           </div>
 
-          {/* Relator */}
           <div>
             <label style={{ fontSize: 13, fontWeight: 500, color: '#374151', display: 'block', marginBottom: 6 }}>Relator *</label>
             <Input
-              value={relator}
-              onChange={(e) => { setRelator(e.target.value); if (e.target.value.trim()) setErrRelator(false); }}
+              value={form.relator}
+              onChange={(e) => { onChange({ relator: e.target.value }); if (e.target.value.trim()) setErrRelator(false); }}
               placeholder="Ingresa el nombre del relator"
               status={errRelator ? 'error' : undefined}
               style={{ fontFamily: 'Poppins' }}
@@ -837,12 +842,11 @@ const AsignarModal: React.FC<{
             {errRelator && <div style={{ color: '#DC2626', fontSize: 12, marginTop: 4 }}>El relator es obligatorio</div>}
           </div>
 
-          {/* Fecha */}
           <div>
             <label style={{ fontSize: 13, fontWeight: 500, color: '#374151', display: 'block', marginBottom: 6 }}>Fecha de Evaluación *</label>
             <DatePicker
-              value={fecha}
-              onChange={(v) => { setFecha(v); if (v) setErrFecha(false); }}
+              value={form.fecha}
+              onChange={(v) => { onChange({ fecha: v }); if (v) setErrFecha(false); }}
               format="DD-MM-YYYY"
               placeholder="Selecciona una fecha"
               style={{ width: '100%' }}
@@ -851,7 +855,6 @@ const AsignarModal: React.FC<{
             {errFecha && <div style={{ color: '#DC2626', fontSize: 12, marginTop: 4 }}>La fecha de evaluación es obligatoria</div>}
           </div>
 
-          {/* Tipo de Carga */}
           <div>
             <label style={{ fontSize: 13, fontWeight: 500, color: '#374151', display: 'block', marginBottom: 6 }}>Tipo de Carga</label>
             <span style={{
@@ -867,19 +870,25 @@ const AsignarModal: React.FC<{
             </div>
           </div>
 
-          {/* Participantes */}
           <div>
             <Button
               block
-              onClick={() => console.log(`Abrir modal participantes ${kind}`)}
+              onClick={onOpenParticipants}
               style={{ borderColor: TEAL, color: TEAL, background: '#FFFFFF', fontFamily: 'Poppins', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
               icon={<Users size={16} weight="regular" />}
             >
-              Gestionar Participantes
+              <span>Gestionar Participantes</span>
+              {form.participantesCount > 0 && (
+                <span style={{ background: TEAL, color: '#FFFFFF', borderRadius: 999, padding: '0 8px', fontSize: 11, fontWeight: 600, marginLeft: 4 }}>
+                  {form.participantesCount} participantes
+                </span>
+              )}
             </Button>
-            <div style={{ fontSize: 12, color: '#9CA3AF', marginTop: 6 }}>
-              Agrega el correo de los participantes del curso
-            </div>
+            {form.participantesCount === 0 && (
+              <div style={{ fontSize: 12, color: '#9CA3AF', marginTop: 6 }}>
+                Agrega el correo de los participantes del curso
+              </div>
+            )}
           </div>
         </div>
 
@@ -901,6 +910,392 @@ const AsignarModal: React.FC<{
   );
 };
 
+// ============= PARTICIPANTES MODALS =============
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+interface SatisParticipante {
+  id: number;
+  rut: string;
+  nombre: string;
+  correo: string;
+  estado: 'activo' | 'eliminado' | 'anulado';
+  selected: boolean;
+}
+const DEFAULT_SATIS: SatisParticipante[] = [
+  { id: 1, rut: '15621841-3', nombre: 'Paula Orellana Marín', correo: '', estado: 'activo', selected: true },
+  { id: 2, rut: '12345678-9', nombre: 'Carlos Muñoz Soto', correo: 'carlos.munoz@empresa.cl', estado: 'activo', selected: true },
+  { id: 3, rut: '16789012-3', nombre: 'Ana Torres Vidal', correo: '', estado: 'activo', selected: true },
+];
+
+const EmailInput: React.FC<{ value: string; placeholder: string; onChange: (v: string) => void }> = ({ value, placeholder, onChange }) => {
+  const [touched, setTouched] = useState(false);
+  const [showCheck, setShowCheck] = useState(false);
+  const empty = !value.trim();
+  const valid = !empty && EMAIL_RE.test(value.trim());
+  const invalid = !empty && !valid;
+
+  let borderColor = '#D1D5DB';
+  let tooltip = '';
+  if (touched) {
+    if (empty) { borderColor = '#F59E0B'; tooltip = 'Correo pendiente de ingresar'; }
+    else if (invalid) { borderColor = '#EF4444'; tooltip = 'Formato de correo inválido. Ej: nombre@empresa.cl'; }
+    else if (showCheck) { borderColor = '#10B981'; }
+  }
+
+  return (
+    <Tooltip title={tooltip} open={touched && tooltip ? undefined : false}>
+      <div style={{ position: 'relative', display: 'inline-block' }}>
+        <Input
+          size="small"
+          value={value}
+          placeholder={placeholder}
+          onChange={(e) => onChange(e.target.value)}
+          onBlur={() => {
+            setTouched(true);
+            if (!empty && EMAIL_RE.test(value.trim())) {
+              setShowCheck(true);
+              setTimeout(() => setShowCheck(false), 1500);
+            }
+          }}
+          style={{ width: '100%', borderColor, fontFamily: 'Poppins' }}
+        />
+        {showCheck && (
+          <CheckCircle size={14} color="#10B981" weight="fill" style={{ position: 'absolute', right: 6, top: '50%', transform: 'translateY(-50%)' }} />
+        )}
+      </div>
+    </Tooltip>
+  );
+};
+
+const SatisfaccionParticipantesModal: React.FC<{
+  open: boolean;
+  row: AsignarCursoRow | null;
+  initial: SatisParticipante[];
+  onClose: () => void;
+  onSave: (list: SatisParticipante[]) => void;
+}> = ({ open, row, initial, onClose, onSave }) => {
+  const [list, setList] = useState<SatisParticipante[]>(initial);
+  const [search, setSearch] = useState('');
+
+  useEffect(() => { if (open) { setList(initial); setSearch(''); } }, [open, initial]);
+
+  if (!row) return null;
+
+  const update = (id: number, patch: Partial<SatisParticipante>) =>
+    setList((prev) => prev.map((p) => (p.id === id ? { ...p, ...patch } : p)));
+
+  const eliminados = list.filter((p) => p.estado === 'eliminado').length;
+  const anulados = list.filter((p) => p.estado === 'anulado').length;
+  const visible = list.filter((p) => p.estado === 'activo').filter((p) =>
+    !search.trim() || p.nombre.toLowerCase().includes(search.toLowerCase()) || p.rut.toLowerCase().includes(search.toLowerCase())
+  );
+  const pendientes = list.filter((p) => p.selected && p.estado === 'activo' && (!p.correo.trim() || !EMAIL_RE.test(p.correo.trim()))).length;
+
+  const handleSave = () => {
+    const invalid = list.some((p) => p.selected && p.estado === 'activo' && p.correo.trim() && !EMAIL_RE.test(p.correo.trim()));
+    if (invalid) {
+      toast.warning('Corrige los correos inválidos antes de guardar');
+      return;
+    }
+    onSave(list);
+  };
+
+  const columns: any[] = [
+    {
+      title: '', dataIndex: 'selected', width: 50, align: 'center' as const,
+      render: (v: boolean, r: SatisParticipante) => (
+        <Checkbox checked={v} onChange={(e) => update(r.id, { selected: e.target.checked })} />
+      ),
+    },
+    {
+      title: <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#374151', whiteSpace: 'nowrap' }}>RUT Participante</span>,
+      dataIndex: 'rut', width: 120,
+      render: (v: string) => <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#374151' }}>{v}</span>,
+    },
+    {
+      title: <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#374151', whiteSpace: 'nowrap' }}>Nombre Participante</span>,
+      dataIndex: 'nombre',
+      render: (v: string) => <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 500, color: '#111827' }}>{v}</span>,
+    },
+    {
+      title: <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#374151', whiteSpace: 'nowrap' }}>Correo Participante</span>,
+      dataIndex: 'correo', width: 240,
+      render: (v: string, r: SatisParticipante) => (
+        <div style={{ width: 220 }}>
+          <EmailInput value={v} placeholder="correo@ejemplo.com" onChange={(nv) => update(r.id, { correo: nv })} />
+        </div>
+      ),
+    },
+  ];
+
+  return (
+    <Modal
+      open={open}
+      onCancel={onClose}
+      width={720}
+      footer={null}
+      title={
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontFamily: 'Poppins' }}>
+          <Users size={20} color={TEAL} weight="regular" />
+          <span style={{ fontSize: 16, fontWeight: 600, color: '#111827' }}>Participantes — Satisfacción</span>
+          <span style={{ background: '#EFF6FF', color: '#1D4ED8', borderRadius: 999, padding: '2px 10px', fontSize: 12, fontWeight: 500, marginLeft: 4 }}>Satisfacción</span>
+        </div>
+      }
+    >
+      <div style={{ fontFamily: 'Poppins' }}>
+        <div style={{ background: '#F0FDF9', borderRadius: 8, padding: '10px 16px', marginBottom: 16 }}>
+          <div style={{ fontSize: 13, fontWeight: 600, color: '#111827' }}>Curso: {row.curso}</div>
+          <div style={{ fontSize: 12, color: '#6B7280' }}>Encuesta: Encuesta de Satisfacción Estándar v2.0</div>
+        </div>
+
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, gap: 8, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <Button
+              type="primary"
+              icon={<CheckSquare size={14} weight="regular" />}
+              onClick={() => setList((prev) => prev.map((p) => ({ ...p, selected: true })))}
+              style={{ background: TEAL, borderColor: TEAL, display: 'inline-flex', alignItems: 'center', gap: 6 }}
+            >
+              Seleccionar Todos
+            </Button>
+            <Button danger icon={<UserMinus size={14} weight="regular" />} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+              Excluir Eliminados ({eliminados})
+            </Button>
+            <Button danger icon={<ProhibitInset size={14} weight="regular" />} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+              Excluir Anulados ({anulados})
+            </Button>
+          </div>
+          <Input
+            prefix={<MagnifyingGlass size={14} color="#9CA3AF" weight="regular" />}
+            placeholder="Filtrar por nombre o RUT..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            style={{ width: 240, fontFamily: 'Poppins' }}
+          />
+        </div>
+
+        <Table
+          columns={columns}
+          dataSource={visible}
+          rowKey="id"
+          pagination={visible.length > 10 ? { pageSize: 10, size: 'small' } : false}
+        />
+
+        {pendientes > 0 && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 12 }}>
+            <Warning size={14} color="#F59E0B" weight="fill" />
+            <span style={{ fontFamily: 'Poppins', fontSize: 12, color: '#D97706' }}>
+              {pendientes} participantes sin correo ingresado
+            </span>
+          </div>
+        )}
+
+        <Button
+          type="primary"
+          block
+          icon={<FloppyDisk size={16} weight="regular" />}
+          onClick={handleSave}
+          style={{ background: TEAL, borderColor: TEAL, marginTop: 16, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+        >
+          Guardar Participantes
+        </Button>
+      </div>
+    </Modal>
+  );
+};
+
+interface TransParticipante {
+  id: number;
+  rut: string;
+  nombre: string;
+  nombreJefe: string;
+  correoJefe: string;
+  nombreEvaluador: string;
+  correoEvaluador: string;
+  estado: 'activo' | 'eliminado' | 'anulado';
+  selected: boolean;
+}
+const DEFAULT_TRANS: TransParticipante[] = [
+  { id: 1, rut: '15775900-0', nombre: 'Francisco Valenzuela Rojas', nombreJefe: '', correoJefe: '', nombreEvaluador: '', correoEvaluador: '', estado: 'activo', selected: true },
+  { id: 2, rut: '12345678-9', nombre: 'Carlos Muñoz Soto', nombreJefe: 'Roberto Silva', correoJefe: 'roberto.silva@empresa.cl', nombreEvaluador: '', correoEvaluador: '', estado: 'activo', selected: true },
+  { id: 3, rut: '16789012-3', nombre: 'Ana Torres Vidal', nombreJefe: '', correoJefe: '', nombreEvaluador: 'María González', correoEvaluador: 'maria.gonzalez@empresa.cl', estado: 'activo', selected: true },
+];
+
+const TransferenciaParticipantesModal: React.FC<{
+  open: boolean;
+  row: AsignarCursoRow | null;
+  initial: TransParticipante[];
+  initialEvaluador: boolean;
+  onClose: () => void;
+  onSave: (list: TransParticipante[], evaluador: boolean) => void;
+}> = ({ open, row, initial, initialEvaluador, onClose, onSave }) => {
+  const [list, setList] = useState<TransParticipante[]>(initial);
+  const [evaluador, setEvaluador] = useState(initialEvaluador);
+  const [search, setSearch] = useState('');
+
+  useEffect(() => {
+    if (open) { setList(initial); setEvaluador(initialEvaluador); setSearch(''); }
+  }, [open, initial, initialEvaluador]);
+
+  if (!row) return null;
+
+  const update = (id: number, patch: Partial<TransParticipante>) =>
+    setList((prev) => prev.map((p) => (p.id === id ? { ...p, ...patch } : p)));
+
+  const eliminados = list.filter((p) => p.estado === 'eliminado').length;
+  const anulados = list.filter((p) => p.estado === 'anulado').length;
+  const visible = list.filter((p) => p.estado === 'activo').filter((p) =>
+    !search.trim() || p.nombre.toLowerCase().includes(search.toLowerCase()) || p.rut.toLowerCase().includes(search.toLowerCase())
+  );
+  const correoKey = evaluador ? 'correoEvaluador' : 'correoJefe';
+  const nombreKey = evaluador ? 'nombreEvaluador' : 'nombreJefe';
+  const pendientes = list.filter((p) => p.selected && p.estado === 'activo' && (!p[correoKey].trim() || !EMAIL_RE.test(p[correoKey].trim()))).length;
+
+  const handleSave = () => {
+    const invalid = list.some((p) => p.selected && p.estado === 'activo' && p[correoKey].trim() && !EMAIL_RE.test(p[correoKey].trim()));
+    if (invalid) {
+      toast.warning('Corrige los correos inválidos antes de guardar');
+      return;
+    }
+    onSave(list, evaluador);
+  };
+
+  const columns: any[] = [
+    {
+      title: '', dataIndex: 'selected', width: 50, align: 'center' as const,
+      render: (v: boolean, r: TransParticipante) => (
+        <Checkbox checked={v} onChange={(e) => update(r.id, { selected: e.target.checked })} />
+      ),
+    },
+    {
+      title: <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#374151', whiteSpace: 'nowrap' }}>RUT Participante</span>,
+      dataIndex: 'rut', width: 120,
+      render: (v: string) => <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#374151' }}>{v}</span>,
+    },
+    {
+      title: <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#374151', whiteSpace: 'nowrap' }}>Nombre Participante</span>,
+      dataIndex: 'nombre',
+      render: (v: string) => <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 500, color: '#111827' }}>{v}</span>,
+    },
+    {
+      title: <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#374151', whiteSpace: 'nowrap' }}>{evaluador ? 'Nombre Evaluador' : 'Nombre Jefe'}</span>,
+      dataIndex: nombreKey, width: 200,
+      render: (v: string, r: TransParticipante) => (
+        <Input
+          size="small"
+          value={v}
+          placeholder={evaluador ? 'Nombre del evaluador' : 'Nombre del jefe directo'}
+          onChange={(e) => update(r.id, { [nombreKey]: e.target.value } as any)}
+          style={{ width: 180, fontFamily: 'Poppins' }}
+        />
+      ),
+    },
+    {
+      title: <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#374151', whiteSpace: 'nowrap' }}>{evaluador ? 'Correo Evaluador' : 'Correo Jefe'}</span>,
+      dataIndex: correoKey, width: 220,
+      render: (v: string, r: TransParticipante) => (
+        <div style={{ width: 200 }}>
+          <EmailInput
+            value={v}
+            placeholder={evaluador ? 'correo@evaluador.cl' : 'correo@jefe.cl'}
+            onChange={(nv) => update(r.id, { [correoKey]: nv } as any)}
+          />
+        </div>
+      ),
+    },
+  ];
+
+  return (
+    <Modal
+      open={open}
+      onCancel={onClose}
+      width={800}
+      footer={null}
+      title={
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontFamily: 'Poppins' }}>
+          <Users size={20} color={TEAL} weight="regular" />
+          <span style={{ fontSize: 16, fontWeight: 600, color: '#111827' }}>Participantes — Transferencia</span>
+          <span style={{ background: '#F0FDF4', color: '#15803D', borderRadius: 999, padding: '2px 10px', fontSize: 12, fontWeight: 500, marginLeft: 4 }}>Transferencia</span>
+        </div>
+      }
+    >
+      <div style={{ fontFamily: 'Poppins' }}>
+        <div style={{ background: '#F0FDF9', borderRadius: 8, padding: '10px 16px', marginBottom: 16 }}>
+          <div style={{ fontSize: 13, fontWeight: 600, color: '#111827' }}>Curso: {row.curso}</div>
+          <div style={{ fontSize: 12, color: '#6B7280' }}>Encuesta: Encuesta de Transferencia Estándar v2.0</div>
+        </div>
+
+        {/* Toggle */}
+        <div style={{ background: '#F9FAFB', border: '1px solid #E5E7EB', borderRadius: 8, padding: '12px 16px', marginBottom: 16 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
+            <UserFocus size={20} color={evaluador ? '#9CA3AF' : TEAL} weight="regular" />
+            <span style={{ fontFamily: 'Poppins', fontSize: 14, fontWeight: 600, color: !evaluador ? '#111827' : '#9CA3AF' }}>Jefe</span>
+            <Switch checked={evaluador} onChange={setEvaluador} style={{ background: evaluador ? TEAL : undefined }} />
+            <span style={{ fontFamily: 'Poppins', fontSize: 14, fontWeight: 600, color: evaluador ? '#111827' : '#9CA3AF' }}>Evaluador</span>
+          </div>
+          <div style={{ textAlign: 'center', fontFamily: 'Poppins', fontSize: 12, color: '#6B7280', marginTop: 8 }}>
+            {evaluador
+              ? 'El correo se enviará al evaluador asignado al participante'
+              : 'El correo se enviará al jefe directo del participante'}
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, gap: 8, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <Button
+              type="primary"
+              icon={<CheckSquare size={14} weight="regular" />}
+              onClick={() => setList((prev) => prev.map((p) => ({ ...p, selected: true })))}
+              style={{ background: TEAL, borderColor: TEAL, display: 'inline-flex', alignItems: 'center', gap: 6 }}
+            >
+              Seleccionar Todos
+            </Button>
+            <Button danger icon={<UserMinus size={14} weight="regular" />} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+              Excluir Eliminados ({eliminados})
+            </Button>
+            <Button danger icon={<ProhibitInset size={14} weight="regular" />} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+              Excluir Anulados ({anulados})
+            </Button>
+          </div>
+          <Input
+            prefix={<MagnifyingGlass size={14} color="#9CA3AF" weight="regular" />}
+            placeholder="Filtrar por nombre o RUT..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            style={{ width: 240, fontFamily: 'Poppins' }}
+          />
+        </div>
+
+        <Table
+          columns={columns}
+          dataSource={visible}
+          rowKey="id"
+          pagination={visible.length > 10 ? { pageSize: 10, size: 'small' } : false}
+        />
+
+        {pendientes > 0 && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 12 }}>
+            <Warning size={14} color="#F59E0B" weight="fill" />
+            <span style={{ fontFamily: 'Poppins', fontSize: 12, color: '#D97706' }}>
+              {pendientes} participantes sin correo de {evaluador ? 'evaluador' : 'jefe'} ingresado
+            </span>
+          </div>
+        )}
+
+        <Button
+          type="primary"
+          block
+          icon={<FloppyDisk size={16} weight="regular" />}
+          onClick={handleSave}
+          style={{ background: TEAL, borderColor: TEAL, marginTop: 16, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+        >
+          Guardar Participantes
+        </Button>
+      </div>
+    </Modal>
+  );
+};
+
 const AsignarEncuestasTab: React.FC = () => {
   const { selectedHoldingId, selectedCompanyId } = useOTICFilter();
   const currentMonthRange = (): [any, any] => [dayjs().startOf('month'), dayjs().endOf('month')];
@@ -915,6 +1310,19 @@ const AsignarEncuestasTab: React.FC = () => {
   const [rows, setRows] = useState<AsignarCursoRow[]>(ASIGNAR_DATA);
   const [asignModal, setAsignModal] = useState<{ kind: AsignKind; row: AsignarCursoRow } | null>(null);
   const [previewModal, setPreviewModal] = useState<{ kind: AsignKind; row: AsignarCursoRow } | null>(null);
+  // Per-row asign form state, keyed by `${inscripcion}-${kind}`
+  const [asignForms, setAsignForms] = useState<Record<string, AsignFormState>>({});
+  // Per-row participants state
+  const [satisParts, setSatisParts] = useState<Record<number, SatisParticipante[]>>({});
+  const [transParts, setTransParts] = useState<Record<number, TransParticipante[]>>({});
+  const [transEvaluador, setTransEvaluador] = useState<Record<number, boolean>>({});
+  const [participantsModal, setParticipantsModal] = useState<{ kind: AsignKind; row: AsignarCursoRow } | null>(null);
+
+  const formKey = (insc: number, kind: AsignKind) => `${insc}-${kind}`;
+  const getForm = (insc: number, kind: AsignKind): AsignFormState =>
+    asignForms[formKey(insc, kind)] ?? { relator: '', fecha: null, participantesCount: 0 };
+  const patchForm = (insc: number, kind: AsignKind, patch: Partial<AsignFormState>) =>
+    setAsignForms((prev) => ({ ...prev, [formKey(insc, kind)]: { ...getForm(insc, kind), ...patch } }));
 
   // Auto-load when both holding+company are selected
   useEffect(() => {
@@ -1357,8 +1765,15 @@ const AsignarEncuestasTab: React.FC = () => {
         open={!!asignModal}
         kind={asignModal?.kind ?? null}
         row={asignModal?.row ?? null}
+        form={asignModal ? getForm(asignModal.row.inscripcion, asignModal.kind) : { relator: '', fecha: null, participantesCount: 0 }}
+        onChange={(patch) => { if (asignModal) patchForm(asignModal.row.inscripcion, asignModal.kind, patch); }}
         onClose={() => setAsignModal(null)}
-        onSave={(_relator, _fecha) => {
+        onOpenParticipants={() => {
+          if (!asignModal) return;
+          setParticipantsModal({ kind: asignModal.kind, row: asignModal.row });
+          setAsignModal(null);
+        }}
+        onSave={() => {
           if (!asignModal) return;
           const { kind, row } = asignModal;
           setRows((prev) => prev.map((r) =>
@@ -1367,7 +1782,57 @@ const AsignarEncuestasTab: React.FC = () => {
               : r
           ));
           setAsignModal(null);
-          message.success(`Encuesta de ${kind} asignada correctamente`);
+          toast.success(`Encuesta de ${kind} asignada correctamente`);
+        }}
+      />
+
+      <SatisfaccionParticipantesModal
+        open={!!participantsModal && participantsModal.kind === 'Satisfacción'}
+        row={participantsModal?.row ?? null}
+        initial={participantsModal && participantsModal.kind === 'Satisfacción'
+          ? (satisParts[participantsModal.row.inscripcion] ?? DEFAULT_SATIS)
+          : DEFAULT_SATIS}
+        onClose={() => {
+          if (participantsModal) {
+            setAsignModal({ kind: participantsModal.kind, row: participantsModal.row });
+          }
+          setParticipantsModal(null);
+        }}
+        onSave={(list) => {
+          if (!participantsModal) return;
+          const { row, kind } = participantsModal;
+          setSatisParts((prev) => ({ ...prev, [row.inscripcion]: list }));
+          const count = list.filter((p) => p.selected && p.estado === 'activo').length;
+          patchForm(row.inscripcion, kind, { participantesCount: count });
+          toast.success('Participantes guardados correctamente');
+          setAsignModal({ kind, row });
+          setParticipantsModal(null);
+        }}
+      />
+
+      <TransferenciaParticipantesModal
+        open={!!participantsModal && participantsModal.kind === 'Transferencia'}
+        row={participantsModal?.row ?? null}
+        initial={participantsModal && participantsModal.kind === 'Transferencia'
+          ? (transParts[participantsModal.row.inscripcion] ?? DEFAULT_TRANS)
+          : DEFAULT_TRANS}
+        initialEvaluador={participantsModal ? (transEvaluador[participantsModal.row.inscripcion] ?? false) : false}
+        onClose={() => {
+          if (participantsModal) {
+            setAsignModal({ kind: participantsModal.kind, row: participantsModal.row });
+          }
+          setParticipantsModal(null);
+        }}
+        onSave={(list, evaluador) => {
+          if (!participantsModal) return;
+          const { row, kind } = participantsModal;
+          setTransParts((prev) => ({ ...prev, [row.inscripcion]: list }));
+          setTransEvaluador((prev) => ({ ...prev, [row.inscripcion]: evaluador }));
+          const count = list.filter((p) => p.selected && p.estado === 'activo').length;
+          patchForm(row.inscripcion, kind, { participantesCount: count });
+          toast.success('Participantes guardados correctamente');
+          setAsignModal({ kind, row });
+          setParticipantsModal(null);
         }}
       />
 
