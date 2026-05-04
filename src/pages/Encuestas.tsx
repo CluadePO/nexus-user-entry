@@ -1765,8 +1765,15 @@ const AsignarEncuestasTab: React.FC = () => {
         open={!!asignModal}
         kind={asignModal?.kind ?? null}
         row={asignModal?.row ?? null}
+        form={asignModal ? getForm(asignModal.row.inscripcion, asignModal.kind) : { relator: '', fecha: null, participantesCount: 0 }}
+        onChange={(patch) => { if (asignModal) patchForm(asignModal.row.inscripcion, asignModal.kind, patch); }}
         onClose={() => setAsignModal(null)}
-        onSave={(_relator, _fecha) => {
+        onOpenParticipants={() => {
+          if (!asignModal) return;
+          setParticipantsModal({ kind: asignModal.kind, row: asignModal.row });
+          setAsignModal(null);
+        }}
+        onSave={() => {
           if (!asignModal) return;
           const { kind, row } = asignModal;
           setRows((prev) => prev.map((r) =>
@@ -1775,7 +1782,57 @@ const AsignarEncuestasTab: React.FC = () => {
               : r
           ));
           setAsignModal(null);
-          message.success(`Encuesta de ${kind} asignada correctamente`);
+          toast.success(`Encuesta de ${kind} asignada correctamente`);
+        }}
+      />
+
+      <SatisfaccionParticipantesModal
+        open={!!participantsModal && participantsModal.kind === 'Satisfacción'}
+        row={participantsModal?.row ?? null}
+        initial={participantsModal && participantsModal.kind === 'Satisfacción'
+          ? (satisParts[participantsModal.row.inscripcion] ?? DEFAULT_SATIS)
+          : DEFAULT_SATIS}
+        onClose={() => {
+          if (participantsModal) {
+            setAsignModal({ kind: participantsModal.kind, row: participantsModal.row });
+          }
+          setParticipantsModal(null);
+        }}
+        onSave={(list) => {
+          if (!participantsModal) return;
+          const { row, kind } = participantsModal;
+          setSatisParts((prev) => ({ ...prev, [row.inscripcion]: list }));
+          const count = list.filter((p) => p.selected && p.estado === 'activo').length;
+          patchForm(row.inscripcion, kind, { participantesCount: count });
+          toast.success('Participantes guardados correctamente');
+          setAsignModal({ kind, row });
+          setParticipantsModal(null);
+        }}
+      />
+
+      <TransferenciaParticipantesModal
+        open={!!participantsModal && participantsModal.kind === 'Transferencia'}
+        row={participantsModal?.row ?? null}
+        initial={participantsModal && participantsModal.kind === 'Transferencia'
+          ? (transParts[participantsModal.row.inscripcion] ?? DEFAULT_TRANS)
+          : DEFAULT_TRANS}
+        initialEvaluador={participantsModal ? (transEvaluador[participantsModal.row.inscripcion] ?? false) : false}
+        onClose={() => {
+          if (participantsModal) {
+            setAsignModal({ kind: participantsModal.kind, row: participantsModal.row });
+          }
+          setParticipantsModal(null);
+        }}
+        onSave={(list, evaluador) => {
+          if (!participantsModal) return;
+          const { row, kind } = participantsModal;
+          setTransParts((prev) => ({ ...prev, [row.inscripcion]: list }));
+          setTransEvaluador((prev) => ({ ...prev, [row.inscripcion]: evaluador }));
+          const count = list.filter((p) => p.selected && p.estado === 'activo').length;
+          patchForm(row.inscripcion, kind, { participantesCount: count });
+          toast.success('Participantes guardados correctamente');
+          setAsignModal({ kind, row });
+          setParticipantsModal(null);
         }}
       />
 
