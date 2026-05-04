@@ -293,6 +293,10 @@ const PreviewModal: React.FC<{ open: boolean; onClose: () => void; encuesta: Enc
 };
 
 const AdministrarEncuestasTab: React.FC = () => {
+  const { selectedCompany } = useOTICFilter();
+  const clienteName = selectedCompany
+    ? (selectedCompany.name.includes('|') ? selectedCompany.name.split('|').pop()!.trim() : selectedCompany.name)
+    : '';
   const [search, setSearch] = useState('');
   const [tipoFilter, setTipoFilter] = useState<'all' | EncuestaTipo>('all');
   const [pageSize, setPageSize] = useState(10);
