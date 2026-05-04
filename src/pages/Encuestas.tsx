@@ -307,6 +307,7 @@ const Encuestas: React.FC = () => {
       title: nowrapTitle('Curso'),
       dataIndex: 'curso',
       ellipsis: true,
+      minWidth: 140,
       render: (v: string) => (
         <Tooltip title={v}>
           <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#374151' }}>{v}</span>
@@ -317,6 +318,7 @@ const Encuestas: React.FC = () => {
       title: nowrapTitle('Encuesta'),
       dataIndex: 'encuesta',
       ellipsis: true,
+      minWidth: 140,
       render: (v: string) => (
         <Tooltip title={v}>
           <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#374151' }}>{v}</span>
