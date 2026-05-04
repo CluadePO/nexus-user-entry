@@ -339,7 +339,7 @@ const Encuestas: React.FC = () => {
       },
     },
     {
-      title: 'Tipo Carga',
+      title: nowrapTitle('Modalidad'),
       dataIndex: 'tipoCarga',
       width: 110,
       render: (v: string) => (
