@@ -1489,7 +1489,7 @@ const AsignarEncuestasTab: React.FC = () => {
     {
       key: 'inscripcion',
       title: headerLabel('N° Inscripción'),
-      dataIndex: 'inscripcion', width: 110,
+      dataIndex: 'inscripcion', width: 100,
       render: (v: number) => <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 500, color: '#111827' }}>{v}</span>,
     },
     {
@@ -1507,7 +1507,8 @@ const AsignarEncuestasTab: React.FC = () => {
     {
       key: 'periodo',
       title: headerLabel('Período'),
-      width: 130,
+      width: 150,
+      onCell: () => ({ style: { whiteSpace: 'nowrap', overflow: 'visible' } as React.CSSProperties }),
       render: (_: unknown, row: AsignarCursoRow) => (
         <span style={{ fontFamily: 'Poppins', fontSize: 12, color: '#374151', whiteSpace: 'nowrap' }}>
           {row.inicio} → {row.termino}
@@ -1518,14 +1519,13 @@ const AsignarEncuestasTab: React.FC = () => {
       key: 'curso',
       title: headerLabel('Curso'),
       dataIndex: 'curso',
-      ellipsis: { showTitle: false },
       render: (v: string) => (
         <Tooltip title={v}>
           <span
             style={{
-              fontFamily: 'Poppins', fontSize: 13, color: '#374151',
+              fontFamily: 'Poppins', fontSize: 13, color: '#374151', lineHeight: 1.4,
               display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
-              overflow: 'hidden', minWidth: 160, maxWidth: 280,
+              overflow: 'hidden', wordBreak: 'break-word', whiteSpace: 'normal', maxWidth: 300,
             }}
           >{v}</span>
         </Tooltip>
@@ -1534,7 +1534,7 @@ const AsignarEncuestasTab: React.FC = () => {
     {
       key: 'tipo',
       title: headerLabel('Tipo'),
-      dataIndex: 'tipo', width: 100, align: 'center' as const,
+      dataIndex: 'tipo', width: 90, align: 'center' as const,
       render: (v: 'Sence' | 'Curso Interno') => {
         const sence = v === 'Sence';
         return (
@@ -1550,7 +1550,7 @@ const AsignarEncuestasTab: React.FC = () => {
     {
       key: 'modalidad',
       title: headerLabel('Modalidad'),
-      dataIndex: 'modalidad', width: 100, align: 'center' as const,
+      dataIndex: 'modalidad', width: 95, align: 'center' as const,
       render: (v: 'E-Learning' | 'Presencial') => {
         const elearn = v === 'E-Learning';
         return (
@@ -1572,7 +1572,7 @@ const AsignarEncuestasTab: React.FC = () => {
     {
       key: 'satisfaccion',
       title: headerLabel('Satisfacción'),
-      dataIndex: 'satisfaccion', width: 90, align: 'center' as const,
+      dataIndex: 'satisfaccion', width: 85, align: 'center' as const,
       render: (v: 'sin_asignar' | 'asignada', row: AsignarCursoRow) =>
         renderActionCell(v, 'Satisfacción', row),
     },
