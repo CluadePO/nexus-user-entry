@@ -2352,13 +2352,6 @@ const Encuestas: React.FC = () => {
             Gestiona evaluaciones, encuestas y cursos finalizados
           </p>
         </div>
-        <Button
-          type="primary"
-          icon={<Plus size={16} weight="bold" />}
-          style={{ background: '#65BFB1', borderColor: '#65BFB1', display: 'inline-flex', alignItems: 'center', gap: 6 }}
-        >
-          Nueva Encuesta
-        </Button>
       </div>
 
       <Tabs
