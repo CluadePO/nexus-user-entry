@@ -1134,8 +1134,8 @@ const TransferenciaParticipantesModal: React.FC<{
   const [search, setSearch] = useState('');
 
   useEffect(() => {
-    if (open) { setList(initial); setEvaluador(initialEvaluador); setSearch(''); }
-  }, [open, initial, initialEvaluador]);
+    if (open) { setList(initial); setEvaluador(false); setSearch(''); }
+  }, [open, initial]);
 
   if (!row) return null;
 
