@@ -701,6 +701,359 @@ const AdministrarEncuestasTab: React.FC = () => {
   );
 };
 
+// ============================================================
+// ASIGNAR ENCUESTAS TAB
+// ============================================================
+interface AsignarCursoRow {
+  inscripcion: number;
+  sc: number | null;
+  sencenet: number | null;
+  inicio: string;
+  termino: string;
+  curso: string;
+  tipo: 'Sence' | 'Curso Interno';
+  modalidad: 'E-Learning' | 'Presencial';
+  participantes: number;
+  satisfaccion: 'sin_asignar' | 'asignada';
+  transferencia: 'sin_asignar' | 'asignada';
+}
+
+const ASIGNAR_DATA: AsignarCursoRow[] = [
+  { inscripcion: 2095229, sc: 2081283, sencenet: 6751930, inicio: '06/01/2026', termino: '14/02/2026', curso: 'HERRAMIENTAS ESENCIALES DEL STORYTELLING PARA LA CONSTRUCCIÓN DE HISTORIAS CORPORATIVAS EFECTIVAS', tipo: 'Sence', modalidad: 'E-Learning', participantes: 1, satisfaccion: 'sin_asignar', transferencia: 'sin_asignar' },
+  { inscripcion: 2118699, sc: null, sencenet: 6720127, inicio: '31/03/2026', termino: '26/05/2026', curso: 'GESTIÓN DE LA INTELIGENCIA EMOCIONAL PARA EL LIDERAZGO DE EQUIPOS', tipo: 'Sence', modalidad: 'E-Learning', participantes: 1, satisfaccion: 'asignada', transferencia: 'sin_asignar' },
+  { inscripcion: 2118700, sc: null, sencenet: 6720128, inicio: '26/05/2026', termino: '21/07/2026', curso: 'HERRAMIENTAS DE GESTIÓN PARA LA DIRECCIÓN DE ORGANIZACIONES', tipo: 'Sence', modalidad: 'E-Learning', participantes: 1, satisfaccion: 'sin_asignar', transferencia: 'sin_asignar' },
+  { inscripcion: 2118703, sc: null, sencenet: 6720129, inicio: '28/07/2026', termino: '29/09/2026', curso: 'HERRAMIENTAS PARA EL EJERCICIO DEL LIDERAZGO EN LAS ORGANIZACIONES', tipo: 'Sence', modalidad: 'E-Learning', participantes: 1, satisfaccion: 'sin_asignar', transferencia: 'sin_asignar' },
+  { inscripcion: 2126744, sc: null, sencenet: 6732975, inicio: '31/03/2026', termino: '26/05/2026', curso: 'Gestión socio-ambiental: casos de empresa', tipo: 'Sence', modalidad: 'E-Learning', participantes: 1, satisfaccion: 'asignada', transferencia: 'asignada' },
+  { inscripcion: 2126747, sc: null, sencenet: 6732976, inicio: '26/05/2026', termino: '28/07/2026', curso: 'Sostenibilidad Socio-Ambiental: desafíos para la empresa', tipo: 'Sence', modalidad: 'E-Learning', participantes: 1, satisfaccion: 'sin_asignar', transferencia: 'sin_asignar' },
+  { inscripcion: 2126757, sc: null, sencenet: 6732977, inicio: '28/07/2026', termino: '29/09/2026', curso: 'Técnicas para la gestión ambiental', tipo: 'Sence', modalidad: 'E-Learning', participantes: 1, satisfaccion: 'sin_asignar', transferencia: 'sin_asignar' },
+  { inscripcion: 2143994, sc: null, sencenet: 6752071, inicio: '05/01/2026', termino: '13/02/2026', curso: 'Aplicación De Técnicas De Comunicación Efectiva', tipo: 'Sence', modalidad: 'E-Learning', participantes: 1, satisfaccion: 'sin_asignar', transferencia: 'sin_asignar' },
+  { inscripcion: 2144001, sc: null, sencenet: 6752074, inicio: '05/01/2026', termino: '30/01/2026', curso: 'Excel Básico: planillas inteligentes para el trabajo diario', tipo: 'Sence', modalidad: 'E-Learning', participantes: 2, satisfaccion: 'asignada', transferencia: 'sin_asignar' },
+  { inscripcion: 2174396, sc: null, sencenet: null, inicio: '05/03/2026', termino: '05/03/2026', curso: 'Capacitación Teórica práctica sobre uso de extintores', tipo: 'Curso Interno', modalidad: 'Presencial', participantes: 9, satisfaccion: 'sin_asignar', transferencia: 'sin_asignar' },
+  { inscripcion: 2177407, sc: null, sencenet: null, inicio: '05/03/2026', termino: '05/03/2026', curso: 'Capacitación Teórica práctica sobre uso de extintores', tipo: 'Curso Interno', modalidad: 'Presencial', participantes: 9, satisfaccion: 'sin_asignar', transferencia: 'sin_asignar' },
+  { inscripcion: 2177416, sc: null, sencenet: null, inicio: '05/03/2026', termino: '05/03/2026', curso: 'Capacitación Teórica práctica sobre uso de extintores', tipo: 'Curso Interno', modalidad: 'E-Learning', participantes: 9, satisfaccion: 'asignada', transferencia: 'asignada' },
+];
+
+const AsignarEncuestasTab: React.FC = () => {
+  const { selectedHoldingId, selectedCompanyId } = useOTICFilter();
+  const [dates, setDates] = useState<any>(null);
+  const [searched, setSearched] = useState(false);
+  const [dateError, setDateError] = useState(false);
+  const [search, setSearch] = useState('');
+  const [pageSize, setPageSize] = useState(10);
+  const [page, setPage] = useState(1);
+
+  // Reset on filter change
+  useEffect(() => {
+    setSearched(false);
+    setDates(null);
+    setDateError(false);
+    setSearch('');
+    setPage(1);
+  }, [selectedHoldingId, selectedCompanyId]);
+
+  const handleBuscar = () => {
+    if (!dates || !dates[0] || !dates[1]) {
+      setDateError(true);
+      return;
+    }
+    setDateError(false);
+    setSearched(true);
+    setPage(1);
+  };
+
+  const filtered = useMemo(() => {
+    if (!searched) return [];
+    const q = search.trim().toLowerCase();
+    if (!q) return ASIGNAR_DATA;
+    return ASIGNAR_DATA.filter((r) =>
+      [r.curso, String(r.inscripcion), String(r.sc ?? ''), String(r.sencenet ?? '')]
+        .some((v) => v.toLowerCase().includes(q))
+    );
+  }, [searched, search]);
+
+  const paged = useMemo(() => {
+    const start = (page - 1) * pageSize;
+    return filtered.slice(start, start + pageSize);
+  }, [filtered, page, pageSize]);
+
+  const nowrap = (text: string) => (
+    <span style={{ whiteSpace: 'nowrap', fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#374151' }}>{text}</span>
+  );
+
+  const renderActionCell = (
+    state: 'sin_asignar' | 'asignada',
+    kind: 'Satisfacción' | 'Transferencia',
+    inscripcion: number
+  ) => {
+    if (state === 'sin_asignar') {
+      return (
+        <Tooltip title="Sin asignar — clic para asignar">
+          <button
+            onClick={() => console.log(`Abrir modal ${kind} ${inscripcion}`)}
+            style={{
+              border: 'none', background: 'transparent', cursor: 'pointer',
+              padding: 4, borderRadius: 6, display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+              transition: 'all .15s',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = '#F3F4F6'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+          >
+            <GearSix size={22} color="#9CA3AF" weight="regular" />
+          </button>
+        </Tooltip>
+      );
+    }
+    return (
+      <div style={{ display: 'inline-flex', gap: 8, alignItems: 'center', justifyContent: 'center' }}>
+        <Tooltip title="Reenviar encuesta a participantes">
+          <button
+            onClick={() => console.log(`Reenviar ${kind}`)}
+            style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: 4, display: 'inline-flex' }}
+          >
+            <PaperPlaneTilt size={22} color={TEAL} weight="regular" />
+          </button>
+        </Tooltip>
+        <Tooltip title="Ver previsualización">
+          <button
+            onClick={() => console.log(`Preview ${kind}`)}
+            style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: 4, display: 'inline-flex' }}
+          >
+            <Eye size={22} color={TEAL} weight="regular" />
+          </button>
+        </Tooltip>
+      </div>
+    );
+  };
+
+  const columns: any[] = [
+    {
+      title: <span style={{ whiteSpace: 'nowrap', fontFamily: 'Poppins' }}>N° Inscripción</span>,
+      dataIndex: 'inscripcion', width: 120,
+      render: (v: number) => <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 500, color: '#111827' }}>{v}</span>,
+    },
+    {
+      title: <span style={{ whiteSpace: 'nowrap', fontFamily: 'Poppins' }}>Código SC</span>,
+      dataIndex: 'sc', width: 100,
+      render: (v: number | null) => <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>{v ?? '—'}</span>,
+    },
+    {
+      title: <span style={{ whiteSpace: 'nowrap', fontFamily: 'Poppins' }}>Código Sencenet</span>,
+      dataIndex: 'sencenet', width: 110,
+      render: (v: number | null) => <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>{v ?? '—'}</span>,
+    },
+    {
+      title: <span style={{ whiteSpace: 'nowrap', fontFamily: 'Poppins' }}>Inicio</span>,
+      dataIndex: 'inicio', width: 100,
+      render: (v: string) => <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#374151' }}>{v.replace(/\//g, '-')}</span>,
+    },
+    {
+      title: <span style={{ whiteSpace: 'nowrap', fontFamily: 'Poppins' }}>Término</span>,
+      dataIndex: 'termino', width: 100,
+      render: (v: string) => <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#374151' }}>{v.replace(/\//g, '-')}</span>,
+    },
+    {
+      title: <span style={{ whiteSpace: 'nowrap', fontFamily: 'Poppins' }}>Curso</span>,
+      dataIndex: 'curso',
+      ellipsis: { showTitle: false },
+      render: (v: string) => (
+        <Tooltip title={v}>
+          <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#374151', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 180 }}>{v}</span>
+        </Tooltip>
+      ),
+    },
+    {
+      title: <span style={{ whiteSpace: 'nowrap', fontFamily: 'Poppins' }}>Tipo</span>,
+      dataIndex: 'tipo', width: 110, align: 'center' as const,
+      render: (v: 'Sence' | 'Curso Interno') => {
+        const sence = v === 'Sence';
+        return (
+          <span style={{
+            display: 'inline-block', padding: '2px 10px', borderRadius: 999,
+            background: sence ? '#EFF6FF' : '#F3F4F6',
+            color: sence ? '#1D4ED8' : '#374151',
+            fontFamily: 'Poppins', fontSize: 12, fontWeight: 500, whiteSpace: 'nowrap',
+          }}>{v}</span>
+        );
+      },
+    },
+    {
+      title: <span style={{ whiteSpace: 'nowrap', fontFamily: 'Poppins' }}>Modalidad</span>,
+      dataIndex: 'modalidad', width: 100, align: 'center' as const,
+      render: (v: 'E-Learning' | 'Presencial') => {
+        const elearn = v === 'E-Learning';
+        return (
+          <span style={{
+            display: 'inline-block', padding: '2px 10px', borderRadius: 999,
+            background: elearn ? '#F0FDF9' : '#F3F4F6',
+            color: elearn ? TEAL : '#374151',
+            fontFamily: 'Poppins', fontSize: 12, fontWeight: 500, whiteSpace: 'nowrap',
+          }}>{v}</span>
+        );
+      },
+    },
+    {
+      title: <span style={{ whiteSpace: 'nowrap', fontFamily: 'Poppins' }}>Participantes</span>,
+      dataIndex: 'participantes', width: 90, align: 'center' as const,
+      render: (v: number) => <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#111827' }}>{v}</span>,
+    },
+    {
+      title: <span style={{ whiteSpace: 'nowrap', fontFamily: 'Poppins' }}>Satisfacción</span>,
+      dataIndex: 'satisfaccion', width: 110, align: 'center' as const,
+      render: (v: 'sin_asignar' | 'asignada', row: AsignarCursoRow) =>
+        renderActionCell(v, 'Satisfacción', row.inscripcion),
+    },
+    {
+      title: <span style={{ whiteSpace: 'nowrap', fontFamily: 'Poppins' }}>Transferencia</span>,
+      dataIndex: 'transferencia', width: 110, align: 'center' as const,
+      render: (v: 'sin_asignar' | 'asignada', row: AsignarCursoRow) =>
+        renderActionCell(v, 'Transferencia', row.inscripcion),
+    },
+  ];
+
+  // Empty states based on filter selection
+  if (!selectedHoldingId && !selectedCompanyId) {
+    return (
+      <div>
+        <div style={{ marginBottom: 24 }}>
+          <h2 style={{ fontFamily: 'Poppins', fontSize: 18, fontWeight: 600, color: '#111827', margin: 0 }}>Asignar Encuestas</h2>
+          <p style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280', marginTop: 4, marginBottom: 0 }}>
+            Gestiona la asignación de encuestas de satisfacción y transferencia por curso
+          </p>
+        </div>
+        <div className="flex flex-col items-center justify-center py-24">
+          <UserPlus size={56} color="#D1D5DB" weight="regular" />
+          <p className="mt-4 mb-1" style={{ fontFamily: 'Poppins', fontSize: 15, fontWeight: 500, color: '#6B7280' }}>Selecciona un Holding y Empresa</p>
+          <p style={{ fontFamily: 'Poppins', fontSize: 13, color: '#9CA3AF' }}>Usa los filtros del menú superior para cargar los cursos disponibles.</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (selectedHoldingId && !selectedCompanyId) {
+    return (
+      <div>
+        <div style={{ marginBottom: 24 }}>
+          <h2 style={{ fontFamily: 'Poppins', fontSize: 18, fontWeight: 600, color: '#111827', margin: 0 }}>Asignar Encuestas</h2>
+          <p style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280', marginTop: 4, marginBottom: 0 }}>
+            Gestiona la asignación de encuestas de satisfacción y transferencia por curso
+          </p>
+        </div>
+        <div className="flex flex-col items-center justify-center py-24">
+          <Buildings size={56} color="#D1D5DB" weight="regular" />
+          <p className="mt-4 mb-1" style={{ fontFamily: 'Poppins', fontSize: 15, fontWeight: 500, color: '#6B7280' }}>Selecciona una Empresa</p>
+          <p style={{ fontFamily: 'Poppins', fontSize: 13, color: '#9CA3AF' }}>Elige una empresa del filtro superior para ver sus cursos.</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ fontFamily: 'Poppins, sans-serif' }}>
+      <div style={{ marginBottom: 24 }}>
+        <h2 style={{ fontFamily: 'Poppins', fontSize: 18, fontWeight: 600, color: '#111827', margin: 0 }}>Asignar Encuestas</h2>
+        <p style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280', marginTop: 4, marginBottom: 0 }}>
+          Gestiona la asignación de encuestas de satisfacción y transferencia por curso
+        </p>
+      </div>
+
+      {/* Selector de Período */}
+      <div style={{ background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: 8, padding: '16px 24px', marginBottom: 24 }}>
+        <div style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 500, color: '#374151', marginBottom: 8 }}>
+          Selección de Período
+        </div>
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16, flexWrap: 'wrap' }}>
+          <div>
+            <DatePicker.RangePicker
+              value={dates}
+              onChange={(v) => { setDates(v); if (v && v[0] && v[1]) setDateError(false); }}
+              format="DD-MM-YYYY"
+              placeholder={['Fecha Inicio', 'Fecha Término']}
+              style={{ width: 340 }}
+            />
+            {dateError && (
+              <div style={{ color: '#DC2626', fontFamily: 'Poppins', fontSize: 12, marginTop: 6 }}>
+                Debes seleccionar un período para buscar
+              </div>
+            )}
+          </div>
+          <Button
+            type="primary"
+            icon={<MagnifyingGlass size={16} weight="regular" />}
+            onClick={handleBuscar}
+            style={{ background: TEAL, borderColor: TEAL, display: 'inline-flex', alignItems: 'center', gap: 6 }}
+          >
+            Buscar
+          </Button>
+        </div>
+      </div>
+
+      {searched && (
+        <>
+          {/* Toolbar */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12, gap: 12, flexWrap: 'wrap' }}>
+            <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>
+              {filtered.length} cursos encontrados
+            </span>
+            <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+              <Input
+                prefix={<MagnifyingGlass size={14} color="#9CA3AF" weight="regular" />}
+                placeholder="Buscar curso..."
+                value={search}
+                onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+                style={{ width: 240, fontFamily: 'Poppins' }}
+              />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>Mostrar</span>
+                <Select
+                  value={pageSize}
+                  onChange={(v) => { setPageSize(v); setPage(1); }}
+                  style={{ width: 80 }}
+                  options={[{ value: 10, label: '10' }, { value: 25, label: '25' }, { value: 50, label: '50' }]}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Table */}
+          <div style={{ background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: 8, overflow: 'hidden' }}>
+            <Table
+              columns={columns}
+              dataSource={paged}
+              rowKey="inscripcion"
+              pagination={false}
+              scroll={{ x: 'max-content' }}
+              locale={{
+                emptyText: (
+                  <div className="flex flex-col items-center justify-center py-12">
+                    <MagnifyingGlass size={48} color="#D1D5DB" weight="regular" />
+                    <p className="mt-3 mb-1" style={{ fontFamily: 'Poppins', fontSize: 14, color: '#6B7280' }}>No se encontraron cursos</p>
+                    <p style={{ fontFamily: 'Poppins', fontSize: 13, color: '#9CA3AF' }}>Intenta con otro término de búsqueda</p>
+                  </div>
+                ),
+              }}
+            />
+          </div>
+
+          {filtered.length > 0 && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 16 }}>
+              <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>
+                Mostrando {(page - 1) * pageSize + 1} a {Math.min(page * pageSize, filtered.length)} de {filtered.length} cursos
+              </span>
+              <Pagination
+                current={page}
+                pageSize={pageSize}
+                total={filtered.length}
+                showSizeChanger={false}
+                onChange={(p) => setPage(p)}
+              />
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+};
+
 const Encuestas: React.FC = () => {
   const { selectedHoldingId, selectedCompanyId, selectedHolding, selectedCompany } = useOTICFilter();
   const [activeTab, setActiveTab] = useState('evaluaciones');
