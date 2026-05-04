@@ -1163,14 +1163,14 @@ const TransferenciaParticipantesModal: React.FC<{
 
   const columns: any[] = [
     {
-      title: '', dataIndex: 'selected', width: 50, align: 'center' as const,
+      title: '', dataIndex: 'selected', width: 40, align: 'center' as const,
       render: (v: boolean, r: TransParticipante) => (
         <Checkbox checked={v} onChange={(e) => update(r.id, { selected: e.target.checked })} />
       ),
     },
     {
       title: <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#374151', whiteSpace: 'nowrap' }}>RUT Participante</span>,
-      dataIndex: 'rut', width: 120,
+      dataIndex: 'rut', width: 110,
       render: (v: string) => <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#374151' }}>{v}</span>,
     },
     {
@@ -1180,22 +1180,22 @@ const TransferenciaParticipantesModal: React.FC<{
     },
     {
       title: <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#374151', whiteSpace: 'nowrap' }}>{evaluador ? 'Nombre Evaluador' : 'Nombre Jefe'}</span>,
-      dataIndex: nombreKey, width: 200,
+      dataIndex: nombreKey, width: 150,
       render: (v: string, r: TransParticipante) => (
         <Input
           size="small"
           value={v}
-          placeholder={evaluador ? 'Nombre del evaluador' : 'Nombre del jefe directo'}
+          placeholder={evaluador ? 'Nombre del evaluador' : 'Nombre del jefe'}
           onChange={(e) => update(r.id, { [nombreKey]: e.target.value } as any)}
-          style={{ width: 180, fontFamily: 'Poppins' }}
+          style={{ width: '100%', fontFamily: 'Poppins' }}
         />
       ),
     },
     {
       title: <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#374151', whiteSpace: 'nowrap' }}>{evaluador ? 'Correo Evaluador' : 'Correo Jefe'}</span>,
-      dataIndex: correoKey, width: 220,
+      dataIndex: correoKey, width: 180,
       render: (v: string, r: TransParticipante) => (
-        <div style={{ width: 200 }}>
+        <div style={{ width: '100%' }}>
           <EmailInput
             value={v}
             placeholder={evaluador ? 'correo@evaluador.cl' : 'correo@jefe.cl'}
@@ -1210,8 +1210,9 @@ const TransferenciaParticipantesModal: React.FC<{
     <Modal
       open={open}
       onCancel={onClose}
-      width={800}
+      width={760}
       footer={null}
+      styles={{ body: { padding: 0 } }}
       title={
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontFamily: 'Poppins' }}>
           <Users size={20} color={TEAL} weight="regular" />
@@ -1221,99 +1222,105 @@ const TransferenciaParticipantesModal: React.FC<{
       }
     >
       <div style={{ fontFamily: 'Poppins' }}>
-        <div style={{ background: '#F0FDF9', borderRadius: 8, padding: '10px 16px', marginBottom: 16 }}>
-          <div style={{ fontSize: 13, fontWeight: 600, color: '#111827' }}>Curso: {row.curso}</div>
-          <div style={{ fontSize: 12, color: '#6B7280' }}>Encuesta: Encuesta de Transferencia Estándar v2.0</div>
+        <div style={{ maxHeight: 'calc(80vh - 200px)', overflowY: 'auto', padding: '16px 24px' }}>
+          <div style={{ background: '#F0FDF9', borderRadius: 8, padding: '10px 16px', marginBottom: 16 }}>
+            <div style={{ fontSize: 13, fontWeight: 600, color: '#111827' }}>Curso: {row.curso}</div>
+            <div style={{ fontSize: 12, color: '#6B7280' }}>Encuesta: Encuesta de Transferencia Estándar v2.0</div>
+          </div>
+
+          {/* Selector destinatario */}
+          <div style={{ marginBottom: 12 }}>
+            <Segmented
+              block
+              value={evaluador ? 'evaluador' : 'jefe'}
+              onChange={(v) => setEvaluador(v === 'evaluador')}
+              options={[
+                {
+                  value: 'jefe',
+                  label: (
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontFamily: 'Poppins', fontSize: 13, fontWeight: !evaluador ? 600 : 500 }}>
+                      <UserCircle size={16} weight="regular" />
+                      Jefe
+                    </span>
+                  ),
+                },
+                {
+                  value: 'evaluador',
+                  label: (
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontFamily: 'Poppins', fontSize: 13, fontWeight: evaluador ? 600 : 500 }}>
+                      <UserFocus size={16} weight="regular" />
+                      Evaluador
+                    </span>
+                  ),
+                },
+              ]}
+              style={{ background: '#F3F4F6' }}
+              className="encuestas-segmented-teal"
+            />
+            <div style={{ textAlign: 'center', fontFamily: 'Poppins', fontSize: 12, color: '#6B7280', marginTop: 8 }}>
+              {evaluador
+                ? 'El correo se enviará al evaluador asignado al participante'
+                : 'El correo se enviará al jefe directo del participante'}
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, gap: 8, flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              <Button
+                type="primary"
+                icon={<CheckSquare size={14} weight="regular" />}
+                onClick={() => setList((prev) => prev.map((p) => ({ ...p, selected: true })))}
+                style={{ background: TEAL, borderColor: TEAL, display: 'inline-flex', alignItems: 'center', gap: 6 }}
+              >
+                Seleccionar Todos
+              </Button>
+              <Button danger icon={<UserMinus size={14} weight="regular" />} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                Excluir Eliminados ({eliminados})
+              </Button>
+              <Button danger icon={<ProhibitInset size={14} weight="regular" />} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                Excluir Anulados ({anulados})
+              </Button>
+            </div>
+            <Input
+              prefix={<MagnifyingGlass size={14} color="#9CA3AF" weight="regular" />}
+              placeholder="Filtrar por nombre o RUT..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              style={{ width: 240, fontFamily: 'Poppins' }}
+            />
+          </div>
+
+          <div style={{ overflowX: 'auto' }}>
+            <Table
+              columns={columns}
+              dataSource={visible}
+              rowKey="id"
+              pagination={visible.length > 10 ? { pageSize: 10, size: 'small' } : false}
+              scroll={{ x: 'max-content' }}
+            />
+          </div>
+
+          {pendientes > 0 && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 12 }}>
+              <Warning size={14} color="#F59E0B" weight="fill" />
+              <span style={{ fontFamily: 'Poppins', fontSize: 12, color: '#D97706' }}>
+                {pendientes} participantes sin correo de {evaluador ? 'evaluador' : 'jefe'} ingresado
+              </span>
+            </div>
+          )}
         </div>
 
-        {/* Selector destinatario */}
-        <div style={{ marginBottom: 12 }}>
-          <Segmented
+        <div style={{ position: 'sticky', bottom: 0, background: '#ffffff', borderTop: '1px solid #E5E7EB', padding: '12px 24px' }}>
+          <Button
+            type="primary"
             block
-            value={evaluador ? 'evaluador' : 'jefe'}
-            onChange={(v) => setEvaluador(v === 'evaluador')}
-            options={[
-              {
-                value: 'jefe',
-                label: (
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontFamily: 'Poppins', fontSize: 13, fontWeight: !evaluador ? 600 : 500 }}>
-                    <UserCircle size={16} weight="regular" />
-                    Jefe
-                  </span>
-                ),
-              },
-              {
-                value: 'evaluador',
-                label: (
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontFamily: 'Poppins', fontSize: 13, fontWeight: evaluador ? 600 : 500 }}>
-                    <UserFocus size={16} weight="regular" />
-                    Evaluador
-                  </span>
-                ),
-              },
-            ]}
-            style={{ background: '#F3F4F6' }}
-            className="encuestas-segmented-teal"
-          />
-          <div style={{ textAlign: 'center', fontFamily: 'Poppins', fontSize: 12, color: '#6B7280', marginTop: 8 }}>
-            {evaluador
-              ? 'El correo se enviará al evaluador asignado al participante'
-              : 'El correo se enviará al jefe directo del participante'}
-          </div>
+            icon={<FloppyDisk size={16} weight="regular" />}
+            onClick={handleSave}
+            style={{ background: TEAL, borderColor: TEAL, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+          >
+            Guardar Participantes
+          </Button>
         </div>
-
-
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, gap: 8, flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-            <Button
-              type="primary"
-              icon={<CheckSquare size={14} weight="regular" />}
-              onClick={() => setList((prev) => prev.map((p) => ({ ...p, selected: true })))}
-              style={{ background: TEAL, borderColor: TEAL, display: 'inline-flex', alignItems: 'center', gap: 6 }}
-            >
-              Seleccionar Todos
-            </Button>
-            <Button danger icon={<UserMinus size={14} weight="regular" />} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-              Excluir Eliminados ({eliminados})
-            </Button>
-            <Button danger icon={<ProhibitInset size={14} weight="regular" />} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-              Excluir Anulados ({anulados})
-            </Button>
-          </div>
-          <Input
-            prefix={<MagnifyingGlass size={14} color="#9CA3AF" weight="regular" />}
-            placeholder="Filtrar por nombre o RUT..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            style={{ width: 240, fontFamily: 'Poppins' }}
-          />
-        </div>
-
-        <Table
-          columns={columns}
-          dataSource={visible}
-          rowKey="id"
-          pagination={visible.length > 10 ? { pageSize: 10, size: 'small' } : false}
-        />
-
-        {pendientes > 0 && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 12 }}>
-            <Warning size={14} color="#F59E0B" weight="fill" />
-            <span style={{ fontFamily: 'Poppins', fontSize: 12, color: '#D97706' }}>
-              {pendientes} participantes sin correo de {evaluador ? 'evaluador' : 'jefe'} ingresado
-            </span>
-          </div>
-        )}
-
-        <Button
-          type="primary"
-          block
-          icon={<FloppyDisk size={16} weight="regular" />}
-          onClick={handleSave}
-          style={{ background: TEAL, borderColor: TEAL, marginTop: 16, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
-        >
-          Guardar Participantes
-        </Button>
       </div>
     </Modal>
   );
