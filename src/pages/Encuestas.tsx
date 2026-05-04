@@ -1772,7 +1772,7 @@ const AsignarEncuestasTab: React.FC = () => {
               dataSource={paged}
               rowKey="inscripcion"
               pagination={false}
-              scroll={{ x: 'max-content' }}
+              tableLayout="fixed"
               onRow={(row: AsignarCursoRow) => {
                 let borderColor = 'transparent';
                 if (isAsignado(row)) borderColor = '#10B981';
