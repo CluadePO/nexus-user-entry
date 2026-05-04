@@ -1119,7 +1119,7 @@ const Encuestas: React.FC = () => {
           Administrar Encuestas
         </span>
       ),
-      children: renderEmptyTab(Note, 'Administrar Encuestas'),
+      children: <AdministrarEncuestasTab />,
     },
     {
       key: 'asignar',
