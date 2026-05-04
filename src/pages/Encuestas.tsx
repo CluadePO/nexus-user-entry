@@ -283,9 +283,10 @@ const Encuestas: React.FC = () => {
     }, 1500);
   };
 
+  const nowrapTitle = (text: string) => <span style={{ whiteSpace: 'nowrap' }}>{text}</span>;
   const columns = [
     {
-      title: 'N° Inscripción',
+      title: nowrapTitle('N° Inscripción'),
       dataIndex: 'inscripcion',
       width: 120,
       render: (v: number) => <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 500, color: '#111827' }}>{v}</span>,
