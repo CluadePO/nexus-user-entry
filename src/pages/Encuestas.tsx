@@ -324,7 +324,7 @@ const Encuestas: React.FC = () => {
       ),
     },
     {
-      title: 'Tipología',
+      title: nowrapTitle('Tipo Encuesta'),
       dataIndex: 'tipologia',
       width: 130,
       render: (v: 'Satisfacción' | 'Transferencia') => {
