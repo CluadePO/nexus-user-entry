@@ -741,6 +741,165 @@ const ASIGNAR_DATA: AsignarCursoRow[] = [
 ];
 
 type PillKey = 'todos' | 'sin' | 'asig';
+type AsignKind = 'Satisfacción' | 'Transferencia';
+
+const ENCUESTA_INFO: Record<AsignKind, { nombre: string; id: number }> = {
+  'Satisfacción': { nombre: 'Encuesta de Satisfacción Estándar v2.0', id: 4728 },
+  'Transferencia': { nombre: 'Encuesta de Transferencia Estándar v2.0', id: 4484 },
+};
+
+const AsignarModal: React.FC<{
+  open: boolean;
+  kind: AsignKind | null;
+  row: AsignarCursoRow | null;
+  onClose: () => void;
+  onSave: (relator: string, fecha: any) => void;
+}> = ({ open, kind, row, onClose, onSave }) => {
+  const [relator, setRelator] = useState('');
+  const [fecha, setFecha] = useState<any>(null);
+  const [errRelator, setErrRelator] = useState(false);
+  const [errFecha, setErrFecha] = useState(false);
+
+  useEffect(() => {
+    if (open) {
+      setRelator(''); setFecha(null); setErrRelator(false); setErrFecha(false);
+    }
+  }, [open, row, kind]);
+
+  if (!kind || !row) return null;
+  const info = ENCUESTA_INFO[kind];
+  const isSatis = kind === 'Satisfacción';
+  const badgeBg = isSatis ? '#EFF6FF' : '#F0FDF4';
+  const badgeColor = isSatis ? '#1D4ED8' : '#15803D';
+
+  const handleSave = () => {
+    const eR = !relator.trim();
+    const eF = !fecha;
+    setErrRelator(eR); setErrFecha(eF);
+    if (eR || eF) return;
+    onSave(relator.trim(), fecha);
+  };
+
+  return (
+    <Modal
+      open={open}
+      onCancel={onClose}
+      width={580}
+      footer={null}
+      title={
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingRight: 24, fontFamily: 'Poppins' }}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+            <ClipboardText size={20} color={TEAL} weight="regular" />
+            <span style={{ fontSize: 16, fontWeight: 600, color: '#111827' }}>Asignar Encuesta</span>
+          </span>
+          <span style={{
+            display: 'inline-block', padding: '2px 10px', borderRadius: 999,
+            background: badgeBg, color: badgeColor, fontFamily: 'Poppins', fontSize: 12, fontWeight: 500,
+          }}>{kind}</span>
+        </div>
+      }
+    >
+      <div style={{ fontFamily: 'Poppins' }}>
+        {/* Header info */}
+        <div style={{ background: '#F0FDF9', border: '1px solid #99F6E4', borderRadius: 8, padding: '12px 16px', marginBottom: 20, display: 'flex', gap: 12 }}>
+          <BookOpen size={20} color={TEAL} weight="regular" style={{ flexShrink: 0, marginTop: 2 }} />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <span style={{ fontSize: 13, fontWeight: 600, color: '#111827' }}>N° Inscripción: {row.inscripcion}</span>
+            <span style={{ fontSize: 13, color: '#374151', wordBreak: 'break-word' }}>Curso: {row.curso}</span>
+          </div>
+        </div>
+
+        {/* Form */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          {/* Encuesta */}
+          <div>
+            <label style={{ fontSize: 13, fontWeight: 500, color: '#374151', display: 'block', marginBottom: 6 }}>Encuesta</label>
+            <Input disabled value={`${info.nombre} (ID ${info.id})`} style={{ background: '#F9FAFB', fontFamily: 'Poppins' }} />
+            <span style={{
+              display: 'inline-flex', alignItems: 'center', gap: 4, marginTop: 6,
+              background: '#F0FDF9', color: TEAL, borderRadius: 999, padding: '2px 10px', fontSize: 11, fontFamily: 'Poppins',
+            }}>
+              <Star size={12} weight="fill" />
+              Estándar vigente
+            </span>
+          </div>
+
+          {/* Relator */}
+          <div>
+            <label style={{ fontSize: 13, fontWeight: 500, color: '#374151', display: 'block', marginBottom: 6 }}>Relator *</label>
+            <Input
+              value={relator}
+              onChange={(e) => { setRelator(e.target.value); if (e.target.value.trim()) setErrRelator(false); }}
+              placeholder="Ingresa el nombre del relator"
+              status={errRelator ? 'error' : undefined}
+              style={{ fontFamily: 'Poppins' }}
+            />
+            {errRelator && <div style={{ color: '#DC2626', fontSize: 12, marginTop: 4 }}>El relator es obligatorio</div>}
+          </div>
+
+          {/* Fecha */}
+          <div>
+            <label style={{ fontSize: 13, fontWeight: 500, color: '#374151', display: 'block', marginBottom: 6 }}>Fecha de Evaluación *</label>
+            <DatePicker
+              value={fecha}
+              onChange={(v) => { setFecha(v); if (v) setErrFecha(false); }}
+              format="DD-MM-YYYY"
+              placeholder="Selecciona una fecha"
+              style={{ width: '100%' }}
+              status={errFecha ? 'error' : undefined}
+            />
+            {errFecha && <div style={{ color: '#DC2626', fontSize: 12, marginTop: 4 }}>La fecha de evaluación es obligatoria</div>}
+          </div>
+
+          {/* Tipo de Carga */}
+          <div>
+            <label style={{ fontSize: 13, fontWeight: 500, color: '#374151', display: 'block', marginBottom: 6 }}>Tipo de Carga</label>
+            <span style={{
+              display: 'inline-flex', alignItems: 'center', gap: 6,
+              background: '#F0FDF9', color: TEAL, borderRadius: 8, padding: '8px 12px',
+              fontSize: 13, fontWeight: 500, fontFamily: 'Poppins',
+            }}>
+              <WifiHigh size={16} weight="regular" />
+              On-line
+            </span>
+            <div style={{ fontSize: 11, color: '#9CA3AF', marginTop: 6 }}>
+              El tipo de carga siempre es On-line para este tipo de encuesta.
+            </div>
+          </div>
+
+          {/* Participantes */}
+          <div>
+            <Button
+              block
+              onClick={() => console.log(`Abrir modal participantes ${kind}`)}
+              style={{ borderColor: TEAL, color: TEAL, background: '#FFFFFF', fontFamily: 'Poppins', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
+              icon={<Users size={16} weight="regular" />}
+            >
+              Gestionar Participantes
+            </Button>
+            <div style={{ fontSize: 12, color: '#9CA3AF', marginTop: 6 }}>
+              Agrega el correo de los participantes del curso
+            </div>
+          </div>
+        </div>
+
+        <div style={{ borderTop: '1px solid #E5E7EB', margin: '20px 0 16px' }} />
+
+        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
+          <Button onClick={onClose} style={{ fontFamily: 'Poppins' }}>Cancelar</Button>
+          <Button
+            type="primary"
+            onClick={handleSave}
+            icon={<FloppyDisk size={16} weight="regular" />}
+            style={{ background: TEAL, borderColor: TEAL, fontFamily: 'Poppins', display: 'inline-flex', alignItems: 'center', gap: 6 }}
+          >
+            Guardar Configuración
+          </Button>
+        </div>
+      </div>
+    </Modal>
+  );
+};
 
 const AsignarEncuestasTab: React.FC = () => {
   const { selectedHoldingId, selectedCompanyId } = useOTICFilter();
@@ -753,6 +912,9 @@ const AsignarEncuestasTab: React.FC = () => {
   const [page, setPage] = useState(1);
   const [pill, setPill] = useState<PillKey>('todos');
   const [showTech, setShowTech] = useState(false);
+  const [rows, setRows] = useState<AsignarCursoRow[]>(ASIGNAR_DATA);
+  const [asignModal, setAsignModal] = useState<{ kind: AsignKind; row: AsignarCursoRow } | null>(null);
+  const [previewModal, setPreviewModal] = useState<{ kind: AsignKind; row: AsignarCursoRow } | null>(null);
 
   // Auto-load when both holding+company are selected
   useEffect(() => {
