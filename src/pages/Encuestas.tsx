@@ -944,12 +944,12 @@ const AsignarEncuestasTab: React.FC = () => {
   const searched_rows = useMemo(() => {
     if (!searched) return [];
     const q = search.trim().toLowerCase();
-    if (!q) return ASIGNAR_DATA;
-    return ASIGNAR_DATA.filter((r) =>
+    if (!q) return rows;
+    return rows.filter((r) =>
       [r.curso, String(r.inscripcion), String(r.sc ?? ''), String(r.sencenet ?? '')]
         .some((v) => v.toLowerCase().includes(q))
     );
-  }, [searched, search]);
+  }, [searched, search, rows]);
 
   const isAsignado = (r: AsignarCursoRow) => r.satisfaccion === 'asignada' && r.transferencia === 'asignada';
   const isSinAsignar = (r: AsignarCursoRow) => r.satisfaccion === 'sin_asignar' || r.transferencia === 'sin_asignar';
@@ -961,10 +961,10 @@ const AsignarEncuestasTab: React.FC = () => {
   }), [searched_rows]);
 
   const totals = useMemo(() => ({
-    total: searched ? ASIGNAR_DATA.length : 0,
-    sin: searched ? ASIGNAR_DATA.filter(isSinAsignar).length : 0,
-    asig: searched ? ASIGNAR_DATA.filter(isAsignado).length : 0,
-  }), [searched]);
+    total: searched ? rows.length : 0,
+    sin: searched ? rows.filter(isSinAsignar).length : 0,
+    asig: searched ? rows.filter(isAsignado).length : 0,
+  }), [searched, rows]);
 
   const filtered = useMemo(() => {
     if (pill === 'sin') return searched_rows.filter(isSinAsignar);
@@ -977,16 +977,20 @@ const AsignarEncuestasTab: React.FC = () => {
     return filtered.slice(start, start + pageSize);
   }, [filtered, page, pageSize]);
 
+  const handleResend = (kind: AsignKind) => {
+    message.success('Encuesta reenviada exitosamente');
+  };
+
   const renderActionCell = (
     state: 'sin_asignar' | 'asignada',
-    kind: 'Satisfacción' | 'Transferencia',
-    inscripcion: number
+    kind: AsignKind,
+    row: AsignarCursoRow
   ) => {
     if (state === 'sin_asignar') {
       return (
         <Tooltip title="Sin asignar — clic para asignar">
           <button
-            onClick={() => console.log(`Abrir modal ${kind} ${inscripcion}`)}
+            onClick={() => setAsignModal({ kind, row })}
             style={{
               border: 'none', background: 'transparent', cursor: 'pointer',
               padding: 4, borderRadius: 6, display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
@@ -1002,13 +1006,23 @@ const AsignarEncuestasTab: React.FC = () => {
     }
     return (
       <div style={{ display: 'inline-flex', gap: 8, alignItems: 'center', justifyContent: 'center' }}>
-        <Tooltip title="Reenviar encuesta a participantes">
-          <button onClick={() => console.log(`Reenviar ${kind}`)} style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: 4, display: 'inline-flex' }}>
-            <PaperPlaneTilt size={22} color={TEAL} weight="regular" />
-          </button>
-        </Tooltip>
+        <Popconfirm
+          title={<span style={{ fontFamily: 'Poppins', fontWeight: 600 }}>¿Reenviar encuesta?</span>}
+          description={<span style={{ fontFamily: 'Poppins', fontSize: 12, color: '#6B7280' }}>Se enviará la encuesta a todos los participantes seleccionados del curso.</span>}
+          icon={<Warning size={16} color="#F59E0B" weight="fill" />}
+          okText="Sí, reenviar"
+          cancelText="Cancelar"
+          okButtonProps={{ style: { background: TEAL, borderColor: TEAL } }}
+          onConfirm={() => handleResend(kind)}
+        >
+          <Tooltip title="Reenviar encuesta a participantes">
+            <button style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: 4, display: 'inline-flex' }}>
+              <PaperPlaneTilt size={22} color={TEAL} weight="regular" />
+            </button>
+          </Tooltip>
+        </Popconfirm>
         <Tooltip title="Ver previsualización">
-          <button onClick={() => console.log(`Preview ${kind}`)} style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: 4, display: 'inline-flex' }}>
+          <button onClick={() => setPreviewModal({ kind, row })} style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: 4, display: 'inline-flex' }}>
             <Eye size={22} color={TEAL} weight="regular" />
           </button>
         </Tooltip>
