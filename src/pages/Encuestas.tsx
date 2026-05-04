@@ -1538,7 +1538,7 @@ const Encuestas: React.FC = () => {
           Asignar Encuestas
         </span>
       ),
-      children: renderEmptyTab(UserPlus, 'Asignar Encuestas'),
+      children: <AsignarEncuestasTab />,
     },
   ];
 
