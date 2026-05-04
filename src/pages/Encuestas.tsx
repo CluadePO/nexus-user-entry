@@ -2352,7 +2352,6 @@ const Encuestas: React.FC = () => {
             Gestiona evaluaciones, encuestas y cursos finalizados
           </p>
         </div>
-        </div>
       </div>
 
       <Tabs
