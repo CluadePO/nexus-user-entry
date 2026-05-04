@@ -166,33 +166,77 @@ interface EncuestaRow {
   vigente: 'Si' | 'No';
 }
 
-const ENCUESTAS_DATA: EncuestaRow[] = [
-  { id: 1015, nombre: 'Encuesta de Satisfacción, CAPACITA (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 1, vigente: 'No' },
-  { id: 1028, nombre: 'Encuesta de Satisfacción, INACAP (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 1, vigente: 'No' },
-  { id: 1052, nombre: 'Encuesta de Satisfacción, INACAP III Relatores (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 1, vigente: 'No' },
-  { id: 1053, nombre: 'Encuesta de Satisfacción, INACAP IV Relatores (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 1, vigente: 'No' },
-  { id: 1054, nombre: 'Encuesta de Satisfacción, INACAP II Relatores (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 1, vigente: 'No' },
-  { id: 1093, nombre: 'Encuesta de Satisfacción, WTCS (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 1, vigente: 'No' },
-  { id: 1383, nombre: 'Encuesta de Satisfacción, CAPACITA V2 (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 1, vigente: 'No' },
-  { id: 3731, nombre: 'Encuesta de transferencia al puesto de trabajo, INACAP (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Transferencia', version: 1, vigente: 'No' },
-  { id: 3848, nombre: 'Encuesta de Satisfacción Presencial, INACAP (ver.2)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 2, vigente: 'No' },
-  { id: 3853, nombre: 'Encuesta de Satisfacción Sincrónica, INACAP (ver.2)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 2, vigente: 'No' },
-  { id: 3854, nombre: 'Encuesta de Satisfacción Asincrónica, INACAP (ver.2)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 2, vigente: 'No' },
-  { id: 3855, nombre: 'Encuesta de Satisfacción Presencial, INACAP (ver.3)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 3, vigente: 'No' },
-  { id: 3856, nombre: 'Encuesta de Satisfacción Sincrónica, INACAP (ver.3)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 3, vigente: 'No' },
-  { id: 3857, nombre: 'Encuesta de Satisfacción Asincrónica, INACAP (ver.3)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 3, vigente: 'No' },
-  { id: 3900, nombre: 'Encuesta de Transferencia Presencial, INACAP (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Transferencia', version: 1, vigente: 'No' },
-  { id: 3901, nombre: 'Encuesta de Transferencia Sincrónica, INACAP (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Transferencia', version: 1, vigente: 'No' },
-  { id: 4100, nombre: 'Encuesta de Satisfacción, CAPACITA V3 (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 1, vigente: 'No' },
-  { id: 4101, nombre: 'Encuesta de Satisfacción Estándar v1.0 (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 1, vigente: 'No' },
-  { id: 4200, nombre: 'Encuesta de Transferencia para Jefaturas (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Transferencia', version: 1, vigente: 'No' },
-  { id: 4302, nombre: 'Encuesta de Transferencia de la Capacitación para Jefaturas (ver.2)', origen: 'Holding', cliente: 'INACAP', tipo: 'Transferencia', version: 2, vigente: 'No' },
-  { id: 4303, nombre: 'Encuesta de Satisfacción Sincrónica, INACAP (ver.6)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 6, vigente: 'No' },
-  { id: 4304, nombre: 'Encuesta de Transferencia para Jefaturas Definitiva (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Transferencia', version: 1, vigente: 'No' },
-  { id: 4484, nombre: 'Encuesta de Transferencia Estándar v2.0 (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Transferencia', version: 1, vigente: 'Si' },
-  { id: 4728, nombre: 'Encuesta de Satisfacción Estándar v2.0 (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 1, vigente: 'Si' },
-  { id: 4729, nombre: 'Encuesta de Satisfacción Sincrónica Estándar v2.0 (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 1, vigente: 'Si' },
-];
+const ENCUESTAS_BY_COMPANY: Record<string, EncuestaRow[]> = {
+  // INACAP + Corporación Instituto Profesional INACAP
+  c1: [
+    { id: 1015, nombre: 'Encuesta de Satisfacción, CAPACITA (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 1, vigente: 'No' },
+    { id: 1028, nombre: 'Encuesta de Satisfacción, INACAP (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 1, vigente: 'No' },
+    { id: 1052, nombre: 'Encuesta de Satisfacción, INACAP III Relatores (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 1, vigente: 'No' },
+    { id: 1053, nombre: 'Encuesta de Satisfacción, INACAP IV Relatores (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 1, vigente: 'No' },
+    { id: 1054, nombre: 'Encuesta de Satisfacción, INACAP II Relatores (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 1, vigente: 'No' },
+    { id: 1093, nombre: 'Encuesta de Satisfacción, WTCS (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 1, vigente: 'No' },
+    { id: 3731, nombre: 'Encuesta de transferencia al puesto de trabajo, INACAP (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Transferencia', version: 1, vigente: 'No' },
+    { id: 3848, nombre: 'Encuesta de Satisfacción Presencial, INACAP (ver.2)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 2, vigente: 'No' },
+    { id: 3853, nombre: 'Encuesta de Satisfacción Sincrónica, INACAP (ver.2)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 2, vigente: 'No' },
+    { id: 4303, nombre: 'Encuesta de Satisfacción Sincrónica, INACAP (ver.6)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 6, vigente: 'No' },
+    { id: 4484, nombre: 'Encuesta de Transferencia Estándar v2.0 (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Transferencia', version: 1, vigente: 'Si' },
+    { id: 4728, nombre: 'Encuesta de Satisfacción Estándar v2.0 (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 1, vigente: 'Si' },
+  ],
+  // INACAP + Instituto Nacional de Capacitación Profesional
+  c2: [
+    { id: 2001, nombre: 'Encuesta de Satisfacción Básica INACAP (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 1, vigente: 'No' },
+    { id: 2002, nombre: 'Encuesta de Transferencia INACAP Estándar (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Transferencia', version: 1, vigente: 'No' },
+    { id: 2003, nombre: 'Encuesta de Satisfacción Presencial INACAP (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 1, vigente: 'No' },
+    { id: 2004, nombre: 'Encuesta de Satisfacción Presencial INACAP (ver.2)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 2, vigente: 'No' },
+    { id: 2005, nombre: 'Encuesta de Satisfacción On-line INACAP (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 1, vigente: 'No' },
+    { id: 2006, nombre: 'Encuesta de Satisfacción On-line INACAP (ver.2)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 2, vigente: 'Si' },
+    { id: 2007, nombre: 'Encuesta de Transferencia Jefaturas INACAP (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Transferencia', version: 1, vigente: 'Si' },
+  ],
+  // INACAP + Universidad Tecnológica de Chile INACAP
+  c3: [
+    { id: 3001, nombre: 'Encuesta de Satisfacción UTEM (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 1, vigente: 'No' },
+    { id: 3002, nombre: 'Encuesta de Satisfacción UTEM (ver.2)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 2, vigente: 'No' },
+    { id: 3003, nombre: 'Encuesta de Satisfacción UTEM (ver.3)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 3, vigente: 'No' },
+    { id: 3004, nombre: 'Encuesta de Transferencia UTEM (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Transferencia', version: 1, vigente: 'No' },
+    { id: 3005, nombre: 'Encuesta de Transferencia UTEM (ver.2)', origen: 'Holding', cliente: 'INACAP', tipo: 'Transferencia', version: 2, vigente: 'No' },
+    { id: 3006, nombre: 'Encuesta de Satisfacción Sincrónica UTEM (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 1, vigente: 'Si' },
+    { id: 3007, nombre: 'Encuesta de Transferencia Estándar UTEM (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Transferencia', version: 1, vigente: 'Si' },
+    { id: 3008, nombre: 'Encuesta de Satisfacción Asincrónica UTEM (ver.1)', origen: 'Holding', cliente: 'INACAP', tipo: 'Satisfacción', version: 1, vigente: 'No' },
+  ],
+  // IANSA + IANSA S.A.
+  c4: [
+    { id: 5001, nombre: 'Encuesta de Satisfacción IANSA Operaciones (ver.1)', origen: 'Empresa', cliente: 'IANSA', tipo: 'Satisfacción', version: 1, vigente: 'No' },
+    { id: 5002, nombre: 'Encuesta de Satisfacción IANSA Operaciones (ver.2)', origen: 'Empresa', cliente: 'IANSA', tipo: 'Satisfacción', version: 2, vigente: 'No' },
+    { id: 5003, nombre: 'Encuesta de Transferencia IANSA Industrial (ver.1)', origen: 'Empresa', cliente: 'IANSA', tipo: 'Transferencia', version: 1, vigente: 'No' },
+    { id: 5004, nombre: 'Encuesta de Satisfacción Presencial IANSA (ver.1)', origen: 'Empresa', cliente: 'IANSA', tipo: 'Satisfacción', version: 1, vigente: 'Si' },
+    { id: 5005, nombre: 'Encuesta de Transferencia Estándar IANSA (ver.1)', origen: 'Empresa', cliente: 'IANSA', tipo: 'Transferencia', version: 1, vigente: 'Si' },
+  ],
+  // IANSA + IANSA Procesados Ltda.
+  c5: [
+    { id: 6001, nombre: 'Encuesta de Satisfacción IANSA Procesados (ver.1)', origen: 'Empresa', cliente: 'IANSA', tipo: 'Satisfacción', version: 1, vigente: 'No' },
+    { id: 6002, nombre: 'Encuesta de Transferencia IANSA Procesados (ver.1)', origen: 'Empresa', cliente: 'IANSA', tipo: 'Transferencia', version: 1, vigente: 'No' },
+    { id: 6003, nombre: 'Encuesta de Satisfacción Calidad IANSA (ver.1)', origen: 'Empresa', cliente: 'IANSA', tipo: 'Satisfacción', version: 1, vigente: 'No' },
+    { id: 6004, nombre: 'Encuesta de Satisfacción Calidad IANSA (ver.2)', origen: 'Empresa', cliente: 'IANSA', tipo: 'Satisfacción', version: 2, vigente: 'Si' },
+    { id: 6005, nombre: 'Encuesta de Transferencia Jefaturas IANSA (ver.1)', origen: 'Empresa', cliente: 'IANSA', tipo: 'Transferencia', version: 1, vigente: 'Si' },
+  ],
+  // Constructora Norte + Constructora Norte S.A.
+  c7: [
+    { id: 7001, nombre: 'Encuesta de Satisfacción C.Norte Obras (ver.1)', origen: 'Empresa', cliente: 'C. Norte', tipo: 'Satisfacción', version: 1, vigente: 'No' },
+    { id: 7002, nombre: 'Encuesta de Satisfacción C.Norte Obras (ver.2)', origen: 'Empresa', cliente: 'C. Norte', tipo: 'Satisfacción', version: 2, vigente: 'No' },
+    { id: 7003, nombre: 'Encuesta de Transferencia C.Norte Faena (ver.1)', origen: 'Empresa', cliente: 'C. Norte', tipo: 'Transferencia', version: 1, vigente: 'No' },
+    { id: 7004, nombre: 'Encuesta de Satisfacción Seguridad C.Norte (ver.1)', origen: 'Empresa', cliente: 'C. Norte', tipo: 'Satisfacción', version: 1, vigente: 'No' },
+    { id: 7005, nombre: 'Encuesta de Satisfacción Seguridad C.Norte (ver.2)', origen: 'Empresa', cliente: 'C. Norte', tipo: 'Satisfacción', version: 2, vigente: 'Si' },
+    { id: 7006, nombre: 'Encuesta de Transferencia Estándar C.Norte (ver.1)', origen: 'Empresa', cliente: 'C. Norte', tipo: 'Transferencia', version: 1, vigente: 'Si' },
+  ],
+  // Constructora Norte + Constructora Norte Filial Ltda.
+  c8: [
+    { id: 8001, nombre: 'Encuesta de Satisfacción C.Norte Filial (ver.1)', origen: 'Empresa', cliente: 'C. Norte', tipo: 'Satisfacción', version: 1, vigente: 'No' },
+    { id: 8002, nombre: 'Encuesta de Transferencia C.Norte Filial (ver.1)', origen: 'Empresa', cliente: 'C. Norte', tipo: 'Transferencia', version: 1, vigente: 'No' },
+    { id: 8003, nombre: 'Encuesta de Satisfacción Presencial Filial (ver.1)', origen: 'Empresa', cliente: 'C. Norte', tipo: 'Satisfacción', version: 1, vigente: 'No' },
+    { id: 8004, nombre: 'Encuesta de Satisfacción On-line Filial (ver.1)', origen: 'Empresa', cliente: 'C. Norte', tipo: 'Satisfacción', version: 1, vigente: 'Si' },
+    { id: 8005, nombre: 'Encuesta de Transferencia Jefaturas Filial (ver.1)', origen: 'Empresa', cliente: 'C. Norte', tipo: 'Transferencia', version: 1, vigente: 'Si' },
+  ],
+};
 
 // Group key (everything before the "(ver.X)") to find max version per group
 const groupKeyOf = (n: string) => n.replace(/\s*\(ver\.\d+\)\s*$/i, '').trim().toLowerCase();
