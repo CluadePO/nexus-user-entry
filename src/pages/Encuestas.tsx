@@ -568,6 +568,7 @@ const Encuestas: React.FC = () => {
             dataSource={pagedRows}
             columns={columns as any}
             pagination={false}
+            scroll={{ x: 'max-content' }}
             locale={{
               emptyText: (
                 <div className="flex flex-col items-center justify-center py-12">
