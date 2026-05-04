@@ -293,6 +293,10 @@ const PreviewModal: React.FC<{ open: boolean; onClose: () => void; encuesta: Enc
 };
 
 const AdministrarEncuestasTab: React.FC = () => {
+  const { selectedCompany } = useOTICFilter();
+  const clienteName = selectedCompany
+    ? (selectedCompany.name.includes('|') ? selectedCompany.name.split('|').pop()!.trim() : selectedCompany.name)
+    : '';
   const [search, setSearch] = useState('');
   const [tipoFilter, setTipoFilter] = useState<'all' | EncuestaTipo>('all');
   const [pageSize, setPageSize] = useState(10);
@@ -472,8 +476,8 @@ const AdministrarEncuestasTab: React.FC = () => {
       render: (v: string) => <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>{v}</span>,
     },
     {
-      title: nowrap('Cliente'), dataIndex: 'cliente', width: 100,
-      render: (v: string) => <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>{v}</span>,
+      title: nowrap('Cliente'), dataIndex: 'cliente', width: 220,
+      render: () => <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280', whiteSpace: 'nowrap' }}>{clienteName || '—'}</span>,
     },
     {
       title: nowrap('Tipo Encuesta'), dataIndex: 'tipo', width: 140,
