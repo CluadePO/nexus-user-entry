@@ -371,7 +371,7 @@ const Encuestas: React.FC = () => {
       },
     },
     {
-      title: '% Respuesta',
+      title: nowrapTitle('Tasa Respuesta'),
       dataIndex: 'pct',
       width: 110,
       align: 'center' as const,
