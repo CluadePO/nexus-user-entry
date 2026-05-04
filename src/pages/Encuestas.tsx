@@ -1119,14 +1119,14 @@ const AsignarEncuestasTab: React.FC = () => {
       title: headerLabel('Satisfacción'),
       dataIndex: 'satisfaccion', width: 110, align: 'center' as const,
       render: (v: 'sin_asignar' | 'asignada', row: AsignarCursoRow) =>
-        renderActionCell(v, 'Satisfacción', row.inscripcion),
+        renderActionCell(v, 'Satisfacción', row),
     },
     {
       key: 'transferencia',
       title: headerLabel('Transferencia'),
       dataIndex: 'transferencia', width: 110, align: 'center' as const,
       render: (v: 'sin_asignar' | 'asignada', row: AsignarCursoRow) =>
-        renderActionCell(v, 'Transferencia', row.inscripcion),
+        renderActionCell(v, 'Transferencia', row),
     },
   ];
 
