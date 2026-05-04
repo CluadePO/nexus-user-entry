@@ -304,7 +304,7 @@ const Encuestas: React.FC = () => {
       render: (v: number | null) => <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>{v ?? '—'}</span>,
     },
     {
-      title: 'Nombre Curso',
+      title: nowrapTitle('Curso'),
       dataIndex: 'curso',
       ellipsis: true,
       render: (v: string) => (
