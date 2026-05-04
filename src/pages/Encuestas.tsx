@@ -736,22 +736,32 @@ const ASIGNAR_DATA: AsignarCursoRow[] = [
   { inscripcion: 2177416, sc: null, sencenet: null, inicio: '05/03/2026', termino: '05/03/2026', curso: 'Capacitación Teórica práctica sobre uso de extintores', tipo: 'Curso Interno', modalidad: 'E-Learning', participantes: 9, satisfaccion: 'asignada', transferencia: 'asignada' },
 ];
 
+type PillKey = 'todos' | 'sin' | 'asig';
+
 const AsignarEncuestasTab: React.FC = () => {
   const { selectedHoldingId, selectedCompanyId } = useOTICFilter();
-  const [dates, setDates] = useState<any>(null);
+  const currentMonthRange = (): [any, any] => [dayjs().startOf('month'), dayjs().endOf('month')];
+  const [dates, setDates] = useState<any>(currentMonthRange());
   const [searched, setSearched] = useState(false);
   const [dateError, setDateError] = useState(false);
   const [search, setSearch] = useState('');
   const [pageSize, setPageSize] = useState(10);
   const [page, setPage] = useState(1);
+  const [pill, setPill] = useState<PillKey>('todos');
+  const [showTech, setShowTech] = useState(false);
 
-  // Reset on filter change
+  // Auto-load when both holding+company are selected
   useEffect(() => {
-    setSearched(false);
-    setDates(null);
-    setDateError(false);
     setSearch('');
     setPage(1);
+    setPill('todos');
+    setDateError(false);
+    if (selectedHoldingId && selectedCompanyId) {
+      setDates(currentMonthRange());
+      setSearched(true);
+    } else {
+      setSearched(false);
+    }
   }, [selectedHoldingId, selectedCompanyId]);
 
   const handleBuscar = () => {
@@ -764,7 +774,8 @@ const AsignarEncuestasTab: React.FC = () => {
     setPage(1);
   };
 
-  const filtered = useMemo(() => {
+  // Apply text search only (used for pill counts and final filter)
+  const searched_rows = useMemo(() => {
     if (!searched) return [];
     const q = search.trim().toLowerCase();
     if (!q) return ASIGNAR_DATA;
@@ -774,14 +785,31 @@ const AsignarEncuestasTab: React.FC = () => {
     );
   }, [searched, search]);
 
+  const isAsignado = (r: AsignarCursoRow) => r.satisfaccion === 'asignada' && r.transferencia === 'asignada';
+  const isSinAsignar = (r: AsignarCursoRow) => r.satisfaccion === 'sin_asignar' || r.transferencia === 'sin_asignar';
+
+  const counts = useMemo(() => ({
+    todos: searched_rows.length,
+    sin: searched_rows.filter(isSinAsignar).length,
+    asig: searched_rows.filter(isAsignado).length,
+  }), [searched_rows]);
+
+  const totals = useMemo(() => ({
+    total: searched ? ASIGNAR_DATA.length : 0,
+    sin: searched ? ASIGNAR_DATA.filter(isSinAsignar).length : 0,
+    asig: searched ? ASIGNAR_DATA.filter(isAsignado).length : 0,
+  }), [searched]);
+
+  const filtered = useMemo(() => {
+    if (pill === 'sin') return searched_rows.filter(isSinAsignar);
+    if (pill === 'asig') return searched_rows.filter(isAsignado);
+    return searched_rows;
+  }, [searched_rows, pill]);
+
   const paged = useMemo(() => {
     const start = (page - 1) * pageSize;
     return filtered.slice(start, start + pageSize);
   }, [filtered, page, pageSize]);
-
-  const nowrap = (text: string) => (
-    <span style={{ whiteSpace: 'nowrap', fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#374151' }}>{text}</span>
-  );
 
   const renderActionCell = (
     state: 'sin_asignar' | 'asignada',
@@ -809,18 +837,12 @@ const AsignarEncuestasTab: React.FC = () => {
     return (
       <div style={{ display: 'inline-flex', gap: 8, alignItems: 'center', justifyContent: 'center' }}>
         <Tooltip title="Reenviar encuesta a participantes">
-          <button
-            onClick={() => console.log(`Reenviar ${kind}`)}
-            style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: 4, display: 'inline-flex' }}
-          >
+          <button onClick={() => console.log(`Reenviar ${kind}`)} style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: 4, display: 'inline-flex' }}>
             <PaperPlaneTilt size={22} color={TEAL} weight="regular" />
           </button>
         </Tooltip>
         <Tooltip title="Ver previsualización">
-          <button
-            onClick={() => console.log(`Preview ${kind}`)}
-            style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: 4, display: 'inline-flex' }}
-          >
+          <button onClick={() => console.log(`Preview ${kind}`)} style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: 4, display: 'inline-flex' }}>
             <Eye size={22} color={TEAL} weight="regular" />
           </button>
         </Tooltip>
@@ -828,44 +850,55 @@ const AsignarEncuestasTab: React.FC = () => {
     );
   };
 
-  const columns: any[] = [
+  const headerLabel = (text: string) => (
+    <span style={{ whiteSpace: 'nowrap', fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#374151' }}>{text}</span>
+  );
+
+  const allColumns: any[] = [
     {
-      title: <span style={{ whiteSpace: 'nowrap', fontFamily: 'Poppins' }}>N° Inscripción</span>,
+      key: 'inscripcion',
+      title: headerLabel('N° Inscripción'),
       dataIndex: 'inscripcion', width: 120,
       render: (v: number) => <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 500, color: '#111827' }}>{v}</span>,
     },
     {
-      title: <span style={{ whiteSpace: 'nowrap', fontFamily: 'Poppins' }}>Código SC</span>,
+      key: 'sc',
+      title: headerLabel('Código SC'),
       dataIndex: 'sc', width: 100,
       render: (v: number | null) => <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>{v ?? '—'}</span>,
     },
     {
-      title: <span style={{ whiteSpace: 'nowrap', fontFamily: 'Poppins' }}>Código Sencenet</span>,
+      key: 'sencenet',
+      title: headerLabel('Código Sencenet'),
       dataIndex: 'sencenet', width: 110,
       render: (v: number | null) => <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>{v ?? '—'}</span>,
     },
     {
-      title: <span style={{ whiteSpace: 'nowrap', fontFamily: 'Poppins' }}>Inicio</span>,
+      key: 'inicio',
+      title: headerLabel('Inicio'),
       dataIndex: 'inicio', width: 100,
       render: (v: string) => <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#374151' }}>{v.replace(/\//g, '-')}</span>,
     },
     {
-      title: <span style={{ whiteSpace: 'nowrap', fontFamily: 'Poppins' }}>Término</span>,
+      key: 'termino',
+      title: headerLabel('Término'),
       dataIndex: 'termino', width: 100,
       render: (v: string) => <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#374151' }}>{v.replace(/\//g, '-')}</span>,
     },
     {
-      title: <span style={{ whiteSpace: 'nowrap', fontFamily: 'Poppins' }}>Curso</span>,
+      key: 'curso',
+      title: headerLabel('Curso'),
       dataIndex: 'curso',
       ellipsis: { showTitle: false },
       render: (v: string) => (
         <Tooltip title={v}>
-          <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#374151', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 180 }}>{v}</span>
+          <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#374151', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 220 }}>{v}</span>
         </Tooltip>
       ),
     },
     {
-      title: <span style={{ whiteSpace: 'nowrap', fontFamily: 'Poppins' }}>Tipo</span>,
+      key: 'tipo',
+      title: headerLabel('Tipo'),
       dataIndex: 'tipo', width: 110, align: 'center' as const,
       render: (v: 'Sence' | 'Curso Interno') => {
         const sence = v === 'Sence';
@@ -880,7 +913,8 @@ const AsignarEncuestasTab: React.FC = () => {
       },
     },
     {
-      title: <span style={{ whiteSpace: 'nowrap', fontFamily: 'Poppins' }}>Modalidad</span>,
+      key: 'modalidad',
+      title: headerLabel('Modalidad'),
       dataIndex: 'modalidad', width: 100, align: 'center' as const,
       render: (v: 'E-Learning' | 'Presencial') => {
         const elearn = v === 'E-Learning';
@@ -895,23 +929,28 @@ const AsignarEncuestasTab: React.FC = () => {
       },
     },
     {
-      title: <span style={{ whiteSpace: 'nowrap', fontFamily: 'Poppins' }}>Participantes</span>,
+      key: 'participantes',
+      title: headerLabel('Participantes'),
       dataIndex: 'participantes', width: 90, align: 'center' as const,
       render: (v: number) => <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#111827' }}>{v}</span>,
     },
     {
-      title: <span style={{ whiteSpace: 'nowrap', fontFamily: 'Poppins' }}>Satisfacción</span>,
+      key: 'satisfaccion',
+      title: headerLabel('Satisfacción'),
       dataIndex: 'satisfaccion', width: 110, align: 'center' as const,
       render: (v: 'sin_asignar' | 'asignada', row: AsignarCursoRow) =>
         renderActionCell(v, 'Satisfacción', row.inscripcion),
     },
     {
-      title: <span style={{ whiteSpace: 'nowrap', fontFamily: 'Poppins' }}>Transferencia</span>,
+      key: 'transferencia',
+      title: headerLabel('Transferencia'),
       dataIndex: 'transferencia', width: 110, align: 'center' as const,
       render: (v: 'sin_asignar' | 'asignada', row: AsignarCursoRow) =>
         renderActionCell(v, 'Transferencia', row.inscripcion),
     },
   ];
+
+  const columns = allColumns.filter((c) => showTech || (c.key !== 'sc' && c.key !== 'sencenet'));
 
   // Empty states based on filter selection
   if (!selectedHoldingId && !selectedCompanyId) {
@@ -949,6 +988,21 @@ const AsignarEncuestasTab: React.FC = () => {
       </div>
     );
   }
+
+  const pillBase: React.CSSProperties = {
+    display: 'inline-flex', alignItems: 'center', gap: 6,
+    background: '#F3F4F6', color: '#6B7280',
+    border: '1px solid #E5E7EB', borderRadius: 999,
+    padding: '4px 16px', fontFamily: 'Poppins', fontSize: 13, fontWeight: 500,
+    cursor: 'pointer', transition: 'background .15s',
+  };
+  const pillStyles: Record<PillKey, React.CSSProperties> = {
+    todos: { background: '#111827', color: '#FFFFFF', border: '1px solid #111827' },
+    sin: { background: '#FEF3C7', color: '#D97706', border: '1px solid #FDE68A' },
+    asig: { background: '#D1FAE5', color: '#065F46', border: '1px solid #A7F3D0' },
+  };
+  const pillStyle = (key: PillKey): React.CSSProperties =>
+    pill === key ? { ...pillBase, ...pillStyles[key] } : pillBase;
 
   return (
     <div style={{ fontFamily: 'Poppins, sans-serif' }}>
@@ -992,6 +1046,53 @@ const AsignarEncuestasTab: React.FC = () => {
 
       {searched && (
         <>
+          {/* Summary cards */}
+          <div style={{ display: 'flex', gap: 12, marginBottom: 16, flexWrap: 'wrap' }}>
+            <div
+              onClick={() => { setPill('todos'); setPage(1); }}
+              style={{ flex: '1 1 180px', background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: 8, padding: '12px 16px', cursor: 'pointer' }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                <ClipboardText size={20} color="#6B7280" weight="regular" />
+                <span style={{ fontFamily: 'Poppins', fontSize: 12, color: '#6B7280' }}>Total Cursos</span>
+              </div>
+              <div style={{ fontFamily: 'Poppins', fontSize: 24, fontWeight: 700, color: '#111827' }}>{totals.total}</div>
+            </div>
+            <div
+              onClick={() => { setPill('sin'); setPage(1); }}
+              style={{ flex: '1 1 180px', background: '#FEF3C7', border: '1px solid #FDE68A', borderRadius: 8, padding: '12px 16px', cursor: 'pointer' }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                <GearSix size={20} color="#D97706" weight="regular" />
+                <span style={{ fontFamily: 'Poppins', fontSize: 12, color: '#D97706' }}>Sin Asignar</span>
+              </div>
+              <div style={{ fontFamily: 'Poppins', fontSize: 24, fontWeight: 700, color: '#D97706' }}>{totals.sin}</div>
+            </div>
+            <div
+              onClick={() => { setPill('asig'); setPage(1); }}
+              style={{ flex: '1 1 180px', background: '#D1FAE5', border: '1px solid #A7F3D0', borderRadius: 8, padding: '12px 16px', cursor: 'pointer' }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                <CheckCircle size={20} color="#065F46" weight="regular" />
+                <span style={{ fontFamily: 'Poppins', fontSize: 12, color: '#065F46' }}>Asignados</span>
+              </div>
+              <div style={{ fontFamily: 'Poppins', fontSize: 24, fontWeight: 700, color: '#065F46' }}>{totals.asig}</div>
+            </div>
+          </div>
+
+          {/* Pills */}
+          <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
+            <span style={pillStyle('todos')} onClick={() => { setPill('todos'); setPage(1); }}>
+              Todos ({counts.todos})
+            </span>
+            <span style={pillStyle('sin')} onClick={() => { setPill('sin'); setPage(1); }}>
+              Sin Asignar ({counts.sin})
+            </span>
+            <span style={pillStyle('asig')} onClick={() => { setPill('asig'); setPage(1); }}>
+              Asignados ({counts.asig})
+            </span>
+          </div>
+
           {/* Toolbar */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12, gap: 12, flexWrap: 'wrap' }}>
             <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>
@@ -1005,6 +1106,18 @@ const AsignarEncuestasTab: React.FC = () => {
                 onChange={(e) => { setSearch(e.target.value); setPage(1); }}
                 style={{ width: 240, fontFamily: 'Poppins' }}
               />
+              <Button
+                size="small"
+                onClick={() => setShowTech((s) => !s)}
+                icon={<Columns size={14} weight="regular" />}
+                style={
+                  showTech
+                    ? { background: '#F0FDF9', borderColor: '#F0FDF9', color: TEAL, fontFamily: 'Poppins', display: 'inline-flex', alignItems: 'center', gap: 6 }
+                    : { fontFamily: 'Poppins', display: 'inline-flex', alignItems: 'center', gap: 6 }
+                }
+              >
+                Columnas técnicas
+              </Button>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>Mostrar</span>
                 <Select
@@ -1025,12 +1138,18 @@ const AsignarEncuestasTab: React.FC = () => {
               rowKey="inscripcion"
               pagination={false}
               scroll={{ x: 'max-content' }}
+              onRow={(row: AsignarCursoRow) => {
+                let borderColor = 'transparent';
+                if (isAsignado(row)) borderColor = '#10B981';
+                else if (row.satisfaccion === 'asignada' || row.transferencia === 'asignada') borderColor = '#F59E0B';
+                return { style: { boxShadow: borderColor === 'transparent' ? 'none' : `inset 3px 0 0 0 ${borderColor}` } } as any;
+              }}
               locale={{
                 emptyText: (
                   <div className="flex flex-col items-center justify-center py-12">
                     <MagnifyingGlass size={48} color="#D1D5DB" weight="regular" />
                     <p className="mt-3 mb-1" style={{ fontFamily: 'Poppins', fontSize: 14, color: '#6B7280' }}>No se encontraron cursos</p>
-                    <p style={{ fontFamily: 'Poppins', fontSize: 13, color: '#9CA3AF' }}>Intenta con otro término de búsqueda</p>
+                    <p style={{ fontFamily: 'Poppins', fontSize: 13, color: '#9CA3AF' }}>Intenta con otro término de búsqueda o ajusta el período seleccionado</p>
                   </div>
                 ),
               }}
