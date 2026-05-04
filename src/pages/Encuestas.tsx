@@ -349,7 +349,7 @@ const Encuestas: React.FC = () => {
       ),
     },
     {
-      title: 'N° Participantes',
+      title: nowrapTitle('Participantes'),
       dataIndex: 'participantes',
       width: 110,
       align: 'center' as const,
