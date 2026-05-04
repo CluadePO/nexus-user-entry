@@ -1161,56 +1161,13 @@ const TransferenciaParticipantesModal: React.FC<{
     onSave(list, evaluador);
   };
 
-  const columns: any[] = [
-    {
-      title: '', dataIndex: 'selected', width: 40, align: 'center' as const,
-      render: (v: boolean, r: TransParticipante) => (
-        <Checkbox checked={v} onChange={(e) => update(r.id, { selected: e.target.checked })} />
-      ),
-    },
-    {
-      title: <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#374151', whiteSpace: 'nowrap' }}>RUT Participante</span>,
-      dataIndex: 'rut', width: 110,
-      render: (v: string) => <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#374151' }}>{v}</span>,
-    },
-    {
-      title: <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#374151', whiteSpace: 'nowrap' }}>Nombre Participante</span>,
-      dataIndex: 'nombre',
-      render: (v: string) => <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 500, color: '#111827' }}>{v}</span>,
-    },
-    {
-      title: <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#374151', whiteSpace: 'nowrap' }}>{evaluador ? 'Nombre Evaluador' : 'Nombre Jefe'}</span>,
-      dataIndex: nombreKey, width: 150,
-      render: (v: string, r: TransParticipante) => (
-        <Input
-          size="small"
-          value={v}
-          placeholder={evaluador ? 'Nombre del evaluador' : 'Nombre del jefe'}
-          onChange={(e) => update(r.id, { [nombreKey]: e.target.value } as any)}
-          style={{ width: '100%', fontFamily: 'Poppins' }}
-        />
-      ),
-    },
-    {
-      title: <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#374151', whiteSpace: 'nowrap' }}>{evaluador ? 'Correo Evaluador' : 'Correo Jefe'}</span>,
-      dataIndex: correoKey, width: 180,
-      render: (v: string, r: TransParticipante) => (
-        <div style={{ width: '100%' }}>
-          <EmailInput
-            value={v}
-            placeholder={evaluador ? 'correo@evaluador.cl' : 'correo@jefe.cl'}
-            onChange={(nv) => update(r.id, { [correoKey]: nv } as any)}
-          />
-        </div>
-      ),
-    },
-  ];
+  const showSearch = visible.length > 8 || search.trim().length > 0;
 
   return (
     <Modal
       open={open}
       onCancel={onClose}
-      width={760}
+      width={580}
       footer={null}
       styles={{ body: { padding: 0 } }}
       title={
@@ -1222,7 +1179,7 @@ const TransferenciaParticipantesModal: React.FC<{
       }
     >
       <div style={{ fontFamily: 'Poppins' }}>
-        <div style={{ maxHeight: 'calc(80vh - 200px)', overflowY: 'auto', padding: '16px 24px' }}>
+        <div style={{ padding: '16px 24px 0 24px' }}>
           <div style={{ background: '#F0FDF9', borderRadius: 8, padding: '10px 16px', marginBottom: 16 }}>
             <div style={{ fontSize: 13, fontWeight: 600, color: '#111827' }}>Curso: {row.curso}</div>
             <div style={{ fontSize: 12, color: '#6B7280' }}>Encuesta: Encuesta de Transferencia Estándar v2.0</div>
@@ -1264,41 +1221,96 @@ const TransferenciaParticipantesModal: React.FC<{
             </div>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, gap: 8, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 12 }}>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               <Button
                 type="primary"
+                size="small"
                 icon={<CheckSquare size={14} weight="regular" />}
                 onClick={() => setList((prev) => prev.map((p) => ({ ...p, selected: true })))}
                 style={{ background: TEAL, borderColor: TEAL, display: 'inline-flex', alignItems: 'center', gap: 6 }}
               >
                 Seleccionar Todos
               </Button>
-              <Button danger icon={<UserMinus size={14} weight="regular" />} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+              <Button danger size="small" icon={<UserMinus size={14} weight="regular" />} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
                 Excluir Eliminados ({eliminados})
               </Button>
-              <Button danger icon={<ProhibitInset size={14} weight="regular" />} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+              <Button danger size="small" icon={<ProhibitInset size={14} weight="regular" />} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
                 Excluir Anulados ({anulados})
               </Button>
             </div>
-            <Input
-              prefix={<MagnifyingGlass size={14} color="#9CA3AF" weight="regular" />}
-              placeholder="Filtrar por nombre o RUT..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              style={{ width: 240, fontFamily: 'Poppins' }}
-            />
+            {showSearch && (
+              <Input
+                prefix={<MagnifyingGlass size={14} color="#9CA3AF" weight="regular" />}
+                placeholder="Filtrar por nombre o RUT..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                style={{ width: '100%', fontFamily: 'Poppins' }}
+              />
+            )}
           </div>
+        </div>
 
-          <div style={{ overflowX: 'auto' }}>
-            <Table
-              columns={columns}
-              dataSource={visible}
-              rowKey="id"
-              pagination={visible.length > 10 ? { pageSize: 10, size: 'small' } : false}
-              scroll={{ x: 'max-content' }}
-            />
-          </div>
+        <div style={{ maxHeight: 'calc(80vh - 320px)', overflowY: 'auto', overflowX: 'hidden', padding: '0 24px' }}>
+          {visible.map((p) => {
+            const disabled = !p.selected;
+            const nombreVal = (p as any)[nombreKey] as string;
+            const correoVal = (p as any)[correoKey] as string;
+            return (
+              <div
+                key={p.id}
+                style={{
+                  background: disabled ? '#F9FAFB' : '#FFFFFF',
+                  border: '1px solid #E5E7EB',
+                  borderRadius: 8,
+                  padding: '14px 16px',
+                  marginBottom: 10,
+                  opacity: disabled ? 0.6 : 1,
+                  transition: 'border-color 0.2s',
+                }}
+                onMouseEnter={(e) => { if (!disabled) e.currentTarget.style.borderColor = '#99F6E4'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E5E7EB'; }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <Checkbox checked={p.selected} onChange={(e) => update(p.id, { selected: e.target.checked })} />
+                  <span style={{
+                    background: '#F3F4F6', color: '#374151', borderRadius: 6,
+                    padding: '2px 8px', fontFamily: 'Poppins', fontSize: 12, fontWeight: 500,
+                  }}>{p.rut}</span>
+                  <span style={{
+                    fontFamily: 'Poppins', fontSize: 14, fontWeight: 600,
+                    color: disabled ? '#9CA3AF' : '#111827',
+                  }}>{p.nombre}</span>
+                </div>
+                <div style={{ display: 'flex', gap: 12, marginTop: 10 }}>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontFamily: 'Poppins', fontSize: 11, fontWeight: 500, color: '#6B7280', marginBottom: 4 }}>
+                      {evaluador ? 'Nombre Evaluador' : 'Nombre Jefe'}
+                    </div>
+                    <Input
+                      size="small"
+                      disabled={disabled}
+                      value={nombreVal}
+                      placeholder={evaluador ? 'Nombre del evaluador' : 'Nombre del jefe directo'}
+                      onChange={(e) => update(p.id, { [nombreKey]: e.target.value } as any)}
+                      style={{ width: '100%', fontFamily: 'Poppins' }}
+                    />
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontFamily: 'Poppins', fontSize: 11, fontWeight: 500, color: '#6B7280', marginBottom: 4 }}>
+                      {evaluador ? 'Correo Evaluador' : 'Correo Jefe'}
+                    </div>
+                    <EmailInput
+                      value={correoVal}
+                      placeholder={evaluador ? 'correo@evaluador.cl' : 'correo@jefe.cl'}
+                      onChange={(nv) => update(p.id, { [correoKey]: nv } as any)}
+                      disabled={disabled}
+                    />
+                  </div>
+                </div>
+              </div>
+            );
+          })}
 
           {pendientes > 0 && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 12 }}>
