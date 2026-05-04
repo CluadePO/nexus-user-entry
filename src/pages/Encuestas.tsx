@@ -733,18 +733,18 @@ interface AsignarCursoRow {
 }
 
 const ASIGNAR_DATA: AsignarCursoRow[] = [
-  { inscripcion: 2095229, sc: 2081283, sencenet: 6751930, inicio: '06/01/2026', termino: '14/02/2026', curso: 'HERRAMIENTAS ESENCIALES DEL STORYTELLING PARA LA CONSTRUCCIÓN DE HISTORIAS CORPORATIVAS EFECTIVAS', tipo: 'Sence', modalidad: 'E-Learning', participantes: 1, satisfaccion: 'sin_asignar', transferencia: 'sin_asignar' },
-  { inscripcion: 2118699, sc: null, sencenet: 6720127, inicio: '31/03/2026', termino: '26/05/2026', curso: 'GESTIÓN DE LA INTELIGENCIA EMOCIONAL PARA EL LIDERAZGO DE EQUIPOS', tipo: 'Sence', modalidad: 'E-Learning', participantes: 1, satisfaccion: 'asignada', transferencia: 'sin_asignar' },
-  { inscripcion: 2118700, sc: null, sencenet: 6720128, inicio: '26/05/2026', termino: '21/07/2026', curso: 'HERRAMIENTAS DE GESTIÓN PARA LA DIRECCIÓN DE ORGANIZACIONES', tipo: 'Sence', modalidad: 'E-Learning', participantes: 1, satisfaccion: 'sin_asignar', transferencia: 'sin_asignar' },
-  { inscripcion: 2118703, sc: null, sencenet: 6720129, inicio: '28/07/2026', termino: '29/09/2026', curso: 'HERRAMIENTAS PARA EL EJERCICIO DEL LIDERAZGO EN LAS ORGANIZACIONES', tipo: 'Sence', modalidad: 'E-Learning', participantes: 1, satisfaccion: 'sin_asignar', transferencia: 'sin_asignar' },
-  { inscripcion: 2126744, sc: null, sencenet: 6732975, inicio: '31/03/2026', termino: '26/05/2026', curso: 'Gestión socio-ambiental: casos de empresa', tipo: 'Sence', modalidad: 'E-Learning', participantes: 1, satisfaccion: 'asignada', transferencia: 'asignada' },
-  { inscripcion: 2126747, sc: null, sencenet: 6732976, inicio: '26/05/2026', termino: '28/07/2026', curso: 'Sostenibilidad Socio-Ambiental: desafíos para la empresa', tipo: 'Sence', modalidad: 'E-Learning', participantes: 1, satisfaccion: 'sin_asignar', transferencia: 'sin_asignar' },
-  { inscripcion: 2126757, sc: null, sencenet: 6732977, inicio: '28/07/2026', termino: '29/09/2026', curso: 'Técnicas para la gestión ambiental', tipo: 'Sence', modalidad: 'E-Learning', participantes: 1, satisfaccion: 'sin_asignar', transferencia: 'sin_asignar' },
-  { inscripcion: 2143994, sc: null, sencenet: 6752071, inicio: '05/01/2026', termino: '13/02/2026', curso: 'Aplicación De Técnicas De Comunicación Efectiva', tipo: 'Sence', modalidad: 'E-Learning', participantes: 1, satisfaccion: 'sin_asignar', transferencia: 'sin_asignar' },
-  { inscripcion: 2144001, sc: null, sencenet: 6752074, inicio: '05/01/2026', termino: '30/01/2026', curso: 'Excel Básico: planillas inteligentes para el trabajo diario', tipo: 'Sence', modalidad: 'E-Learning', participantes: 2, satisfaccion: 'asignada', transferencia: 'sin_asignar' },
-  { inscripcion: 2174396, sc: null, sencenet: null, inicio: '05/03/2026', termino: '05/03/2026', curso: 'Capacitación Teórica práctica sobre uso de extintores', tipo: 'Curso Interno', modalidad: 'Presencial', participantes: 9, satisfaccion: 'sin_asignar', transferencia: 'sin_asignar' },
-  { inscripcion: 2177407, sc: null, sencenet: null, inicio: '05/03/2026', termino: '05/03/2026', curso: 'Capacitación Teórica práctica sobre uso de extintores', tipo: 'Curso Interno', modalidad: 'Presencial', participantes: 9, satisfaccion: 'sin_asignar', transferencia: 'sin_asignar' },
-  { inscripcion: 2177416, sc: null, sencenet: null, inicio: '05/03/2026', termino: '05/03/2026', curso: 'Capacitación Teórica práctica sobre uso de extintores', tipo: 'Curso Interno', modalidad: 'E-Learning', participantes: 9, satisfaccion: 'asignada', transferencia: 'asignada' },
+  { inscripcion: 2095229, sc: 2081283, sencenet: 6751930, inicio: '06/01/26', termino: '14/02/26', curso: 'HERRAMIENTAS ESENCIALES DEL STORYTELLING PARA LA CONSTRUCCIÓN DE HISTORIAS CORPORATIVAS EFECTIVAS', tipo: 'Sence', modalidad: 'E-Learning', participantes: 1, satisfaccion: 'sin_asignar', transferencia: 'sin_asignar' },
+  { inscripcion: 2118699, sc: null, sencenet: 6720127, inicio: '31/03/26', termino: '26/05/26', curso: 'GESTIÓN DE LA INTELIGENCIA EMOCIONAL PARA EL LIDERAZGO DE EQUIPOS', tipo: 'Sence', modalidad: 'E-Learning', participantes: 1, satisfaccion: 'asignada', transferencia: 'sin_asignar' },
+  { inscripcion: 2118700, sc: null, sencenet: 6720128, inicio: '26/05/26', termino: '21/07/26', curso: 'HERRAMIENTAS DE GESTIÓN PARA LA DIRECCIÓN DE ORGANIZACIONES', tipo: 'Sence', modalidad: 'E-Learning', participantes: 1, satisfaccion: 'sin_asignar', transferencia: 'sin_asignar' },
+  { inscripcion: 2118703, sc: null, sencenet: 6720129, inicio: '28/07/26', termino: '29/09/26', curso: 'HERRAMIENTAS PARA EL EJERCICIO DEL LIDERAZGO EN LAS ORGANIZACIONES', tipo: 'Sence', modalidad: 'E-Learning', participantes: 1, satisfaccion: 'sin_asignar', transferencia: 'sin_asignar' },
+  { inscripcion: 2126744, sc: null, sencenet: 6732975, inicio: '31/03/26', termino: '26/05/26', curso: 'Gestión socio-ambiental: casos de empresa', tipo: 'Sence', modalidad: 'E-Learning', participantes: 1, satisfaccion: 'asignada', transferencia: 'asignada' },
+  { inscripcion: 2126747, sc: null, sencenet: 6732976, inicio: '26/05/26', termino: '28/07/26', curso: 'Sostenibilidad Socio-Ambiental: desafíos para la empresa', tipo: 'Sence', modalidad: 'E-Learning', participantes: 1, satisfaccion: 'sin_asignar', transferencia: 'sin_asignar' },
+  { inscripcion: 2126757, sc: null, sencenet: 6732977, inicio: '28/07/26', termino: '29/09/26', curso: 'Técnicas para la gestión ambiental', tipo: 'Sence', modalidad: 'E-Learning', participantes: 1, satisfaccion: 'sin_asignar', transferencia: 'sin_asignar' },
+  { inscripcion: 2143994, sc: null, sencenet: 6752071, inicio: '05/01/26', termino: '13/02/26', curso: 'Aplicación De Técnicas De Comunicación Efectiva', tipo: 'Sence', modalidad: 'E-Learning', participantes: 1, satisfaccion: 'sin_asignar', transferencia: 'sin_asignar' },
+  { inscripcion: 2144001, sc: null, sencenet: 6752074, inicio: '05/01/26', termino: '30/01/26', curso: 'Excel Básico: planillas inteligentes para el trabajo diario', tipo: 'Sence', modalidad: 'E-Learning', participantes: 2, satisfaccion: 'asignada', transferencia: 'sin_asignar' },
+  { inscripcion: 2174396, sc: null, sencenet: null, inicio: '05/03/26', termino: '05/03/26', curso: 'Capacitación Teórica práctica sobre uso de extintores', tipo: 'Curso Interno', modalidad: 'Presencial', participantes: 9, satisfaccion: 'sin_asignar', transferencia: 'sin_asignar' },
+  { inscripcion: 2177407, sc: null, sencenet: null, inicio: '05/03/26', termino: '05/03/26', curso: 'Capacitación Teórica práctica sobre uso de extintores', tipo: 'Curso Interno', modalidad: 'Presencial', participantes: 9, satisfaccion: 'sin_asignar', transferencia: 'sin_asignar' },
+  { inscripcion: 2177416, sc: null, sencenet: null, inicio: '05/03/26', termino: '05/03/26', curso: 'Capacitación Teórica práctica sobre uso de extintores', tipo: 'Curso Interno', modalidad: 'E-Learning', participantes: 9, satisfaccion: 'asignada', transferencia: 'asignada' },
 ];
 
 type PillKey = 'todos' | 'sin' | 'asig';
@@ -1489,7 +1489,7 @@ const AsignarEncuestasTab: React.FC = () => {
     {
       key: 'inscripcion',
       title: headerLabel('N° Inscripción'),
-      dataIndex: 'inscripcion', width: 120,
+      dataIndex: 'inscripcion', width: 110,
       render: (v: number) => <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 500, color: '#111827' }}>{v}</span>,
     },
     {
@@ -1505,16 +1505,14 @@ const AsignarEncuestasTab: React.FC = () => {
       render: (v: number | null) => <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>{v ?? '—'}</span>,
     },
     {
-      key: 'inicio',
-      title: headerLabel('Inicio'),
-      dataIndex: 'inicio', width: 100,
-      render: (v: string) => <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#374151' }}>{v.replace(/\//g, '-')}</span>,
-    },
-    {
-      key: 'termino',
-      title: headerLabel('Término'),
-      dataIndex: 'termino', width: 100,
-      render: (v: string) => <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#374151' }}>{v.replace(/\//g, '-')}</span>,
+      key: 'periodo',
+      title: headerLabel('Período'),
+      width: 130,
+      render: (_: unknown, row: AsignarCursoRow) => (
+        <span style={{ fontFamily: 'Poppins', fontSize: 12, color: '#374151', whiteSpace: 'nowrap' }}>
+          {row.inicio} → {row.termino}
+        </span>
+      ),
     },
     {
       key: 'curso',
@@ -1523,14 +1521,20 @@ const AsignarEncuestasTab: React.FC = () => {
       ellipsis: { showTitle: false },
       render: (v: string) => (
         <Tooltip title={v}>
-          <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#374151', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 220 }}>{v}</span>
+          <span
+            style={{
+              fontFamily: 'Poppins', fontSize: 13, color: '#374151',
+              display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
+              overflow: 'hidden', minWidth: 160, maxWidth: 280,
+            }}
+          >{v}</span>
         </Tooltip>
       ),
     },
     {
       key: 'tipo',
       title: headerLabel('Tipo'),
-      dataIndex: 'tipo', width: 110, align: 'center' as const,
+      dataIndex: 'tipo', width: 100, align: 'center' as const,
       render: (v: 'Sence' | 'Curso Interno') => {
         const sence = v === 'Sence';
         return (
@@ -1562,20 +1566,20 @@ const AsignarEncuestasTab: React.FC = () => {
     {
       key: 'participantes',
       title: headerLabel('Participantes'),
-      dataIndex: 'participantes', width: 90, align: 'center' as const,
+      dataIndex: 'participantes', width: 80, align: 'center' as const,
       render: (v: number) => <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#111827' }}>{v}</span>,
     },
     {
       key: 'satisfaccion',
       title: headerLabel('Satisfacción'),
-      dataIndex: 'satisfaccion', width: 110, align: 'center' as const,
+      dataIndex: 'satisfaccion', width: 90, align: 'center' as const,
       render: (v: 'sin_asignar' | 'asignada', row: AsignarCursoRow) =>
         renderActionCell(v, 'Satisfacción', row),
     },
     {
       key: 'transferencia',
       title: headerLabel('Transferencia'),
-      dataIndex: 'transferencia', width: 110, align: 'center' as const,
+      dataIndex: 'transferencia', width: 100, align: 'center' as const,
       render: (v: 'sin_asignar' | 'asignada', row: AsignarCursoRow) =>
         renderActionCell(v, 'Transferencia', row),
     },
@@ -1768,7 +1772,7 @@ const AsignarEncuestasTab: React.FC = () => {
               dataSource={paged}
               rowKey="inscripcion"
               pagination={false}
-              scroll={{ x: 'max-content' }}
+              tableLayout="fixed"
               onRow={(row: AsignarCursoRow) => {
                 let borderColor = 'transparent';
                 if (isAsignado(row)) borderColor = '#10B981';
