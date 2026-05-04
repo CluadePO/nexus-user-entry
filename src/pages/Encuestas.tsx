@@ -928,7 +928,7 @@ const DEFAULT_SATIS: SatisParticipante[] = [
   { id: 3, rut: '16789012-3', nombre: 'Ana Torres Vidal', correo: '', estado: 'activo', selected: true },
 ];
 
-const EmailInput: React.FC<{ value: string; placeholder: string; onChange: (v: string) => void }> = ({ value, placeholder, onChange }) => {
+const EmailInput: React.FC<{ value: string; placeholder: string; onChange: (v: string) => void; disabled?: boolean }> = ({ value, placeholder, onChange, disabled }) => {
   const [touched, setTouched] = useState(false);
   const [showCheck, setShowCheck] = useState(false);
   const empty = !value.trim();
