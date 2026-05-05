@@ -170,9 +170,6 @@ export const CourseComparisonModal: React.FC<CourseComparisonModalProps> = ({
               <ArrowLeftRight className="h-5 w-5 text-primary" />
             </div>
             Comparador de Cursos
-            <Badge variant="secondary" className="ml-2">
-              {selectedCourses.length}/3 cursos
-            </Badge>
           </DialogTitle>
         </DialogHeader>
 
@@ -256,18 +253,11 @@ export const CourseComparisonModal: React.FC<CourseComparisonModalProps> = ({
                           <row.icon className="h-4 w-4" />
                           {row.label}
                         </div>
-                        {selectedCourses.map((course, index) => (
+                        {selectedCourses.map((course) => (
                           <div
                             key={course.id}
-                            className={`text-sm font-medium flex items-center gap-1 ${
-                              comparisons[index] === 'best'
-                                ? 'text-emerald-600'
-                                : ''
-                            }`}
+                            className="text-sm font-medium flex items-center gap-1"
                           >
-                            {comparisons[index] === 'best' && (
-                              <CheckCircle2 className="h-4 w-4 flex-shrink-0" />
-                            )}
                             {row.getValue(course)}
                           </div>
                         ))}
