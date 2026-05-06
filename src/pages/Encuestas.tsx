@@ -905,7 +905,7 @@ const AsignarModal: React.FC<{
                   </span>
                 </div>
                 <div style={{ fontFamily: 'Poppins', fontSize: 12, color: '#92400E', marginTop: 6 }}>
-                  {sinCorreo} de {totalParticipantes} participantes no tienen correo asignado. Todos deben tener correo para poder guardar la asignación.
+                  {sinCorreo} de {totalParticipantes} participantes no tienen correo asignado. Todos los participantes visibles deben tener correo para poder guardar la asignación.
                 </div>
                 <button
                   onClick={onOpenParticipants}
