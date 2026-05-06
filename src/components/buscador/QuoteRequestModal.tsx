@@ -33,6 +33,7 @@ interface CourseInfo {
   specialty: string;
   effectiveValuePerParticipant: number;
   maxImputableValue: number;
+  isSence?: boolean;
 }
 
 interface QuoteRequestModalProps {
