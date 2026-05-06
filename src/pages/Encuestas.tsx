@@ -1078,7 +1078,7 @@ const EmailInput: React.FC<{ value: string; placeholder: string; onChange: (v: s
   }
 
   return (
-    <Tooltip title={tooltip} open={touched && tooltip ? undefined : false}>
+    <Tooltip title={tooltip} open={(touched && tooltip) || (forceError && empty) ? undefined : false}>
       <div style={{ position: 'relative', display: 'inline-block', width: '100%' }}>
         <Input
           size="small"
