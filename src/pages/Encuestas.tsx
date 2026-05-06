@@ -890,7 +890,43 @@ const AsignarModal: React.FC<{
                 </span>
               )}
             </Button>
-            {form.participantesCount === 0 && (
+            {sinCorreo > 0 && (
+              <div style={{
+                marginTop: 12,
+                background: '#FEF3C7',
+                borderLeft: '4px solid #D97706',
+                borderRadius: 8,
+                padding: '12px 16px',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <Warning size={18} color="#D97706" weight="regular" />
+                  <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#D97706' }}>
+                    Participantes sin correo
+                  </span>
+                </div>
+                <div style={{ fontFamily: 'Poppins', fontSize: 12, color: '#92400E', marginTop: 6 }}>
+                  {sinCorreo} de {totalParticipantes} participantes no tienen correo asignado. Todos deben tener correo para poder guardar la asignación.
+                </div>
+                <button
+                  onClick={onOpenParticipants}
+                  style={{
+                    marginTop: 10,
+                    background: 'transparent',
+                    border: '1px solid #FDE68A',
+                    borderRadius: 6,
+                    color: '#D97706',
+                    fontFamily: 'Poppins',
+                    fontSize: 12,
+                    fontWeight: 500,
+                    padding: '6px 12px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Ir a gestionar participantes →
+                </button>
+              </div>
+            )}
+            {form.participantesCount === 0 && sinCorreo === 0 && (
               <div style={{ fontSize: 12, color: '#9CA3AF', marginTop: 6 }}>
                 Agrega el correo de los participantes del curso
               </div>
@@ -902,14 +938,17 @@ const AsignarModal: React.FC<{
 
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
           <Button onClick={onClose} style={{ fontFamily: 'Poppins' }}>Cancelar</Button>
-          <Button
-            type="primary"
-            onClick={handleSave}
-            icon={<FloppyDisk size={16} weight="regular" />}
-            style={{ background: TEAL, borderColor: TEAL, fontFamily: 'Poppins', display: 'inline-flex', alignItems: 'center', gap: 6 }}
-          >
-            Guardar Configuración
-          </Button>
+          <Tooltip title={saveDisabled ? `${sinCorreo} participantes no tienen correo. Corrígelo antes de guardar.` : ''}>
+            <Button
+              type="primary"
+              onClick={handleSave}
+              disabled={saveDisabled}
+              icon={<FloppyDisk size={16} weight="regular" />}
+              style={{ background: saveDisabled ? undefined : TEAL, borderColor: saveDisabled ? undefined : TEAL, fontFamily: 'Poppins', display: 'inline-flex', alignItems: 'center', gap: 6 }}
+            >
+              Guardar Configuración
+            </Button>
+          </Tooltip>
         </div>
       </div>
     </Modal>
