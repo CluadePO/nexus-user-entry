@@ -918,15 +918,17 @@ const CourseDetail: React.FC = () => {
         </div>
       </div>
 
-      {/* Floating Franchise Calculator */}
-      <FranchiseCalculator 
-        effectiveValuePerParticipant={course.effectiveValuePerParticipant}
-        maxImputableValue={course.maxImputableValue}
-        formatPrice={formatPrice}
-        tierParticipants={tierParticipants}
-        onTierParticipantsChange={setTierParticipants}
-        onQuoteRequest={() => setQuoteModalOpen(true)}
-      />
+      {/* Floating Franchise Calculator (solo cursos SENCE) */}
+      {course.type === 'Sence' && (
+        <FranchiseCalculator 
+          effectiveValuePerParticipant={course.effectiveValuePerParticipant}
+          maxImputableValue={course.maxImputableValue}
+          formatPrice={formatPrice}
+          tierParticipants={tierParticipants}
+          onTierParticipantsChange={setTierParticipants}
+          onQuoteRequest={() => setQuoteModalOpen(true)}
+        />
+      )}
 
       {/* Quote Request Modal */}
       <QuoteRequestModal
