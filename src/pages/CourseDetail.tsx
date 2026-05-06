@@ -23,7 +23,8 @@ import {
   Share2,
   Heart,
   Award,
-  Download
+  Download,
+  X
 } from 'lucide-react';
 import QuoteRequestModal from '@/components/buscador/QuoteRequestModal';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -247,6 +248,15 @@ const FranchiseCalculator: React.FC<FranchiseCalculatorProps> = ({
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
+  React.useEffect(() => {
+    if (!isExpanded) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsExpanded(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isExpanded]);
+
   const coverageOptions = [
     { percentage: 15, label: '15%', color: 'blue' },
     { percentage: 50, label: '50%', color: 'amber' },
@@ -320,7 +330,7 @@ const FranchiseCalculator: React.FC<FranchiseCalculatorProps> = ({
                 onClick={() => setIsExpanded(false)}
                 className="h-8 w-8"
               >
-                <ChevronRight className="h-4 w-4" />
+                <X className="h-4 w-4" />
               </Button>
             </div>
           </div>
@@ -333,22 +343,16 @@ const FranchiseCalculator: React.FC<FranchiseCalculatorProps> = ({
               <div className="space-y-3">
                 {coverageOptions.map((option) => {
                   const coverage = calculateCoverage(option.percentage);
-                  const colorClasses = option.color === 'emerald'
-                    ? { dot: 'bg-emerald-500', text: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800' }
-                    : option.color === 'amber'
-                      ? { dot: 'bg-amber-500', text: 'text-amber-600 dark:text-amber-400', bg: 'bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800' }
-                      : { dot: 'bg-blue-500', text: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800' };
                   return (
                     <div
                       key={option.percentage}
-                      className={`p-3 rounded-lg border ${colorClasses.bg} space-y-2`}
+                      className="p-3 rounded-lg border border-border space-y-2"
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <div className={`w-3 h-3 rounded-full ${colorClasses.dot}`} />
                           <span className="text-sm font-semibold">Tramo {option.label}</span>
                         </div>
-                        <span className={`font-bold text-sm ${colorClasses.text}`}>
+                        <span className="font-bold text-sm text-foreground">
                           {formatPrice(coverage)}
                         </span>
                       </div>
@@ -397,12 +401,12 @@ const FranchiseCalculator: React.FC<FranchiseCalculatorProps> = ({
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Total franquicia</span>
-                <span className="font-medium text-primary">{formatPrice(totalFranchiseValue)}</span>
+                <span className="font-medium">{formatPrice(totalFranchiseValue)}</span>
               </div>
               <Separator />
               <div className="flex justify-between text-sm font-semibold">
                 <span className="text-foreground">Costo empresa</span>
-                <span className="text-destructive">{formatPrice(Math.max(0, totalCompanyCost))}</span>
+                <span className="font-medium">{formatPrice(Math.max(0, totalCompanyCost))}</span>
               </div>
             </div>
 
