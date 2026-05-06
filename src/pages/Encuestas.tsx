@@ -905,7 +905,7 @@ const AsignarModal: React.FC<{
                   </span>
                 </div>
                 <div style={{ fontFamily: 'Poppins', fontSize: 12, color: '#92400E', marginTop: 6 }}>
-                  {sinCorreo} de {totalParticipantes} participantes no tienen correo asignado. Todos deben tener correo para poder guardar la asignación.
+                  {sinCorreo} de {totalParticipantes} participantes no tienen correo asignado. Todos los participantes visibles deben tener correo para poder guardar la asignación.
                 </div>
                 <button
                   onClick={onOpenParticipants}
@@ -1060,7 +1060,7 @@ const buildTransDefault = (_insc: number): TransParticipante[] =>
     selected: p.estado === 'activo',
   }));
 
-const EmailInput: React.FC<{ value: string; placeholder: string; onChange: (v: string) => void; disabled?: boolean }> = ({ value, placeholder, onChange, disabled }) => {
+const EmailInput: React.FC<{ value: string; placeholder: string; onChange: (v: string) => void; disabled?: boolean; forceError?: boolean }> = ({ value, placeholder, onChange, disabled, forceError }) => {
   const [touched, setTouched] = useState(false);
   const [showCheck, setShowCheck] = useState(false);
   const empty = !value.trim();
@@ -1069,14 +1069,16 @@ const EmailInput: React.FC<{ value: string; placeholder: string; onChange: (v: s
 
   let borderColor = '#D1D5DB';
   let tooltip = '';
-  if (touched) {
+  if (forceError && empty) {
+    borderColor = '#F97316'; tooltip = 'Correo requerido para guardar';
+  } else if (touched) {
     if (empty) { borderColor = '#F59E0B'; tooltip = 'Correo pendiente de ingresar'; }
     else if (invalid) { borderColor = '#EF4444'; tooltip = 'Formato de correo inválido. Ej: nombre@empresa.cl'; }
     else if (showCheck) { borderColor = '#10B981'; }
   }
 
   return (
-    <Tooltip title={tooltip} open={touched && tooltip ? undefined : false}>
+    <Tooltip title={tooltip} open={(touched && tooltip) || (forceError && empty) ? undefined : false}>
       <div style={{ position: 'relative', display: 'inline-block', width: '100%' }}>
         <Input
           size="small"
@@ -1105,17 +1107,26 @@ const SatisfaccionParticipantesModal: React.FC<{
   open: boolean;
   row: AsignarCursoRow | null;
   initial: SatisParticipante[];
+  initialExcluirEliminados?: boolean;
+  initialExcluirAnulados?: boolean;
   onClose: () => void;
-  onSave: (list: SatisParticipante[]) => void;
-}> = ({ open, row, initial, onClose, onSave }) => {
+  onSave: (list: SatisParticipante[], excluirEliminados: boolean, excluirAnulados: boolean) => void;
+}> = ({ open, row, initial, initialExcluirEliminados, initialExcluirAnulados, onClose, onSave }) => {
   const [list, setList] = useState<SatisParticipante[]>(initial);
   const [search, setSearch] = useState('');
-  const [excluirEliminados, setExcluirEliminados] = useState(false);
-  const [excluirAnulados, setExcluirAnulados] = useState(false);
+  const [excluirEliminados, setExcluirEliminados] = useState(!!initialExcluirEliminados);
+  const [excluirAnulados, setExcluirAnulados] = useState(!!initialExcluirAnulados);
+  const [showErrors, setShowErrors] = useState(false);
 
   useEffect(() => {
-    if (open) { setList(initial); setSearch(''); setExcluirEliminados(false); setExcluirAnulados(false); }
-  }, [open, initial]);
+    if (open) {
+      setList(initial);
+      setSearch('');
+      setExcluirEliminados(!!initialExcluirEliminados);
+      setExcluirAnulados(!!initialExcluirAnulados);
+      setShowErrors(false);
+    }
+  }, [open, initial, initialExcluirEliminados, initialExcluirAnulados]);
 
   if (!row) return null;
 
@@ -1125,21 +1136,26 @@ const SatisfaccionParticipantesModal: React.FC<{
   const eliminados = list.filter((p) => p.estado === 'eliminado').length;
   const anulados = list.filter((p) => p.estado === 'anulado').length;
   const activos = list.filter((p) => p.estado === 'activo').length;
+  const isVisible = (p: SatisParticipante) =>
+    !(excluirEliminados && p.estado === 'eliminado') &&
+    !(excluirAnulados && p.estado === 'anulado');
   const visible = list
-    .filter((p) => !(excluirEliminados && p.estado === 'eliminado'))
-    .filter((p) => !(excluirAnulados && p.estado === 'anulado'))
+    .filter(isVisible)
     .filter((p) =>
       !search.trim() || p.nombre.toLowerCase().includes(search.toLowerCase()) || p.rut.toLowerCase().includes(search.toLowerCase())
     );
-  const pendientes = list.filter((p) => p.selected && p.estado === 'activo' && (!p.correo.trim() || !EMAIL_RE.test(p.correo.trim()))).length;
+  const visibleAll = list.filter(isVisible);
+  const pendientes = visibleAll.filter((p) => !p.correo.trim() || !EMAIL_RE.test(p.correo.trim())).length;
 
   const handleSave = () => {
-    const invalid = list.some((p) => p.selected && p.estado === 'activo' && p.correo.trim() && !EMAIL_RE.test(p.correo.trim()));
-    if (invalid) {
-      toast.warning('Corrige los correos inválidos antes de guardar');
+    const missing = visibleAll.some((p) => !p.correo.trim());
+    const invalid = visibleAll.some((p) => p.correo.trim() && !EMAIL_RE.test(p.correo.trim()));
+    if (missing || invalid) {
+      setShowErrors(true);
+      toast.warning('Corrige los correos de todos los participantes visibles antes de guardar.');
       return;
     }
-    onSave(list);
+    onSave(list, excluirEliminados, excluirAnulados);
   };
 
   const estadoBadge = (estado: 'activo' | 'eliminado' | 'anulado') => {
@@ -1179,11 +1195,12 @@ const SatisfaccionParticipantesModal: React.FC<{
       dataIndex: 'correo', width: 240,
       render: (v: string, r: SatisParticipante) => (
         <div style={{ width: 220 }}>
-          {r.estado !== 'activo' ? (
-            <Input size="small" disabled value="" placeholder="Sin correo" style={{ width: '100%', fontFamily: 'Poppins', background: '#F9FAFB' }} />
-          ) : (
-            <EmailInput value={v} placeholder="correo@ejemplo.com" onChange={(nv) => update(r.id, { correo: nv })} />
-          )}
+          <EmailInput
+            value={v}
+            placeholder="correo@ejemplo.com"
+            onChange={(nv) => update(r.id, { correo: nv })}
+            forceError={showErrors}
+          />
         </div>
       ),
     },
@@ -1312,18 +1329,28 @@ const TransferenciaParticipantesModal: React.FC<{
   row: AsignarCursoRow | null;
   initial: TransParticipante[];
   initialEvaluador: boolean;
+  initialExcluirEliminados?: boolean;
+  initialExcluirAnulados?: boolean;
   onClose: () => void;
-  onSave: (list: TransParticipante[], evaluador: boolean) => void;
-}> = ({ open, row, initial, initialEvaluador, onClose, onSave }) => {
+  onSave: (list: TransParticipante[], evaluador: boolean, excluirEliminados: boolean, excluirAnulados: boolean) => void;
+}> = ({ open, row, initial, initialEvaluador, initialExcluirEliminados, initialExcluirAnulados, onClose, onSave }) => {
   const [list, setList] = useState<TransParticipante[]>(initial);
   const [evaluador, setEvaluador] = useState(initialEvaluador);
   const [search, setSearch] = useState('');
-  const [excluirEliminados, setExcluirEliminados] = useState(false);
-  const [excluirAnulados, setExcluirAnulados] = useState(false);
+  const [excluirEliminados, setExcluirEliminados] = useState(!!initialExcluirEliminados);
+  const [excluirAnulados, setExcluirAnulados] = useState(!!initialExcluirAnulados);
+  const [showErrors, setShowErrors] = useState(false);
 
   useEffect(() => {
-    if (open) { setList(initial); setEvaluador(false); setSearch(''); setExcluirEliminados(false); setExcluirAnulados(false); }
-  }, [open, initial]);
+    if (open) {
+      setList(initial);
+      setEvaluador(initialEvaluador);
+      setSearch('');
+      setExcluirEliminados(!!initialExcluirEliminados);
+      setExcluirAnulados(!!initialExcluirAnulados);
+      setShowErrors(false);
+    }
+  }, [open, initial, initialEvaluador, initialExcluirEliminados, initialExcluirAnulados]);
 
   if (!row) return null;
 
@@ -1333,23 +1360,28 @@ const TransferenciaParticipantesModal: React.FC<{
   const eliminados = list.filter((p) => p.estado === 'eliminado').length;
   const anulados = list.filter((p) => p.estado === 'anulado').length;
   const activos = list.filter((p) => p.estado === 'activo').length;
+  const isVisible = (p: TransParticipante) =>
+    !(excluirEliminados && p.estado === 'eliminado') &&
+    !(excluirAnulados && p.estado === 'anulado');
   const visible = list
-    .filter((p) => !(excluirEliminados && p.estado === 'eliminado'))
-    .filter((p) => !(excluirAnulados && p.estado === 'anulado'))
+    .filter(isVisible)
     .filter((p) =>
       !search.trim() || p.nombre.toLowerCase().includes(search.toLowerCase()) || p.rut.toLowerCase().includes(search.toLowerCase())
     );
   const correoKey = evaluador ? 'correoEvaluador' : 'correoJefe';
   const nombreKey = evaluador ? 'nombreEvaluador' : 'nombreJefe';
-  const pendientes = list.filter((p) => p.selected && p.estado === 'activo' && (!p[correoKey].trim() || !EMAIL_RE.test(p[correoKey].trim()))).length;
+  const visibleAll = list.filter(isVisible);
+  const pendientes = visibleAll.filter((p) => !p[correoKey].trim() || !EMAIL_RE.test(p[correoKey].trim())).length;
 
   const handleSave = () => {
-    const invalid = list.some((p) => p.selected && p.estado === 'activo' && p[correoKey].trim() && !EMAIL_RE.test(p[correoKey].trim()));
-    if (invalid) {
-      toast.warning('Corrige los correos inválidos antes de guardar');
+    const missing = visibleAll.some((p) => !p[correoKey].trim());
+    const invalid = visibleAll.some((p) => p[correoKey].trim() && !EMAIL_RE.test(p[correoKey].trim()));
+    if (missing || invalid) {
+      setShowErrors(true);
+      toast.warning('Corrige los correos de todos los participantes visibles antes de guardar.');
       return;
     }
-    onSave(list, evaluador);
+    onSave(list, evaluador, excluirEliminados, excluirAnulados);
   };
 
   const showSearch = visible.length > 8 || search.trim().length > 0;
@@ -1466,10 +1498,9 @@ const TransferenciaParticipantesModal: React.FC<{
             const isElim = p.estado === 'eliminado';
             const isAnul = p.estado === 'anulado';
             const isInactive = isElim || isAnul;
-            const disabled = isInactive || !p.selected;
             const nombreVal = (p as any)[nombreKey] as string;
             const correoVal = (p as any)[correoKey] as string;
-            const cardBg = isElim ? '#FEF2F2' : isAnul ? '#FFF7ED' : (disabled ? '#F9FAFB' : '#FFFFFF');
+            const cardBg = isElim ? '#FEF2F2' : isAnul ? '#FFF7ED' : '#FFFFFF';
             return (
               <div
                 key={p.id}
@@ -1479,15 +1510,14 @@ const TransferenciaParticipantesModal: React.FC<{
                   borderRadius: 8,
                   padding: '14px 16px',
                   marginBottom: 10,
-                  opacity: isInactive ? 0.85 : (disabled ? 0.6 : 1),
                   transition: 'border-color 0.2s',
                 }}
-                onMouseEnter={(e) => { if (!disabled) e.currentTarget.style.borderColor = '#99F6E4'; }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#99F6E4'; }}
                 onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E5E7EB'; }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
                   <Checkbox
-                    checked={!isInactive && p.selected}
+                    checked={p.estado === 'activo' ? p.selected : false}
                     disabled={isInactive}
                     onChange={(e) => update(p.id, { selected: e.target.checked })}
                   />
@@ -1497,7 +1527,7 @@ const TransferenciaParticipantesModal: React.FC<{
                   }}>{p.rut}</span>
                   <span style={{
                     fontFamily: 'Poppins', fontSize: 14, fontWeight: 600,
-                    color: disabled ? '#9CA3AF' : '#111827',
+                    color: '#111827',
                   }}>{p.nombre}</span>
                   {isElim && (
                     <span style={{ background: '#FEE2E2', color: '#991B1B', borderRadius: 999, padding: '2px 8px', fontFamily: 'Poppins', fontSize: 11, fontWeight: 500 }}>Eliminado</span>
@@ -1513,33 +1543,22 @@ const TransferenciaParticipantesModal: React.FC<{
                     </div>
                     <Input
                       size="small"
-                      disabled={disabled}
-                      value={isInactive ? '' : nombreVal}
-                      placeholder={isInactive ? 'Sin correo' : (evaluador ? 'Nombre del evaluador' : 'Nombre del jefe directo')}
+                      value={nombreVal}
+                      placeholder={evaluador ? 'Nombre del evaluador' : 'Nombre del jefe directo'}
                       onChange={(e) => update(p.id, { [nombreKey]: e.target.value } as any)}
-                      style={{ width: '100%', fontFamily: 'Poppins', background: isInactive ? '#F9FAFB' : undefined }}
+                      style={{ width: '100%', fontFamily: 'Poppins' }}
                     />
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontFamily: 'Poppins', fontSize: 11, fontWeight: 500, color: '#6B7280', marginBottom: 4 }}>
                       {evaluador ? 'Correo Evaluador' : 'Correo Jefe'}
                     </div>
-                    {isInactive ? (
-                      <Input
-                        size="small"
-                        disabled
-                        value=""
-                        placeholder="Sin correo"
-                        style={{ width: '100%', fontFamily: 'Poppins', background: '#F9FAFB' }}
-                      />
-                    ) : (
-                      <EmailInput
-                        value={correoVal}
-                        placeholder={evaluador ? 'correo@evaluador.cl' : 'correo@jefe.cl'}
-                        onChange={(nv) => update(p.id, { [correoKey]: nv } as any)}
-                        disabled={disabled}
-                      />
-                    )}
+                    <EmailInput
+                      value={correoVal}
+                      placeholder={evaluador ? 'correo@evaluador.cl' : 'correo@jefe.cl'}
+                      onChange={(nv) => update(p.id, { [correoKey]: nv } as any)}
+                      forceError={showErrors}
+                    />
                   </div>
                 </div>
               </div>
@@ -1592,6 +1611,8 @@ const AsignarEncuestasTab: React.FC = () => {
   const [satisParts, setSatisParts] = useState<Record<number, SatisParticipante[]>>({});
   const [transParts, setTransParts] = useState<Record<number, TransParticipante[]>>({});
   const [transEvaluador, setTransEvaluador] = useState<Record<number, boolean>>({});
+  // Per-row exclusion state, keyed by `${inscripcion}-${kind}`
+  const [exclusionState, setExclusionState] = useState<Record<string, { excluirEliminados: boolean; excluirAnulados: boolean }>>({});
   const [participantsModal, setParticipantsModal] = useState<{ kind: AsignKind; row: AsignarCursoRow } | null>(null);
 
   const formKey = (insc: number, kind: AsignKind) => `${insc}-${kind}`;
@@ -2048,16 +2069,25 @@ const AsignarEncuestasTab: React.FC = () => {
         let sinCorreo = 0;
         let total = 0;
         if (insc && kind) {
+          const excl = exclusionState[`${insc}-${kind}`] ?? { excluirEliminados: false, excluirAnulados: false };
           if (kind === 'Satisfacción') {
             const list = satisParts[insc] ?? buildSatisDefault(insc);
-            const active = list.filter((p) => p.estado === 'activo' && p.selected);
-            total = active.length;
-            sinCorreo = active.filter((p) => !p.correo.trim()).length;
+            const visible = list.filter((p) =>
+              !(excl.excluirEliminados && p.estado === 'eliminado') &&
+              !(excl.excluirAnulados && p.estado === 'anulado')
+            );
+            total = visible.length;
+            sinCorreo = visible.filter((p) => !p.correo.trim() || !EMAIL_RE.test(p.correo.trim())).length;
           } else {
             const list = transParts[insc] ?? buildTransDefault(insc);
-            const active = list.filter((p) => p.estado === 'activo' && p.selected);
-            total = active.length;
-            sinCorreo = active.filter((p) => !p.correoJefe.trim()).length;
+            const evalKind = transEvaluador[insc] ?? false;
+            const correoKey = evalKind ? 'correoEvaluador' : 'correoJefe';
+            const visible = list.filter((p) =>
+              !(excl.excluirEliminados && p.estado === 'eliminado') &&
+              !(excl.excluirAnulados && p.estado === 'anulado')
+            );
+            total = visible.length;
+            sinCorreo = visible.filter((p) => !p[correoKey].trim() || !EMAIL_RE.test(p[correoKey].trim())).length;
           }
         }
         return (
@@ -2096,18 +2126,24 @@ const AsignarEncuestasTab: React.FC = () => {
         initial={participantsModal && participantsModal.kind === 'Satisfacción'
           ? (satisParts[participantsModal.row.inscripcion] ?? buildSatisDefault(participantsModal.row.inscripcion))
           : DEFAULT_SATIS}
+        initialExcluirEliminados={participantsModal ? exclusionState[`${participantsModal.row.inscripcion}-Satisfacción`]?.excluirEliminados : false}
+        initialExcluirAnulados={participantsModal ? exclusionState[`${participantsModal.row.inscripcion}-Satisfacción`]?.excluirAnulados : false}
         onClose={() => {
           if (participantsModal) {
             setAsignModal({ kind: participantsModal.kind, row: participantsModal.row });
           }
           setParticipantsModal(null);
         }}
-        onSave={(list) => {
+        onSave={(list, excluirEliminados, excluirAnulados) => {
           if (!participantsModal) return;
           const { row, kind } = participantsModal;
           setSatisParts((prev) => ({ ...prev, [row.inscripcion]: list }));
-          const count = list.filter((p) => p.selected && p.estado === 'activo').length;
-          patchForm(row.inscripcion, kind, { participantesCount: count });
+          setExclusionState((prev) => ({ ...prev, [`${row.inscripcion}-${kind}`]: { excluirEliminados, excluirAnulados } }));
+          const visible = list.filter((p) =>
+            !(excluirEliminados && p.estado === 'eliminado') &&
+            !(excluirAnulados && p.estado === 'anulado')
+          );
+          patchForm(row.inscripcion, kind, { participantesCount: visible.length });
           toast.success('Participantes guardados correctamente');
           setAsignModal({ kind, row });
           setParticipantsModal(null);
@@ -2121,19 +2157,25 @@ const AsignarEncuestasTab: React.FC = () => {
           ? (transParts[participantsModal.row.inscripcion] ?? buildTransDefault(participantsModal.row.inscripcion))
           : DEFAULT_TRANS}
         initialEvaluador={participantsModal ? (transEvaluador[participantsModal.row.inscripcion] ?? false) : false}
+        initialExcluirEliminados={participantsModal ? exclusionState[`${participantsModal.row.inscripcion}-Transferencia`]?.excluirEliminados : false}
+        initialExcluirAnulados={participantsModal ? exclusionState[`${participantsModal.row.inscripcion}-Transferencia`]?.excluirAnulados : false}
         onClose={() => {
           if (participantsModal) {
             setAsignModal({ kind: participantsModal.kind, row: participantsModal.row });
           }
           setParticipantsModal(null);
         }}
-        onSave={(list, evaluador) => {
+        onSave={(list, evaluador, excluirEliminados, excluirAnulados) => {
           if (!participantsModal) return;
           const { row, kind } = participantsModal;
           setTransParts((prev) => ({ ...prev, [row.inscripcion]: list }));
           setTransEvaluador((prev) => ({ ...prev, [row.inscripcion]: evaluador }));
-          const count = list.filter((p) => p.selected && p.estado === 'activo').length;
-          patchForm(row.inscripcion, kind, { participantesCount: count });
+          setExclusionState((prev) => ({ ...prev, [`${row.inscripcion}-${kind}`]: { excluirEliminados, excluirAnulados } }));
+          const visible = list.filter((p) =>
+            !(excluirEliminados && p.estado === 'eliminado') &&
+            !(excluirAnulados && p.estado === 'anulado')
+          );
+          patchForm(row.inscripcion, kind, { participantesCount: visible.length });
           toast.success('Participantes guardados correctamente');
           setAsignModal({ kind, row });
           setParticipantsModal(null);
