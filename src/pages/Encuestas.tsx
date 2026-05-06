@@ -1107,17 +1107,26 @@ const SatisfaccionParticipantesModal: React.FC<{
   open: boolean;
   row: AsignarCursoRow | null;
   initial: SatisParticipante[];
+  initialExcluirEliminados?: boolean;
+  initialExcluirAnulados?: boolean;
   onClose: () => void;
-  onSave: (list: SatisParticipante[]) => void;
-}> = ({ open, row, initial, onClose, onSave }) => {
+  onSave: (list: SatisParticipante[], excluirEliminados: boolean, excluirAnulados: boolean) => void;
+}> = ({ open, row, initial, initialExcluirEliminados, initialExcluirAnulados, onClose, onSave }) => {
   const [list, setList] = useState<SatisParticipante[]>(initial);
   const [search, setSearch] = useState('');
-  const [excluirEliminados, setExcluirEliminados] = useState(false);
-  const [excluirAnulados, setExcluirAnulados] = useState(false);
+  const [excluirEliminados, setExcluirEliminados] = useState(!!initialExcluirEliminados);
+  const [excluirAnulados, setExcluirAnulados] = useState(!!initialExcluirAnulados);
+  const [showErrors, setShowErrors] = useState(false);
 
   useEffect(() => {
-    if (open) { setList(initial); setSearch(''); setExcluirEliminados(false); setExcluirAnulados(false); }
-  }, [open, initial]);
+    if (open) {
+      setList(initial);
+      setSearch('');
+      setExcluirEliminados(!!initialExcluirEliminados);
+      setExcluirAnulados(!!initialExcluirAnulados);
+      setShowErrors(false);
+    }
+  }, [open, initial, initialExcluirEliminados, initialExcluirAnulados]);
 
   if (!row) return null;
 
@@ -1127,21 +1136,26 @@ const SatisfaccionParticipantesModal: React.FC<{
   const eliminados = list.filter((p) => p.estado === 'eliminado').length;
   const anulados = list.filter((p) => p.estado === 'anulado').length;
   const activos = list.filter((p) => p.estado === 'activo').length;
+  const isVisible = (p: SatisParticipante) =>
+    !(excluirEliminados && p.estado === 'eliminado') &&
+    !(excluirAnulados && p.estado === 'anulado');
   const visible = list
-    .filter((p) => !(excluirEliminados && p.estado === 'eliminado'))
-    .filter((p) => !(excluirAnulados && p.estado === 'anulado'))
+    .filter(isVisible)
     .filter((p) =>
       !search.trim() || p.nombre.toLowerCase().includes(search.toLowerCase()) || p.rut.toLowerCase().includes(search.toLowerCase())
     );
-  const pendientes = list.filter((p) => p.selected && p.estado === 'activo' && (!p.correo.trim() || !EMAIL_RE.test(p.correo.trim()))).length;
+  const visibleAll = list.filter(isVisible);
+  const pendientes = visibleAll.filter((p) => !p.correo.trim() || !EMAIL_RE.test(p.correo.trim())).length;
 
   const handleSave = () => {
-    const invalid = list.some((p) => p.selected && p.estado === 'activo' && p.correo.trim() && !EMAIL_RE.test(p.correo.trim()));
-    if (invalid) {
-      toast.warning('Corrige los correos inválidos antes de guardar');
+    const missing = visibleAll.some((p) => !p.correo.trim());
+    const invalid = visibleAll.some((p) => p.correo.trim() && !EMAIL_RE.test(p.correo.trim()));
+    if (missing || invalid) {
+      setShowErrors(true);
+      toast.warning('Corrige los correos de todos los participantes visibles antes de guardar.');
       return;
     }
-    onSave(list);
+    onSave(list, excluirEliminados, excluirAnulados);
   };
 
   const estadoBadge = (estado: 'activo' | 'eliminado' | 'anulado') => {
@@ -1181,11 +1195,12 @@ const SatisfaccionParticipantesModal: React.FC<{
       dataIndex: 'correo', width: 240,
       render: (v: string, r: SatisParticipante) => (
         <div style={{ width: 220 }}>
-          {r.estado !== 'activo' ? (
-            <Input size="small" disabled value="" placeholder="Sin correo" style={{ width: '100%', fontFamily: 'Poppins', background: '#F9FAFB' }} />
-          ) : (
-            <EmailInput value={v} placeholder="correo@ejemplo.com" onChange={(nv) => update(r.id, { correo: nv })} />
-          )}
+          <EmailInput
+            value={v}
+            placeholder="correo@ejemplo.com"
+            onChange={(nv) => update(r.id, { correo: nv })}
+            forceError={showErrors}
+          />
         </div>
       ),
     },
