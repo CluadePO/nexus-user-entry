@@ -277,7 +277,7 @@ const FranchiseCalculator: React.FC<FranchiseCalculatorProps> = ({
   const totalCompanyCost = totalEffectiveValue - totalFranchiseValue;
 
   const handleTierParticipantsChange = (percentage: number, value: number) => {
-    onTierParticipantsChange({ ...tierParticipants, [percentage]: Math.max(0, value) });
+    onTierParticipantsChange({ ...tierParticipants, [percentage]: Math.min(1000, Math.max(0, value)) });
   };
 
   return (
@@ -368,6 +368,7 @@ const FranchiseCalculator: React.FC<FranchiseCalculatorProps> = ({
                         <input
                           type="number"
                           min="0"
+                          max="1000"
                           value={tierParticipants[option.percentage]}
                           onChange={(e) => handleTierParticipantsChange(option.percentage, parseInt(e.target.value) || 0)}
                           className="flex h-8 w-full rounded-md border border-input bg-background px-3 py-1 text-center text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
