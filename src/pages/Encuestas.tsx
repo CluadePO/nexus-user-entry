@@ -766,11 +766,13 @@ const AsignarModal: React.FC<{
   kind: AsignKind | null;
   row: AsignarCursoRow | null;
   form: AsignFormState;
+  sinCorreo: number;
+  totalParticipantes: number;
   onChange: (patch: Partial<AsignFormState>) => void;
   onClose: () => void;
   onSave: () => void;
   onOpenParticipants: () => void;
-}> = ({ open, kind, row, form, onChange, onClose, onSave, onOpenParticipants }) => {
+}> = ({ open, kind, row, form, sinCorreo, totalParticipantes, onChange, onClose, onSave, onOpenParticipants }) => {
   const [errRelator, setErrRelator] = useState(false);
   const [errFecha, setErrFecha] = useState(false);
 
