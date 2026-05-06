@@ -401,12 +401,12 @@ const FranchiseCalculator: React.FC<FranchiseCalculatorProps> = ({
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Total franquicia</span>
-                <span className="font-medium text-primary">{formatPrice(totalFranchiseValue)}</span>
+                <span className="font-medium">{formatPrice(totalFranchiseValue)}</span>
               </div>
               <Separator />
               <div className="flex justify-between text-sm font-semibold">
                 <span className="text-foreground">Costo empresa</span>
-                <span className="text-destructive">{formatPrice(Math.max(0, totalCompanyCost))}</span>
+                <span className="font-medium">{formatPrice(Math.max(0, totalCompanyCost))}</span>
               </div>
             </div>
 
