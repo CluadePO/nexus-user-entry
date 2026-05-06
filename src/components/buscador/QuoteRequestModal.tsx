@@ -66,6 +66,7 @@ const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
   });
   const [participants, setParticipants] = useState<number>(1);
   const [customMode, setCustomMode] = useState<boolean>(false);
+  const [customInput, setCustomInput] = useState<string>('');
 
   // Sync from calculator when modal opens
   useEffect(() => {
@@ -73,7 +74,9 @@ const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
       const total = Object.values(initialTierParticipants).reduce((a, b) => a + b, 0);
       if (total > 0) {
         setParticipants(total);
-        setCustomMode(total >= 8);
+        const isCustom = total >= 8;
+        setCustomMode(isCustom);
+        setCustomInput(isCustom ? String(total) : '');
       }
     }
   }, [open, initialTierParticipants]);
@@ -90,6 +93,7 @@ const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
 
   const handleSelectParticipants = (n: number) => {
     setCustomMode(false);
+    setCustomInput('');
     setParticipants(n);
   };
 
@@ -99,10 +103,15 @@ const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
       toast({ title: "Debes ingresar al menos 1 participante", variant: "destructive" });
       return;
     }
+    if (customMode && (customInput === '' || parseInt(customInput) < 8)) {
+      toast({ title: "Debes ingresar el número de participantes (mínimo 8)", variant: "destructive" });
+      return;
+    }
     console.log('Quote request submitted:', { ...formData, participants, ...calculations });
     setFormData({ name: '', email: '', company: '', message: '' });
     setParticipants(1);
     setCustomMode(false);
+    setCustomInput('');
     onOpenChange(false);
     toast({
       title: "¡Solicitud enviada con éxito!",
@@ -243,7 +252,8 @@ const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
                       type="button"
                       onClick={() => {
                         setCustomMode(true);
-                        if (participants < 8) setParticipants(8);
+                        setCustomInput('');
+                        setParticipants(0);
                       }}
                       className={`h-11 px-4 rounded-md border text-sm font-medium transition-colors ${
                         customMode
@@ -258,9 +268,21 @@ const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
                         type="number"
                         min={8}
                         max={10000}
-                        value={participants}
-                        onChange={(e) => setParticipants(Math.min(10000, Math.max(8, parseInt(e.target.value) || 8)))}
-                        className="h-11 w-24 rounded-md border border-input bg-background px-3 text-center text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        required
+                        placeholder="Ej: 15"
+                        value={customInput}
+                        onChange={(e) => {
+                          const raw = e.target.value;
+                          if (raw === '') {
+                            setCustomInput('');
+                            setParticipants(0);
+                            return;
+                          }
+                          const n = Math.min(10000, Math.max(0, parseInt(raw) || 0));
+                          setCustomInput(String(n));
+                          setParticipants(n);
+                        }}
+                        className="h-11 w-28 rounded-md border border-input bg-background px-3 text-center text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       />
                     )}
                   </div>
