@@ -1254,7 +1254,7 @@ const SatisfaccionParticipantesModal: React.FC<{
               onClick={() => setExcluirAnulados((v) => !v)}
               style={exclBtnStyle(excluirAnulados)}
             >
-              {excluirAnulados ? `Mostrando sin Anulados (${anulados})` : `Excluir Anulados (${anulados})`}
+              {excluirAnulados ? `Mostrando sin Anulados (${anulados})` : `Excluir Anulados (0)`}
             </Button>
           </div>
           <Input
