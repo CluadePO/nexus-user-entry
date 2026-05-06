@@ -248,6 +248,15 @@ const FranchiseCalculator: React.FC<FranchiseCalculatorProps> = ({
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
+  React.useEffect(() => {
+    if (!isExpanded) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsExpanded(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isExpanded]);
+
   const coverageOptions = [
     { percentage: 15, label: '15%', color: 'blue' },
     { percentage: 50, label: '50%', color: 'amber' },
