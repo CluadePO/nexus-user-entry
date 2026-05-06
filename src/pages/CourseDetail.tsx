@@ -277,7 +277,7 @@ const FranchiseCalculator: React.FC<FranchiseCalculatorProps> = ({
   const totalCompanyCost = totalEffectiveValue - totalFranchiseValue;
 
   const handleTierParticipantsChange = (percentage: number, value: number) => {
-    onTierParticipantsChange({ ...tierParticipants, [percentage]: Math.max(0, value) });
+    onTierParticipantsChange({ ...tierParticipants, [percentage]: Math.min(1000, Math.max(0, value)) });
   };
 
   return (
