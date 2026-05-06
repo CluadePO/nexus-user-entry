@@ -1026,35 +1026,39 @@ const PARTICIPANTES_BASE: Record<number, { nombre: string; correo: string }[]> =
   ],
 };
 
-const buildSatisDefault = (insc: number): SatisParticipante[] => {
-  const base = PARTICIPANTES_BASE[insc];
-  if (!base) return DEFAULT_SATIS;
-  return base.map((p, i) => ({
-    id: i + 1,
-    rut: `${10000000 + insc + i}-K`,
-    nombre: p.nombre,
-    correo: p.correo,
-    estado: 'activo',
-    selected: true,
-  }));
-};
+// Mixed dataset: activos + eliminados + anulados (used in Participantes modals)
+const MIXED_PARTICIPANTES: { rut: string; nombre: string; correo: string; estado: 'activo' | 'eliminado' | 'anulado' }[] = [
+  { rut: '12095229-K', nombre: 'Paula Orellana Marín', correo: 'paula@empresa.cl', estado: 'activo' },
+  { rut: '12345678-9', nombre: 'Carlos Muñoz Soto', correo: 'carlos@empresa.cl', estado: 'activo' },
+  { rut: '16789012-3', nombre: 'Ana Torres Vidal', correo: '', estado: 'eliminado' },
+  { rut: '19876543-2', nombre: 'Roberto Silva Pinto', correo: '', estado: 'eliminado' },
+  { rut: '14567890-1', nombre: 'María José Contreras', correo: '', estado: 'anulado' },
+  { rut: '17654321-8', nombre: 'Diego Pérez Vega', correo: 'diego@empresa.cl', estado: 'activo' },
+  { rut: '15432198-7', nombre: 'Valentina Rojas Castro', correo: '', estado: 'anulado' },
+];
 
-const buildTransDefault = (insc: number): TransParticipante[] => {
-  const base = PARTICIPANTES_BASE[insc];
-  if (!base) return [];
-  return base.map((p, i) => ({
+const buildSatisDefault = (_insc: number): SatisParticipante[] =>
+  MIXED_PARTICIPANTES.map((p, i) => ({
     id: i + 1,
-    rut: `${10000000 + insc + i}-K`,
+    rut: p.rut,
     nombre: p.nombre,
-    // Reuse same email for Transferencia row (participant's own email validation)
-    correoJefe: p.correo,
+    correo: p.estado === 'activo' ? p.correo : '',
+    estado: p.estado,
+    selected: p.estado === 'activo',
+  }));
+
+const buildTransDefault = (_insc: number): TransParticipante[] =>
+  MIXED_PARTICIPANTES.map((p, i) => ({
+    id: i + 1,
+    rut: p.rut,
+    nombre: p.nombre,
+    correoJefe: p.estado === 'activo' ? p.correo : '',
     nombreJefe: '',
     correoEvaluador: '',
     nombreEvaluador: '',
-    estado: 'activo',
-    selected: true,
-  }) as TransParticipante);
-};
+    estado: p.estado,
+    selected: p.estado === 'activo',
+  }));
 
 const EmailInput: React.FC<{ value: string; placeholder: string; onChange: (v: string) => void; disabled?: boolean }> = ({ value, placeholder, onChange, disabled }) => {
   const [touched, setTouched] = useState(false);
@@ -1106,8 +1110,12 @@ const SatisfaccionParticipantesModal: React.FC<{
 }> = ({ open, row, initial, onClose, onSave }) => {
   const [list, setList] = useState<SatisParticipante[]>(initial);
   const [search, setSearch] = useState('');
+  const [excluirEliminados, setExcluirEliminados] = useState(false);
+  const [excluirAnulados, setExcluirAnulados] = useState(false);
 
-  useEffect(() => { if (open) { setList(initial); setSearch(''); } }, [open, initial]);
+  useEffect(() => {
+    if (open) { setList(initial); setSearch(''); setExcluirEliminados(false); setExcluirAnulados(false); }
+  }, [open, initial]);
 
   if (!row) return null;
 
@@ -1116,9 +1124,13 @@ const SatisfaccionParticipantesModal: React.FC<{
 
   const eliminados = list.filter((p) => p.estado === 'eliminado').length;
   const anulados = list.filter((p) => p.estado === 'anulado').length;
-  const visible = list.filter((p) => p.estado === 'activo').filter((p) =>
-    !search.trim() || p.nombre.toLowerCase().includes(search.toLowerCase()) || p.rut.toLowerCase().includes(search.toLowerCase())
-  );
+  const activos = list.filter((p) => p.estado === 'activo').length;
+  const visible = list
+    .filter((p) => !(excluirEliminados && p.estado === 'eliminado'))
+    .filter((p) => !(excluirAnulados && p.estado === 'anulado'))
+    .filter((p) =>
+      !search.trim() || p.nombre.toLowerCase().includes(search.toLowerCase()) || p.rut.toLowerCase().includes(search.toLowerCase())
+    );
   const pendientes = list.filter((p) => p.selected && p.estado === 'activo' && (!p.correo.trim() || !EMAIL_RE.test(p.correo.trim()))).length;
 
   const handleSave = () => {
@@ -1130,11 +1142,21 @@ const SatisfaccionParticipantesModal: React.FC<{
     onSave(list);
   };
 
+  const estadoBadge = (estado: 'activo' | 'eliminado' | 'anulado') => {
+    if (estado === 'eliminado') {
+      return <span style={{ background: '#FEE2E2', color: '#991B1B', borderRadius: 999, padding: '2px 8px', fontFamily: 'Poppins', fontSize: 11, fontWeight: 500 }}>Eliminado</span>;
+    }
+    if (estado === 'anulado') {
+      return <span style={{ background: '#FED7AA', color: '#9A3412', borderRadius: 999, padding: '2px 8px', fontFamily: 'Poppins', fontSize: 11, fontWeight: 500 }}>Anulado</span>;
+    }
+    return null;
+  };
+
   const columns: any[] = [
     {
       title: '', dataIndex: 'selected', width: 50, align: 'center' as const,
       render: (v: boolean, r: SatisParticipante) => (
-        <Checkbox checked={v} onChange={(e) => update(r.id, { selected: e.target.checked })} />
+        <Checkbox checked={r.estado === 'activo' && v} disabled={r.estado !== 'activo'} onChange={(e) => update(r.id, { selected: e.target.checked })} />
       ),
     },
     {
@@ -1145,18 +1167,31 @@ const SatisfaccionParticipantesModal: React.FC<{
     {
       title: <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#374151', whiteSpace: 'nowrap' }}>Nombre Participante</span>,
       dataIndex: 'nombre',
-      render: (v: string) => <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 500, color: '#111827' }}>{v}</span>,
+      render: (v: string, r: SatisParticipante) => (
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 500, color: '#111827' }}>{v}</span>
+          {estadoBadge(r.estado)}
+        </span>
+      ),
     },
     {
       title: <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#374151', whiteSpace: 'nowrap' }}>Correo Participante</span>,
       dataIndex: 'correo', width: 240,
       render: (v: string, r: SatisParticipante) => (
         <div style={{ width: 220 }}>
-          <EmailInput value={v} placeholder="correo@ejemplo.com" onChange={(nv) => update(r.id, { correo: nv })} />
+          {r.estado !== 'activo' ? (
+            <Input size="small" disabled value="" placeholder="Sin correo" style={{ width: '100%', fontFamily: 'Poppins', background: '#F9FAFB' }} />
+          ) : (
+            <EmailInput value={v} placeholder="correo@ejemplo.com" onChange={(nv) => update(r.id, { correo: nv })} />
+          )}
         </div>
       ),
     },
   ];
+
+  const exclBtnStyle = (active: boolean) => active
+    ? { background: '#FEE2E2', color: '#991B1B', borderColor: '#FECACA', display: 'inline-flex', alignItems: 'center', gap: 6 } as const
+    : { display: 'inline-flex', alignItems: 'center', gap: 6 } as const;
 
   return (
     <Modal
@@ -1178,21 +1213,31 @@ const SatisfaccionParticipantesModal: React.FC<{
           <div style={{ fontSize: 12, color: '#6B7280' }}>Encuesta: Encuesta de Satisfacción Estándar v2.0</div>
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, gap: 8, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, gap: 8, flexWrap: 'wrap' }}>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             <Button
               type="primary"
               icon={<CheckSquare size={14} weight="regular" />}
-              onClick={() => setList((prev) => prev.map((p) => ({ ...p, selected: true })))}
+              onClick={() => setList((prev) => prev.map((p) => (p.estado === 'activo' ? { ...p, selected: true } : p)))}
               style={{ background: TEAL, borderColor: TEAL, display: 'inline-flex', alignItems: 'center', gap: 6 }}
             >
               Seleccionar Todos
             </Button>
-            <Button danger icon={<UserMinus size={14} weight="regular" />} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-              Excluir Eliminados ({eliminados})
+            <Button
+              icon={<UserMinus size={14} weight="regular" />}
+              danger={!excluirEliminados}
+              onClick={() => setExcluirEliminados((v) => !v)}
+              style={exclBtnStyle(excluirEliminados)}
+            >
+              {excluirEliminados ? `Mostrando sin Eliminados (${eliminados})` : `Excluir Eliminados (${eliminados})`}
             </Button>
-            <Button danger icon={<ProhibitInset size={14} weight="regular" />} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-              Excluir Anulados ({anulados})
+            <Button
+              icon={<ProhibitInset size={14} weight="regular" />}
+              danger={!excluirAnulados}
+              onClick={() => setExcluirAnulados((v) => !v)}
+              style={exclBtnStyle(excluirAnulados)}
+            >
+              {excluirAnulados ? `Mostrando sin Anulados (${anulados})` : `Excluir Anulados (${anulados})`}
             </Button>
           </div>
           <Input
@@ -1204,11 +1249,22 @@ const SatisfaccionParticipantesModal: React.FC<{
           />
         </div>
 
+        <div style={{ fontFamily: 'Poppins', fontSize: 12, color: '#6B7280', marginBottom: 12 }}>
+          Mostrando {visible.length} participantes ({activos} activos · {eliminados} eliminados · {anulados} anulados)
+        </div>
+
         <Table
           columns={columns}
           dataSource={visible}
           rowKey="id"
           pagination={visible.length > 10 ? { pageSize: 10, size: 'small' } : false}
+          onRow={(r: SatisParticipante) => ({
+            style: r.estado === 'eliminado'
+              ? { background: '#FEF2F2' }
+              : r.estado === 'anulado'
+                ? { background: '#FFF7ED' }
+                : undefined,
+          })}
         />
 
         {pendientes > 0 && (
@@ -1262,9 +1318,11 @@ const TransferenciaParticipantesModal: React.FC<{
   const [list, setList] = useState<TransParticipante[]>(initial);
   const [evaluador, setEvaluador] = useState(initialEvaluador);
   const [search, setSearch] = useState('');
+  const [excluirEliminados, setExcluirEliminados] = useState(false);
+  const [excluirAnulados, setExcluirAnulados] = useState(false);
 
   useEffect(() => {
-    if (open) { setList(initial); setEvaluador(false); setSearch(''); }
+    if (open) { setList(initial); setEvaluador(false); setSearch(''); setExcluirEliminados(false); setExcluirAnulados(false); }
   }, [open, initial]);
 
   if (!row) return null;
@@ -1274,9 +1332,13 @@ const TransferenciaParticipantesModal: React.FC<{
 
   const eliminados = list.filter((p) => p.estado === 'eliminado').length;
   const anulados = list.filter((p) => p.estado === 'anulado').length;
-  const visible = list.filter((p) => p.estado === 'activo').filter((p) =>
-    !search.trim() || p.nombre.toLowerCase().includes(search.toLowerCase()) || p.rut.toLowerCase().includes(search.toLowerCase())
-  );
+  const activos = list.filter((p) => p.estado === 'activo').length;
+  const visible = list
+    .filter((p) => !(excluirEliminados && p.estado === 'eliminado'))
+    .filter((p) => !(excluirAnulados && p.estado === 'anulado'))
+    .filter((p) =>
+      !search.trim() || p.nombre.toLowerCase().includes(search.toLowerCase()) || p.rut.toLowerCase().includes(search.toLowerCase())
+    );
   const correoKey = evaluador ? 'correoEvaluador' : 'correoJefe';
   const nombreKey = evaluador ? 'nombreEvaluador' : 'nombreJefe';
   const pendientes = list.filter((p) => p.selected && p.estado === 'activo' && (!p[correoKey].trim() || !EMAIL_RE.test(p[correoKey].trim()))).length;
@@ -1291,6 +1353,10 @@ const TransferenciaParticipantesModal: React.FC<{
   };
 
   const showSearch = visible.length > 8 || search.trim().length > 0;
+
+  const exclBtnStyle = (active: boolean) => active
+    ? { background: '#FEE2E2', color: '#991B1B', borderColor: '#FECACA', display: 'inline-flex', alignItems: 'center', gap: 6 } as const
+    : { display: 'inline-flex', alignItems: 'center', gap: 6 } as const;
 
   return (
     <Modal
@@ -1356,17 +1422,32 @@ const TransferenciaParticipantesModal: React.FC<{
                 type="primary"
                 size="small"
                 icon={<CheckSquare size={14} weight="regular" />}
-                onClick={() => setList((prev) => prev.map((p) => ({ ...p, selected: true })))}
+                onClick={() => setList((prev) => prev.map((p) => (p.estado === 'activo' ? { ...p, selected: true } : p)))}
                 style={{ background: TEAL, borderColor: TEAL, display: 'inline-flex', alignItems: 'center', gap: 6 }}
               >
                 Seleccionar Todos
               </Button>
-              <Button danger size="small" icon={<UserMinus size={14} weight="regular" />} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                Excluir Eliminados ({eliminados})
+              <Button
+                size="small"
+                icon={<UserMinus size={14} weight="regular" />}
+                danger={!excluirEliminados}
+                onClick={() => setExcluirEliminados((v) => !v)}
+                style={exclBtnStyle(excluirEliminados)}
+              >
+                {excluirEliminados ? `Mostrando sin Eliminados (${eliminados})` : `Excluir Eliminados (${eliminados})`}
               </Button>
-              <Button danger size="small" icon={<ProhibitInset size={14} weight="regular" />} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                Excluir Anulados ({anulados})
+              <Button
+                size="small"
+                icon={<ProhibitInset size={14} weight="regular" />}
+                danger={!excluirAnulados}
+                onClick={() => setExcluirAnulados((v) => !v)}
+                style={exclBtnStyle(excluirAnulados)}
+              >
+                {excluirAnulados ? `Mostrando sin Anulados (${anulados})` : `Excluir Anulados (${anulados})`}
               </Button>
+            </div>
+            <div style={{ fontFamily: 'Poppins', fontSize: 12, color: '#6B7280' }}>
+              Mostrando {visible.length} participantes ({activos} activos · {eliminados} eliminados · {anulados} anulados)
             </div>
             {showSearch && (
               <Input
@@ -1382,26 +1463,34 @@ const TransferenciaParticipantesModal: React.FC<{
 
         <div style={{ maxHeight: 'calc(80vh - 320px)', overflowY: 'auto', overflowX: 'hidden', padding: '0 24px' }}>
           {visible.map((p) => {
-            const disabled = !p.selected;
+            const isElim = p.estado === 'eliminado';
+            const isAnul = p.estado === 'anulado';
+            const isInactive = isElim || isAnul;
+            const disabled = isInactive || !p.selected;
             const nombreVal = (p as any)[nombreKey] as string;
             const correoVal = (p as any)[correoKey] as string;
+            const cardBg = isElim ? '#FEF2F2' : isAnul ? '#FFF7ED' : (disabled ? '#F9FAFB' : '#FFFFFF');
             return (
               <div
                 key={p.id}
                 style={{
-                  background: disabled ? '#F9FAFB' : '#FFFFFF',
+                  background: cardBg,
                   border: '1px solid #E5E7EB',
                   borderRadius: 8,
                   padding: '14px 16px',
                   marginBottom: 10,
-                  opacity: disabled ? 0.6 : 1,
+                  opacity: isInactive ? 0.85 : (disabled ? 0.6 : 1),
                   transition: 'border-color 0.2s',
                 }}
                 onMouseEnter={(e) => { if (!disabled) e.currentTarget.style.borderColor = '#99F6E4'; }}
                 onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E5E7EB'; }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <Checkbox checked={p.selected} onChange={(e) => update(p.id, { selected: e.target.checked })} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                  <Checkbox
+                    checked={!isInactive && p.selected}
+                    disabled={isInactive}
+                    onChange={(e) => update(p.id, { selected: e.target.checked })}
+                  />
                   <span style={{
                     background: '#F3F4F6', color: '#374151', borderRadius: 6,
                     padding: '2px 8px', fontFamily: 'Poppins', fontSize: 12, fontWeight: 500,
@@ -1410,6 +1499,12 @@ const TransferenciaParticipantesModal: React.FC<{
                     fontFamily: 'Poppins', fontSize: 14, fontWeight: 600,
                     color: disabled ? '#9CA3AF' : '#111827',
                   }}>{p.nombre}</span>
+                  {isElim && (
+                    <span style={{ background: '#FEE2E2', color: '#991B1B', borderRadius: 999, padding: '2px 8px', fontFamily: 'Poppins', fontSize: 11, fontWeight: 500 }}>Eliminado</span>
+                  )}
+                  {isAnul && (
+                    <span style={{ background: '#FED7AA', color: '#9A3412', borderRadius: 999, padding: '2px 8px', fontFamily: 'Poppins', fontSize: 11, fontWeight: 500 }}>Anulado</span>
+                  )}
                 </div>
                 <div style={{ display: 'flex', gap: 12, marginTop: 10 }}>
                   <div style={{ flex: 1, minWidth: 0 }}>
@@ -1419,22 +1514,32 @@ const TransferenciaParticipantesModal: React.FC<{
                     <Input
                       size="small"
                       disabled={disabled}
-                      value={nombreVal}
-                      placeholder={evaluador ? 'Nombre del evaluador' : 'Nombre del jefe directo'}
+                      value={isInactive ? '' : nombreVal}
+                      placeholder={isInactive ? 'Sin correo' : (evaluador ? 'Nombre del evaluador' : 'Nombre del jefe directo')}
                       onChange={(e) => update(p.id, { [nombreKey]: e.target.value } as any)}
-                      style={{ width: '100%', fontFamily: 'Poppins' }}
+                      style={{ width: '100%', fontFamily: 'Poppins', background: isInactive ? '#F9FAFB' : undefined }}
                     />
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontFamily: 'Poppins', fontSize: 11, fontWeight: 500, color: '#6B7280', marginBottom: 4 }}>
                       {evaluador ? 'Correo Evaluador' : 'Correo Jefe'}
                     </div>
-                    <EmailInput
-                      value={correoVal}
-                      placeholder={evaluador ? 'correo@evaluador.cl' : 'correo@jefe.cl'}
-                      onChange={(nv) => update(p.id, { [correoKey]: nv } as any)}
-                      disabled={disabled}
-                    />
+                    {isInactive ? (
+                      <Input
+                        size="small"
+                        disabled
+                        value=""
+                        placeholder="Sin correo"
+                        style={{ width: '100%', fontFamily: 'Poppins', background: '#F9FAFB' }}
+                      />
+                    ) : (
+                      <EmailInput
+                        value={correoVal}
+                        placeholder={evaluador ? 'correo@evaluador.cl' : 'correo@jefe.cl'}
+                        onChange={(nv) => update(p.id, { [correoKey]: nv } as any)}
+                        disabled={disabled}
+                      />
+                    )}
                   </div>
                 </div>
               </div>
