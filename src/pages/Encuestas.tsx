@@ -789,8 +789,11 @@ const AsignarModal: React.FC<{
     const eF = !form.fecha;
     setErrRelator(eR); setErrFecha(eF);
     if (eR || eF) return;
+    if (sinCorreo > 0) return;
     onSave();
   };
+
+  const saveDisabled = sinCorreo > 0;
 
   return (
     <Modal
