@@ -2013,7 +2013,7 @@ const AsignarEncuestasTab: React.FC = () => {
         open={!!participantsModal && participantsModal.kind === 'Transferencia'}
         row={participantsModal?.row ?? null}
         initial={participantsModal && participantsModal.kind === 'Transferencia'
-          ? (transParts[participantsModal.row.inscripcion] ?? DEFAULT_TRANS)
+          ? (transParts[participantsModal.row.inscripcion] ?? buildTransDefault(participantsModal.row.inscripcion))
           : DEFAULT_TRANS}
         initialEvaluador={participantsModal ? (transEvaluador[participantsModal.row.inscripcion] ?? false) : false}
         onClose={() => {
