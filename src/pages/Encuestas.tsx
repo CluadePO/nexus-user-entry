@@ -1329,18 +1329,28 @@ const TransferenciaParticipantesModal: React.FC<{
   row: AsignarCursoRow | null;
   initial: TransParticipante[];
   initialEvaluador: boolean;
+  initialExcluirEliminados?: boolean;
+  initialExcluirAnulados?: boolean;
   onClose: () => void;
-  onSave: (list: TransParticipante[], evaluador: boolean) => void;
-}> = ({ open, row, initial, initialEvaluador, onClose, onSave }) => {
+  onSave: (list: TransParticipante[], evaluador: boolean, excluirEliminados: boolean, excluirAnulados: boolean) => void;
+}> = ({ open, row, initial, initialEvaluador, initialExcluirEliminados, initialExcluirAnulados, onClose, onSave }) => {
   const [list, setList] = useState<TransParticipante[]>(initial);
   const [evaluador, setEvaluador] = useState(initialEvaluador);
   const [search, setSearch] = useState('');
-  const [excluirEliminados, setExcluirEliminados] = useState(false);
-  const [excluirAnulados, setExcluirAnulados] = useState(false);
+  const [excluirEliminados, setExcluirEliminados] = useState(!!initialExcluirEliminados);
+  const [excluirAnulados, setExcluirAnulados] = useState(!!initialExcluirAnulados);
+  const [showErrors, setShowErrors] = useState(false);
 
   useEffect(() => {
-    if (open) { setList(initial); setEvaluador(false); setSearch(''); setExcluirEliminados(false); setExcluirAnulados(false); }
-  }, [open, initial]);
+    if (open) {
+      setList(initial);
+      setEvaluador(initialEvaluador);
+      setSearch('');
+      setExcluirEliminados(!!initialExcluirEliminados);
+      setExcluirAnulados(!!initialExcluirAnulados);
+      setShowErrors(false);
+    }
+  }, [open, initial, initialEvaluador, initialExcluirEliminados, initialExcluirAnulados]);
 
   if (!row) return null;
 
@@ -1350,23 +1360,28 @@ const TransferenciaParticipantesModal: React.FC<{
   const eliminados = list.filter((p) => p.estado === 'eliminado').length;
   const anulados = list.filter((p) => p.estado === 'anulado').length;
   const activos = list.filter((p) => p.estado === 'activo').length;
+  const isVisible = (p: TransParticipante) =>
+    !(excluirEliminados && p.estado === 'eliminado') &&
+    !(excluirAnulados && p.estado === 'anulado');
   const visible = list
-    .filter((p) => !(excluirEliminados && p.estado === 'eliminado'))
-    .filter((p) => !(excluirAnulados && p.estado === 'anulado'))
+    .filter(isVisible)
     .filter((p) =>
       !search.trim() || p.nombre.toLowerCase().includes(search.toLowerCase()) || p.rut.toLowerCase().includes(search.toLowerCase())
     );
   const correoKey = evaluador ? 'correoEvaluador' : 'correoJefe';
   const nombreKey = evaluador ? 'nombreEvaluador' : 'nombreJefe';
-  const pendientes = list.filter((p) => p.selected && p.estado === 'activo' && (!p[correoKey].trim() || !EMAIL_RE.test(p[correoKey].trim()))).length;
+  const visibleAll = list.filter(isVisible);
+  const pendientes = visibleAll.filter((p) => !p[correoKey].trim() || !EMAIL_RE.test(p[correoKey].trim())).length;
 
   const handleSave = () => {
-    const invalid = list.some((p) => p.selected && p.estado === 'activo' && p[correoKey].trim() && !EMAIL_RE.test(p[correoKey].trim()));
-    if (invalid) {
-      toast.warning('Corrige los correos inválidos antes de guardar');
+    const missing = visibleAll.some((p) => !p[correoKey].trim());
+    const invalid = visibleAll.some((p) => p[correoKey].trim() && !EMAIL_RE.test(p[correoKey].trim()));
+    if (missing || invalid) {
+      setShowErrors(true);
+      toast.warning('Corrige los correos de todos los participantes visibles antes de guardar.');
       return;
     }
-    onSave(list, evaluador);
+    onSave(list, evaluador, excluirEliminados, excluirAnulados);
   };
 
   const showSearch = visible.length > 8 || search.trim().length > 0;
