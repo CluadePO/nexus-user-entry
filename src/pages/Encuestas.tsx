@@ -1246,7 +1246,7 @@ const SatisfaccionParticipantesModal: React.FC<{
               onClick={() => setExcluirEliminados((v) => !v)}
               style={exclBtnStyle(excluirEliminados)}
             >
-              {excluirEliminados ? `Mostrando sin Eliminados (${eliminados})` : `Excluir Eliminados (${eliminados})`}
+              {excluirEliminados ? `Mostrando sin Eliminados (${eliminados})` : `Excluir Eliminados (0)`}
             </Button>
             <Button
               icon={<ProhibitInset size={14} weight="regular" />}
@@ -1254,7 +1254,7 @@ const SatisfaccionParticipantesModal: React.FC<{
               onClick={() => setExcluirAnulados((v) => !v)}
               style={exclBtnStyle(excluirAnulados)}
             >
-              {excluirAnulados ? `Mostrando sin Anulados (${anulados})` : `Excluir Anulados (${anulados})`}
+              {excluirAnulados ? `Mostrando sin Anulados (${anulados})` : `Excluir Anulados (0)`}
             </Button>
           </div>
           <Input
@@ -1267,7 +1267,7 @@ const SatisfaccionParticipantesModal: React.FC<{
         </div>
 
         <div style={{ fontFamily: 'Poppins', fontSize: 12, color: '#6B7280', marginBottom: 12 }}>
-          Mostrando {visible.length} participantes ({activos} activos · {eliminados} eliminados · {anulados} anulados)
+          Mostrando {visible.length} participantes ({activos} activos · {excluirEliminados ? 0 : eliminados} eliminados · {excluirAnulados ? 0 : anulados} anulados)
         </div>
 
         <Table
@@ -1466,7 +1466,7 @@ const TransferenciaParticipantesModal: React.FC<{
                 onClick={() => setExcluirEliminados((v) => !v)}
                 style={exclBtnStyle(excluirEliminados)}
               >
-                {excluirEliminados ? `Mostrando sin Eliminados (${eliminados})` : `Excluir Eliminados (${eliminados})`}
+                {excluirEliminados ? `Mostrando sin Eliminados (${eliminados})` : `Excluir Eliminados (0)`}
               </Button>
               <Button
                 size="small"
@@ -1475,11 +1475,11 @@ const TransferenciaParticipantesModal: React.FC<{
                 onClick={() => setExcluirAnulados((v) => !v)}
                 style={exclBtnStyle(excluirAnulados)}
               >
-                {excluirAnulados ? `Mostrando sin Anulados (${anulados})` : `Excluir Anulados (${anulados})`}
+                {excluirAnulados ? `Mostrando sin Anulados (${anulados})` : `Excluir Anulados (0)`}
               </Button>
             </div>
             <div style={{ fontFamily: 'Poppins', fontSize: 12, color: '#6B7280' }}>
-              Mostrando {visible.length} participantes ({activos} activos · {eliminados} eliminados · {anulados} anulados)
+              Mostrando {visible.length} participantes ({activos} activos · {excluirEliminados ? 0 : eliminados} eliminados · {excluirAnulados ? 0 : anulados} anulados)
             </div>
             {showSearch && (
               <Input
