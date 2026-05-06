@@ -33,6 +33,7 @@ interface CourseInfo {
   specialty: string;
   effectiveValuePerParticipant: number;
   maxImputableValue: number;
+  isSence?: boolean;
 }
 
 interface QuoteRequestModalProps {
@@ -110,9 +111,10 @@ const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
     });
   };
 
+  const isSence = courseInfo.isSence !== false;
   const courseDetails = [
     { icon: Building2, label: 'Proveedor', value: courseInfo.provider },
-    { icon: Hash, label: 'Código SENCE', value: courseInfo.senceCode },
+    ...(isSence ? [{ icon: Hash, label: 'Código SENCE', value: courseInfo.senceCode }] : []),
     { icon: Layers, label: 'Área', value: courseInfo.area },
     { icon: Monitor, label: 'Modalidad', value: courseInfo.modality },
     { icon: Clock, label: 'Duración', value: `${courseInfo.hours} horas` },
@@ -330,12 +332,14 @@ const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
                       {formatPrice(courseInfo.effectiveValuePerParticipant)}
                     </p>
                   </div>
-                  <div className="p-3 rounded-lg bg-muted/50 border">
-                    <p className="text-xs text-muted-foreground">Valor máximo imputable</p>
-                    <p className="text-base font-bold text-foreground">
-                      {formatPrice(courseInfo.maxImputableValue)}
-                    </p>
-                  </div>
+                  {isSence && (
+                    <div className="p-3 rounded-lg bg-muted/50 border">
+                      <p className="text-xs text-muted-foreground">Valor máximo imputable</p>
+                      <p className="text-base font-bold text-foreground">
+                        {formatPrice(courseInfo.maxImputableValue)}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
 
