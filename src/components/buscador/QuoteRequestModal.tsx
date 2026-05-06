@@ -93,6 +93,7 @@ const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
 
   const handleSelectParticipants = (n: number) => {
     setCustomMode(false);
+    setCustomInput('');
     setParticipants(n);
   };
 
