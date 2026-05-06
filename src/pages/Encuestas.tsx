@@ -1422,17 +1422,32 @@ const TransferenciaParticipantesModal: React.FC<{
                 type="primary"
                 size="small"
                 icon={<CheckSquare size={14} weight="regular" />}
-                onClick={() => setList((prev) => prev.map((p) => ({ ...p, selected: true })))}
+                onClick={() => setList((prev) => prev.map((p) => (p.estado === 'activo' ? { ...p, selected: true } : p)))}
                 style={{ background: TEAL, borderColor: TEAL, display: 'inline-flex', alignItems: 'center', gap: 6 }}
               >
                 Seleccionar Todos
               </Button>
-              <Button danger size="small" icon={<UserMinus size={14} weight="regular" />} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                Excluir Eliminados ({eliminados})
+              <Button
+                size="small"
+                icon={<UserMinus size={14} weight="regular" />}
+                danger={!excluirEliminados}
+                onClick={() => setExcluirEliminados((v) => !v)}
+                style={exclBtnStyle(excluirEliminados)}
+              >
+                {excluirEliminados ? `Mostrando sin Eliminados (${eliminados})` : `Excluir Eliminados (${eliminados})`}
               </Button>
-              <Button danger size="small" icon={<ProhibitInset size={14} weight="regular" />} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                Excluir Anulados ({anulados})
+              <Button
+                size="small"
+                icon={<ProhibitInset size={14} weight="regular" />}
+                danger={!excluirAnulados}
+                onClick={() => setExcluirAnulados((v) => !v)}
+                style={exclBtnStyle(excluirAnulados)}
+              >
+                {excluirAnulados ? `Mostrando sin Anulados (${anulados})` : `Excluir Anulados (${anulados})`}
               </Button>
+            </div>
+            <div style={{ fontFamily: 'Poppins', fontSize: 12, color: '#6B7280' }}>
+              Mostrando {visible.length} participantes ({activos} activos · {eliminados} eliminados · {anulados} anulados)
             </div>
             {showSearch && (
               <Input
