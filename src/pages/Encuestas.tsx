@@ -1989,7 +1989,7 @@ const AsignarEncuestasTab: React.FC = () => {
         open={!!participantsModal && participantsModal.kind === 'Satisfacción'}
         row={participantsModal?.row ?? null}
         initial={participantsModal && participantsModal.kind === 'Satisfacción'
-          ? (satisParts[participantsModal.row.inscripcion] ?? DEFAULT_SATIS)
+          ? (satisParts[participantsModal.row.inscripcion] ?? buildSatisDefault(participantsModal.row.inscripcion))
           : DEFAULT_SATIS}
         onClose={() => {
           if (participantsModal) {
