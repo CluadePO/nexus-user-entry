@@ -1318,9 +1318,11 @@ const TransferenciaParticipantesModal: React.FC<{
   const [list, setList] = useState<TransParticipante[]>(initial);
   const [evaluador, setEvaluador] = useState(initialEvaluador);
   const [search, setSearch] = useState('');
+  const [excluirEliminados, setExcluirEliminados] = useState(false);
+  const [excluirAnulados, setExcluirAnulados] = useState(false);
 
   useEffect(() => {
-    if (open) { setList(initial); setEvaluador(false); setSearch(''); }
+    if (open) { setList(initial); setEvaluador(false); setSearch(''); setExcluirEliminados(false); setExcluirAnulados(false); }
   }, [open, initial]);
 
   if (!row) return null;
@@ -1330,9 +1332,13 @@ const TransferenciaParticipantesModal: React.FC<{
 
   const eliminados = list.filter((p) => p.estado === 'eliminado').length;
   const anulados = list.filter((p) => p.estado === 'anulado').length;
-  const visible = list.filter((p) => p.estado === 'activo').filter((p) =>
-    !search.trim() || p.nombre.toLowerCase().includes(search.toLowerCase()) || p.rut.toLowerCase().includes(search.toLowerCase())
-  );
+  const activos = list.filter((p) => p.estado === 'activo').length;
+  const visible = list
+    .filter((p) => !(excluirEliminados && p.estado === 'eliminado'))
+    .filter((p) => !(excluirAnulados && p.estado === 'anulado'))
+    .filter((p) =>
+      !search.trim() || p.nombre.toLowerCase().includes(search.toLowerCase()) || p.rut.toLowerCase().includes(search.toLowerCase())
+    );
   const correoKey = evaluador ? 'correoEvaluador' : 'correoJefe';
   const nombreKey = evaluador ? 'nombreEvaluador' : 'nombreJefe';
   const pendientes = list.filter((p) => p.selected && p.estado === 'activo' && (!p[correoKey].trim() || !EMAIL_RE.test(p[correoKey].trim()))).length;
@@ -1347,6 +1353,10 @@ const TransferenciaParticipantesModal: React.FC<{
   };
 
   const showSearch = visible.length > 8 || search.trim().length > 0;
+
+  const exclBtnStyle = (active: boolean) => active
+    ? { background: '#FEE2E2', color: '#991B1B', borderColor: '#FECACA', display: 'inline-flex', alignItems: 'center', gap: 6 } as const
+    : { display: 'inline-flex', alignItems: 'center', gap: 6 } as const;
 
   return (
     <Modal
