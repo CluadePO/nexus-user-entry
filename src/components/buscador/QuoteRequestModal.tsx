@@ -66,6 +66,7 @@ const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
   });
   const [participants, setParticipants] = useState<number>(1);
   const [customMode, setCustomMode] = useState<boolean>(false);
+  const [customInput, setCustomInput] = useState<string>('');
 
   // Sync from calculator when modal opens
   useEffect(() => {
