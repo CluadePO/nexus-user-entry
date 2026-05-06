@@ -74,7 +74,9 @@ const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
       const total = Object.values(initialTierParticipants).reduce((a, b) => a + b, 0);
       if (total > 0) {
         setParticipants(total);
-        setCustomMode(total >= 8);
+        const isCustom = total >= 8;
+        setCustomMode(isCustom);
+        setCustomInput(isCustom ? String(total) : '');
       }
     }
   }, [open, initialTierParticipants]);
