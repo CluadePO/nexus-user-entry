@@ -284,15 +284,22 @@ const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
 
                 <div className="space-y-2">
                   <Label htmlFor="message" className="text-sm font-medium">
-                    Mensaje
+                    Mensaje <span className="text-destructive">*</span>
                   </Label>
-                  <Textarea
-                    id="message"
-                    placeholder="Cuéntanos sobre tus necesidades de capacitación..."
-                    value={formData.message}
-                    onChange={(e) => handleInputChange('message', e.target.value)}
-                    rows={3}
-                  />
+                  <div className="relative">
+                    <Textarea
+                      id="message"
+                      placeholder="Cuéntanos sobre tus necesidades de capacitación..."
+                      value={formData.message}
+                      onChange={(e) => handleInputChange('message', e.target.value.slice(0, 500))}
+                      maxLength={500}
+                      required
+                      rows={3}
+                    />
+                    <span className="absolute right-3 bottom-2 text-xs text-muted-foreground">
+                      {formData.message.length}/500
+                    </span>
+                  </div>
                 </div>
 
                 <Button type="submit" className="w-full mt-4" size="lg">
