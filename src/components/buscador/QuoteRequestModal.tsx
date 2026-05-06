@@ -332,12 +332,14 @@ const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
                       {formatPrice(courseInfo.effectiveValuePerParticipant)}
                     </p>
                   </div>
-                  <div className="p-3 rounded-lg bg-muted/50 border">
-                    <p className="text-xs text-muted-foreground">Valor máximo imputable</p>
-                    <p className="text-base font-bold text-foreground">
-                      {formatPrice(courseInfo.maxImputableValue)}
-                    </p>
-                  </div>
+                  {isSence && (
+                    <div className="p-3 rounded-lg bg-muted/50 border">
+                      <p className="text-xs text-muted-foreground">Valor máximo imputable</p>
+                      <p className="text-base font-bold text-foreground">
+                        {formatPrice(courseInfo.maxImputableValue)}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
 
