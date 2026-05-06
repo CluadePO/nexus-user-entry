@@ -972,6 +972,90 @@ const DEFAULT_SATIS: SatisParticipante[] = [
   { id: 3, rut: '16789012-3', nombre: 'Ana Torres Vidal', correo: '', estado: 'activo', selected: true },
 ];
 
+// Per-inscripcion participant seeds (names + emails) used to validate the
+// "all participants must have email" rule for both Satisfacción and Transferencia.
+const PARTICIPANTES_BASE: Record<number, { nombre: string; correo: string }[]> = {
+  2095229: [{ nombre: 'Paula Orellana Marín', correo: '' }],
+  2118699: [{ nombre: 'Paula Orellana Marín', correo: 'paula@empresa.cl' }],
+  2118700: [{ nombre: 'Carlos Muñoz Soto', correo: '' }],
+  2118703: [{ nombre: 'Ana Torres Vidal', correo: '' }],
+  2126744: [
+    { nombre: 'Paula Orellana Marín', correo: 'paula@empresa.cl' },
+    { nombre: 'Carlos Muñoz Soto', correo: 'carlos@empresa.cl' },
+    { nombre: 'Ana Torres Vidal', correo: 'ana@empresa.cl' },
+  ],
+  2126747: [{ nombre: 'Francisco Valenzuela Rojas', correo: '' }],
+  2126757: [{ nombre: 'Roberto Silva Pinto', correo: '' }],
+  2143994: [{ nombre: 'María José Contreras', correo: '' }],
+  2144001: [
+    { nombre: 'Diego Pérez Vega', correo: 'diego@empresa.cl' },
+    { nombre: 'Valentina Rojas Castro', correo: '' },
+  ],
+  2174396: [
+    { nombre: 'Juan Morales Fuentes', correo: '' },
+    { nombre: 'María Contreras Pinto', correo: '' },
+    { nombre: 'Carlos Muñoz Rojas', correo: '' },
+    { nombre: 'Ana Torres Soto', correo: '' },
+    { nombre: 'Pedro Vargas León', correo: '' },
+    { nombre: 'Francisca Silva Araya', correo: '' },
+    { nombre: 'Diego Pérez Vega', correo: '' },
+    { nombre: 'Valentina Rojas Castro', correo: '' },
+    { nombre: 'Rodrigo Díaz Meza', correo: '' },
+  ],
+  2177407: [
+    { nombre: 'Juan Morales Fuentes', correo: 'juan@empresa.cl' },
+    { nombre: 'María Contreras Pinto', correo: 'maria@empresa.cl' },
+    { nombre: 'Carlos Muñoz Rojas', correo: 'carlos@empresa.cl' },
+    { nombre: 'Ana Torres Soto', correo: 'ana@empresa.cl' },
+    { nombre: 'Pedro Vargas León', correo: 'pedro@empresa.cl' },
+    { nombre: 'Francisca Silva Araya', correo: '' },
+    { nombre: 'Diego Pérez Vega', correo: '' },
+    { nombre: 'Valentina Rojas Castro', correo: '' },
+    { nombre: 'Rodrigo Díaz Meza', correo: '' },
+  ],
+  2177416: [
+    { nombre: 'Juan Morales Fuentes', correo: 'juan@empresa.cl' },
+    { nombre: 'María Contreras Pinto', correo: 'maria@empresa.cl' },
+    { nombre: 'Carlos Muñoz Rojas', correo: 'carlos@empresa.cl' },
+    { nombre: 'Ana Torres Soto', correo: 'ana@empresa.cl' },
+    { nombre: 'Pedro Vargas León', correo: 'pedro@empresa.cl' },
+    { nombre: 'Francisca Silva Araya', correo: 'francisca@empresa.cl' },
+    { nombre: 'Diego Pérez Vega', correo: 'diego@empresa.cl' },
+    { nombre: 'Valentina Rojas Castro', correo: 'valentina@empresa.cl' },
+    { nombre: 'Rodrigo Díaz Meza', correo: 'rodrigo@empresa.cl' },
+  ],
+};
+
+const buildSatisDefault = (insc: number): SatisParticipante[] => {
+  const base = PARTICIPANTES_BASE[insc];
+  if (!base) return DEFAULT_SATIS;
+  return base.map((p, i) => ({
+    id: i + 1,
+    rut: `${10000000 + insc + i}-K`,
+    nombre: p.nombre,
+    correo: p.correo,
+    estado: 'activo',
+    selected: true,
+  }));
+};
+
+const buildTransDefault = (insc: number): TransParticipante[] => {
+  const base = PARTICIPANTES_BASE[insc];
+  if (!base) return [];
+  return base.map((p, i) => ({
+    id: i + 1,
+    rut: `${10000000 + insc + i}-K`,
+    nombre: p.nombre,
+    // Reuse same email for Transferencia row (participant's own email validation)
+    correoJefe: p.correo,
+    nombreJefe: '',
+    correoEvaluador: '',
+    nombreEvaluador: '',
+    estado: 'activo',
+    selected: true,
+  }) as TransParticipante);
+};
+
 const EmailInput: React.FC<{ value: string; placeholder: string; onChange: (v: string) => void; disabled?: boolean }> = ({ value, placeholder, onChange, disabled }) => {
   const [touched, setTouched] = useState(false);
   const [showCheck, setShowCheck] = useState(false);
