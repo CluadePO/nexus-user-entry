@@ -2069,16 +2069,25 @@ const AsignarEncuestasTab: React.FC = () => {
         let sinCorreo = 0;
         let total = 0;
         if (insc && kind) {
+          const excl = exclusionState[`${insc}-${kind}`] ?? { excluirEliminados: false, excluirAnulados: false };
           if (kind === 'Satisfacción') {
             const list = satisParts[insc] ?? buildSatisDefault(insc);
-            const active = list.filter((p) => p.estado === 'activo' && p.selected);
-            total = active.length;
-            sinCorreo = active.filter((p) => !p.correo.trim()).length;
+            const visible = list.filter((p) =>
+              !(excl.excluirEliminados && p.estado === 'eliminado') &&
+              !(excl.excluirAnulados && p.estado === 'anulado')
+            );
+            total = visible.length;
+            sinCorreo = visible.filter((p) => !p.correo.trim() || !EMAIL_RE.test(p.correo.trim())).length;
           } else {
             const list = transParts[insc] ?? buildTransDefault(insc);
-            const active = list.filter((p) => p.estado === 'activo' && p.selected);
-            total = active.length;
-            sinCorreo = active.filter((p) => !p.correoJefe.trim()).length;
+            const evalKind = transEvaluador[insc] ?? false;
+            const correoKey = evalKind ? 'correoEvaluador' : 'correoJefe';
+            const visible = list.filter((p) =>
+              !(excl.excluirEliminados && p.estado === 'eliminado') &&
+              !(excl.excluirAnulados && p.estado === 'anulado')
+            );
+            total = visible.length;
+            sinCorreo = visible.filter((p) => !p[correoKey].trim() || !EMAIL_RE.test(p[correoKey].trim())).length;
           }
         }
         return (
@@ -2117,18 +2126,24 @@ const AsignarEncuestasTab: React.FC = () => {
         initial={participantsModal && participantsModal.kind === 'Satisfacción'
           ? (satisParts[participantsModal.row.inscripcion] ?? buildSatisDefault(participantsModal.row.inscripcion))
           : DEFAULT_SATIS}
+        initialExcluirEliminados={participantsModal ? exclusionState[`${participantsModal.row.inscripcion}-Satisfacción`]?.excluirEliminados : false}
+        initialExcluirAnulados={participantsModal ? exclusionState[`${participantsModal.row.inscripcion}-Satisfacción`]?.excluirAnulados : false}
         onClose={() => {
           if (participantsModal) {
             setAsignModal({ kind: participantsModal.kind, row: participantsModal.row });
           }
           setParticipantsModal(null);
         }}
-        onSave={(list) => {
+        onSave={(list, excluirEliminados, excluirAnulados) => {
           if (!participantsModal) return;
           const { row, kind } = participantsModal;
           setSatisParts((prev) => ({ ...prev, [row.inscripcion]: list }));
-          const count = list.filter((p) => p.selected && p.estado === 'activo').length;
-          patchForm(row.inscripcion, kind, { participantesCount: count });
+          setExclusionState((prev) => ({ ...prev, [`${row.inscripcion}-${kind}`]: { excluirEliminados, excluirAnulados } }));
+          const visible = list.filter((p) =>
+            !(excluirEliminados && p.estado === 'eliminado') &&
+            !(excluirAnulados && p.estado === 'anulado')
+          );
+          patchForm(row.inscripcion, kind, { participantesCount: visible.length });
           toast.success('Participantes guardados correctamente');
           setAsignModal({ kind, row });
           setParticipantsModal(null);
@@ -2142,19 +2157,25 @@ const AsignarEncuestasTab: React.FC = () => {
           ? (transParts[participantsModal.row.inscripcion] ?? buildTransDefault(participantsModal.row.inscripcion))
           : DEFAULT_TRANS}
         initialEvaluador={participantsModal ? (transEvaluador[participantsModal.row.inscripcion] ?? false) : false}
+        initialExcluirEliminados={participantsModal ? exclusionState[`${participantsModal.row.inscripcion}-Transferencia`]?.excluirEliminados : false}
+        initialExcluirAnulados={participantsModal ? exclusionState[`${participantsModal.row.inscripcion}-Transferencia`]?.excluirAnulados : false}
         onClose={() => {
           if (participantsModal) {
             setAsignModal({ kind: participantsModal.kind, row: participantsModal.row });
           }
           setParticipantsModal(null);
         }}
-        onSave={(list, evaluador) => {
+        onSave={(list, evaluador, excluirEliminados, excluirAnulados) => {
           if (!participantsModal) return;
           const { row, kind } = participantsModal;
           setTransParts((prev) => ({ ...prev, [row.inscripcion]: list }));
           setTransEvaluador((prev) => ({ ...prev, [row.inscripcion]: evaluador }));
-          const count = list.filter((p) => p.selected && p.estado === 'activo').length;
-          patchForm(row.inscripcion, kind, { participantesCount: count });
+          setExclusionState((prev) => ({ ...prev, [`${row.inscripcion}-${kind}`]: { excluirEliminados, excluirAnulados } }));
+          const visible = list.filter((p) =>
+            !(excluirEliminados && p.estado === 'eliminado') &&
+            !(excluirAnulados && p.estado === 'anulado')
+          );
+          patchForm(row.inscripcion, kind, { participantesCount: visible.length });
           toast.success('Participantes guardados correctamente');
           setAsignModal({ kind, row });
           setParticipantsModal(null);
