@@ -257,8 +257,9 @@ const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
                       <input
                         type="number"
                         min={8}
+                        max={10000}
                         value={participants}
-                        onChange={(e) => setParticipants(Math.max(8, parseInt(e.target.value) || 8))}
+                        onChange={(e) => setParticipants(Math.min(10000, Math.max(8, parseInt(e.target.value) || 8)))}
                         className="h-11 w-24 rounded-md border border-input bg-background px-3 text-center text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       />
                     )}
