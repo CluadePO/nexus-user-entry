@@ -343,22 +343,16 @@ const FranchiseCalculator: React.FC<FranchiseCalculatorProps> = ({
               <div className="space-y-3">
                 {coverageOptions.map((option) => {
                   const coverage = calculateCoverage(option.percentage);
-                  const colorClasses = option.color === 'emerald'
-                    ? { dot: 'bg-emerald-500', text: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800' }
-                    : option.color === 'amber'
-                      ? { dot: 'bg-amber-500', text: 'text-amber-600 dark:text-amber-400', bg: 'bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800' }
-                      : { dot: 'bg-blue-500', text: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800' };
                   return (
                     <div
                       key={option.percentage}
-                      className={`p-3 rounded-lg border ${colorClasses.bg} space-y-2`}
+                      className="p-3 rounded-lg border border-border space-y-2"
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <div className={`w-3 h-3 rounded-full ${colorClasses.dot}`} />
                           <span className="text-sm font-semibold">Tramo {option.label}</span>
                         </div>
-                        <span className={`font-bold text-sm ${colorClasses.text}`}>
+                        <span className="font-bold text-sm text-foreground">
                           {formatPrice(coverage)}
                         </span>
                       </div>
