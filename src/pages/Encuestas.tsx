@@ -1475,7 +1475,7 @@ const TransferenciaParticipantesModal: React.FC<{
                 onClick={() => setExcluirAnulados((v) => !v)}
                 style={exclBtnStyle(excluirAnulados)}
               >
-                {excluirAnulados ? `Mostrando sin Anulados (${anulados})` : `Excluir Anulados (${anulados})`}
+                {excluirAnulados ? `Mostrando sin Anulados (${anulados})` : `Excluir Anulados (0)`}
               </Button>
             </div>
             <div style={{ fontFamily: 'Poppins', fontSize: 12, color: '#6B7280' }}>
