@@ -1517,7 +1517,7 @@ const TransferenciaParticipantesModal: React.FC<{
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
                   <Checkbox
-                    checked={r.estado === 'activo' ? p.selected : false}
+                    checked={p.estado === 'activo' ? p.selected : false}
                     disabled={isInactive}
                     onChange={(e) => update(p.id, { selected: e.target.checked })}
                   />
