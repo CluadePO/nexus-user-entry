@@ -316,7 +316,7 @@ const FranchiseCalculator: React.FC<FranchiseCalculatorProps> = ({
           />
         )}
         
-        <div className="h-full w-80 bg-background border-l shadow-xl flex flex-col overflow-hidden">
+        <div className="h-screen w-80 bg-background border-l shadow-xl flex flex-col overflow-hidden">
           {/* Header */}
           <div className="p-4 border-b bg-gradient-to-r from-primary/10 to-transparent">
             <div className="flex items-center justify-between">
