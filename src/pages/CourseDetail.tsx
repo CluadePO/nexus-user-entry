@@ -304,7 +304,7 @@ const FranchiseCalculator: React.FC<FranchiseCalculatorProps> = ({
 
       {/* Expanded Sidebar */}
       <div
-        className={`fixed right-0 top-0 h-full z-50 transition-transform duration-300 ${
+        className={`fixed right-0 top-0 h-screen z-[60] transition-transform duration-300 ${
           isExpanded ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
