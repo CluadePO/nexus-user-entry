@@ -1060,7 +1060,7 @@ const buildTransDefault = (_insc: number): TransParticipante[] =>
     selected: p.estado === 'activo',
   }));
 
-const EmailInput: React.FC<{ value: string; placeholder: string; onChange: (v: string) => void; disabled?: boolean }> = ({ value, placeholder, onChange, disabled }) => {
+const EmailInput: React.FC<{ value: string; placeholder: string; onChange: (v: string) => void; disabled?: boolean; forceError?: boolean }> = ({ value, placeholder, onChange, disabled, forceError }) => {
   const [touched, setTouched] = useState(false);
   const [showCheck, setShowCheck] = useState(false);
   const empty = !value.trim();
@@ -1069,7 +1069,9 @@ const EmailInput: React.FC<{ value: string; placeholder: string; onChange: (v: s
 
   let borderColor = '#D1D5DB';
   let tooltip = '';
-  if (touched) {
+  if (forceError && empty) {
+    borderColor = '#F97316'; tooltip = 'Correo requerido para guardar';
+  } else if (touched) {
     if (empty) { borderColor = '#F59E0B'; tooltip = 'Correo pendiente de ingresar'; }
     else if (invalid) { borderColor = '#EF4444'; tooltip = 'Formato de correo inválido. Ej: nombre@empresa.cl'; }
     else if (showCheck) { borderColor = '#10B981'; }
