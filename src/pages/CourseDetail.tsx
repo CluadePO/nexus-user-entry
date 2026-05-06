@@ -720,6 +720,13 @@ const CourseDetail: React.FC = () => {
                 <p className="font-medium">{course.provider.rut}</p>
               </div>
               <div className="space-y-1">
+                <p className="text-sm text-muted-foreground">Teléfono</p>
+                <p className="font-medium flex items-center gap-1">
+                  <Phone className="h-4 w-4" />
+                  {course.provider.phone}
+                </p>
+              </div>
+              <div className="space-y-1">
                 <p className="text-sm text-muted-foreground">Sitio Web</p>
                 <a 
                   href={`https://${course.provider.website}`} 
@@ -730,13 +737,6 @@ const CourseDetail: React.FC = () => {
                   <Globe className="h-4 w-4" />
                   {course.provider.website}
                 </a>
-              </div>
-              <div className="space-y-1">
-                <p className="text-sm text-muted-foreground">Teléfono</p>
-                <p className="font-medium flex items-center gap-1">
-                  <Phone className="h-4 w-4" />
-                  {course.provider.phone}
-                </p>
               </div>
             </CardContent>
           </Card>
