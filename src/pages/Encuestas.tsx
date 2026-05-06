@@ -1937,30 +1937,53 @@ const AsignarEncuestasTab: React.FC = () => {
         </>
       )}
 
-      <AsignarModal
-        open={!!asignModal}
-        kind={asignModal?.kind ?? null}
-        row={asignModal?.row ?? null}
-        form={asignModal ? getForm(asignModal.row.inscripcion, asignModal.kind) : { relator: '', fecha: null, participantesCount: 0 }}
-        onChange={(patch) => { if (asignModal) patchForm(asignModal.row.inscripcion, asignModal.kind, patch); }}
-        onClose={() => setAsignModal(null)}
-        onOpenParticipants={() => {
-          if (!asignModal) return;
-          setParticipantsModal({ kind: asignModal.kind, row: asignModal.row });
-          setAsignModal(null);
-        }}
-        onSave={() => {
-          if (!asignModal) return;
-          const { kind, row } = asignModal;
-          setRows((prev) => prev.map((r) =>
-            r.inscripcion === row.inscripcion
-              ? { ...r, [kind === 'Satisfacción' ? 'satisfaccion' : 'transferencia']: 'asignada' as const }
-              : r
-          ));
-          setAsignModal(null);
-          toast.success(`Encuesta de ${kind} asignada correctamente`);
-        }}
-      />
+      {(() => {
+        const insc = asignModal?.row.inscripcion;
+        const kind = asignModal?.kind;
+        let sinCorreo = 0;
+        let total = 0;
+        if (insc && kind) {
+          if (kind === 'Satisfacción') {
+            const list = satisParts[insc] ?? buildSatisDefault(insc);
+            const active = list.filter((p) => p.estado === 'activo' && p.selected);
+            total = active.length;
+            sinCorreo = active.filter((p) => !p.correo.trim()).length;
+          } else {
+            const list = transParts[insc] ?? buildTransDefault(insc);
+            const active = list.filter((p) => p.estado === 'activo' && p.selected);
+            total = active.length;
+            sinCorreo = active.filter((p) => !p.correoJefe.trim()).length;
+          }
+        }
+        return (
+          <AsignarModal
+            open={!!asignModal}
+            kind={asignModal?.kind ?? null}
+            row={asignModal?.row ?? null}
+            form={asignModal ? getForm(asignModal.row.inscripcion, asignModal.kind) : { relator: '', fecha: null, participantesCount: 0 }}
+            sinCorreo={sinCorreo}
+            totalParticipantes={total}
+            onChange={(patch) => { if (asignModal) patchForm(asignModal.row.inscripcion, asignModal.kind, patch); }}
+            onClose={() => setAsignModal(null)}
+            onOpenParticipants={() => {
+              if (!asignModal) return;
+              setParticipantsModal({ kind: asignModal.kind, row: asignModal.row });
+              setAsignModal(null);
+            }}
+            onSave={() => {
+              if (!asignModal) return;
+              const { kind, row } = asignModal;
+              setRows((prev) => prev.map((r) =>
+                r.inscripcion === row.inscripcion
+                  ? { ...r, [kind === 'Satisfacción' ? 'satisfaccion' : 'transferencia']: 'asignada' as const }
+                  : r
+              ));
+              setAsignModal(null);
+              toast.success(`Encuesta de ${kind} asignada correctamente`);
+            }}
+          />
+        );
+      })()}
 
       <SatisfaccionParticipantesModal
         open={!!participantsModal && participantsModal.kind === 'Satisfacción'}
