@@ -1026,35 +1026,39 @@ const PARTICIPANTES_BASE: Record<number, { nombre: string; correo: string }[]> =
   ],
 };
 
-const buildSatisDefault = (insc: number): SatisParticipante[] => {
-  const base = PARTICIPANTES_BASE[insc];
-  if (!base) return DEFAULT_SATIS;
-  return base.map((p, i) => ({
-    id: i + 1,
-    rut: `${10000000 + insc + i}-K`,
-    nombre: p.nombre,
-    correo: p.correo,
-    estado: 'activo',
-    selected: true,
-  }));
-};
+// Mixed dataset: activos + eliminados + anulados (used in Participantes modals)
+const MIXED_PARTICIPANTES: { rut: string; nombre: string; correo: string; estado: 'activo' | 'eliminado' | 'anulado' }[] = [
+  { rut: '12095229-K', nombre: 'Paula Orellana Marín', correo: 'paula@empresa.cl', estado: 'activo' },
+  { rut: '12345678-9', nombre: 'Carlos Muñoz Soto', correo: 'carlos@empresa.cl', estado: 'activo' },
+  { rut: '16789012-3', nombre: 'Ana Torres Vidal', correo: '', estado: 'eliminado' },
+  { rut: '19876543-2', nombre: 'Roberto Silva Pinto', correo: '', estado: 'eliminado' },
+  { rut: '14567890-1', nombre: 'María José Contreras', correo: '', estado: 'anulado' },
+  { rut: '17654321-8', nombre: 'Diego Pérez Vega', correo: 'diego@empresa.cl', estado: 'activo' },
+  { rut: '15432198-7', nombre: 'Valentina Rojas Castro', correo: '', estado: 'anulado' },
+];
 
-const buildTransDefault = (insc: number): TransParticipante[] => {
-  const base = PARTICIPANTES_BASE[insc];
-  if (!base) return [];
-  return base.map((p, i) => ({
+const buildSatisDefault = (_insc: number): SatisParticipante[] =>
+  MIXED_PARTICIPANTES.map((p, i) => ({
     id: i + 1,
-    rut: `${10000000 + insc + i}-K`,
+    rut: p.rut,
     nombre: p.nombre,
-    // Reuse same email for Transferencia row (participant's own email validation)
-    correoJefe: p.correo,
+    correo: p.estado === 'activo' ? p.correo : '',
+    estado: p.estado,
+    selected: p.estado === 'activo',
+  }));
+
+const buildTransDefault = (_insc: number): TransParticipante[] =>
+  MIXED_PARTICIPANTES.map((p, i) => ({
+    id: i + 1,
+    rut: p.rut,
+    nombre: p.nombre,
+    correoJefe: p.estado === 'activo' ? p.correo : '',
     nombreJefe: '',
     correoEvaluador: '',
     nombreEvaluador: '',
-    estado: 'activo',
-    selected: true,
-  }) as TransParticipante);
-};
+    estado: p.estado,
+    selected: p.estado === 'activo',
+  }));
 
 const EmailInput: React.FC<{ value: string; placeholder: string; onChange: (v: string) => void; disabled?: boolean }> = ({ value, placeholder, onChange, disabled }) => {
   const [touched, setTouched] = useState(false);
