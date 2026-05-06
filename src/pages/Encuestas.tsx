@@ -1479,7 +1479,7 @@ const TransferenciaParticipantesModal: React.FC<{
               </Button>
             </div>
             <div style={{ fontFamily: 'Poppins', fontSize: 12, color: '#6B7280' }}>
-              Mostrando {visible.length} participantes ({activos} activos · {eliminados} eliminados · {anulados} anulados)
+              Mostrando {visible.length} participantes ({activos} activos · {excluirEliminados ? 0 : eliminados} eliminados · {excluirAnulados ? 0 : anulados} anulados)
             </div>
             {showSearch && (
               <Input
