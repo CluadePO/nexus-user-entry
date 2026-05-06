@@ -103,10 +103,15 @@ const QuoteRequestModal: React.FC<QuoteRequestModalProps> = ({
       toast({ title: "Debes ingresar al menos 1 participante", variant: "destructive" });
       return;
     }
+    if (customMode && (customInput === '' || parseInt(customInput) < 8)) {
+      toast({ title: "Debes ingresar el número de participantes (mínimo 8)", variant: "destructive" });
+      return;
+    }
     console.log('Quote request submitted:', { ...formData, participants, ...calculations });
     setFormData({ name: '', email: '', company: '', message: '' });
     setParticipants(1);
     setCustomMode(false);
+    setCustomInput('');
     onOpenChange(false);
     toast({
       title: "¡Solicitud enviada con éxito!",
