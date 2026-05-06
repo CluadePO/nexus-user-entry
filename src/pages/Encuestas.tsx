@@ -766,11 +766,13 @@ const AsignarModal: React.FC<{
   kind: AsignKind | null;
   row: AsignarCursoRow | null;
   form: AsignFormState;
+  sinCorreo: number;
+  totalParticipantes: number;
   onChange: (patch: Partial<AsignFormState>) => void;
   onClose: () => void;
   onSave: () => void;
   onOpenParticipants: () => void;
-}> = ({ open, kind, row, form, onChange, onClose, onSave, onOpenParticipants }) => {
+}> = ({ open, kind, row, form, sinCorreo, totalParticipantes, onChange, onClose, onSave, onOpenParticipants }) => {
   const [errRelator, setErrRelator] = useState(false);
   const [errFecha, setErrFecha] = useState(false);
 
@@ -787,8 +789,11 @@ const AsignarModal: React.FC<{
     const eF = !form.fecha;
     setErrRelator(eR); setErrFecha(eF);
     if (eR || eF) return;
+    if (sinCorreo > 0) return;
     onSave();
   };
+
+  const saveDisabled = sinCorreo > 0;
 
   return (
     <Modal
@@ -885,7 +890,43 @@ const AsignarModal: React.FC<{
                 </span>
               )}
             </Button>
-            {form.participantesCount === 0 && (
+            {sinCorreo > 0 && (
+              <div style={{
+                marginTop: 12,
+                background: '#FEF3C7',
+                borderLeft: '4px solid #D97706',
+                borderRadius: 8,
+                padding: '12px 16px',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <Warning size={18} color="#D97706" weight="regular" />
+                  <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#D97706' }}>
+                    Participantes sin correo
+                  </span>
+                </div>
+                <div style={{ fontFamily: 'Poppins', fontSize: 12, color: '#92400E', marginTop: 6 }}>
+                  {sinCorreo} de {totalParticipantes} participantes no tienen correo asignado. Todos deben tener correo para poder guardar la asignación.
+                </div>
+                <button
+                  onClick={onOpenParticipants}
+                  style={{
+                    marginTop: 10,
+                    background: 'transparent',
+                    border: '1px solid #FDE68A',
+                    borderRadius: 6,
+                    color: '#D97706',
+                    fontFamily: 'Poppins',
+                    fontSize: 12,
+                    fontWeight: 500,
+                    padding: '6px 12px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Ir a gestionar participantes →
+                </button>
+              </div>
+            )}
+            {form.participantesCount === 0 && sinCorreo === 0 && (
               <div style={{ fontSize: 12, color: '#9CA3AF', marginTop: 6 }}>
                 Agrega el correo de los participantes del curso
               </div>
@@ -897,14 +938,17 @@ const AsignarModal: React.FC<{
 
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
           <Button onClick={onClose} style={{ fontFamily: 'Poppins' }}>Cancelar</Button>
-          <Button
-            type="primary"
-            onClick={handleSave}
-            icon={<FloppyDisk size={16} weight="regular" />}
-            style={{ background: TEAL, borderColor: TEAL, fontFamily: 'Poppins', display: 'inline-flex', alignItems: 'center', gap: 6 }}
-          >
-            Guardar Configuración
-          </Button>
+          <Tooltip title={saveDisabled ? `${sinCorreo} participantes no tienen correo. Corrígelo antes de guardar.` : ''}>
+            <Button
+              type="primary"
+              onClick={handleSave}
+              disabled={saveDisabled}
+              icon={<FloppyDisk size={16} weight="regular" />}
+              style={{ background: saveDisabled ? undefined : TEAL, borderColor: saveDisabled ? undefined : TEAL, fontFamily: 'Poppins', display: 'inline-flex', alignItems: 'center', gap: 6 }}
+            >
+              Guardar Configuración
+            </Button>
+          </Tooltip>
         </div>
       </div>
     </Modal>
@@ -927,6 +971,90 @@ const DEFAULT_SATIS: SatisParticipante[] = [
   { id: 2, rut: '12345678-9', nombre: 'Carlos Muñoz Soto', correo: 'carlos.munoz@empresa.cl', estado: 'activo', selected: true },
   { id: 3, rut: '16789012-3', nombre: 'Ana Torres Vidal', correo: '', estado: 'activo', selected: true },
 ];
+
+// Per-inscripcion participant seeds (names + emails) used to validate the
+// "all participants must have email" rule for both Satisfacción and Transferencia.
+const PARTICIPANTES_BASE: Record<number, { nombre: string; correo: string }[]> = {
+  2095229: [{ nombre: 'Paula Orellana Marín', correo: '' }],
+  2118699: [{ nombre: 'Paula Orellana Marín', correo: 'paula@empresa.cl' }],
+  2118700: [{ nombre: 'Carlos Muñoz Soto', correo: '' }],
+  2118703: [{ nombre: 'Ana Torres Vidal', correo: '' }],
+  2126744: [
+    { nombre: 'Paula Orellana Marín', correo: 'paula@empresa.cl' },
+    { nombre: 'Carlos Muñoz Soto', correo: 'carlos@empresa.cl' },
+    { nombre: 'Ana Torres Vidal', correo: 'ana@empresa.cl' },
+  ],
+  2126747: [{ nombre: 'Francisco Valenzuela Rojas', correo: '' }],
+  2126757: [{ nombre: 'Roberto Silva Pinto', correo: '' }],
+  2143994: [{ nombre: 'María José Contreras', correo: '' }],
+  2144001: [
+    { nombre: 'Diego Pérez Vega', correo: 'diego@empresa.cl' },
+    { nombre: 'Valentina Rojas Castro', correo: '' },
+  ],
+  2174396: [
+    { nombre: 'Juan Morales Fuentes', correo: '' },
+    { nombre: 'María Contreras Pinto', correo: '' },
+    { nombre: 'Carlos Muñoz Rojas', correo: '' },
+    { nombre: 'Ana Torres Soto', correo: '' },
+    { nombre: 'Pedro Vargas León', correo: '' },
+    { nombre: 'Francisca Silva Araya', correo: '' },
+    { nombre: 'Diego Pérez Vega', correo: '' },
+    { nombre: 'Valentina Rojas Castro', correo: '' },
+    { nombre: 'Rodrigo Díaz Meza', correo: '' },
+  ],
+  2177407: [
+    { nombre: 'Juan Morales Fuentes', correo: 'juan@empresa.cl' },
+    { nombre: 'María Contreras Pinto', correo: 'maria@empresa.cl' },
+    { nombre: 'Carlos Muñoz Rojas', correo: 'carlos@empresa.cl' },
+    { nombre: 'Ana Torres Soto', correo: 'ana@empresa.cl' },
+    { nombre: 'Pedro Vargas León', correo: 'pedro@empresa.cl' },
+    { nombre: 'Francisca Silva Araya', correo: '' },
+    { nombre: 'Diego Pérez Vega', correo: '' },
+    { nombre: 'Valentina Rojas Castro', correo: '' },
+    { nombre: 'Rodrigo Díaz Meza', correo: '' },
+  ],
+  2177416: [
+    { nombre: 'Juan Morales Fuentes', correo: 'juan@empresa.cl' },
+    { nombre: 'María Contreras Pinto', correo: 'maria@empresa.cl' },
+    { nombre: 'Carlos Muñoz Rojas', correo: 'carlos@empresa.cl' },
+    { nombre: 'Ana Torres Soto', correo: 'ana@empresa.cl' },
+    { nombre: 'Pedro Vargas León', correo: 'pedro@empresa.cl' },
+    { nombre: 'Francisca Silva Araya', correo: 'francisca@empresa.cl' },
+    { nombre: 'Diego Pérez Vega', correo: 'diego@empresa.cl' },
+    { nombre: 'Valentina Rojas Castro', correo: 'valentina@empresa.cl' },
+    { nombre: 'Rodrigo Díaz Meza', correo: 'rodrigo@empresa.cl' },
+  ],
+};
+
+const buildSatisDefault = (insc: number): SatisParticipante[] => {
+  const base = PARTICIPANTES_BASE[insc];
+  if (!base) return DEFAULT_SATIS;
+  return base.map((p, i) => ({
+    id: i + 1,
+    rut: `${10000000 + insc + i}-K`,
+    nombre: p.nombre,
+    correo: p.correo,
+    estado: 'activo',
+    selected: true,
+  }));
+};
+
+const buildTransDefault = (insc: number): TransParticipante[] => {
+  const base = PARTICIPANTES_BASE[insc];
+  if (!base) return [];
+  return base.map((p, i) => ({
+    id: i + 1,
+    rut: `${10000000 + insc + i}-K`,
+    nombre: p.nombre,
+    // Reuse same email for Transferencia row (participant's own email validation)
+    correoJefe: p.correo,
+    nombreJefe: '',
+    correoEvaluador: '',
+    nombreEvaluador: '',
+    estado: 'activo',
+    selected: true,
+  }) as TransParticipante);
+};
 
 const EmailInput: React.FC<{ value: string; placeholder: string; onChange: (v: string) => void; disabled?: boolean }> = ({ value, placeholder, onChange, disabled }) => {
   const [touched, setTouched] = useState(false);
@@ -1809,36 +1937,59 @@ const AsignarEncuestasTab: React.FC = () => {
         </>
       )}
 
-      <AsignarModal
-        open={!!asignModal}
-        kind={asignModal?.kind ?? null}
-        row={asignModal?.row ?? null}
-        form={asignModal ? getForm(asignModal.row.inscripcion, asignModal.kind) : { relator: '', fecha: null, participantesCount: 0 }}
-        onChange={(patch) => { if (asignModal) patchForm(asignModal.row.inscripcion, asignModal.kind, patch); }}
-        onClose={() => setAsignModal(null)}
-        onOpenParticipants={() => {
-          if (!asignModal) return;
-          setParticipantsModal({ kind: asignModal.kind, row: asignModal.row });
-          setAsignModal(null);
-        }}
-        onSave={() => {
-          if (!asignModal) return;
-          const { kind, row } = asignModal;
-          setRows((prev) => prev.map((r) =>
-            r.inscripcion === row.inscripcion
-              ? { ...r, [kind === 'Satisfacción' ? 'satisfaccion' : 'transferencia']: 'asignada' as const }
-              : r
-          ));
-          setAsignModal(null);
-          toast.success(`Encuesta de ${kind} asignada correctamente`);
-        }}
-      />
+      {(() => {
+        const insc = asignModal?.row.inscripcion;
+        const kind = asignModal?.kind;
+        let sinCorreo = 0;
+        let total = 0;
+        if (insc && kind) {
+          if (kind === 'Satisfacción') {
+            const list = satisParts[insc] ?? buildSatisDefault(insc);
+            const active = list.filter((p) => p.estado === 'activo' && p.selected);
+            total = active.length;
+            sinCorreo = active.filter((p) => !p.correo.trim()).length;
+          } else {
+            const list = transParts[insc] ?? buildTransDefault(insc);
+            const active = list.filter((p) => p.estado === 'activo' && p.selected);
+            total = active.length;
+            sinCorreo = active.filter((p) => !p.correoJefe.trim()).length;
+          }
+        }
+        return (
+          <AsignarModal
+            open={!!asignModal}
+            kind={asignModal?.kind ?? null}
+            row={asignModal?.row ?? null}
+            form={asignModal ? getForm(asignModal.row.inscripcion, asignModal.kind) : { relator: '', fecha: null, participantesCount: 0 }}
+            sinCorreo={sinCorreo}
+            totalParticipantes={total}
+            onChange={(patch) => { if (asignModal) patchForm(asignModal.row.inscripcion, asignModal.kind, patch); }}
+            onClose={() => setAsignModal(null)}
+            onOpenParticipants={() => {
+              if (!asignModal) return;
+              setParticipantsModal({ kind: asignModal.kind, row: asignModal.row });
+              setAsignModal(null);
+            }}
+            onSave={() => {
+              if (!asignModal) return;
+              const { kind, row } = asignModal;
+              setRows((prev) => prev.map((r) =>
+                r.inscripcion === row.inscripcion
+                  ? { ...r, [kind === 'Satisfacción' ? 'satisfaccion' : 'transferencia']: 'asignada' as const }
+                  : r
+              ));
+              setAsignModal(null);
+              toast.success(`Encuesta de ${kind} asignada correctamente`);
+            }}
+          />
+        );
+      })()}
 
       <SatisfaccionParticipantesModal
         open={!!participantsModal && participantsModal.kind === 'Satisfacción'}
         row={participantsModal?.row ?? null}
         initial={participantsModal && participantsModal.kind === 'Satisfacción'
-          ? (satisParts[participantsModal.row.inscripcion] ?? DEFAULT_SATIS)
+          ? (satisParts[participantsModal.row.inscripcion] ?? buildSatisDefault(participantsModal.row.inscripcion))
           : DEFAULT_SATIS}
         onClose={() => {
           if (participantsModal) {
@@ -1862,7 +2013,7 @@ const AsignarEncuestasTab: React.FC = () => {
         open={!!participantsModal && participantsModal.kind === 'Transferencia'}
         row={participantsModal?.row ?? null}
         initial={participantsModal && participantsModal.kind === 'Transferencia'
-          ? (transParts[participantsModal.row.inscripcion] ?? DEFAULT_TRANS)
+          ? (transParts[participantsModal.row.inscripcion] ?? buildTransDefault(participantsModal.row.inscripcion))
           : DEFAULT_TRANS}
         initialEvaluador={participantsModal ? (transEvaluador[participantsModal.row.inscripcion] ?? false) : false}
         onClose={() => {
