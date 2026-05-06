@@ -1463,26 +1463,34 @@ const TransferenciaParticipantesModal: React.FC<{
 
         <div style={{ maxHeight: 'calc(80vh - 320px)', overflowY: 'auto', overflowX: 'hidden', padding: '0 24px' }}>
           {visible.map((p) => {
-            const disabled = !p.selected;
+            const isElim = p.estado === 'eliminado';
+            const isAnul = p.estado === 'anulado';
+            const isInactive = isElim || isAnul;
+            const disabled = isInactive || !p.selected;
             const nombreVal = (p as any)[nombreKey] as string;
             const correoVal = (p as any)[correoKey] as string;
+            const cardBg = isElim ? '#FEF2F2' : isAnul ? '#FFF7ED' : (disabled ? '#F9FAFB' : '#FFFFFF');
             return (
               <div
                 key={p.id}
                 style={{
-                  background: disabled ? '#F9FAFB' : '#FFFFFF',
+                  background: cardBg,
                   border: '1px solid #E5E7EB',
                   borderRadius: 8,
                   padding: '14px 16px',
                   marginBottom: 10,
-                  opacity: disabled ? 0.6 : 1,
+                  opacity: isInactive ? 0.85 : (disabled ? 0.6 : 1),
                   transition: 'border-color 0.2s',
                 }}
                 onMouseEnter={(e) => { if (!disabled) e.currentTarget.style.borderColor = '#99F6E4'; }}
                 onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E5E7EB'; }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <Checkbox checked={p.selected} onChange={(e) => update(p.id, { selected: e.target.checked })} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                  <Checkbox
+                    checked={!isInactive && p.selected}
+                    disabled={isInactive}
+                    onChange={(e) => update(p.id, { selected: e.target.checked })}
+                  />
                   <span style={{
                     background: '#F3F4F6', color: '#374151', borderRadius: 6,
                     padding: '2px 8px', fontFamily: 'Poppins', fontSize: 12, fontWeight: 500,
@@ -1491,6 +1499,12 @@ const TransferenciaParticipantesModal: React.FC<{
                     fontFamily: 'Poppins', fontSize: 14, fontWeight: 600,
                     color: disabled ? '#9CA3AF' : '#111827',
                   }}>{p.nombre}</span>
+                  {isElim && (
+                    <span style={{ background: '#FEE2E2', color: '#991B1B', borderRadius: 999, padding: '2px 8px', fontFamily: 'Poppins', fontSize: 11, fontWeight: 500 }}>Eliminado</span>
+                  )}
+                  {isAnul && (
+                    <span style={{ background: '#FED7AA', color: '#9A3412', borderRadius: 999, padding: '2px 8px', fontFamily: 'Poppins', fontSize: 11, fontWeight: 500 }}>Anulado</span>
+                  )}
                 </div>
                 <div style={{ display: 'flex', gap: 12, marginTop: 10 }}>
                   <div style={{ flex: 1, minWidth: 0 }}>
@@ -1500,22 +1514,32 @@ const TransferenciaParticipantesModal: React.FC<{
                     <Input
                       size="small"
                       disabled={disabled}
-                      value={nombreVal}
-                      placeholder={evaluador ? 'Nombre del evaluador' : 'Nombre del jefe directo'}
+                      value={isInactive ? '' : nombreVal}
+                      placeholder={isInactive ? 'Sin correo' : (evaluador ? 'Nombre del evaluador' : 'Nombre del jefe directo')}
                       onChange={(e) => update(p.id, { [nombreKey]: e.target.value } as any)}
-                      style={{ width: '100%', fontFamily: 'Poppins' }}
+                      style={{ width: '100%', fontFamily: 'Poppins', background: isInactive ? '#F9FAFB' : undefined }}
                     />
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontFamily: 'Poppins', fontSize: 11, fontWeight: 500, color: '#6B7280', marginBottom: 4 }}>
                       {evaluador ? 'Correo Evaluador' : 'Correo Jefe'}
                     </div>
-                    <EmailInput
-                      value={correoVal}
-                      placeholder={evaluador ? 'correo@evaluador.cl' : 'correo@jefe.cl'}
-                      onChange={(nv) => update(p.id, { [correoKey]: nv } as any)}
-                      disabled={disabled}
-                    />
+                    {isInactive ? (
+                      <Input
+                        size="small"
+                        disabled
+                        value=""
+                        placeholder="Sin correo"
+                        style={{ width: '100%', fontFamily: 'Poppins', background: '#F9FAFB' }}
+                      />
+                    ) : (
+                      <EmailInput
+                        value={correoVal}
+                        placeholder={evaluador ? 'correo@evaluador.cl' : 'correo@jefe.cl'}
+                        onChange={(nv) => update(p.id, { [correoKey]: nv } as any)}
+                        disabled={disabled}
+                      />
+                    )}
                   </div>
                 </div>
               </div>
