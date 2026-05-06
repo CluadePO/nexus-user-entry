@@ -944,6 +944,7 @@ const CourseDetail: React.FC = () => {
           specialty: course.specialty,
           effectiveValuePerParticipant: course.effectiveValuePerParticipant,
           maxImputableValue: course.maxImputableValue,
+          isSence: course.type === 'Sence',
         }}
         formatPrice={formatPrice}
         initialTierParticipants={tierParticipants}
