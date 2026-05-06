@@ -1246,7 +1246,7 @@ const SatisfaccionParticipantesModal: React.FC<{
               onClick={() => setExcluirEliminados((v) => !v)}
               style={exclBtnStyle(excluirEliminados)}
             >
-              {excluirEliminados ? `Mostrando sin Eliminados (${eliminados})` : `Excluir Eliminados (${eliminados})`}
+              {excluirEliminados ? `Mostrando sin Eliminados (${eliminados})` : `Excluir Eliminados (0)`}
             </Button>
             <Button
               icon={<ProhibitInset size={14} weight="regular" />}
