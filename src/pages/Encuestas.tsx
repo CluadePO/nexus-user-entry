@@ -1611,6 +1611,8 @@ const AsignarEncuestasTab: React.FC = () => {
   const [satisParts, setSatisParts] = useState<Record<number, SatisParticipante[]>>({});
   const [transParts, setTransParts] = useState<Record<number, TransParticipante[]>>({});
   const [transEvaluador, setTransEvaluador] = useState<Record<number, boolean>>({});
+  // Per-row exclusion state, keyed by `${inscripcion}-${kind}`
+  const [exclusionState, setExclusionState] = useState<Record<string, { excluirEliminados: boolean; excluirAnulados: boolean }>>({});
   const [participantsModal, setParticipantsModal] = useState<{ kind: AsignKind; row: AsignarCursoRow } | null>(null);
 
   const formKey = (insc: number, kind: AsignKind) => `${insc}-${kind}`;
