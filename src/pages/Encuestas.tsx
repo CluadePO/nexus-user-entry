@@ -1052,7 +1052,7 @@ const buildTransDefault = (_insc: number): TransParticipante[] =>
     id: i + 1,
     rut: p.rut,
     nombre: p.nombre,
-    correoJefe: p.estado === 'activo' ? p.correo : '',
+    correoJefe: '',
     nombreJefe: '',
     correoEvaluador: '',
     nombreEvaluador: '',
