@@ -1320,8 +1320,12 @@ interface TransParticipante {
 }
 const DEFAULT_TRANS: TransParticipante[] = [
   { id: 1, rut: '15775900-0', nombre: 'Francisco Valenzuela Rojas', nombreJefe: '', correoJefe: '', nombreEvaluador: '', correoEvaluador: '', estado: 'activo', selected: true },
-  { id: 2, rut: '12345678-9', nombre: 'Carlos Muñoz Soto', nombreJefe: 'Roberto Silva', correoJefe: 'roberto.silva@empresa.cl', nombreEvaluador: '', correoEvaluador: '', estado: 'activo', selected: true },
-  { id: 3, rut: '16789012-3', nombre: 'Ana Torres Vidal', nombreJefe: '', correoJefe: '', nombreEvaluador: 'María González', correoEvaluador: 'maria.gonzalez@empresa.cl', estado: 'activo', selected: true },
+  { id: 2, rut: '12345678-9', nombre: 'Carlos Muñoz Soto', nombreJefe: '', correoJefe: '', nombreEvaluador: '', correoEvaluador: '', estado: 'activo', selected: true },
+  { id: 3, rut: '16789012-3', nombre: 'Ana Torres Vidal', nombreJefe: '', correoJefe: '', nombreEvaluador: '', correoEvaluador: '', estado: 'activo', selected: true },
+  { id: 4, rut: '19876543-2', nombre: 'Roberto Silva Pinto', nombreJefe: '', correoJefe: '', nombreEvaluador: '', correoEvaluador: '', estado: 'eliminado', selected: true },
+  { id: 5, rut: '14567890-1', nombre: 'María José Contreras', nombreJefe: '', correoJefe: '', nombreEvaluador: '', correoEvaluador: '', estado: 'anulado', selected: true },
+  { id: 6, rut: '17654321-8', nombre: 'Diego Pérez Vega', nombreJefe: '', correoJefe: '', nombreEvaluador: '', correoEvaluador: '', estado: 'activo', selected: true },
+  { id: 7, rut: '15432198-7', nombre: 'Valentina Rojas Castro', nombreJefe: '', correoJefe: '', nombreEvaluador: '', correoEvaluador: '', estado: 'anulado', selected: true },
 ];
 
 const TransferenciaParticipantesModal: React.FC<{
