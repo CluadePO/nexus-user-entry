@@ -1719,21 +1719,18 @@ const AsignarEncuestasTab: React.FC = () => {
     }
     return (
       <div style={{ display: 'inline-flex', gap: 8, alignItems: 'center', justifyContent: 'center' }}>
-        <Popconfirm
-          title={<span style={{ fontFamily: 'Poppins', fontWeight: 600 }}>¿Reenviar encuesta?</span>}
-          description={<span style={{ fontFamily: 'Poppins', fontSize: 12, color: '#6B7280' }}>Se enviará la encuesta a todos los participantes seleccionados del curso.</span>}
-          icon={<Warning size={16} color="#F59E0B" weight="fill" />}
-          okText="Sí, reenviar"
-          cancelText="Cancelar"
-          okButtonProps={{ style: { background: TEAL, borderColor: TEAL } }}
-          onConfirm={() => handleResend(kind)}
-        >
-          <Tooltip title="Reenviar encuesta a participantes">
-            <button style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: 4, display: 'inline-flex' }}>
-              <PaperPlaneTilt size={22} color={TEAL} weight="regular" />
-            </button>
-          </Tooltip>
-        </Popconfirm>
+        <Tooltip title="Reenviar encuesta a participantes">
+          <button
+            onClick={() => {
+              const pendientes = RESEND_PENDIENTES.map((p) => p.rut);
+              setResendSelected(pendientes);
+              setResendModal({ kind, row });
+            }}
+            style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: 4, display: 'inline-flex' }}
+          >
+            <PaperPlaneTilt size={22} color={TEAL} weight="regular" />
+          </button>
+        </Tooltip>
         <Tooltip title="Ver previsualización">
           <button onClick={() => setPreviewModal({ kind, row })} style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: 4, display: 'inline-flex' }}>
             <Eye size={22} color={TEAL} weight="regular" />
