@@ -1619,6 +1619,9 @@ const AsignarEncuestasTab: React.FC = () => {
   // Per-row exclusion state, keyed by `${inscripcion}-${kind}`
   const [exclusionState, setExclusionState] = useState<Record<string, { excluirEliminados: boolean; excluirAnulados: boolean }>>({});
   const [participantsModal, setParticipantsModal] = useState<{ kind: AsignKind; row: AsignarCursoRow } | null>(null);
+  const [resendModal, setResendModal] = useState<{ kind: AsignKind; row: AsignarCursoRow } | null>(null);
+  const [resendSelected, setResendSelected] = useState<string[]>([]);
+  const [resendConfirmOpen, setResendConfirmOpen] = useState(false);
 
   const formKey = (insc: number, kind: AsignKind) => `${insc}-${kind}`;
   const getForm = (insc: number, kind: AsignKind): AsignFormState =>
