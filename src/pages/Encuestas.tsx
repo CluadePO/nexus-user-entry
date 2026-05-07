@@ -27,6 +27,7 @@ import {
   ProhibitInset,
   UserFocus,
   UserCircle,
+  EnvelopeSimple,
 } from '@phosphor-icons/react';
 import { Switch, Checkbox } from 'antd';
 import { toast } from 'sonner';
