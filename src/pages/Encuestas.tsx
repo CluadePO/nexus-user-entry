@@ -2195,6 +2195,134 @@ const AsignarEncuestasTab: React.FC = () => {
           vigente: 'Si',
         } : null}
       />
+
+      <Modal
+        open={!!resendModal}
+        onCancel={() => { setResendModal(null); setResendConfirmOpen(false); }}
+        width={640}
+        footer={null}
+        title={
+          resendModal && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontFamily: 'Poppins' }}>
+              <PaperPlaneTilt size={20} color={TEAL} weight="regular" />
+              <span style={{ fontWeight: 600, color: '#111827' }}>Reenviar Encuesta</span>
+              <span
+                style={{
+                  fontSize: 11,
+                  fontWeight: 600,
+                  padding: '2px 8px',
+                  borderRadius: 999,
+                  background: resendModal.kind === 'Satisfacción' ? '#DBEAFE' : '#D1FAE5',
+                  color: resendModal.kind === 'Satisfacción' ? '#1E3A8A' : '#065F46',
+                }}
+              >
+                {resendModal.kind}
+              </span>
+            </div>
+          )
+        }
+      >
+        {resendModal && (
+          <div style={{ fontFamily: 'Poppins' }}>
+            <div style={{ background: '#ECFDF5', border: '1px solid #A7F3D0', borderRadius: 8, padding: '12px 16px', marginBottom: 16 }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: '#111827' }}>Curso: {resendModal.row.curso}</div>
+              <div style={{ fontSize: 12, color: '#6B7280', marginTop: 2 }}>Encuesta: {ENCUESTA_INFO[resendModal.kind].nombre}</div>
+            </div>
+
+            {RESEND_PENDIENTES.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '24px 0' }}>
+                <CheckCircle size={56} color="#10B981" weight="regular" />
+                <div style={{ fontSize: 15, fontWeight: 500, color: '#065F46', marginTop: 12 }}>¡Todos los participantes han respondido!</div>
+                <div style={{ fontSize: 13, color: '#6B7280', marginTop: 4 }}>No hay participantes pendientes de respuesta en este curso.</div>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 24 }}>
+                  <Button onClick={() => setResendModal(null)}>Cerrar</Button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div style={{ display: 'flex', gap: 12, marginBottom: 16, flexWrap: 'wrap' }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#F3F4F6', padding: '4px 10px', borderRadius: 999, fontSize: 12, color: '#374151' }}>
+                    <Users size={14} color="#6B7280" weight="regular" /> {RESEND_TOTAL} total
+                  </span>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#FEF3C7', padding: '4px 10px', borderRadius: 999, fontSize: 12, color: '#D97706' }}>
+                    <EnvelopeSimple size={14} color="#D97706" weight="regular" /> {RESEND_PENDIENTES.length} pendientes de respuesta
+                  </span>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#D1FAE5', padding: '4px 10px', borderRadius: 999, fontSize: 12, color: '#065F46' }}>
+                    <CheckCircle size={14} color="#10B981" weight="regular" /> {RESEND_RESPONDIDOS} ya respondieron
+                  </span>
+                </div>
+
+                <div style={{ marginBottom: 12 }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: '#111827' }}>Participantes que recibirán el reenvío</div>
+                  <div style={{ fontSize: 12, color: '#6B7280' }}>Solo se muestran participantes con correo registrado que aún no han respondido la encuesta.</div>
+                </div>
+
+                <Table
+                  size="small"
+                  pagination={false}
+                  rowKey="rut"
+                  dataSource={RESEND_PENDIENTES}
+                  style={{ border: '1px solid #E5E7EB', borderRadius: 8, background: '#fff' }}
+                  rowSelection={{
+                    selectedRowKeys: resendSelected,
+                    onChange: (keys) => setResendSelected(keys as string[]),
+                  }}
+                  columns={[
+                    { title: 'RUT', dataIndex: 'rut', width: 120, render: (v: string) => <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#374151' }}>{v}</span> },
+                    { title: 'Nombre', dataIndex: 'nombre', render: (v: string) => <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 500, color: '#111827' }}>{v}</span> },
+                    {
+                      title: 'Correo', dataIndex: 'correo',
+                      render: (v: string) => (
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>
+                          <EnvelopeSimple size={14} color="#9CA3AF" weight="regular" /> {v}
+                        </span>
+                      ),
+                    },
+                    {
+                      title: 'Estado',
+                      dataIndex: 'estado',
+                      render: () => (
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#FEF3C7', color: '#D97706', padding: '2px 10px', borderRadius: 999, fontSize: 12, fontWeight: 500 }}>
+                          <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#F59E0B' }} />
+                          Pendiente
+                        </span>
+                      ),
+                    },
+                  ]}
+                />
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 24 }}>
+                  <Button onClick={() => setResendModal(null)}>Cancelar</Button>
+                  <Popconfirm
+                    open={resendConfirmOpen}
+                    onOpenChange={setResendConfirmOpen}
+                    title={<span style={{ fontFamily: 'Poppins', fontWeight: 600 }}>¿Confirmar reenvío?</span>}
+                    description={<span style={{ fontFamily: 'Poppins', fontSize: 12, color: '#6B7280' }}>Se reenviará la encuesta a {resendSelected.length} participantes seleccionados.</span>}
+                    okText="Sí, reenviar"
+                    cancelText="Cancelar"
+                    okButtonProps={{ style: { background: TEAL, borderColor: TEAL } }}
+                    onConfirm={() => {
+                      const n = resendSelected.length;
+                      setResendModal(null);
+                      setResendConfirmOpen(false);
+                      toast.success(`Encuesta reenviada exitosamente a ${n} participantes.`);
+                    }}
+                  >
+                    <Button
+                      type="primary"
+                      disabled={resendSelected.length === 0}
+                      icon={<PaperPlaneTilt size={16} weight="regular" />}
+                      style={{ background: TEAL, borderColor: TEAL }}
+                    >
+                      Reenviar a seleccionados
+                    </Button>
+                  </Popconfirm>
+                </div>
+              </>
+            )}
+          </div>
+        )}
+      </Modal>
     </div>
   );
 };
