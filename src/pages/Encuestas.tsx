@@ -756,6 +756,13 @@ const ENCUESTA_INFO: Record<AsignKind, { nombre: string; id: number }> = {
   'Transferencia': { nombre: 'Encuesta de Transferencia Estándar v2.0', id: 4484 },
 };
 
+const RESEND_PENDIENTES: { rut: string; nombre: string; correo: string; estado: 'Pendiente' }[] = [
+  { rut: '12095229-K', nombre: 'Paula Orellana Marín', correo: 'paula@empresa.cl', estado: 'Pendiente' },
+  { rut: '17654321-8', nombre: 'Diego Pérez Vega', correo: 'diego@empresa.cl', estado: 'Pendiente' },
+];
+const RESEND_TOTAL = 3;
+const RESEND_RESPONDIDOS = 1;
+
 interface AsignFormState {
   relator: string;
   fecha: any;
