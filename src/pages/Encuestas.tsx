@@ -1970,18 +1970,6 @@ const AsignarEncuestasTab: React.FC = () => {
             </div>
           </div>
 
-          {/* Pills */}
-          <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
-            <span style={pillStyle('todos')} onClick={() => { setPill('todos'); setPage(1); }}>
-              Todos ({counts.todos})
-            </span>
-            <span style={pillStyle('sin')} onClick={() => { setPill('sin'); setPage(1); }}>
-              Sin Asignar ({counts.sin})
-            </span>
-            <span style={pillStyle('asig')} onClick={() => { setPill('asig'); setPage(1); }}>
-              Asignados ({counts.asig})
-            </span>
-          </div>
 
           {/* Toolbar */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12, gap: 12, flexWrap: 'wrap' }}>
