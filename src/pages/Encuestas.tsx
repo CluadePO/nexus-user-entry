@@ -748,7 +748,7 @@ const ASIGNAR_DATA: AsignarCursoRow[] = [
   { inscripcion: 2177416, sc: null, sencenet: null, inicio: '05/03/26', termino: '05/03/26', curso: 'Capacitación Teórica práctica sobre uso de extintores', tipo: 'Curso Interno', modalidad: 'E-Learning', participantes: 9, satisfaccion: 'asignada', transferencia: 'asignada' },
 ];
 
-type PillKey = 'todos' | 'sin' | 'asig';
+type PillKey = 'todas' | 'satisfaccion' | 'transferencia';
 type AsignKind = 'Satisfacción' | 'Transferencia';
 
 const ENCUESTA_INFO: Record<AsignKind, { nombre: string; id: number }> = {
