@@ -2261,6 +2261,10 @@ const AsignarEncuestasTab: React.FC = () => {
                 <div style={{ marginBottom: 12 }}>
                   <div style={{ fontSize: 13, fontWeight: 600, color: '#111827' }}>Participantes que recibirán el reenvío</div>
                   <div style={{ fontSize: 12, color: '#6B7280' }}>Solo se muestran participantes con correo registrado que aún no han respondido la encuesta.</div>
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 6, fontSize: 12, color: '#6B7280' }}>
+                    <Info size={14} color="#9CA3AF" weight="regular" />
+                    Puedes editar el correo de un participante antes de confirmar el reenvío. Los cambios se guardarán al hacer clic en Reenviar a seleccionados.
+                  </div>
                 </div>
 
                 <Table
@@ -2278,11 +2282,36 @@ const AsignarEncuestasTab: React.FC = () => {
                     { title: 'Nombre', dataIndex: 'nombre', render: (v: string) => <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 500, color: '#111827' }}>{v}</span> },
                     {
                       title: 'Correo', dataIndex: 'correo',
-                      render: (v: string) => (
-                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>
-                          <EnvelopeSimple size={14} color="#9CA3AF" weight="regular" /> {v}
-                        </span>
-                      ),
+                      render: (_v: string, rec: { rut: string; correo: string }) => {
+                        const cur = resendEmails[rec.rut] ?? rec.correo;
+                        const err = resendEmailErrors[rec.rut];
+                        const valid = resendEmailValid[rec.rut];
+                        const edited = (resendOriginalEmails[rec.rut] ?? rec.correo) !== cur;
+                        const borderColor = err === 'empty' ? '#F59E0B' : err === 'invalid' ? '#EF4444' : valid ? '#10B981' : undefined;
+                        const tip = err === 'empty' ? 'El correo no puede estar vacío' : err === 'invalid' ? 'Formato de correo inválido. Ej: nombre@empresa.cl' : '';
+                        return (
+                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, width: '100%' }}>
+                            <Tooltip title={tip} open={tip ? undefined : false}>
+                              <Input
+                                size="small"
+                                value={cur}
+                                prefix={<EnvelopeSimple size={14} color="#9CA3AF" weight="regular" />}
+                                onChange={(e) => {
+                                  setResendEmails((p) => ({ ...p, [rec.rut]: e.target.value }));
+                                  if (resendEmailErrors[rec.rut]) setResendEmailErrors((p) => ({ ...p, [rec.rut]: null }));
+                                }}
+                                onBlur={(e) => validateResendEmail(rec.rut, e.target.value, true)}
+                                style={{ fontFamily: 'Poppins', fontSize: 13, borderColor, boxShadow: borderColor ? `0 0 0 2px ${borderColor}22` : undefined }}
+                              />
+                            </Tooltip>
+                            {edited && (
+                              <Tooltip title="Correo editado">
+                                <PencilSimple size={12} color={TEAL} weight="regular" />
+                              </Tooltip>
+                            )}
+                          </div>
+                        );
+                      },
                     },
                     {
                       title: 'Estado',
@@ -2299,30 +2328,61 @@ const AsignarEncuestasTab: React.FC = () => {
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 24 }}>
                   <Button onClick={() => setResendModal(null)}>Cancelar</Button>
-                  <Popconfirm
-                    open={resendConfirmOpen}
-                    onOpenChange={setResendConfirmOpen}
-                    title={<span style={{ fontFamily: 'Poppins', fontWeight: 600 }}>¿Confirmar reenvío?</span>}
-                    description={<span style={{ fontFamily: 'Poppins', fontSize: 12, color: '#6B7280' }}>Se reenviará la encuesta a {resendSelected.length} participantes seleccionados.</span>}
-                    okText="Sí, reenviar"
-                    cancelText="Cancelar"
-                    okButtonProps={{ style: { background: TEAL, borderColor: TEAL } }}
-                    onConfirm={() => {
-                      const n = resendSelected.length;
-                      setResendModal(null);
-                      setResendConfirmOpen(false);
-                      toast.success(`Encuesta reenviada exitosamente a ${n} participantes.`);
-                    }}
-                  >
-                    <Button
-                      type="primary"
-                      disabled={resendSelected.length === 0}
-                      icon={<PaperPlaneTilt size={16} weight="regular" />}
-                      style={{ background: TEAL, borderColor: TEAL }}
-                    >
-                      Reenviar a seleccionados
-                    </Button>
-                  </Popconfirm>
+                  {(() => {
+                    const editedCount = resendSelected.filter((r) => (resendOriginalEmails[r] ?? '') !== (resendEmails[r] ?? '')).length;
+                    return (
+                      <Popconfirm
+                        open={resendConfirmOpen}
+                        onOpenChange={setResendConfirmOpen}
+                        title={<span style={{ fontFamily: 'Poppins', fontWeight: 600 }}>¿Confirmar reenvío?</span>}
+                        description={
+                          <span style={{ fontFamily: 'Poppins', fontSize: 12, color: '#6B7280' }}>
+                            {editedCount > 0
+                              ? `Se enviará la encuesta a ${resendSelected.length} participantes seleccionados. Los correos editados serán actualizados en el sistema.`
+                              : `Se reenviará la encuesta a ${resendSelected.length} participantes seleccionados.`}
+                          </span>
+                        }
+                        okText="Sí, reenviar"
+                        cancelText="Cancelar"
+                        okButtonProps={{ style: { background: TEAL, borderColor: TEAL } }}
+                        onConfirm={() => {
+                          const n = resendSelected.length;
+                          setResendModal(null);
+                          setResendConfirmOpen(false);
+                          toast.success(
+                            editedCount > 0
+                              ? `Encuesta reenviada exitosamente a ${n} participantes. ${editedCount} correos actualizados.`
+                              : `Encuesta reenviada exitosamente a ${n} participantes.`
+                          );
+                        }}
+                      >
+                        <Button
+                          type="primary"
+                          disabled={resendSelected.length === 0}
+                          icon={<PaperPlaneTilt size={16} weight="regular" />}
+                          style={{ background: TEAL, borderColor: TEAL }}
+                          onClick={(e) => {
+                            // Validate selected emails before opening Popconfirm
+                            const errs: Record<string, 'empty' | 'invalid' | null> = {};
+                            let hasError = false;
+                            resendSelected.forEach((rut) => {
+                              const v = (resendEmails[rut] ?? '').trim();
+                              if (!v) { errs[rut] = 'empty'; hasError = true; }
+                              else if (!isValidEmail(v)) { errs[rut] = 'invalid'; hasError = true; }
+                            });
+                            if (hasError) {
+                              e.stopPropagation();
+                              setResendEmailErrors((p) => ({ ...p, ...errs }));
+                              setResendConfirmOpen(false);
+                              toast.warning('Corrige los correos inválidos antes de reenviar.');
+                            }
+                          }}
+                        >
+                          Reenviar a seleccionados
+                        </Button>
+                      </Popconfirm>
+                    );
+                  })()}
                 </div>
               </>
             )}
