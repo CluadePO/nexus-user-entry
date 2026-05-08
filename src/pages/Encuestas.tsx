@@ -28,6 +28,8 @@ import {
   UserFocus,
   UserCircle,
   EnvelopeSimple,
+  PencilSimple,
+  Info,
 } from '@phosphor-icons/react';
 import { Switch, Checkbox } from 'antd';
 import { toast } from 'sonner';
@@ -1629,6 +1631,24 @@ const AsignarEncuestasTab: React.FC = () => {
   const [resendModal, setResendModal] = useState<{ kind: AsignKind; row: AsignarCursoRow } | null>(null);
   const [resendSelected, setResendSelected] = useState<string[]>([]);
   const [resendConfirmOpen, setResendConfirmOpen] = useState(false);
+  const [resendEmails, setResendEmails] = useState<Record<string, string>>({});
+  const [resendOriginalEmails, setResendOriginalEmails] = useState<Record<string, string>>({});
+  const [resendEmailErrors, setResendEmailErrors] = useState<Record<string, 'empty' | 'invalid' | null>>({});
+  const [resendEmailValid, setResendEmailValid] = useState<Record<string, boolean>>({});
+
+  const isValidEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.trim());
+  const validateResendEmail = (rut: string, value: string, flashGreen = false) => {
+    const v = value.trim();
+    let err: 'empty' | 'invalid' | null = null;
+    if (!v) err = 'empty';
+    else if (!isValidEmail(v)) err = 'invalid';
+    setResendEmailErrors((p) => ({ ...p, [rut]: err }));
+    if (!err && flashGreen) {
+      setResendEmailValid((p) => ({ ...p, [rut]: true }));
+      setTimeout(() => setResendEmailValid((p) => ({ ...p, [rut]: false })), 1500);
+    }
+    return err;
+  };
 
   const formKey = (insc: number, kind: AsignKind) => `${insc}-${kind}`;
   const getForm = (insc: number, kind: AsignKind): AsignFormState =>
@@ -1727,7 +1747,13 @@ const AsignarEncuestasTab: React.FC = () => {
           <button
             onClick={() => {
               const pendientes = RESEND_PENDIENTES.map((p) => p.rut);
+              const emails: Record<string, string> = {};
+              RESEND_PENDIENTES.forEach((p) => { emails[p.rut] = p.correo; });
               setResendSelected(pendientes);
+              setResendEmails(emails);
+              setResendOriginalEmails({ ...emails });
+              setResendEmailErrors({});
+              setResendEmailValid({});
               setResendModal({ kind, row });
             }}
             style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: 4, display: 'inline-flex' }}
