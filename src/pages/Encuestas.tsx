@@ -1950,12 +1950,16 @@ const AsignarEncuestasTab: React.FC = () => {
             <span style={pillStyle('todas')} onClick={() => { setPill('todas'); setPage(1); }}>
               Todas ({counts.todas})
             </span>
-            <span style={pillStyle('satisfaccion')} onClick={() => { setPill('satisfaccion'); setPage(1); }}>
-              Satisfacción ({counts.satisfaccion})
-            </span>
-            <span style={pillStyle('transferencia')} onClick={() => { setPill('transferencia'); setPage(1); }}>
-              Transferencia ({counts.transferencia})
-            </span>
+            <Tooltip title="Cursos con encuesta de Satisfacción pendiente de asignar">
+              <span style={pillStyle('satisfaccion')} onClick={() => { setPill('satisfaccion'); setPage(1); }}>
+                Satisfacción ({counts.satisfaccion})
+              </span>
+            </Tooltip>
+            <Tooltip title="Cursos con encuesta de Transferencia pendiente de asignar">
+              <span style={pillStyle('transferencia')} onClick={() => { setPill('transferencia'); setPage(1); }}>
+                Transferencia ({counts.transferencia})
+              </span>
+            </Tooltip>
           </div>
 
 
