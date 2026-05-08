@@ -748,7 +748,7 @@ const ASIGNAR_DATA: AsignarCursoRow[] = [
   { inscripcion: 2177416, sc: null, sencenet: null, inicio: '05/03/26', termino: '05/03/26', curso: 'Capacitación Teórica práctica sobre uso de extintores', tipo: 'Curso Interno', modalidad: 'E-Learning', participantes: 9, satisfaccion: 'asignada', transferencia: 'asignada' },
 ];
 
-type PillKey = 'todos' | 'sin' | 'asig';
+type PillKey = 'todas' | 'satisfaccion' | 'transferencia';
 type AsignKind = 'Satisfacción' | 'Transferencia';
 
 const ENCUESTA_INFO: Record<AsignKind, { nombre: string; id: number }> = {
@@ -1612,7 +1612,7 @@ const AsignarEncuestasTab: React.FC = () => {
   const [search, setSearch] = useState('');
   const [pageSize, setPageSize] = useState(10);
   const [page, setPage] = useState(1);
-  const [pill, setPill] = useState<PillKey>('todos');
+  const [pill, setPill] = useState<PillKey>('todas');
   const [showTech, setShowTech] = useState(false);
   const [rows, setRows] = useState<AsignarCursoRow[]>(ASIGNAR_DATA);
   const [asignModal, setAsignModal] = useState<{ kind: AsignKind; row: AsignarCursoRow } | null>(null);
@@ -1640,7 +1640,7 @@ const AsignarEncuestasTab: React.FC = () => {
   useEffect(() => {
     setSearch('');
     setPage(1);
-    setPill('todos');
+    setPill('todas');
     setDateError(false);
     if (selectedHoldingId && selectedCompanyId) {
       setDates(currentMonthRange());
@@ -1674,21 +1674,18 @@ const AsignarEncuestasTab: React.FC = () => {
   const isAsignado = (r: AsignarCursoRow) => r.satisfaccion === 'asignada' && r.transferencia === 'asignada';
   const isSinAsignar = (r: AsignarCursoRow) => r.satisfaccion === 'sin_asignar' || r.transferencia === 'sin_asignar';
 
+  const isSatSin = (r: AsignarCursoRow) => r.satisfaccion === 'sin_asignar';
+  const isTransSin = (r: AsignarCursoRow) => r.transferencia === 'sin_asignar';
+
   const counts = useMemo(() => ({
-    todos: searched_rows.length,
-    sin: searched_rows.filter(isSinAsignar).length,
-    asig: searched_rows.filter(isAsignado).length,
+    todas: searched_rows.length,
+    satisfaccion: searched_rows.filter(isSatSin).length,
+    transferencia: searched_rows.filter(isTransSin).length,
   }), [searched_rows]);
 
-  const totals = useMemo(() => ({
-    total: searched ? rows.length : 0,
-    sin: searched ? rows.filter(isSinAsignar).length : 0,
-    asig: searched ? rows.filter(isAsignado).length : 0,
-  }), [searched, rows]);
-
   const filtered = useMemo(() => {
-    if (pill === 'sin') return searched_rows.filter(isSinAsignar);
-    if (pill === 'asig') return searched_rows.filter(isAsignado);
+    if (pill === 'satisfaccion') return searched_rows.filter(isSatSin);
+    if (pill === 'transferencia') return searched_rows.filter(isTransSin);
     return searched_rows;
   }, [searched_rows, pill]);
 
@@ -1899,9 +1896,9 @@ const AsignarEncuestasTab: React.FC = () => {
     cursor: 'pointer', transition: 'background .15s',
   };
   const pillStyles: Record<PillKey, React.CSSProperties> = {
-    todos: { background: '#111827', color: '#FFFFFF', border: '1px solid #111827' },
-    sin: { background: '#FEF3C7', color: '#D97706', border: '1px solid #FDE68A' },
-    asig: { background: '#D1FAE5', color: '#065F46', border: '1px solid #A7F3D0' },
+    todas: { background: '#111827', color: '#FFFFFF', border: '1px solid #111827' },
+    satisfaccion: { background: '#EFF6FF', color: '#1D4ED8', border: '1px solid #BFDBFE' },
+    transferencia: { background: '#F0FDF4', color: '#15803D', border: '1px solid #BBF7D0' },
   };
   const pillStyle = (key: PillKey): React.CSSProperties =>
     pill === key ? { ...pillBase, ...pillStyles[key] } : pillBase;
@@ -1948,38 +1945,17 @@ const AsignarEncuestasTab: React.FC = () => {
 
       {searched && (
         <>
-          {/* Summary cards */}
-          <div style={{ display: 'flex', gap: 12, marginBottom: 16, flexWrap: 'wrap' }}>
-            <div
-              onClick={() => { setPill('todos'); setPage(1); }}
-              style={{ flex: '1 1 180px', background: '#FFFFFF', border: '1px solid #E5E7EB', borderRadius: 8, padding: '12px 16px', cursor: 'pointer' }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                <ClipboardText size={20} color="#6B7280" weight="regular" />
-                <span style={{ fontFamily: 'Poppins', fontSize: 12, color: '#6B7280' }}>Total Cursos</span>
-              </div>
-              <div style={{ fontFamily: 'Poppins', fontSize: 24, fontWeight: 700, color: '#111827' }}>{totals.total}</div>
-            </div>
-            <div
-              onClick={() => { setPill('sin'); setPage(1); }}
-              style={{ flex: '1 1 180px', background: '#FEF3C7', border: '1px solid #FDE68A', borderRadius: 8, padding: '12px 16px', cursor: 'pointer' }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                <GearSix size={20} color="#D97706" weight="regular" />
-                <span style={{ fontFamily: 'Poppins', fontSize: 12, color: '#D97706' }}>Sin Asignar</span>
-              </div>
-              <div style={{ fontFamily: 'Poppins', fontSize: 24, fontWeight: 700, color: '#D97706' }}>{totals.sin}</div>
-            </div>
-            <div
-              onClick={() => { setPill('asig'); setPage(1); }}
-              style={{ flex: '1 1 180px', background: '#D1FAE5', border: '1px solid #A7F3D0', borderRadius: 8, padding: '12px 16px', cursor: 'pointer' }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                <CheckCircle size={20} color="#065F46" weight="regular" />
-                <span style={{ fontFamily: 'Poppins', fontSize: 12, color: '#065F46' }}>Asignados</span>
-              </div>
-              <div style={{ fontFamily: 'Poppins', fontSize: 24, fontWeight: 700, color: '#065F46' }}>{totals.asig}</div>
-            </div>
+          {/* Filter pills */}
+          <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
+            <span style={pillStyle('todas')} onClick={() => { setPill('todas'); setPage(1); }}>
+              Todas ({counts.todas})
+            </span>
+            <span style={pillStyle('satisfaccion')} onClick={() => { setPill('satisfaccion'); setPage(1); }}>
+              Satisfacción ({counts.satisfaccion})
+            </span>
+            <span style={pillStyle('transferencia')} onClick={() => { setPill('transferencia'); setPage(1); }}>
+              Transferencia ({counts.transferencia})
+            </span>
           </div>
 
 
