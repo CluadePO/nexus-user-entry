@@ -1188,9 +1188,9 @@ const SatisfaccionParticipantesModal: React.FC<{
       ),
     },
     {
-      title: <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#374151', whiteSpace: 'nowrap' }}>RUT Participante</span>,
+      title: <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#1D4D4A', whiteSpace: 'nowrap' }}>RUT Participante</span>,
       dataIndex: 'rut', width: 120,
-      render: (v: string) => <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#374151' }}>{v}</span>,
+      render: (v: string) => <span style={{ fontFamily: 'Poppins', fontSize: 12, color: '#316772' }}>{v}</span>,
     },
     {
       title: <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#1D4D4A', whiteSpace: 'nowrap' }}>Nombre Participante</span>,
