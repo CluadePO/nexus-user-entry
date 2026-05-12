@@ -1270,11 +1270,11 @@ const SatisfaccionParticipantesModal: React.FC<{
             </Button>
           </div>
           <Input
-            prefix={<MagnifyingGlass size={14} color="#9CA3AF" weight="regular" />}
+            prefix={<MagnifyingGlass size={14} color="#A8B3B3" weight="regular" />}
             placeholder="Filtrar por nombre o RUT..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            style={{ width: 240, fontFamily: 'Poppins' }}
+            style={{ width: 240, fontFamily: 'Poppins', borderRadius: 10, borderColor: '#D8E6E2' }}
           />
         </div>
 
