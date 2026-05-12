@@ -1230,16 +1230,16 @@ const SatisfaccionParticipantesModal: React.FC<{
       footer={null}
       title={
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontFamily: 'Poppins' }}>
-          <Users size={20} color={TEAL} weight="regular" />
-          <span style={{ fontSize: 16, fontWeight: 600, color: '#111827' }}>Participantes — Satisfacción</span>
-          <span style={{ background: '#EFF6FF', color: '#1D4ED8', borderRadius: 999, padding: '2px 10px', fontSize: 12, fontWeight: 500, marginLeft: 4 }}>Satisfacción</span>
+          <Users size={20} color="#65BFB1" weight="regular" />
+          <span style={{ fontSize: 16, fontWeight: 600, color: '#1D4D4A' }}>Participantes — Satisfacción</span>
+          <span style={{ background: '#EFF6FF', color: '#1D4ED8', borderRadius: 9999, padding: '2px 10px', fontSize: 12, fontWeight: 500, marginLeft: 4 }}>Satisfacción</span>
         </div>
       }
     >
       <div style={{ fontFamily: 'Poppins' }}>
-        <div style={{ background: '#F0FDF9', borderRadius: 8, padding: '10px 16px', marginBottom: 16 }}>
-          <div style={{ fontSize: 13, fontWeight: 600, color: '#111827' }}>Curso: {row.curso}</div>
-          <div style={{ fontSize: 12, color: '#6B7280' }}>Encuesta: Encuesta de Satisfacción Estándar v2.0</div>
+        <div style={{ background: '#F0FFFA', border: '1px solid #D8E6E2', borderRadius: 16, padding: '12px 16px', marginBottom: 16 }}>
+          <div style={{ fontSize: 13, fontWeight: 600, color: '#1D4D4A' }}>Curso: {row.curso}</div>
+          <div style={{ fontSize: 12, color: '#316772' }}>Encuesta: Encuesta de Satisfacción Estándar v2.0</div>
         </div>
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, gap: 8, flexWrap: 'wrap' }}>
@@ -1248,7 +1248,7 @@ const SatisfaccionParticipantesModal: React.FC<{
               type="primary"
               icon={<CheckSquare size={14} weight="regular" />}
               onClick={() => setList((prev) => prev.map((p) => (p.estado === 'activo' ? { ...p, selected: true } : p)))}
-              style={{ background: TEAL, borderColor: TEAL, display: 'inline-flex', alignItems: 'center', gap: 6 }}
+              style={{ background: '#65BFB1', borderColor: '#65BFB1', color: '#1D4D4A', borderRadius: 10, display: 'inline-flex', alignItems: 'center', gap: 6 }}
             >
               Seleccionar Todos
             </Button>
