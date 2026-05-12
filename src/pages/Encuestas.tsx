@@ -1628,6 +1628,7 @@ const AsignarEncuestasTab: React.FC = () => {
   const [rows, setRows] = useState<AsignarCursoRow[]>(ASIGNAR_DATA);
   const [asignModal, setAsignModal] = useState<{ kind: AsignKind; row: AsignarCursoRow } | null>(null);
   const [previewModal, setPreviewModal] = useState<{ kind: AsignKind; row: AsignarCursoRow } | null>(null);
+  const [emailPreviewModal, setEmailPreviewModal] = useState<{ kind: AsignKind; row: AsignarCursoRow } | null>(null);
   // Per-row asign form state, keyed by `${inscripcion}-${kind}`
   const [asignForms, setAsignForms] = useState<Record<string, AsignFormState>>({});
   // Per-row participants state
