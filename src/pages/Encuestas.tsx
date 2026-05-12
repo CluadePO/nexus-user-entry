@@ -1471,7 +1471,7 @@ const TransferenciaParticipantesModal: React.FC<{
                 size="small"
                 icon={<CheckSquare size={14} weight="regular" />}
                 onClick={() => setList((prev) => prev.map((p) => (p.estado === 'activo' ? { ...p, selected: true } : p)))}
-                style={{ background: TEAL, borderColor: TEAL, display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                style={{ background: '#65BFB1', borderColor: '#65BFB1', color: '#1D4D4A', borderRadius: 10, display: 'inline-flex', alignItems: 'center', gap: 6 }}
               >
                 Seleccionar Todos
               </Button>
