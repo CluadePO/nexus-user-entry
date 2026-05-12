@@ -1592,21 +1592,21 @@ const TransferenciaParticipantesModal: React.FC<{
 
           {pendientes > 0 && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 12 }}>
-              <Warning size={14} color="#F59E0B" weight="fill" />
-              <span style={{ fontFamily: 'Poppins', fontSize: 12, color: '#D97706' }}>
+              <Warning size={14} color="#F0A945" weight="fill" />
+              <span style={{ fontFamily: 'Poppins', fontSize: 12, color: '#F0A945' }}>
                 {pendientes} participantes sin correo de {evaluador ? 'evaluador' : 'jefe'} ingresado
               </span>
             </div>
           )}
         </div>
 
-        <div style={{ position: 'sticky', bottom: 0, background: '#ffffff', borderTop: '1px solid #E5E7EB', padding: '12px 24px' }}>
+        <div style={{ position: 'sticky', bottom: 0, background: '#ffffff', borderTop: '1px solid #D8E6E2', padding: '12px 24px' }}>
           <Button
             type="primary"
             block
             icon={<FloppyDisk size={16} weight="regular" />}
             onClick={handleSave}
-            style={{ background: TEAL, borderColor: TEAL, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+            style={{ background: '#65BFB1', borderColor: '#65BFB1', color: '#1D4D4A', borderRadius: 12, fontFamily: 'Poppins', fontSize: 14, fontWeight: 600, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
           >
             Guardar Participantes
           </Button>
