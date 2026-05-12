@@ -28,6 +28,7 @@ import LiquidacionSence from "./pages/LiquidacionSence";
 import ComiteBipartito from "./pages/ComiteBipartito";
 import ComiteVoto from "./pages/ComiteVoto";
 import EncuestaResponder from "./pages/EncuestaResponder";
+import EncuestaFormulario from "./pages/EncuestaFormulario";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -56,6 +57,7 @@ const App = () => (
                 <Route path="/comite/voto/:comiteId/1" element={<ComiteVoto tipo={1} />} />
                 <Route path="/comite/voto/:comiteId/2" element={<ComiteVoto tipo={2} />} />
                 <Route path="/encuestas/responder/:encuestaId" element={<EncuestaResponder />} />
+                <Route path="/encuestas/responder/:encuestaId/formulario" element={<EncuestaFormulario />} />
                 <Route path="/" element={<Navigate to="/dashboard" replace />} />
                 <Route element={<AppLayout />}>
                 <Route path="/dashboard" element={<Dashboard />} />
