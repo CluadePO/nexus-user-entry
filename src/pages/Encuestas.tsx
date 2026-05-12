@@ -1289,17 +1289,17 @@ const SatisfaccionParticipantesModal: React.FC<{
           pagination={visible.length > 10 ? { pageSize: 10, size: 'small' } : false}
           onRow={(r: SatisParticipante) => ({
             style: r.estado === 'eliminado'
-              ? { background: '#FEF2F2' }
+              ? { background: '#FFF1F0' }
               : r.estado === 'anulado'
-                ? { background: '#FFF7ED' }
+                ? { background: '#FFFBE6' }
                 : undefined,
           })}
         />
 
         {pendientes > 0 && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 12 }}>
-            <Warning size={14} color="#F59E0B" weight="fill" />
-            <span style={{ fontFamily: 'Poppins', fontSize: 12, color: '#D97706' }}>
+            <Warning size={14} color="#F0A945" weight="fill" />
+            <span style={{ fontFamily: 'Poppins', fontSize: 12, color: '#F0A945' }}>
               {pendientes} participantes sin correo ingresado
             </span>
           </div>
@@ -1310,7 +1310,7 @@ const SatisfaccionParticipantesModal: React.FC<{
           block
           icon={<FloppyDisk size={16} weight="regular" />}
           onClick={handleSave}
-          style={{ background: TEAL, borderColor: TEAL, marginTop: 16, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+          style={{ background: '#65BFB1', borderColor: '#65BFB1', color: '#1D4D4A', borderRadius: 12, marginTop: 16, fontFamily: 'Poppins', fontSize: 14, fontWeight: 600, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
         >
           Guardar Participantes
         </Button>
