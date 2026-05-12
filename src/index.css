@@ -229,11 +229,12 @@
 /* Encuestas Segmented (Jefe/Evaluador) — active item teal */
 .encuestas-segmented-teal .ant-segmented-item-selected {
   background: #65BFB1 !important;
+  border-radius: 8px !important;
 }
 .encuestas-segmented-teal .ant-segmented-item-selected .ant-segmented-item-label,
 .encuestas-segmented-teal .ant-segmented-item-selected .ant-segmented-item-label * {
-  color: #ffffff !important;
+  color: #1D4D4A !important;
 }
 .encuestas-segmented-teal .ant-segmented-item:not(.ant-segmented-item-selected) .ant-segmented-item-label {
-  color: #6B7280;
+  color: #316772;
 }
