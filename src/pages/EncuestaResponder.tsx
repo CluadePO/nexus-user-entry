@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Buildings } from '@phosphor-icons/react';
 import { EncuestaEmailContent } from '@/components/encuestas/EncuestaEmailContent';
-import { PreviewModal, ENCUESTA_INFO } from '@/pages/Encuestas';
 
-const Header: React.FC = () => (
+export const ResponderHeader: React.FC = () => (
   <header
     className="fixed top-0 left-0 right-0 z-50 bg-white flex items-center justify-between px-6"
     style={{ borderBottom: '1px solid #E5E7EB', height: 64, fontFamily: 'Poppins, sans-serif' }}
@@ -34,7 +33,7 @@ const Header: React.FC = () => (
   </header>
 );
 
-const Footer: React.FC = () => (
+export const ResponderFooter: React.FC = () => (
   <footer
     className="fixed bottom-0 left-0 right-0 bg-white flex items-center justify-center px-6"
     style={{
@@ -51,9 +50,8 @@ const Footer: React.FC = () => (
 
 const EncuestaResponder: React.FC = () => {
   const { encuestaId } = useParams<{ encuestaId: string }>();
-  const [previewOpen, setPreviewOpen] = useState(false);
+  const navigate = useNavigate();
 
-  // Datos simulados
   const data = {
     participante: 'HILDA ZIERATH COLINIR',
     curso: 'INDUCCION HSE MINERA ESCONDIDA',
@@ -61,11 +59,9 @@ const EncuestaResponder: React.FC = () => {
     relator: 'Prueba Relator',
   };
 
-  const info = ENCUESTA_INFO['Satisfacción'];
-
   return (
     <div style={{ minHeight: '100vh', background: '#F9FAFB', paddingTop: 64, paddingBottom: 48 }}>
-      <Header />
+      <ResponderHeader />
       <main
         style={{
           maxWidth: 600,
@@ -77,23 +73,12 @@ const EncuestaResponder: React.FC = () => {
           fontFamily: 'Poppins, sans-serif',
         }}
       >
-        <EncuestaEmailContent data={data} onResponderClick={() => setPreviewOpen(true)} />
+        <EncuestaEmailContent
+          data={data}
+          onResponderClick={() => navigate(`/encuestas/responder/${encuestaId}/formulario`)}
+        />
       </main>
-      <Footer />
-
-      <PreviewModal
-        open={previewOpen}
-        onClose={() => setPreviewOpen(false)}
-        encuesta={{
-          id: info.id,
-          nombre: info.nombre,
-          origen: 'OTIC',
-          cliente: '',
-          tipo: 'Satisfacción',
-          version: 2,
-          vigente: 'Si',
-        } as any}
-      />
+      <ResponderFooter />
     </div>
   );
 };
