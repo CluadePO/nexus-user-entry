@@ -1079,14 +1079,14 @@ const EmailInput: React.FC<{ value: string; placeholder: string; onChange: (v: s
   const valid = !empty && EMAIL_RE.test(value.trim());
   const invalid = !empty && !valid;
 
-  let borderColor = '#D1D5DB';
+  let borderColor = '#D8E6E2';
   let tooltip = '';
   if (forceError && empty) {
-    borderColor = '#F97316'; tooltip = 'Correo requerido para guardar';
+    borderColor = '#F0A945'; tooltip = 'Correo requerido para guardar';
   } else if (touched) {
-    if (empty) { borderColor = '#F59E0B'; tooltip = 'Correo pendiente de ingresar'; }
-    else if (invalid) { borderColor = '#EF4444'; tooltip = 'Formato de correo inválido. Ej: nombre@empresa.cl'; }
-    else if (showCheck) { borderColor = '#10B981'; }
+    if (empty) { borderColor = '#F0A945'; tooltip = 'Correo pendiente de ingresar'; }
+    else if (invalid) { borderColor = '#E55157'; tooltip = 'Formato de correo inválido. Ej: nombre@empresa.cl'; }
+    else if (showCheck) { borderColor = '#97D972'; }
   }
 
   return (
