@@ -1203,7 +1203,7 @@ const SatisfaccionParticipantesModal: React.FC<{
       ),
     },
     {
-      title: <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#374151', whiteSpace: 'nowrap' }}>Correo Participante</span>,
+      title: <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#1D4D4A', whiteSpace: 'nowrap' }}>Correo Participante</span>,
       dataIndex: 'correo', width: 240,
       render: (v: string, r: SatisParticipante) => (
         <div style={{ width: 220 }}>
