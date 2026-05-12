@@ -901,6 +901,14 @@ const AsignarModal: React.FC<{
                 </span>
               )}
             </Button>
+            <Button
+              block
+              onClick={onPreviewEmail}
+              style={{ marginTop: 8, borderColor: '#99F6E4', color: TEAL, background: '#FFFFFF', fontFamily: 'Poppins', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
+              icon={<EnvelopeSimple size={16} weight="regular" color={TEAL} />}
+            >
+              Vista previa del correo
+            </Button>
             {sinCorreo > 0 && (
               <div style={{
                 marginTop: 12,
