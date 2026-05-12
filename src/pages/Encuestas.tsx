@@ -1403,8 +1403,8 @@ const TransferenciaParticipantesModal: React.FC<{
   const showSearch = visible.length > 8 || search.trim().length > 0;
 
   const exclBtnStyle = (active: boolean) => active
-    ? { background: '#FEE2E2', color: '#991B1B', borderColor: '#FECACA', display: 'inline-flex', alignItems: 'center', gap: 6 } as const
-    : { display: 'inline-flex', alignItems: 'center', gap: 6 } as const;
+    ? { background: '#FFF1F0', color: '#E55157', borderColor: '#E55157', borderRadius: 10, display: 'inline-flex', alignItems: 'center', gap: 6 } as const
+    : { background: '#FFFFFF', color: '#E55157', borderColor: '#E55157', borderRadius: 10, display: 'inline-flex', alignItems: 'center', gap: 6 } as const;
 
   return (
     <Modal
