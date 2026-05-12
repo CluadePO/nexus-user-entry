@@ -1105,10 +1105,10 @@ const EmailInput: React.FC<{ value: string; placeholder: string; onChange: (v: s
               setTimeout(() => setShowCheck(false), 1500);
             }
           }}
-          style={{ width: '100%', borderColor, fontFamily: 'Poppins' }}
+          style={{ width: '100%', borderColor, borderRadius: 10, fontFamily: 'Poppins', color: !empty && valid ? '#1D4D4A' : undefined }}
         />
         {showCheck && (
-          <CheckCircle size={14} color="#10B981" weight="fill" style={{ position: 'absolute', right: 6, top: '50%', transform: 'translateY(-50%)' }} />
+          <CheckCircle size={14} color="#97D972" weight="fill" style={{ position: 'absolute', right: 6, top: '50%', transform: 'translateY(-50%)' }} />
         )}
       </div>
     </Tooltip>
