@@ -1454,10 +1454,10 @@ const TransferenciaParticipantesModal: React.FC<{
                   ),
                 },
               ]}
-              style={{ background: '#F3F4F6' }}
+              style={{ background: '#E4F2EE' }}
               className="encuestas-segmented-teal"
             />
-            <div style={{ textAlign: 'center', fontFamily: 'Poppins', fontSize: 12, color: '#6B7280', marginTop: 8 }}>
+            <div style={{ textAlign: 'center', fontFamily: 'Poppins', fontSize: 12, color: '#316772', marginTop: 8 }}>
               {evaluador
                 ? 'El correo se enviará al evaluador asignado al participante'
                 : 'El correo se enviará al jefe directo del participante'}
