@@ -1172,10 +1172,10 @@ const SatisfaccionParticipantesModal: React.FC<{
 
   const estadoBadge = (estado: 'activo' | 'eliminado' | 'anulado') => {
     if (estado === 'eliminado') {
-      return <span style={{ background: '#FEE2E2', color: '#991B1B', borderRadius: 999, padding: '2px 8px', fontFamily: 'Poppins', fontSize: 11, fontWeight: 500 }}>Eliminado</span>;
+      return <span style={{ background: '#FFF1F0', color: '#E55157', borderRadius: 9999, padding: '2px 8px', fontFamily: 'Poppins', fontSize: 11, fontWeight: 500 }}>Eliminado</span>;
     }
     if (estado === 'anulado') {
-      return <span style={{ background: '#FED7AA', color: '#9A3412', borderRadius: 999, padding: '2px 8px', fontFamily: 'Poppins', fontSize: 11, fontWeight: 500 }}>Anulado</span>;
+      return <span style={{ background: '#FFFBE6', color: '#F0A945', borderRadius: 9999, padding: '2px 8px', fontFamily: 'Poppins', fontSize: 11, fontWeight: 500 }}>Anulado</span>;
     }
     return null;
   };
