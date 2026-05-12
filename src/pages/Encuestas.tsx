@@ -1193,11 +1193,11 @@ const SatisfaccionParticipantesModal: React.FC<{
       render: (v: string) => <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#374151' }}>{v}</span>,
     },
     {
-      title: <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#374151', whiteSpace: 'nowrap' }}>Nombre Participante</span>,
+      title: <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#1D4D4A', whiteSpace: 'nowrap' }}>Nombre Participante</span>,
       dataIndex: 'nombre',
       render: (v: string, r: SatisParticipante) => (
         <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 500, color: '#111827' }}>{v}</span>
+          <span style={{ fontFamily: 'Poppins', fontSize: 14, fontWeight: 600, color: '#1D4D4A' }}>{v}</span>
           {estadoBadge(r.estado)}
         </span>
       ),
