@@ -2244,6 +2244,54 @@ const AsignarEncuestasTab: React.FC = () => {
         } : null}
       />
 
+      {(() => {
+        if (!emailPreviewModal) return null;
+        const { kind, row } = emailPreviewModal;
+        const form = getForm(row.inscripcion, kind);
+        // Pick first participant from the appropriate list
+        let firstName = 'Participante';
+        if (kind === 'Satisfacción') {
+          const list = satisParts[row.inscripcion] ?? buildSatisDefault(row.inscripcion);
+          firstName = list[0]?.nombre || firstName;
+        } else {
+          const list = transParts[row.inscripcion] ?? buildTransDefault(row.inscripcion);
+          firstName = list[0]?.nombre || firstName;
+        }
+        const fechaStr = form.fecha ? dayjs(form.fecha).format('DD-MM-YYYY') : '—';
+        return (
+          <Modal
+            open={!!emailPreviewModal}
+            onCancel={() => setEmailPreviewModal(null)}
+            width={640}
+            title={
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontFamily: 'Poppins' }}>
+                <EnvelopeSimple size={20} color={TEAL} weight="regular" />
+                <span style={{ fontSize: 16, fontWeight: 600, color: '#111827' }}>Vista previa del correo</span>
+              </span>
+            }
+            footer={[
+              <Button key="close" onClick={() => setEmailPreviewModal(null)} block>
+                Cerrar
+              </Button>,
+            ]}
+          >
+            <div style={{ background: '#F9FAFB', padding: 24, borderRadius: 8 }}>
+              <div style={{ background: '#FFFFFF', padding: 32, borderRadius: 12, boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}>
+                <EncuestaEmailContent
+                  data={{
+                    participante: firstName,
+                    curso: row.curso,
+                    fecha: fechaStr,
+                    relator: form.relator || '—',
+                  }}
+                  onResponderClick={() => {}}
+                />
+              </div>
+            </div>
+          </Modal>
+        );
+      })()}
+
       <Modal
         open={!!resendModal}
         onCancel={() => { setResendModal(null); setResendConfirmOpen(false); }}
