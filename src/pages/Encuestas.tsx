@@ -2121,6 +2121,10 @@ const AsignarEncuestasTab: React.FC = () => {
               setParticipantsModal({ kind: asignModal.kind, row: asignModal.row });
               setAsignModal(null);
             }}
+            onPreviewEmail={() => {
+              if (!asignModal) return;
+              setEmailPreviewModal({ kind: asignModal.kind, row: asignModal.row });
+            }}
             onSave={() => {
               if (!asignModal) return;
               const { kind, row } = asignModal;
@@ -2129,8 +2133,36 @@ const AsignarEncuestasTab: React.FC = () => {
                   ? { ...r, [kind === 'Satisfacción' ? 'satisfaccion' : 'transferencia']: 'asignada' as const }
                   : r
               ));
+              // Compute participants with email registered
+              let withEmail = 0;
+              if (kind === 'Satisfacción') {
+                const list = satisParts[row.inscripcion] ?? buildSatisDefault(row.inscripcion);
+                const excl = exclusionState[`${row.inscripcion}-Satisfacción`] ?? { excluirEliminados: false, excluirAnulados: false };
+                withEmail = list.filter((p) =>
+                  !(excl.excluirEliminados && p.estado === 'eliminado') &&
+                  !(excl.excluirAnulados && p.estado === 'anulado') &&
+                  p.correo.trim() && EMAIL_RE.test(p.correo.trim())
+                ).length;
+              } else {
+                const list = transParts[row.inscripcion] ?? buildTransDefault(row.inscripcion);
+                const excl = exclusionState[`${row.inscripcion}-Transferencia`] ?? { excluirEliminados: false, excluirAnulados: false };
+                const evalKind = transEvaluador[row.inscripcion] ?? false;
+                const correoKey = evalKind ? 'correoEvaluador' : 'correoJefe';
+                withEmail = list.filter((p) =>
+                  !(excl.excluirEliminados && p.estado === 'eliminado') &&
+                  !(excl.excluirAnulados && p.estado === 'anulado') &&
+                  p[correoKey].trim() && EMAIL_RE.test(p[correoKey].trim())
+                ).length;
+              }
               setAsignModal(null);
               toast.success(`Encuesta de ${kind} asignada correctamente`);
+              setTimeout(() => {
+                toast.info(`Correo enviado a ${withEmail} participantes con el link de la encuesta.`, {
+                  duration: 4000,
+                  icon: <EnvelopeSimple size={18} color="#2563EB" weight="regular" />,
+                  style: { background: '#EFF6FF', border: '1px solid #BFDBFE', color: '#1E3A8A' },
+                });
+              }, 200);
             }}
           />
         );
