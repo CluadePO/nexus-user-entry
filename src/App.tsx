@@ -55,6 +55,7 @@ const App = () => (
                 <Route path="/login" element={<Login />} />
                 <Route path="/comite/voto/:comiteId/1" element={<ComiteVoto tipo={1} />} />
                 <Route path="/comite/voto/:comiteId/2" element={<ComiteVoto tipo={2} />} />
+                <Route path="/encuestas/responder/:encuestaId" element={<EncuestaResponder />} />
                 <Route path="/" element={<Navigate to="/dashboard" replace />} />
                 <Route element={<AppLayout />}>
                 <Route path="/dashboard" element={<Dashboard />} />
