@@ -262,7 +262,7 @@ const groupKeyOf = (n: string) => n.replace(/\s*\(ver\.\d+\)\s*$/i, '').trim().t
 
 const TEAL = '#65BFB1';
 
-const PreviewModal: React.FC<{ open: boolean; onClose: () => void; encuesta: EncuestaRow | null }> = ({ open, onClose, encuesta }) => {
+export const PreviewModal: React.FC<{ open: boolean; onClose: () => void; encuesta: EncuestaRow | null }> = ({ open, onClose, encuesta }) => {
   if (!encuesta) return null;
   const scaleHeader = (
     <div className="flex gap-2 items-center" style={{ fontFamily: 'Poppins', fontSize: 11, color: '#6B7280' }}>
