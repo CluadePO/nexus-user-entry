@@ -753,7 +753,7 @@ const ASIGNAR_DATA: AsignarCursoRow[] = [
 type PillKey = 'todas' | 'satisfaccion' | 'transferencia';
 type AsignKind = 'Satisfacción' | 'Transferencia';
 
-const ENCUESTA_INFO: Record<AsignKind, { nombre: string; id: number }> = {
+export const ENCUESTA_INFO: Record<AsignKind, { nombre: string; id: number }> = {
   'Satisfacción': { nombre: 'Encuesta de Satisfacción Estándar v2.0', id: 4728 },
   'Transferencia': { nombre: 'Encuesta de Transferencia Estándar v2.0', id: 4484 },
 };
