@@ -38,6 +38,7 @@ import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { useOTICFilter } from '@/context/OTICFilterContext';
+import { EncuestaEmailContent } from '@/components/encuestas/EncuestaEmailContent';
 
 interface EvalRow {
   inscripcion: number;
