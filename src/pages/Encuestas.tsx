@@ -38,6 +38,7 @@ import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { useOTICFilter } from '@/context/OTICFilterContext';
+import { EncuestaEmailContent } from '@/components/encuestas/EncuestaEmailContent';
 
 interface EvalRow {
   inscripcion: number;
@@ -262,7 +263,7 @@ const groupKeyOf = (n: string) => n.replace(/\s*\(ver\.\d+\)\s*$/i, '').trim().t
 
 const TEAL = '#65BFB1';
 
-const PreviewModal: React.FC<{ open: boolean; onClose: () => void; encuesta: EncuestaRow | null }> = ({ open, onClose, encuesta }) => {
+export const PreviewModal: React.FC<{ open: boolean; onClose: () => void; encuesta: EncuestaRow | null }> = ({ open, onClose, encuesta }) => {
   if (!encuesta) return null;
   const scaleHeader = (
     <div className="flex gap-2 items-center" style={{ fontFamily: 'Poppins', fontSize: 11, color: '#6B7280' }}>
@@ -753,7 +754,7 @@ const ASIGNAR_DATA: AsignarCursoRow[] = [
 type PillKey = 'todas' | 'satisfaccion' | 'transferencia';
 type AsignKind = 'Satisfacción' | 'Transferencia';
 
-const ENCUESTA_INFO: Record<AsignKind, { nombre: string; id: number }> = {
+export const ENCUESTA_INFO: Record<AsignKind, { nombre: string; id: number }> = {
   'Satisfacción': { nombre: 'Encuesta de Satisfacción Estándar v2.0', id: 4728 },
   'Transferencia': { nombre: 'Encuesta de Transferencia Estándar v2.0', id: 4484 },
 };
@@ -782,7 +783,8 @@ const AsignarModal: React.FC<{
   onClose: () => void;
   onSave: () => void;
   onOpenParticipants: () => void;
-}> = ({ open, kind, row, form, sinCorreo, totalParticipantes, onChange, onClose, onSave, onOpenParticipants }) => {
+  onPreviewEmail: () => void;
+}> = ({ open, kind, row, form, sinCorreo, totalParticipantes, onChange, onClose, onSave, onOpenParticipants, onPreviewEmail }) => {
   const [errRelator, setErrRelator] = useState(false);
   const [errFecha, setErrFecha] = useState(false);
 
@@ -899,6 +901,14 @@ const AsignarModal: React.FC<{
                   {form.participantesCount} participantes
                 </span>
               )}
+            </Button>
+            <Button
+              block
+              onClick={onPreviewEmail}
+              style={{ marginTop: 8, borderColor: '#99F6E4', color: TEAL, background: '#FFFFFF', fontFamily: 'Poppins', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
+              icon={<EnvelopeSimple size={16} weight="regular" color={TEAL} />}
+            >
+              Vista previa del correo
             </Button>
             {sinCorreo > 0 && (
               <div style={{
@@ -1619,6 +1629,7 @@ const AsignarEncuestasTab: React.FC = () => {
   const [rows, setRows] = useState<AsignarCursoRow[]>(ASIGNAR_DATA);
   const [asignModal, setAsignModal] = useState<{ kind: AsignKind; row: AsignarCursoRow } | null>(null);
   const [previewModal, setPreviewModal] = useState<{ kind: AsignKind; row: AsignarCursoRow } | null>(null);
+  const [emailPreviewModal, setEmailPreviewModal] = useState<{ kind: AsignKind; row: AsignarCursoRow } | null>(null);
   // Per-row asign form state, keyed by `${inscripcion}-${kind}`
   const [asignForms, setAsignForms] = useState<Record<string, AsignFormState>>({});
   // Per-row participants state
@@ -2111,6 +2122,10 @@ const AsignarEncuestasTab: React.FC = () => {
               setParticipantsModal({ kind: asignModal.kind, row: asignModal.row });
               setAsignModal(null);
             }}
+            onPreviewEmail={() => {
+              if (!asignModal) return;
+              setEmailPreviewModal({ kind: asignModal.kind, row: asignModal.row });
+            }}
             onSave={() => {
               if (!asignModal) return;
               const { kind, row } = asignModal;
@@ -2119,8 +2134,36 @@ const AsignarEncuestasTab: React.FC = () => {
                   ? { ...r, [kind === 'Satisfacción' ? 'satisfaccion' : 'transferencia']: 'asignada' as const }
                   : r
               ));
+              // Compute participants with email registered
+              let withEmail = 0;
+              if (kind === 'Satisfacción') {
+                const list = satisParts[row.inscripcion] ?? buildSatisDefault(row.inscripcion);
+                const excl = exclusionState[`${row.inscripcion}-Satisfacción`] ?? { excluirEliminados: false, excluirAnulados: false };
+                withEmail = list.filter((p) =>
+                  !(excl.excluirEliminados && p.estado === 'eliminado') &&
+                  !(excl.excluirAnulados && p.estado === 'anulado') &&
+                  p.correo.trim() && EMAIL_RE.test(p.correo.trim())
+                ).length;
+              } else {
+                const list = transParts[row.inscripcion] ?? buildTransDefault(row.inscripcion);
+                const excl = exclusionState[`${row.inscripcion}-Transferencia`] ?? { excluirEliminados: false, excluirAnulados: false };
+                const evalKind = transEvaluador[row.inscripcion] ?? false;
+                const correoKey = evalKind ? 'correoEvaluador' : 'correoJefe';
+                withEmail = list.filter((p) =>
+                  !(excl.excluirEliminados && p.estado === 'eliminado') &&
+                  !(excl.excluirAnulados && p.estado === 'anulado') &&
+                  p[correoKey].trim() && EMAIL_RE.test(p[correoKey].trim())
+                ).length;
+              }
               setAsignModal(null);
               toast.success(`Encuesta de ${kind} asignada correctamente`);
+              setTimeout(() => {
+                toast.info(`Correo enviado a ${withEmail} participantes con el link de la encuesta.`, {
+                  duration: 4000,
+                  icon: <EnvelopeSimple size={18} color="#2563EB" weight="regular" />,
+                  style: { background: '#EFF6FF', border: '1px solid #BFDBFE', color: '#1E3A8A' },
+                });
+              }, 200);
             }}
           />
         );
@@ -2201,6 +2244,54 @@ const AsignarEncuestasTab: React.FC = () => {
           vigente: 'Si',
         } : null}
       />
+
+      {(() => {
+        if (!emailPreviewModal) return null;
+        const { kind, row } = emailPreviewModal;
+        const form = getForm(row.inscripcion, kind);
+        // Pick first participant from the appropriate list
+        let firstName = 'Participante';
+        if (kind === 'Satisfacción') {
+          const list = satisParts[row.inscripcion] ?? buildSatisDefault(row.inscripcion);
+          firstName = list[0]?.nombre || firstName;
+        } else {
+          const list = transParts[row.inscripcion] ?? buildTransDefault(row.inscripcion);
+          firstName = list[0]?.nombre || firstName;
+        }
+        const fechaStr = form.fecha ? dayjs(form.fecha).format('DD-MM-YYYY') : '—';
+        return (
+          <Modal
+            open={!!emailPreviewModal}
+            onCancel={() => setEmailPreviewModal(null)}
+            width={640}
+            title={
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontFamily: 'Poppins' }}>
+                <EnvelopeSimple size={20} color={TEAL} weight="regular" />
+                <span style={{ fontSize: 16, fontWeight: 600, color: '#111827' }}>Vista previa del correo</span>
+              </span>
+            }
+            footer={[
+              <Button key="close" onClick={() => setEmailPreviewModal(null)} block>
+                Cerrar
+              </Button>,
+            ]}
+          >
+            <div style={{ background: '#F9FAFB', padding: 24, borderRadius: 8 }}>
+              <div style={{ background: '#FFFFFF', padding: 32, borderRadius: 12, boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}>
+                <EncuestaEmailContent
+                  data={{
+                    participante: firstName,
+                    curso: row.curso,
+                    fecha: fechaStr,
+                    relator: form.relator || '—',
+                  }}
+                  onResponderClick={() => {}}
+                />
+              </div>
+            </div>
+          </Modal>
+        );
+      })()}
 
       <Modal
         open={!!resendModal}
