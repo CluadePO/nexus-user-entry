@@ -751,7 +751,7 @@ const ASIGNAR_DATA: AsignarCursoRow[] = [
   { inscripcion: 2177416, sc: null, sencenet: null, inicio: '05/03/26', termino: '05/03/26', curso: 'Capacitación Teórica práctica sobre uso de extintores', tipo: 'Curso Interno', modalidad: 'E-Learning', participantes: 9, satisfaccion: 'asignada', transferencia: 'asignada' },
 ];
 
-type PillKey = 'todas' | 'satisfaccion' | 'transferencia';
+
 type AsignKind = 'Satisfacción' | 'Transferencia';
 
 export const ENCUESTA_INFO: Record<AsignKind, { nombre: string; id: number }> = {
@@ -1624,7 +1624,7 @@ const AsignarEncuestasTab: React.FC = () => {
   const [search, setSearch] = useState('');
   const [pageSize, setPageSize] = useState(10);
   const [page, setPage] = useState(1);
-  const [pill, setPill] = useState<PillKey>('todas');
+  
   const [showTech, setShowTech] = useState(false);
   const [rows, setRows] = useState<AsignarCursoRow[]>(ASIGNAR_DATA);
   const [asignModal, setAsignModal] = useState<{ kind: AsignKind; row: AsignarCursoRow } | null>(null);
@@ -1671,7 +1671,6 @@ const AsignarEncuestasTab: React.FC = () => {
   useEffect(() => {
     setSearch('');
     setPage(1);
-    setPill('todas');
     setDateError(false);
     if (selectedHoldingId && selectedCompanyId) {
       setDates(currentMonthRange());
@@ -1708,17 +1707,7 @@ const AsignarEncuestasTab: React.FC = () => {
   const isSatSin = (r: AsignarCursoRow) => r.satisfaccion === 'sin_asignar';
   const isTransSin = (r: AsignarCursoRow) => r.transferencia === 'sin_asignar';
 
-  const counts = useMemo(() => ({
-    todas: searched_rows.length,
-    satisfaccion: searched_rows.filter(isSatSin).length,
-    transferencia: searched_rows.filter(isTransSin).length,
-  }), [searched_rows]);
-
-  const filtered = useMemo(() => {
-    if (pill === 'satisfaccion') return searched_rows.filter(isSatSin);
-    if (pill === 'transferencia') return searched_rows.filter(isTransSin);
-    return searched_rows;
-  }, [searched_rows, pill]);
+  const filtered = useMemo(() => searched_rows, [searched_rows]);
 
   const paged = useMemo(() => {
     const start = (page - 1) * pageSize;
@@ -1925,21 +1914,6 @@ const AsignarEncuestasTab: React.FC = () => {
     );
   }
 
-  const pillBase: React.CSSProperties = {
-    display: 'inline-flex', alignItems: 'center', gap: 6,
-    background: '#F3F4F6', color: '#6B7280',
-    border: '1px solid #E5E7EB', borderRadius: 999,
-    padding: '4px 16px', fontFamily: 'Poppins', fontSize: 13, fontWeight: 500,
-    cursor: 'pointer', transition: 'background .15s',
-  };
-  const pillStyles: Record<PillKey, React.CSSProperties> = {
-    todas: { background: '#111827', color: '#FFFFFF', border: '1px solid #111827' },
-    satisfaccion: { background: '#EFF6FF', color: '#1D4ED8', border: '1px solid #BFDBFE' },
-    transferencia: { background: '#F0FDF4', color: '#15803D', border: '1px solid #BBF7D0' },
-  };
-  const pillStyle = (key: PillKey): React.CSSProperties =>
-    pill === key ? { ...pillBase, ...pillStyles[key] } : pillBase;
-
   return (
     <div style={{ fontFamily: 'Poppins, sans-serif' }}>
       <div style={{ marginBottom: 24 }}>
@@ -1982,24 +1956,6 @@ const AsignarEncuestasTab: React.FC = () => {
 
       {searched && (
         <>
-          {/* Filter pills */}
-          <div style={{ display: 'flex', gap: 8, marginBottom: 16, flexWrap: 'wrap' }}>
-            <span style={pillStyle('todas')} onClick={() => { setPill('todas'); setPage(1); }}>
-              Todas ({counts.todas})
-            </span>
-            <Tooltip title="Cursos con encuesta de Satisfacción pendiente de asignar">
-              <span style={pillStyle('satisfaccion')} onClick={() => { setPill('satisfaccion'); setPage(1); }}>
-                Satisfacción ({counts.satisfaccion})
-              </span>
-            </Tooltip>
-            <Tooltip title="Cursos con encuesta de Transferencia pendiente de asignar">
-              <span style={pillStyle('transferencia')} onClick={() => { setPill('transferencia'); setPage(1); }}>
-                Transferencia ({counts.transferencia})
-              </span>
-            </Tooltip>
-          </div>
-
-
           {/* Toolbar */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12, gap: 12, flexWrap: 'wrap' }}>
             <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>
