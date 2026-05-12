@@ -1079,14 +1079,14 @@ const EmailInput: React.FC<{ value: string; placeholder: string; onChange: (v: s
   const valid = !empty && EMAIL_RE.test(value.trim());
   const invalid = !empty && !valid;
 
-  let borderColor = '#D1D5DB';
+  let borderColor = '#D8E6E2';
   let tooltip = '';
   if (forceError && empty) {
-    borderColor = '#F97316'; tooltip = 'Correo requerido para guardar';
+    borderColor = '#F0A945'; tooltip = 'Correo requerido para guardar';
   } else if (touched) {
-    if (empty) { borderColor = '#F59E0B'; tooltip = 'Correo pendiente de ingresar'; }
-    else if (invalid) { borderColor = '#EF4444'; tooltip = 'Formato de correo inválido. Ej: nombre@empresa.cl'; }
-    else if (showCheck) { borderColor = '#10B981'; }
+    if (empty) { borderColor = '#F0A945'; tooltip = 'Correo pendiente de ingresar'; }
+    else if (invalid) { borderColor = '#E55157'; tooltip = 'Formato de correo inválido. Ej: nombre@empresa.cl'; }
+    else if (showCheck) { borderColor = '#97D972'; }
   }
 
   return (
@@ -1105,10 +1105,10 @@ const EmailInput: React.FC<{ value: string; placeholder: string; onChange: (v: s
               setTimeout(() => setShowCheck(false), 1500);
             }
           }}
-          style={{ width: '100%', borderColor, fontFamily: 'Poppins' }}
+          style={{ width: '100%', borderColor, borderRadius: 10, fontFamily: 'Poppins', color: !empty && valid ? '#1D4D4A' : undefined }}
         />
         {showCheck && (
-          <CheckCircle size={14} color="#10B981" weight="fill" style={{ position: 'absolute', right: 6, top: '50%', transform: 'translateY(-50%)' }} />
+          <CheckCircle size={14} color="#97D972" weight="fill" style={{ position: 'absolute', right: 6, top: '50%', transform: 'translateY(-50%)' }} />
         )}
       </div>
     </Tooltip>
@@ -1172,10 +1172,10 @@ const SatisfaccionParticipantesModal: React.FC<{
 
   const estadoBadge = (estado: 'activo' | 'eliminado' | 'anulado') => {
     if (estado === 'eliminado') {
-      return <span style={{ background: '#FEE2E2', color: '#991B1B', borderRadius: 999, padding: '2px 8px', fontFamily: 'Poppins', fontSize: 11, fontWeight: 500 }}>Eliminado</span>;
+      return <span style={{ background: '#FFF1F0', color: '#E55157', borderRadius: 9999, padding: '2px 8px', fontFamily: 'Poppins', fontSize: 11, fontWeight: 500 }}>Eliminado</span>;
     }
     if (estado === 'anulado') {
-      return <span style={{ background: '#FED7AA', color: '#9A3412', borderRadius: 999, padding: '2px 8px', fontFamily: 'Poppins', fontSize: 11, fontWeight: 500 }}>Anulado</span>;
+      return <span style={{ background: '#FFFBE6', color: '#F0A945', borderRadius: 9999, padding: '2px 8px', fontFamily: 'Poppins', fontSize: 11, fontWeight: 500 }}>Anulado</span>;
     }
     return null;
   };
@@ -1188,22 +1188,22 @@ const SatisfaccionParticipantesModal: React.FC<{
       ),
     },
     {
-      title: <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#374151', whiteSpace: 'nowrap' }}>RUT Participante</span>,
+      title: <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#1D4D4A', whiteSpace: 'nowrap' }}>RUT Participante</span>,
       dataIndex: 'rut', width: 120,
-      render: (v: string) => <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#374151' }}>{v}</span>,
+      render: (v: string) => <span style={{ fontFamily: 'Poppins', fontSize: 12, color: '#316772' }}>{v}</span>,
     },
     {
-      title: <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#374151', whiteSpace: 'nowrap' }}>Nombre Participante</span>,
+      title: <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#1D4D4A', whiteSpace: 'nowrap' }}>Nombre Participante</span>,
       dataIndex: 'nombre',
       render: (v: string, r: SatisParticipante) => (
         <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 500, color: '#111827' }}>{v}</span>
+          <span style={{ fontFamily: 'Poppins', fontSize: 14, fontWeight: 600, color: '#1D4D4A' }}>{v}</span>
           {estadoBadge(r.estado)}
         </span>
       ),
     },
     {
-      title: <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#374151', whiteSpace: 'nowrap' }}>Correo Participante</span>,
+      title: <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 600, color: '#1D4D4A', whiteSpace: 'nowrap' }}>Correo Participante</span>,
       dataIndex: 'correo', width: 240,
       render: (v: string, r: SatisParticipante) => (
         <div style={{ width: 220 }}>
@@ -1219,8 +1219,8 @@ const SatisfaccionParticipantesModal: React.FC<{
   ];
 
   const exclBtnStyle = (active: boolean) => active
-    ? { background: '#FEE2E2', color: '#991B1B', borderColor: '#FECACA', display: 'inline-flex', alignItems: 'center', gap: 6 } as const
-    : { display: 'inline-flex', alignItems: 'center', gap: 6 } as const;
+    ? { background: '#FFF1F0', color: '#E55157', borderColor: '#E55157', borderRadius: 10, display: 'inline-flex', alignItems: 'center', gap: 6 } as const
+    : { background: '#FFFFFF', color: '#E55157', borderColor: '#E55157', borderRadius: 10, display: 'inline-flex', alignItems: 'center', gap: 6 } as const;
 
   return (
     <Modal
@@ -1230,16 +1230,16 @@ const SatisfaccionParticipantesModal: React.FC<{
       footer={null}
       title={
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontFamily: 'Poppins' }}>
-          <Users size={20} color={TEAL} weight="regular" />
-          <span style={{ fontSize: 16, fontWeight: 600, color: '#111827' }}>Participantes — Satisfacción</span>
-          <span style={{ background: '#EFF6FF', color: '#1D4ED8', borderRadius: 999, padding: '2px 10px', fontSize: 12, fontWeight: 500, marginLeft: 4 }}>Satisfacción</span>
+          <Users size={20} color="#65BFB1" weight="regular" />
+          <span style={{ fontSize: 16, fontWeight: 600, color: '#1D4D4A' }}>Participantes — Satisfacción</span>
+          <span style={{ background: '#EFF6FF', color: '#1D4ED8', borderRadius: 9999, padding: '2px 10px', fontSize: 12, fontWeight: 500, marginLeft: 4 }}>Satisfacción</span>
         </div>
       }
     >
       <div style={{ fontFamily: 'Poppins' }}>
-        <div style={{ background: '#F0FDF9', borderRadius: 8, padding: '10px 16px', marginBottom: 16 }}>
-          <div style={{ fontSize: 13, fontWeight: 600, color: '#111827' }}>Curso: {row.curso}</div>
-          <div style={{ fontSize: 12, color: '#6B7280' }}>Encuesta: Encuesta de Satisfacción Estándar v2.0</div>
+        <div style={{ background: '#F0FFFA', border: '1px solid #D8E6E2', borderRadius: 16, padding: '12px 16px', marginBottom: 16 }}>
+          <div style={{ fontSize: 13, fontWeight: 600, color: '#1D4D4A' }}>Curso: {row.curso}</div>
+          <div style={{ fontSize: 12, color: '#316772' }}>Encuesta: Encuesta de Satisfacción Estándar v2.0</div>
         </div>
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, gap: 8, flexWrap: 'wrap' }}>
@@ -1248,7 +1248,7 @@ const SatisfaccionParticipantesModal: React.FC<{
               type="primary"
               icon={<CheckSquare size={14} weight="regular" />}
               onClick={() => setList((prev) => prev.map((p) => (p.estado === 'activo' ? { ...p, selected: true } : p)))}
-              style={{ background: TEAL, borderColor: TEAL, display: 'inline-flex', alignItems: 'center', gap: 6 }}
+              style={{ background: '#65BFB1', borderColor: '#65BFB1', color: '#1D4D4A', borderRadius: 10, display: 'inline-flex', alignItems: 'center', gap: 6 }}
             >
               Seleccionar Todos
             </Button>
@@ -1270,15 +1270,15 @@ const SatisfaccionParticipantesModal: React.FC<{
             </Button>
           </div>
           <Input
-            prefix={<MagnifyingGlass size={14} color="#9CA3AF" weight="regular" />}
+            prefix={<MagnifyingGlass size={14} color="#A8B3B3" weight="regular" />}
             placeholder="Filtrar por nombre o RUT..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            style={{ width: 240, fontFamily: 'Poppins' }}
+            style={{ width: 240, fontFamily: 'Poppins', borderRadius: 10, borderColor: '#D8E6E2' }}
           />
         </div>
 
-        <div style={{ fontFamily: 'Poppins', fontSize: 12, color: '#6B7280', marginBottom: 12 }}>
+        <div style={{ fontFamily: 'Poppins', fontSize: 12, color: '#316772', marginBottom: 12 }}>
           Mostrando {visible.length} participantes ({activos} activos · {excluirEliminados ? 0 : eliminados} eliminados · {excluirAnulados ? 0 : anulados} anulados)
         </div>
 
@@ -1289,17 +1289,17 @@ const SatisfaccionParticipantesModal: React.FC<{
           pagination={visible.length > 10 ? { pageSize: 10, size: 'small' } : false}
           onRow={(r: SatisParticipante) => ({
             style: r.estado === 'eliminado'
-              ? { background: '#FEF2F2' }
+              ? { background: '#FFF1F0' }
               : r.estado === 'anulado'
-                ? { background: '#FFF7ED' }
+                ? { background: '#FFFBE6' }
                 : undefined,
           })}
         />
 
         {pendientes > 0 && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 12 }}>
-            <Warning size={14} color="#F59E0B" weight="fill" />
-            <span style={{ fontFamily: 'Poppins', fontSize: 12, color: '#D97706' }}>
+            <Warning size={14} color="#F0A945" weight="fill" />
+            <span style={{ fontFamily: 'Poppins', fontSize: 12, color: '#F0A945' }}>
               {pendientes} participantes sin correo ingresado
             </span>
           </div>
@@ -1310,7 +1310,7 @@ const SatisfaccionParticipantesModal: React.FC<{
           block
           icon={<FloppyDisk size={16} weight="regular" />}
           onClick={handleSave}
-          style={{ background: TEAL, borderColor: TEAL, marginTop: 16, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+          style={{ background: '#65BFB1', borderColor: '#65BFB1', color: '#1D4D4A', borderRadius: 12, marginTop: 16, fontFamily: 'Poppins', fontSize: 14, fontWeight: 600, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
         >
           Guardar Participantes
         </Button>
@@ -1403,8 +1403,8 @@ const TransferenciaParticipantesModal: React.FC<{
   const showSearch = visible.length > 8 || search.trim().length > 0;
 
   const exclBtnStyle = (active: boolean) => active
-    ? { background: '#FEE2E2', color: '#991B1B', borderColor: '#FECACA', display: 'inline-flex', alignItems: 'center', gap: 6 } as const
-    : { display: 'inline-flex', alignItems: 'center', gap: 6 } as const;
+    ? { background: '#FFF1F0', color: '#E55157', borderColor: '#E55157', borderRadius: 10, display: 'inline-flex', alignItems: 'center', gap: 6 } as const
+    : { background: '#FFFFFF', color: '#E55157', borderColor: '#E55157', borderRadius: 10, display: 'inline-flex', alignItems: 'center', gap: 6 } as const;
 
   return (
     <Modal
@@ -1415,17 +1415,17 @@ const TransferenciaParticipantesModal: React.FC<{
       styles={{ body: { padding: 0 } }}
       title={
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontFamily: 'Poppins' }}>
-          <Users size={20} color={TEAL} weight="regular" />
-          <span style={{ fontSize: 16, fontWeight: 600, color: '#111827' }}>Participantes — Transferencia</span>
-          <span style={{ background: '#F0FDF4', color: '#15803D', borderRadius: 999, padding: '2px 10px', fontSize: 12, fontWeight: 500, marginLeft: 4 }}>Transferencia</span>
+          <Users size={20} color="#65BFB1" weight="regular" />
+          <span style={{ fontSize: 16, fontWeight: 600, color: '#1D4D4A' }}>Participantes — Transferencia</span>
+          <span style={{ background: '#F0FDF4', color: '#15803D', borderRadius: 9999, padding: '2px 10px', fontSize: 12, fontWeight: 500, marginLeft: 4 }}>Transferencia</span>
         </div>
       }
     >
       <div style={{ fontFamily: 'Poppins' }}>
         <div style={{ padding: '16px 24px 0 24px' }}>
-          <div style={{ background: '#F0FDF9', borderRadius: 8, padding: '10px 16px', marginBottom: 16 }}>
-            <div style={{ fontSize: 13, fontWeight: 600, color: '#111827' }}>Curso: {row.curso}</div>
-            <div style={{ fontSize: 12, color: '#6B7280' }}>Encuesta: Encuesta de Transferencia Estándar v2.0</div>
+          <div style={{ background: '#F0FFFA', border: '1px solid #D8E6E2', borderRadius: 16, padding: '12px 16px', marginBottom: 16 }}>
+            <div style={{ fontSize: 13, fontWeight: 600, color: '#1D4D4A' }}>Curso: {row.curso}</div>
+            <div style={{ fontSize: 12, color: '#316772' }}>Encuesta: Encuesta de Transferencia Estándar v2.0</div>
           </div>
 
           {/* Selector destinatario */}
@@ -1454,10 +1454,10 @@ const TransferenciaParticipantesModal: React.FC<{
                   ),
                 },
               ]}
-              style={{ background: '#F3F4F6' }}
+              style={{ background: '#E4F2EE' }}
               className="encuestas-segmented-teal"
             />
-            <div style={{ textAlign: 'center', fontFamily: 'Poppins', fontSize: 12, color: '#6B7280', marginTop: 8 }}>
+            <div style={{ textAlign: 'center', fontFamily: 'Poppins', fontSize: 12, color: '#316772', marginTop: 8 }}>
               {evaluador
                 ? 'El correo se enviará al evaluador asignado al participante'
                 : 'El correo se enviará al jefe directo del participante'}
@@ -1471,7 +1471,7 @@ const TransferenciaParticipantesModal: React.FC<{
                 size="small"
                 icon={<CheckSquare size={14} weight="regular" />}
                 onClick={() => setList((prev) => prev.map((p) => (p.estado === 'activo' ? { ...p, selected: true } : p)))}
-                style={{ background: TEAL, borderColor: TEAL, display: 'inline-flex', alignItems: 'center', gap: 6 }}
+                style={{ background: '#65BFB1', borderColor: '#65BFB1', color: '#1D4D4A', borderRadius: 10, display: 'inline-flex', alignItems: 'center', gap: 6 }}
               >
                 Seleccionar Todos
               </Button>
@@ -1494,16 +1494,16 @@ const TransferenciaParticipantesModal: React.FC<{
                 {excluirAnulados ? `Mostrando sin Anulados (${anulados})` : `Excluir Anulados (0)`}
               </Button>
             </div>
-            <div style={{ fontFamily: 'Poppins', fontSize: 12, color: '#6B7280' }}>
+            <div style={{ fontFamily: 'Poppins', fontSize: 12, color: '#316772' }}>
               Mostrando {visible.length} participantes ({activos} activos · {excluirEliminados ? 0 : eliminados} eliminados · {excluirAnulados ? 0 : anulados} anulados)
             </div>
             {showSearch && (
               <Input
-                prefix={<MagnifyingGlass size={14} color="#9CA3AF" weight="regular" />}
+                prefix={<MagnifyingGlass size={14} color="#A8B3B3" weight="regular" />}
                 placeholder="Filtrar por nombre o RUT..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                style={{ width: '100%', fontFamily: 'Poppins' }}
+                style={{ width: '100%', fontFamily: 'Poppins', borderRadius: 10, borderColor: '#D8E6E2' }}
               />
             )}
           </div>
@@ -1516,20 +1516,30 @@ const TransferenciaParticipantesModal: React.FC<{
             const isInactive = isElim || isAnul;
             const nombreVal = (p as any)[nombreKey] as string;
             const correoVal = (p as any)[correoKey] as string;
-            const cardBg = isElim ? '#FEF2F2' : isAnul ? '#FFF7ED' : '#FFFFFF';
+            const cardBg = isElim ? '#FFF1F0' : isAnul ? '#FFFBE6' : '#FFFFFF';
+            const cardBorder = isElim ? '#FFCCC7' : isAnul ? '#FFE58F' : '#D8E6E2';
+            const inputBorder = isElim ? '#FFCCC7' : isAnul ? '#FFE58F' : '#D8E6E2';
             return (
               <div
                 key={p.id}
                 style={{
                   background: cardBg,
-                  border: '1px solid #E5E7EB',
-                  borderRadius: 8,
+                  border: `1px solid ${cardBorder}`,
+                  borderRadius: 12,
                   padding: '14px 16px',
                   marginBottom: 10,
-                  transition: 'border-color 0.2s',
+                  transition: 'border-color 0.2s, background 0.2s',
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#99F6E4'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E5E7EB'; }}
+                onMouseEnter={(e) => {
+                  if (!isInactive) {
+                    e.currentTarget.style.borderColor = '#65BFB1';
+                    e.currentTarget.style.background = '#F0FFFA';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = cardBorder;
+                  e.currentTarget.style.background = cardBg;
+                }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
                   <Checkbox
@@ -1538,23 +1548,22 @@ const TransferenciaParticipantesModal: React.FC<{
                     onChange={(e) => update(p.id, { selected: e.target.checked })}
                   />
                   <span style={{
-                    background: '#F3F4F6', color: '#374151', borderRadius: 6,
-                    padding: '2px 8px', fontFamily: 'Poppins', fontSize: 12, fontWeight: 500,
+                    color: '#316772', fontFamily: 'Poppins', fontSize: 12, fontWeight: 500,
                   }}>{p.rut}</span>
                   <span style={{
                     fontFamily: 'Poppins', fontSize: 14, fontWeight: 600,
-                    color: '#111827',
+                    color: '#1D4D4A',
                   }}>{p.nombre}</span>
                   {isElim && (
-                    <span style={{ background: '#FEE2E2', color: '#991B1B', borderRadius: 999, padding: '2px 8px', fontFamily: 'Poppins', fontSize: 11, fontWeight: 500 }}>Eliminado</span>
+                    <span style={{ background: '#FFF1F0', color: '#E55157', borderRadius: 9999, padding: '2px 8px', fontFamily: 'Poppins', fontSize: 11, fontWeight: 500 }}>Eliminado</span>
                   )}
                   {isAnul && (
-                    <span style={{ background: '#FED7AA', color: '#9A3412', borderRadius: 999, padding: '2px 8px', fontFamily: 'Poppins', fontSize: 11, fontWeight: 500 }}>Anulado</span>
+                    <span style={{ background: '#FFFBE6', color: '#F0A945', borderRadius: 9999, padding: '2px 8px', fontFamily: 'Poppins', fontSize: 11, fontWeight: 500 }}>Anulado</span>
                   )}
                 </div>
                 <div style={{ display: 'flex', gap: 12, marginTop: 10 }}>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontFamily: 'Poppins', fontSize: 11, fontWeight: 500, color: '#6B7280', marginBottom: 4 }}>
+                    <div style={{ fontFamily: 'Poppins', fontSize: 11, fontWeight: 500, color: '#69898C', marginBottom: 4 }}>
                       {evaluador ? 'Nombre Evaluador' : 'Nombre Jefe'}
                     </div>
                     <Input
@@ -1562,11 +1571,11 @@ const TransferenciaParticipantesModal: React.FC<{
                       value={nombreVal}
                       placeholder={evaluador ? 'Nombre del evaluador' : 'Nombre del jefe directo'}
                       onChange={(e) => update(p.id, { [nombreKey]: e.target.value } as any)}
-                      style={{ width: '100%', fontFamily: 'Poppins' }}
+                      style={{ width: '100%', fontFamily: 'Poppins', borderRadius: 10, borderColor: nombreVal ? '#65BFB1' : inputBorder, color: nombreVal ? '#1D4D4A' : undefined }}
                     />
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontFamily: 'Poppins', fontSize: 11, fontWeight: 500, color: '#6B7280', marginBottom: 4 }}>
+                    <div style={{ fontFamily: 'Poppins', fontSize: 11, fontWeight: 500, color: '#69898C', marginBottom: 4 }}>
                       {evaluador ? 'Correo Evaluador' : 'Correo Jefe'}
                     </div>
                     <EmailInput
@@ -1583,21 +1592,21 @@ const TransferenciaParticipantesModal: React.FC<{
 
           {pendientes > 0 && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 12 }}>
-              <Warning size={14} color="#F59E0B" weight="fill" />
-              <span style={{ fontFamily: 'Poppins', fontSize: 12, color: '#D97706' }}>
+              <Warning size={14} color="#F0A945" weight="fill" />
+              <span style={{ fontFamily: 'Poppins', fontSize: 12, color: '#F0A945' }}>
                 {pendientes} participantes sin correo de {evaluador ? 'evaluador' : 'jefe'} ingresado
               </span>
             </div>
           )}
         </div>
 
-        <div style={{ position: 'sticky', bottom: 0, background: '#ffffff', borderTop: '1px solid #E5E7EB', padding: '12px 24px' }}>
+        <div style={{ position: 'sticky', bottom: 0, background: '#ffffff', borderTop: '1px solid #D8E6E2', padding: '12px 24px' }}>
           <Button
             type="primary"
             block
             icon={<FloppyDisk size={16} weight="regular" />}
             onClick={handleSave}
-            style={{ background: TEAL, borderColor: TEAL, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+            style={{ background: '#65BFB1', borderColor: '#65BFB1', color: '#1D4D4A', borderRadius: 12, fontFamily: 'Poppins', fontSize: 14, fontWeight: 600, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
           >
             Guardar Participantes
           </Button>
