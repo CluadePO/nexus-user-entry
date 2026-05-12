@@ -1516,20 +1516,30 @@ const TransferenciaParticipantesModal: React.FC<{
             const isInactive = isElim || isAnul;
             const nombreVal = (p as any)[nombreKey] as string;
             const correoVal = (p as any)[correoKey] as string;
-            const cardBg = isElim ? '#FEF2F2' : isAnul ? '#FFF7ED' : '#FFFFFF';
+            const cardBg = isElim ? '#FFF1F0' : isAnul ? '#FFFBE6' : '#FFFFFF';
+            const cardBorder = isElim ? '#FFCCC7' : isAnul ? '#FFE58F' : '#D8E6E2';
+            const inputBorder = isElim ? '#FFCCC7' : isAnul ? '#FFE58F' : '#D8E6E2';
             return (
               <div
                 key={p.id}
                 style={{
                   background: cardBg,
-                  border: '1px solid #E5E7EB',
-                  borderRadius: 8,
+                  border: `1px solid ${cardBorder}`,
+                  borderRadius: 12,
                   padding: '14px 16px',
                   marginBottom: 10,
-                  transition: 'border-color 0.2s',
+                  transition: 'border-color 0.2s, background 0.2s',
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#99F6E4'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E5E7EB'; }}
+                onMouseEnter={(e) => {
+                  if (!isInactive) {
+                    e.currentTarget.style.borderColor = '#65BFB1';
+                    e.currentTarget.style.background = '#F0FFFA';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = cardBorder;
+                  e.currentTarget.style.background = cardBg;
+                }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
                   <Checkbox
@@ -1538,23 +1548,22 @@ const TransferenciaParticipantesModal: React.FC<{
                     onChange={(e) => update(p.id, { selected: e.target.checked })}
                   />
                   <span style={{
-                    background: '#F3F4F6', color: '#374151', borderRadius: 6,
-                    padding: '2px 8px', fontFamily: 'Poppins', fontSize: 12, fontWeight: 500,
+                    color: '#316772', fontFamily: 'Poppins', fontSize: 12, fontWeight: 500,
                   }}>{p.rut}</span>
                   <span style={{
                     fontFamily: 'Poppins', fontSize: 14, fontWeight: 600,
-                    color: '#111827',
+                    color: '#1D4D4A',
                   }}>{p.nombre}</span>
                   {isElim && (
-                    <span style={{ background: '#FEE2E2', color: '#991B1B', borderRadius: 999, padding: '2px 8px', fontFamily: 'Poppins', fontSize: 11, fontWeight: 500 }}>Eliminado</span>
+                    <span style={{ background: '#FFF1F0', color: '#E55157', borderRadius: 9999, padding: '2px 8px', fontFamily: 'Poppins', fontSize: 11, fontWeight: 500 }}>Eliminado</span>
                   )}
                   {isAnul && (
-                    <span style={{ background: '#FED7AA', color: '#9A3412', borderRadius: 999, padding: '2px 8px', fontFamily: 'Poppins', fontSize: 11, fontWeight: 500 }}>Anulado</span>
+                    <span style={{ background: '#FFFBE6', color: '#F0A945', borderRadius: 9999, padding: '2px 8px', fontFamily: 'Poppins', fontSize: 11, fontWeight: 500 }}>Anulado</span>
                   )}
                 </div>
                 <div style={{ display: 'flex', gap: 12, marginTop: 10 }}>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontFamily: 'Poppins', fontSize: 11, fontWeight: 500, color: '#6B7280', marginBottom: 4 }}>
+                    <div style={{ fontFamily: 'Poppins', fontSize: 11, fontWeight: 500, color: '#69898C', marginBottom: 4 }}>
                       {evaluador ? 'Nombre Evaluador' : 'Nombre Jefe'}
                     </div>
                     <Input
@@ -1562,11 +1571,11 @@ const TransferenciaParticipantesModal: React.FC<{
                       value={nombreVal}
                       placeholder={evaluador ? 'Nombre del evaluador' : 'Nombre del jefe directo'}
                       onChange={(e) => update(p.id, { [nombreKey]: e.target.value } as any)}
-                      style={{ width: '100%', fontFamily: 'Poppins' }}
+                      style={{ width: '100%', fontFamily: 'Poppins', borderRadius: 10, borderColor: nombreVal ? '#65BFB1' : inputBorder, color: nombreVal ? '#1D4D4A' : undefined }}
                     />
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontFamily: 'Poppins', fontSize: 11, fontWeight: 500, color: '#6B7280', marginBottom: 4 }}>
+                    <div style={{ fontFamily: 'Poppins', fontSize: 11, fontWeight: 500, color: '#69898C', marginBottom: 4 }}>
                       {evaluador ? 'Correo Evaluador' : 'Correo Jefe'}
                     </div>
                     <EmailInput
