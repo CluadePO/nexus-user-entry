@@ -782,7 +782,8 @@ const AsignarModal: React.FC<{
   onClose: () => void;
   onSave: () => void;
   onOpenParticipants: () => void;
-}> = ({ open, kind, row, form, sinCorreo, totalParticipantes, onChange, onClose, onSave, onOpenParticipants }) => {
+  onPreviewEmail: () => void;
+}> = ({ open, kind, row, form, sinCorreo, totalParticipantes, onChange, onClose, onSave, onOpenParticipants, onPreviewEmail }) => {
   const [errRelator, setErrRelator] = useState(false);
   const [errFecha, setErrFecha] = useState(false);
 
