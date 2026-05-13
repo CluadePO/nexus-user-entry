@@ -259,6 +259,22 @@ const mockCourses: Course[] = [
     imageUrl: courseImages[7],
     isFavorite: false,
   },
+  {
+    id: '9',
+    name: 'Comunicación Asertiva en el Trabajo',
+    type: 'No Sence',
+    modality: 'Presencial',
+    provider: 'Instituto de Habilidades Profesionales',
+    price: 195000,
+    hours: 18,
+    rating: 4.8,
+    participants: 1350,
+    category: 'Habilidades Blandas',
+    area: 'Habilidades Blandas',
+    region: 'Metropolitana',
+    imageUrl: courseImages[5],
+    isFavorite: false,
+  },
 ];
 
 const MiBuscador: React.FC = () => {
