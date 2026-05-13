@@ -815,13 +815,15 @@ const CourseDetail: React.FC = () => {
                     {course.hours} horas
                   </p>
                 </div>
-                <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">Región</p>
-                  <p className="font-medium flex items-center gap-1">
-                    <MapPin className="h-4 w-4 text-muted-foreground" />
-                    {course.location}
-                  </p>
-                </div>
+                {course.modality !== 'E-learning' && course.modality !== 'A Distancia' && (
+                  <div className="space-y-1">
+                    <p className="text-sm text-muted-foreground">Región</p>
+                    <p className="font-medium flex items-center gap-1">
+                      <MapPin className="h-4 w-4 text-muted-foreground" />
+                      {course.location}
+                    </p>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
