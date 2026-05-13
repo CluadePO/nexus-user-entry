@@ -562,7 +562,7 @@ const CourseDetail: React.FC = () => {
 
     // Learnings
     if (y > 240) { doc.addPage(); y = 20; }
-    y = addSection('Lo que aprenderás', y);
+    y = addSection('Aprendizaje esperado', y);
     doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(60, 60, 60);
@@ -892,11 +892,11 @@ const CourseDetail: React.FC = () => {
 
               <Separator />
 
-              {/* Lo que aprenderás */}
+              {/* Aprendizaje esperado */}
               <div>
                 <h4 className="font-semibold text-foreground flex items-center gap-2 mb-3">
                   <Award className="h-4 w-4 text-primary" />
-                  Lo que aprenderás
+                  Aprendizaje esperado
                 </h4>
                 <div className="grid grid-cols-1 gap-2">
                   {course.learnings.map((learning, index) => (
