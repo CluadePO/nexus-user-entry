@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft, Save } from 'lucide-react';
 import DNCDashboard from '@/components/dnc/DNCDashboard';
 import DNCOnboarding from '@/components/dnc/DNCOnboarding';
 import DNCWizardLayout from '@/components/dnc/DNCWizardLayout';
@@ -12,6 +14,7 @@ import DNCStepComunicacion, { defaultComunicacion, type ComunicacionState } from
 import DNCStepResumen from '@/components/dnc/steps/DNCStepResumen';
 import DNCSuccess from '@/components/dnc/DNCSuccess';
 import DNCTrackingDashboard from '@/components/dnc/DNCTrackingDashboard';
+import { toast } from 'sonner';
 
 type Phase = 'dashboard' | 'onboarding' | 'wizard' | 'success' | 'tracking';
 
@@ -23,6 +26,7 @@ const emptyEmpresa: EmpresaDataStep1 = {
 const DNC: React.FC = () => {
   const [phase, setPhase] = useState<Phase>('dashboard');
   const [step, setStep] = useState(1);
+  const [editMode, setEditMode] = useState(false);
   const [empresa, setEmpresa] = useState<EmpresaDataStep1>(emptyEmpresa);
   const [alcance, setAlcance] = useState<Alcance | null>(null);
   const [modelo, setModelo] = useState<ModeloAsignacion | null>(null);
@@ -31,8 +35,19 @@ const DNC: React.FC = () => {
   const [surveyDesign, setSurveyDesign] = useState<SurveyDesignState>(defaultSurveyDesign());
   const [comunicacion, setComunicacion] = useState<ComunicacionState>(defaultComunicacion());
 
-  const startNew = () => { setStep(1); setPhase('wizard'); };
+  const startNew = () => { setStep(1); setEditMode(false); setPhase('wizard'); };
   const dncName = empresa.nombreProceso || 'DNC Constructora Arenas 2025';
+
+  const handleEditFromSummary = (s: number) => {
+    setEditMode(true);
+    setStep(s);
+  };
+
+  const handleSaveAndReturn = () => {
+    setEditMode(false);
+    setStep(6);
+    toast.success('Cambios guardados');
+  };
 
   if (phase === 'dashboard') {
     return <DNCDashboard onNew={startNew} onOpenOnboarding={() => setPhase('onboarding')} onOpenTracking={() => setPhase('tracking')} />;
@@ -50,11 +65,24 @@ const DNC: React.FC = () => {
   return (
     <DNCWizardLayout
       step={step}
-      onStepChange={(s) => setStep(s)}
-      onBackToList={() => setPhase('dashboard')}
+      onStepChange={(s) => { if (!editMode) setStep(s); }}
+      onBackToList={() => { setEditMode(false); setPhase('dashboard'); }}
     >
+      {editMode && step !== 6 && (
+        <div className="mb-4 flex items-center justify-between gap-4 p-3 rounded-lg border-2 border-primary/40 bg-primary/5">
+          <div className="flex items-center gap-2 text-sm">
+            <ArrowLeft className="w-4 h-4 text-primary" />
+            <span className="text-foreground">
+              Editando desde el <strong>resumen</strong>. Guarda los cambios para volver al paso 6.
+            </span>
+          </div>
+          <Button size="sm" className="gap-2" onClick={handleSaveAndReturn}>
+            <Save className="w-4 h-4" /> Guardar y volver al resumen
+          </Button>
+        </div>
+      )}
       {step === 1 && (
-        <DNCStepDatos data={empresa} onChange={setEmpresa} onNext={() => setStep(2)} />
+        <DNCStepDatos data={empresa} onChange={setEmpresa} onNext={() => editMode ? handleSaveAndReturn() : setStep(2)} />
       )}
       {step === 2 && (
         <DNCStepParticipantes
@@ -64,24 +92,24 @@ const DNC: React.FC = () => {
           onModeloChange={setModelo}
           participants={participants}
           onParticipantsChange={setParticipants}
-          onNext={() => setStep(3)}
-          onBack={() => setStep(1)}
+          onNext={() => editMode ? handleSaveAndReturn() : setStep(3)}
+          onBack={() => editMode ? handleSaveAndReturn() : setStep(1)}
         />
       )}
       {step === 3 && (
         <DNCStepAreasTematicas
           state={areasState}
           onChange={setAreasState}
-          onNext={() => setStep(4)}
-          onBack={() => setStep(2)}
+          onNext={() => editMode ? handleSaveAndReturn() : setStep(4)}
+          onBack={() => editMode ? handleSaveAndReturn() : setStep(2)}
         />
       )}
       {step === 4 && (
         <DNCStepDisenoEncuesta
           state={surveyDesign}
           onChange={setSurveyDesign}
-          onNext={() => setStep(5)}
-          onBack={() => setStep(3)}
+          onNext={() => editMode ? handleSaveAndReturn() : setStep(5)}
+          onBack={() => editMode ? handleSaveAndReturn() : setStep(3)}
         />
       )}
       {step === 5 && (
@@ -89,8 +117,8 @@ const DNC: React.FC = () => {
           state={comunicacion}
           onChange={setComunicacion}
           responsableEmail={empresa.email}
-          onNext={() => setStep(6)}
-          onBack={() => setStep(4)}
+          onNext={() => editMode ? handleSaveAndReturn() : setStep(6)}
+          onBack={() => editMode ? handleSaveAndReturn() : setStep(4)}
         />
       )}
       {step === 6 && (
@@ -104,8 +132,8 @@ const DNC: React.FC = () => {
           surveyDesign={surveyDesign}
           comunicacion={comunicacion}
           onBack={() => setStep(5)}
-          onEdit={(s) => setStep(s)}
-          onConfirm={() => setPhase('success')}
+          onEdit={handleEditFromSummary}
+          onConfirm={() => { setEditMode(false); setPhase('success'); }}
         />
       )}
     </DNCWizardLayout>
