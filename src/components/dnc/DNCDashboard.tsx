@@ -190,9 +190,9 @@ const DNCDashboard: React.FC<Props> = ({ onNew, onOpenOnboarding, onOpenTracking
             </TableRow>
           </TableHeader>
           <TableBody>
-            {rows.length === 0 ? (
+            {pagedRows.length === 0 ? (
               <TableRow><TableCell colSpan={8} className="text-center py-10 text-muted-foreground text-sm">No hay procesos.</TableCell></TableRow>
-            ) : rows.map(r => (
+            ) : pagedRows.map(r => (
               <TableRow key={r.id}>
                 <TableCell className="font-medium text-primary">{r.nombre}</TableCell>
                 <TableCell className="text-sm">{r.empresa}</TableCell>
@@ -205,15 +205,15 @@ const DNCDashboard: React.FC<Props> = ({ onNew, onOpenOnboarding, onOpenTracking
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="inline-flex items-center gap-1">
-                    <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => onOpenTracking?.(r.id)}><Eye className="w-4 h-4" /></Button>
+                    <Button size="icon" variant="ghost" className="h-8 w-8" title="Ver" onClick={() => onOpenTracking?.(r.id)}><Eye className="w-4 h-4" /></Button>
+                    <Button size="icon" variant="ghost" className="h-8 w-8" title="Descargar reporte PDF" onClick={() => handleDownloadReport(r.nombre)}>
+                      <FileText className="w-4 h-4" />
+                    </Button>
                     {r.estado === 'Terminada' && (
-                      <>
-                        <Button size="icon" variant="ghost" className="h-8 w-8"><Download className="w-4 h-4" /></Button>
-                        <Button size="icon" variant="ghost" className="h-8 w-8"><FileText className="w-4 h-4" /></Button>
-                      </>
+                      <Button size="icon" variant="ghost" className="h-8 w-8" title="Descargar datos" onClick={() => handleDownloadReport(r.nombre)}><Download className="w-4 h-4" /></Button>
                     )}
                     {r.estado === 'Borrador' && (
-                      <Button size="icon" variant="ghost" className="h-8 w-8"><Pencil className="w-4 h-4" /></Button>
+                      <Button size="icon" variant="ghost" className="h-8 w-8" title="Editar borrador"><Pencil className="w-4 h-4" /></Button>
                     )}
                   </div>
                 </TableCell>
@@ -221,6 +221,32 @@ const DNCDashboard: React.FC<Props> = ({ onNew, onOpenOnboarding, onOpenTracking
             ))}
           </TableBody>
         </Table>
+
+        {/* Paginador */}
+        <div className="flex items-center justify-between pt-2">
+          <p className="text-xs text-muted-foreground">
+            Mostrando {pagedRows.length === 0 ? 0 : (currentPage - 1) * PAGE_SIZE + 1}–{(currentPage - 1) * PAGE_SIZE + pagedRows.length} de {rows.length}
+          </p>
+          <div className="inline-flex items-center gap-1">
+            <Button variant="outline" size="icon" className="h-8 w-8" disabled={currentPage <= 1} onClick={() => setPage(p => Math.max(1, p - 1))}>
+              <ChevronLeft className="w-4 h-4" />
+            </Button>
+            {Array.from({ length: totalPages }).map((_, i) => (
+              <Button
+                key={i}
+                variant={currentPage === i + 1 ? 'default' : 'outline'}
+                size="sm"
+                className="h-8 min-w-8 px-2"
+                onClick={() => setPage(i + 1)}
+              >
+                {i + 1}
+              </Button>
+            ))}
+            <Button variant="outline" size="icon" className="h-8 w-8" disabled={currentPage >= totalPages} onClick={() => setPage(p => Math.min(totalPages, p + 1))}>
+              <ChevronRight className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
       </Card>
     </div>
   );
