@@ -358,25 +358,17 @@ const DNCStepAreasTematicas: React.FC<Props> = ({ state, onChange, onNext, onBac
                       <TableHead>Área</TableHead>
                       <TableHead>Temáticas incluidas</TableHead>
                       <TableHead>Máx. a priorizar</TableHead>
-                      <TableHead>Estado</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {selectedAreas.map(a => {
                       const sel = current[a.id];
                       const incluidas = sel.tematicas.length;
-                      const estado = getEstado(incluidas, sel.maxPriorizar);
-                      const Icon = estado.icon;
                       return (
                         <TableRow key={a.id}>
                           <TableCell className={cn('font-medium', a.color)}>{a.name}</TableCell>
                           <TableCell className="text-primary font-medium">{incluidas}</TableCell>
                           <TableCell>{incluidas <= 1 ? 1 : sel.maxPriorizar}</TableCell>
-                          <TableCell>
-                            <span className={cn('inline-flex items-center gap-1.5 text-sm', estado.cls)}>
-                              <Icon className="w-4 h-4" /> {estado.label}
-                            </span>
-                          </TableCell>
                         </TableRow>
                       );
                     })}
