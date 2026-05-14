@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import DNCDashboard from '@/components/dnc/DNCDashboard';
 import DNCOnboarding from '@/components/dnc/DNCOnboarding';
 import DNCWizardLayout from '@/components/dnc/DNCWizardLayout';
@@ -8,9 +6,10 @@ import DNCStepDatos, { type EmpresaDataStep1 } from '@/components/dnc/steps/DNCS
 import DNCStepParticipantes, {
   type Alcance, type ModeloAsignacion, type ParticipanteSimple,
 } from '@/components/dnc/steps/DNCStepParticipantes';
-import DNCStepAreasTematicas, { type AreasState } from '@/components/dnc/steps/DNCStepAreasTematicas';
+import DNCStepAreasTematicas, { type AreasState, AREAS } from '@/components/dnc/steps/DNCStepAreasTematicas';
 import DNCStepDisenoEncuesta, { defaultSurveyDesign, type SurveyDesignState } from '@/components/dnc/steps/DNCStepDisenoEncuesta';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import DNCStepComunicacion, { defaultComunicacion, type ComunicacionState } from '@/components/dnc/steps/DNCStepComunicacion';
+import DNCStepResumen from '@/components/dnc/steps/DNCStepResumen';
 
 type Phase = 'dashboard' | 'onboarding' | 'wizard';
 
@@ -28,6 +27,7 @@ const DNC: React.FC = () => {
   const [participants, setParticipants] = useState<ParticipanteSimple[]>([]);
   const [areasState, setAreasState] = useState<AreasState>({});
   const [surveyDesign, setSurveyDesign] = useState<SurveyDesignState>(defaultSurveyDesign());
+  const [comunicacion, setComunicacion] = useState<ComunicacionState>(defaultComunicacion());
 
   const startNew = () => { setStep(1); setPhase('wizard'); };
 
@@ -75,25 +75,29 @@ const DNC: React.FC = () => {
           onBack={() => setStep(3)}
         />
       )}
-      {step >= 5 && (
-        <Card className="p-10 text-center space-y-4">
-          <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center text-3xl">🚧</div>
-          <h2 className="text-xl font-bold text-foreground">Paso {step} en construcción</h2>
-          <p className="text-sm text-muted-foreground">Esta sección será implementada próximamente.</p>
-          <div className="flex justify-center gap-3">
-            <Button variant="outline" className="gap-2" onClick={() => setStep(step - 1)}>
-              <ArrowLeft className="w-4 h-4" /> Volver
-            </Button>
-            {step < 6 && (
-              <Button className="gap-2" onClick={() => setStep(step + 1)}>
-                Siguiente <ArrowRight className="w-4 h-4" />
-              </Button>
-            )}
-            {step === 6 && (
-              <Button onClick={() => setPhase('dashboard')}>Finalizar</Button>
-            )}
-          </div>
-        </Card>
+      {step === 5 && (
+        <DNCStepComunicacion
+          state={comunicacion}
+          onChange={setComunicacion}
+          responsableEmail={empresa.email}
+          onNext={() => setStep(6)}
+          onBack={() => setStep(4)}
+        />
+      )}
+      {step === 6 && (
+        <DNCStepResumen
+          empresa={empresa}
+          alcance={alcance}
+          modelo={modelo}
+          participants={participants}
+          areasState={areasState}
+          areasMeta={AREAS.map(a => ({ id: a.id, name: a.name, tematicas: a.tematicas }))}
+          surveyDesign={surveyDesign}
+          comunicacion={comunicacion}
+          onBack={() => setStep(5)}
+          onEdit={(s) => setStep(s)}
+          onConfirm={() => setPhase('dashboard')}
+        />
       )}
     </DNCWizardLayout>
   );
