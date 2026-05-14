@@ -258,8 +258,8 @@ const DNCStepParticipantes: React.FC<Props> = ({
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <Button size="sm" variant="outline" className="gap-1.5" onClick={() => setShowPreview(true)}>
-                  <Eye className="w-3.5 h-3.5" /> Ver datos
+                <Button size="sm" variant="outline" className="gap-1.5" onClick={openExisting}>
+                  <Eye className="w-3.5 h-3.5" /> Ver / editar datos
                 </Button>
                 <Button size="sm" variant="outline" className="gap-1.5" onClick={() => fileRef.current?.click()}>
                   <Upload className="w-3.5 h-3.5" /> Reemplazar
