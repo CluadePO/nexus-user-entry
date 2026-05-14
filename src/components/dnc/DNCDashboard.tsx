@@ -9,9 +9,10 @@ import {
 } from '@/components/ui/table';
 import {
   Plus, Info, Zap, BarChart3, Target, Search, Eye, Download, FileText, Pencil,
-  ArrowUpDown,
+  ArrowUpDown, ChevronLeft, ChevronRight,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 export type DNCEstado = 'Iniciada' | 'Terminada' | 'Borrador' | 'Creada';
 
@@ -50,11 +51,14 @@ interface Props {
   onOpenTracking?: (id: string) => void;
 }
 
+const PAGE_SIZE = 5;
+
 const DNCDashboard: React.FC<Props> = ({ onNew, onOpenOnboarding, onOpenTracking }) => {
   const [search, setSearch] = useState('');
   const [estadoFilter, setEstadoFilter] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'inicio' | 'cierre' | null>(null);
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
+  const [page, setPage] = useState(1);
 
   const rows = useMemo(() => {
     let r = MOCK_ROWS.filter(x =>
@@ -71,12 +75,21 @@ const DNCDashboard: React.FC<Props> = ({ onNew, onOpenOnboarding, onOpenTracking
     return r;
   }, [search, estadoFilter, sortBy, sortDir]);
 
+  const totalPages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const pagedRows = rows.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
   const stats = useMemo(() => ({
     total: MOCK_ROWS.length,
     activas: MOCK_ROWS.filter(r => r.estado === 'Iniciada').length,
     borradores: MOCK_ROWS.filter(r => r.estado === 'Borrador').length,
     finalizadas: MOCK_ROWS.filter(r => r.estado === 'Terminada').length,
   }), []);
+
+  const handleDownloadReport = (nombre: string) => {
+    toast.loading('Generando reporte...', { id: 'rep' });
+    setTimeout(() => toast.success(`Reporte de "${nombre}" generado`, { id: 'rep' }), 900);
+  };
 
   const toggleSort = (key: 'inicio' | 'cierre') => {
     if (sortBy === key) setSortDir(d => d === 'asc' ? 'desc' : 'asc');
@@ -177,9 +190,9 @@ const DNCDashboard: React.FC<Props> = ({ onNew, onOpenOnboarding, onOpenTracking
             </TableRow>
           </TableHeader>
           <TableBody>
-            {rows.length === 0 ? (
+            {pagedRows.length === 0 ? (
               <TableRow><TableCell colSpan={8} className="text-center py-10 text-muted-foreground text-sm">No hay procesos.</TableCell></TableRow>
-            ) : rows.map(r => (
+            ) : pagedRows.map(r => (
               <TableRow key={r.id}>
                 <TableCell className="font-medium text-primary">{r.nombre}</TableCell>
                 <TableCell className="text-sm">{r.empresa}</TableCell>
@@ -192,15 +205,15 @@ const DNCDashboard: React.FC<Props> = ({ onNew, onOpenOnboarding, onOpenTracking
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="inline-flex items-center gap-1">
-                    <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => onOpenTracking?.(r.id)}><Eye className="w-4 h-4" /></Button>
+                    <Button size="icon" variant="ghost" className="h-8 w-8" title="Ver" onClick={() => onOpenTracking?.(r.id)}><Eye className="w-4 h-4" /></Button>
+                    <Button size="icon" variant="ghost" className="h-8 w-8" title="Descargar reporte PDF" onClick={() => handleDownloadReport(r.nombre)}>
+                      <FileText className="w-4 h-4" />
+                    </Button>
                     {r.estado === 'Terminada' && (
-                      <>
-                        <Button size="icon" variant="ghost" className="h-8 w-8"><Download className="w-4 h-4" /></Button>
-                        <Button size="icon" variant="ghost" className="h-8 w-8"><FileText className="w-4 h-4" /></Button>
-                      </>
+                      <Button size="icon" variant="ghost" className="h-8 w-8" title="Descargar datos" onClick={() => handleDownloadReport(r.nombre)}><Download className="w-4 h-4" /></Button>
                     )}
                     {r.estado === 'Borrador' && (
-                      <Button size="icon" variant="ghost" className="h-8 w-8"><Pencil className="w-4 h-4" /></Button>
+                      <Button size="icon" variant="ghost" className="h-8 w-8" title="Editar borrador"><Pencil className="w-4 h-4" /></Button>
                     )}
                   </div>
                 </TableCell>
@@ -208,6 +221,32 @@ const DNCDashboard: React.FC<Props> = ({ onNew, onOpenOnboarding, onOpenTracking
             ))}
           </TableBody>
         </Table>
+
+        {/* Paginador */}
+        <div className="flex items-center justify-between pt-2">
+          <p className="text-xs text-muted-foreground">
+            Mostrando {pagedRows.length === 0 ? 0 : (currentPage - 1) * PAGE_SIZE + 1}–{(currentPage - 1) * PAGE_SIZE + pagedRows.length} de {rows.length}
+          </p>
+          <div className="inline-flex items-center gap-1">
+            <Button variant="outline" size="icon" className="h-8 w-8" disabled={currentPage <= 1} onClick={() => setPage(p => Math.max(1, p - 1))}>
+              <ChevronLeft className="w-4 h-4" />
+            </Button>
+            {Array.from({ length: totalPages }).map((_, i) => (
+              <Button
+                key={i}
+                variant={currentPage === i + 1 ? 'default' : 'outline'}
+                size="sm"
+                className="h-8 min-w-8 px-2"
+                onClick={() => setPage(i + 1)}
+              >
+                {i + 1}
+              </Button>
+            ))}
+            <Button variant="outline" size="icon" className="h-8 w-8" disabled={currentPage >= totalPages} onClick={() => setPage(p => Math.min(totalPages, p + 1))}>
+              <ChevronRight className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
       </Card>
     </div>
   );

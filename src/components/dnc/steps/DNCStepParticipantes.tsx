@@ -1,15 +1,17 @@
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, ArrowRight, Download, Inbox, CheckCircle2, Trash2, Eye, Upload } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Download, Inbox, CheckCircle2, Trash2, Eye, Upload, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import * as XLSX from 'xlsx';
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription,
 } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from '@/components/ui/table';
@@ -76,6 +78,13 @@ function parseRow(row: any): ParticipanteSimple | null {
   };
 }
 
+const isValidEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+const validateRow = (p: ParticipanteSimple) => ({
+  rut: !p.rut.trim(),
+  nombres: !p.nombres.trim(),
+  email: !p.email.trim() || !isValidEmail(p.email),
+});
+
 const DNCStepParticipantes: React.FC<Props> = ({
   alcance, onAlcanceChange, modelo, onModeloChange,
   participants, onParticipantsChange, onNext, onBack,
@@ -84,6 +93,11 @@ const DNCStepParticipantes: React.FC<Props> = ({
   const [drag, setDrag] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
+  const [draftRows, setDraftRows] = useState<ParticipanteSimple[]>([]);
+  const [reviewMode, setReviewMode] = useState<'review' | 'view'>('review');
+
+  const errors = useMemo(() => draftRows.map(validateRow), [draftRows]);
+  const errorCount = errors.filter(e => e.rut || e.nombres || e.email).length;
 
   const handleFile = async (file: File) => {
     if (!file.name.match(/\.(xlsx|xls|csv)$/i)) {
@@ -97,12 +111,35 @@ const DNCStepParticipantes: React.FC<Props> = ({
       const rows: any[] = XLSX.utils.sheet_to_json(ws);
       const parsed = rows.map(parseRow).filter(Boolean) as ParticipanteSimple[];
       if (!parsed.length) { toast.error('No se encontraron registros válidos.'); return; }
-      onParticipantsChange(parsed);
+      setDraftRows(parsed);
       setFileName(file.name);
-      toast.success(`${parsed.length} participantes cargados`);
+      setReviewMode('review');
+      setShowPreview(true);
     } catch {
       toast.error('Error al leer el archivo');
     }
+  };
+
+  const updateDraft = (i: number, patch: Partial<ParticipanteSimple>) => {
+    setDraftRows(rows => rows.map((r, idx) => idx === i ? { ...r, ...patch } : r));
+  };
+
+  const removeDraft = (i: number) => setDraftRows(rows => rows.filter((_, idx) => idx !== i));
+
+  const confirmUpload = () => {
+    if (errorCount > 0) {
+      toast.error(`Aún hay ${errorCount} registro(s) con errores. Corrige antes de continuar.`);
+      return;
+    }
+    onParticipantsChange(draftRows);
+    setShowPreview(false);
+    toast.success(`${draftRows.length} participantes confirmados`);
+  };
+
+  const openExisting = () => {
+    setDraftRows(participants);
+    setReviewMode('view');
+    setShowPreview(true);
   };
 
   const onDrop = (e: React.DragEvent) => {
@@ -221,8 +258,8 @@ const DNCStepParticipantes: React.FC<Props> = ({
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <Button size="sm" variant="outline" className="gap-1.5" onClick={() => setShowPreview(true)}>
-                  <Eye className="w-3.5 h-3.5" /> Ver datos
+                <Button size="sm" variant="outline" className="gap-1.5" onClick={openExisting}>
+                  <Eye className="w-3.5 h-3.5" /> Ver / editar datos
                 </Button>
                 <Button size="sm" variant="outline" className="gap-1.5" onClick={() => fileRef.current?.click()}>
                   <Upload className="w-3.5 h-3.5" /> Reemplazar
@@ -253,31 +290,95 @@ const DNCStepParticipantes: React.FC<Props> = ({
       </div>
 
       <Dialog open={showPreview} onOpenChange={setShowPreview}>
-        <DialogContent className="max-w-3xl">
-          <DialogHeader><DialogTitle>Participantes ({participants.length})</DialogTitle></DialogHeader>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>Revisión de carga ({draftRows.length} registros)</DialogTitle>
+            <DialogDescription>
+              Verifica los datos procesados desde {fileName ?? 'el archivo'} antes de confirmar la carga definitiva.
+            </DialogDescription>
+          </DialogHeader>
+
+          {errorCount > 0 ? (
+            <Alert className="border-destructive/40 bg-destructive/5">
+              <AlertCircle className="w-4 h-4 text-destructive" />
+              <AlertDescription className="text-sm text-destructive">
+                Hay <strong>{errorCount}</strong> registro(s) con datos incompletos o inválidos. Corrige los campos resaltados.
+              </AlertDescription>
+            </Alert>
+          ) : (
+            <Alert className="border-emerald-200 bg-emerald-50 text-emerald-800">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              <AlertDescription className="text-sm">
+                Todos los registros son válidos. Puedes confirmar la carga.
+              </AlertDescription>
+            </Alert>
+          )}
+
           <ScrollArea className="h-[50vh]">
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-10">#</TableHead>
                   <TableHead>Rut</TableHead>
                   <TableHead>Nombres</TableHead>
                   <TableHead>Email</TableHead>
-                  <TableHead>Tipo</TableHead>
+                  <TableHead className="w-36">Tipo</TableHead>
+                  <TableHead className="w-12"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {participants.map((p, i) => (
-                  <TableRow key={i}>
-                    <TableCell className="font-mono text-xs">{p.rut}</TableCell>
-                    <TableCell className="text-sm">{p.nombres}</TableCell>
-                    <TableCell className="text-sm">{p.email}</TableCell>
-                    <TableCell className="text-sm">{p.tipo}</TableCell>
-                  </TableRow>
-                ))}
+                {draftRows.map((p, i) => {
+                  const err = errors[i];
+                  return (
+                    <TableRow key={i} className={cn(err && (err.rut || err.nombres || err.email) && 'bg-destructive/5')}>
+                      <TableCell className="text-xs text-muted-foreground">{i + 1}</TableCell>
+                      <TableCell>
+                        <Input
+                          value={p.rut}
+                          onChange={(e) => updateDraft(i, { rut: e.target.value })}
+                          className={cn('h-8 text-xs font-mono', err?.rut && 'border-destructive')}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Input
+                          value={p.nombres}
+                          onChange={(e) => updateDraft(i, { nombres: e.target.value })}
+                          className={cn('h-8 text-xs', err?.nombres && 'border-destructive')}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Input
+                          value={p.email}
+                          onChange={(e) => updateDraft(i, { email: e.target.value })}
+                          className={cn('h-8 text-xs', err?.email && 'border-destructive')}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Select value={p.tipo} onValueChange={(v) => updateDraft(i, { tipo: v as 'Colaborador' | 'Jefatura' })}>
+                          <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Colaborador">Colaborador</SelectItem>
+                            <SelectItem value="Jefatura">Jefatura</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </TableCell>
+                      <TableCell>
+                        <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive" onClick={() => removeDraft(i)}>
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </ScrollArea>
-          <DialogFooter><Button variant="outline" onClick={() => setShowPreview(false)}>Cerrar</Button></DialogFooter>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setShowPreview(false)}>Cancelar</Button>
+            <Button onClick={confirmUpload} disabled={errorCount > 0 || draftRows.length === 0}>
+              {reviewMode === 'view' ? 'Guardar cambios' : `Confirmar carga (${draftRows.length})`}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

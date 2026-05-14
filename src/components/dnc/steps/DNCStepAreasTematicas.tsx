@@ -90,6 +90,13 @@ const DNCStepAreasTematicas: React.FC<Props> = ({ state, onChange, onNext, onBac
     update(id, { tematicas: next, selected: next.length > 0 ? true : current[id].selected });
   };
 
+  const toggleAllTematicas = (id: string, all: string[]) => {
+    const list = current[id].tematicas;
+    const allSelected = all.every(t => list.includes(t));
+    const next = allSelected ? [] : [...all];
+    update(id, { tematicas: next, selected: next.length > 0 });
+  };
+
   const selectedAreas = AREAS.filter(a => current[a.id]?.selected);
   const activeCount = selectedAreas.length;
   const faltan = Math.max(0, MIN_AREAS - activeCount);
@@ -203,6 +210,14 @@ const DNCStepAreasTematicas: React.FC<Props> = ({ state, onChange, onNext, onBac
                       </button>
                     </PopoverTrigger>
                     <PopoverContent className="p-2 w-[--radix-popover-trigger-width]" align="start">
+                      <button
+                        type="button"
+                        onClick={() => toggleAllTematicas(a.id, a.tematicas)}
+                        className="w-full flex items-center gap-2 px-2 py-1.5 rounded hover:bg-muted text-left text-sm font-medium border-b mb-1"
+                      >
+                        <Checkbox checked={a.tematicas.every(t => tematicasSel.includes(t))} />
+                        <span className="text-primary">Seleccionar todas las temáticas</span>
+                      </button>
                       <div className="space-y-1 max-h-64 overflow-auto">
                         {a.tematicas.map(t => {
                           const checked = tematicasSel.includes(t);
@@ -343,25 +358,17 @@ const DNCStepAreasTematicas: React.FC<Props> = ({ state, onChange, onNext, onBac
                       <TableHead>Área</TableHead>
                       <TableHead>Temáticas incluidas</TableHead>
                       <TableHead>Máx. a priorizar</TableHead>
-                      <TableHead>Estado</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {selectedAreas.map(a => {
                       const sel = current[a.id];
                       const incluidas = sel.tematicas.length;
-                      const estado = getEstado(incluidas, sel.maxPriorizar);
-                      const Icon = estado.icon;
                       return (
                         <TableRow key={a.id}>
                           <TableCell className={cn('font-medium', a.color)}>{a.name}</TableCell>
                           <TableCell className="text-primary font-medium">{incluidas}</TableCell>
                           <TableCell>{incluidas <= 1 ? 1 : sel.maxPriorizar}</TableCell>
-                          <TableCell>
-                            <span className={cn('inline-flex items-center gap-1.5 text-sm', estado.cls)}>
-                              <Icon className="w-4 h-4" /> {estado.label}
-                            </span>
-                          </TableCell>
                         </TableRow>
                       );
                     })}

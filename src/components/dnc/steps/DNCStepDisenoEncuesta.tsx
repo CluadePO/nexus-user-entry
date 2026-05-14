@@ -57,7 +57,7 @@ const DNCStepDisenoEncuesta: React.FC<Props> = ({ state, onChange, onNext, onBac
   const removeMes = (m: string) => update({ meses: state.meses.filter(x => x !== m) });
 
   return (
-    <div className="grid grid-cols-[1fr_360px] gap-6">
+    <div className="grid grid-cols-[1fr_480px] gap-6">
       {/* LEFT: form */}
       <div className="space-y-6">
         <div>
@@ -162,63 +162,61 @@ const DNCStepDisenoEncuesta: React.FC<Props> = ({ state, onChange, onNext, onBac
         </div>
       </div>
 
-      {/* RIGHT: phone preview */}
+      {/* RIGHT: neutral preview */}
       <div className="space-y-3">
         <h4 className="font-semibold text-foreground">Vista previa del encuestado</h4>
         <div className="sticky top-4">
-          <div className="mx-auto w-[320px] rounded-[2rem] bg-foreground p-3 shadow-xl">
-            <div className="rounded-[1.5rem] bg-background p-4 max-h-[640px] overflow-y-auto space-y-5">
-              {state.modalidadEnabled && (
-                <div className="space-y-2">
-                  <p className="text-xs font-semibold text-primary">Pregunta 1</p>
-                  <p className="text-sm font-medium text-foreground">¿Qué modalidad prefieres?</p>
-                  <div className="space-y-2">
-                    {MODALIDADES.filter(m => state.modalidades.includes(m.id)).map(m => (
-                      <div key={m.id} className="rounded-md border bg-card p-3">
-                        <p className="text-sm font-semibold text-primary">{m.label}</p>
-                        <p className="text-xs text-muted-foreground">{m.desc}</p>
-                      </div>
-                    ))}
-                    {state.modalidades.length === 0 && (
-                      <p className="text-xs text-muted-foreground italic">No hay opciones activas.</p>
-                    )}
-                  </div>
+          <Card className="p-6 max-h-[640px] overflow-y-auto space-y-5 bg-muted/30">
+            {state.modalidadEnabled && (
+              <div className="space-y-2">
+                <p className="text-xs font-semibold text-primary">Pregunta 1</p>
+                <p className="text-sm font-medium text-foreground">¿Qué modalidad prefieres?</p>
+                <div className="grid grid-cols-1 gap-2">
+                  {MODALIDADES.filter(m => state.modalidades.includes(m.id)).map(m => (
+                    <div key={m.id} className="rounded-md border bg-background p-3">
+                      <p className="text-sm font-semibold text-primary">{m.label}</p>
+                      <p className="text-xs text-muted-foreground">{m.desc}</p>
+                    </div>
+                  ))}
+                  {state.modalidades.length === 0 && (
+                    <p className="text-xs text-muted-foreground italic">No hay opciones activas.</p>
+                  )}
                 </div>
-              )}
+              </div>
+            )}
 
-              {state.temporalidadEnabled && (
-                <div className="space-y-2">
-                  <p className="text-xs font-semibold text-primary">Pregunta 2</p>
-                  <p className="text-sm font-medium text-foreground">¿En qué mes(es)?</p>
-                  <div className="h-9 rounded-md border bg-background px-3 flex items-center justify-between text-xs text-muted-foreground">
-                    Seleccionar meses...
-                    <ChevronDown className="w-4 h-4" />
-                  </div>
+            {state.temporalidadEnabled && (
+              <div className="space-y-2">
+                <p className="text-xs font-semibold text-primary">Pregunta 2</p>
+                <p className="text-sm font-medium text-foreground">¿En qué mes(es)?</p>
+                <div className="h-9 rounded-md border bg-background px-3 flex items-center justify-between text-xs text-muted-foreground">
+                  Seleccionar meses...
+                  <ChevronDown className="w-4 h-4" />
                 </div>
-              )}
+              </div>
+            )}
 
-              {state.necesidadEnabled && (
-                <div className="space-y-2">
-                  <p className="text-xs font-semibold text-primary">Pregunta 3</p>
-                  <p className="text-sm font-medium text-foreground">¿Necesitas más capacitación?</p>
-                  <RadioGroup className="flex gap-4">
-                    {['Sí', 'No', 'No estoy seguro/a'].map(opt => (
-                      <div key={opt} className="flex items-center gap-1.5">
-                        <RadioGroupItem value={opt} id={`prev-${opt}`} disabled />
-                        <Label htmlFor={`prev-${opt}`} className="text-xs text-muted-foreground">{opt}</Label>
-                      </div>
-                    ))}
-                  </RadioGroup>
-                </div>
-              )}
+            {state.necesidadEnabled && (
+              <div className="space-y-2">
+                <p className="text-xs font-semibold text-primary">Pregunta 3</p>
+                <p className="text-sm font-medium text-foreground">¿Necesitas más capacitación?</p>
+                <RadioGroup className="flex gap-4">
+                  {['Sí', 'No', 'No estoy seguro/a'].map(opt => (
+                    <div key={opt} className="flex items-center gap-1.5">
+                      <RadioGroupItem value={opt} id={`prev-${opt}`} disabled />
+                      <Label htmlFor={`prev-${opt}`} className="text-xs text-muted-foreground">{opt}</Label>
+                    </div>
+                  ))}
+                </RadioGroup>
+              </div>
+            )}
 
-              {!state.modalidadEnabled && !state.temporalidadEnabled && !state.necesidadEnabled && (
-                <p className="text-sm text-muted-foreground italic text-center py-10">
-                  Activa al menos una pregunta para ver la vista previa.
-                </p>
-              )}
-            </div>
-          </div>
+            {!state.modalidadEnabled && !state.temporalidadEnabled && !state.necesidadEnabled && (
+              <p className="text-sm text-muted-foreground italic text-center py-10">
+                Activa al menos una pregunta para ver la vista previa.
+              </p>
+            )}
+          </Card>
         </div>
       </div>
     </div>
