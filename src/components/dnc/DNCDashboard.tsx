@@ -47,9 +47,10 @@ const fmt = (d: string | null) => d ? new Date(d).toLocaleDateString('es-CL') : 
 interface Props {
   onNew: () => void;
   onOpenOnboarding: () => void;
+  onOpenTracking?: (id: string) => void;
 }
 
-const DNCDashboard: React.FC<Props> = ({ onNew, onOpenOnboarding }) => {
+const DNCDashboard: React.FC<Props> = ({ onNew, onOpenOnboarding, onOpenTracking }) => {
   const [search, setSearch] = useState('');
   const [estadoFilter, setEstadoFilter] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'inicio' | 'cierre' | null>(null);
@@ -191,7 +192,7 @@ const DNCDashboard: React.FC<Props> = ({ onNew, onOpenOnboarding }) => {
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="inline-flex items-center gap-1">
-                    <Button size="icon" variant="ghost" className="h-8 w-8"><Eye className="w-4 h-4" /></Button>
+                    <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => onOpenTracking?.(r.id)}><Eye className="w-4 h-4" /></Button>
                     {r.estado === 'Terminada' && (
                       <>
                         <Button size="icon" variant="ghost" className="h-8 w-8"><Download className="w-4 h-4" /></Button>
