@@ -210,6 +210,14 @@ const DNCStepAreasTematicas: React.FC<Props> = ({ state, onChange, onNext, onBac
                       </button>
                     </PopoverTrigger>
                     <PopoverContent className="p-2 w-[--radix-popover-trigger-width]" align="start">
+                      <button
+                        type="button"
+                        onClick={() => toggleAllTematicas(a.id, a.tematicas)}
+                        className="w-full flex items-center gap-2 px-2 py-1.5 rounded hover:bg-muted text-left text-sm font-medium border-b mb-1"
+                      >
+                        <Checkbox checked={a.tematicas.every(t => tematicasSel.includes(t))} />
+                        <span className="text-primary">Seleccionar todas las temáticas</span>
+                      </button>
                       <div className="space-y-1 max-h-64 overflow-auto">
                         {a.tematicas.map(t => {
                           const checked = tematicasSel.includes(t);
