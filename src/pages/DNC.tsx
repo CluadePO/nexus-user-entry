@@ -10,8 +10,10 @@ import DNCStepAreasTematicas, { type AreasState, AREAS } from '@/components/dnc/
 import DNCStepDisenoEncuesta, { defaultSurveyDesign, type SurveyDesignState } from '@/components/dnc/steps/DNCStepDisenoEncuesta';
 import DNCStepComunicacion, { defaultComunicacion, type ComunicacionState } from '@/components/dnc/steps/DNCStepComunicacion';
 import DNCStepResumen from '@/components/dnc/steps/DNCStepResumen';
+import DNCSuccess from '@/components/dnc/DNCSuccess';
+import DNCTrackingDashboard from '@/components/dnc/DNCTrackingDashboard';
 
-type Phase = 'dashboard' | 'onboarding' | 'wizard';
+type Phase = 'dashboard' | 'onboarding' | 'wizard' | 'success' | 'tracking';
 
 const emptyEmpresa: EmpresaDataStep1 = {
   razonSocial: '', rut: '', nombreProceso: '', rubro: '', region: '',
@@ -30,12 +32,19 @@ const DNC: React.FC = () => {
   const [comunicacion, setComunicacion] = useState<ComunicacionState>(defaultComunicacion());
 
   const startNew = () => { setStep(1); setPhase('wizard'); };
+  const dncName = empresa.nombreProceso || 'DNC Constructora Arenas 2025';
 
   if (phase === 'dashboard') {
-    return <DNCDashboard onNew={startNew} onOpenOnboarding={() => setPhase('onboarding')} />;
+    return <DNCDashboard onNew={startNew} onOpenOnboarding={() => setPhase('onboarding')} onOpenTracking={() => setPhase('tracking')} />;
   }
   if (phase === 'onboarding') {
     return <DNCOnboarding onBack={() => setPhase('dashboard')} onNew={startNew} />;
+  }
+  if (phase === 'success') {
+    return <DNCSuccess dncName={dncName} onViewTracking={() => setPhase('tracking')} onBackToList={() => setPhase('dashboard')} />;
+  }
+  if (phase === 'tracking') {
+    return <DNCTrackingDashboard dncName={dncName} onBack={() => setPhase('dashboard')} />;
   }
 
   return (
@@ -96,7 +105,7 @@ const DNC: React.FC = () => {
           comunicacion={comunicacion}
           onBack={() => setStep(5)}
           onEdit={(s) => setStep(s)}
-          onConfirm={() => setPhase('dashboard')}
+          onConfirm={() => setPhase('success')}
         />
       )}
     </DNCWizardLayout>
