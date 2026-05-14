@@ -307,7 +307,7 @@ const DNCStepParticipantes: React.FC<Props> = ({
       </div>
 
       <Dialog open={showPreview} onOpenChange={setShowPreview}>
-        <DialogContent className="max-w-4xl">
+        <DialogContent className="max-w-[95vw] xl:max-w-7xl">
           <DialogHeader>
             <DialogTitle>Revisión de carga ({draftRows.length} registros)</DialogTitle>
             <DialogDescription>
