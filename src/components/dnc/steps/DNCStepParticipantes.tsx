@@ -114,7 +114,7 @@ const DNCStepParticipantes: React.FC<Props> = ({
   const [reviewMode, setReviewMode] = useState<'review' | 'view'>('review');
 
   const errors = useMemo(() => draftRows.map(validateRow), [draftRows]);
-  const errorCount = errors.filter(e => e.rut || e.nombres || e.email).length;
+  const errorCount = errors.filter(e => e.rut || e.nombres || e.apellidoPaterno || e.email || e.rutJefatura).length;
 
   const handleFile = async (file: File) => {
     if (!file.name.match(/\.(xlsx|xls|csv)$/i)) {
