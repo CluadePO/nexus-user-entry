@@ -78,6 +78,13 @@ function parseRow(row: any): ParticipanteSimple | null {
   };
 }
 
+const isValidEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+const validateRow = (p: ParticipanteSimple) => ({
+  rut: !p.rut.trim(),
+  nombres: !p.nombres.trim(),
+  email: !p.email.trim() || !isValidEmail(p.email),
+});
+
 const DNCStepParticipantes: React.FC<Props> = ({
   alcance, onAlcanceChange, modelo, onModeloChange,
   participants, onParticipantsChange, onNext, onBack,
@@ -86,6 +93,11 @@ const DNCStepParticipantes: React.FC<Props> = ({
   const [drag, setDrag] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [fileName, setFileName] = useState<string | null>(null);
+  const [draftRows, setDraftRows] = useState<ParticipanteSimple[]>([]);
+  const [reviewMode, setReviewMode] = useState<'review' | 'view'>('review');
+
+  const errors = useMemo(() => draftRows.map(validateRow), [draftRows]);
+  const errorCount = errors.filter(e => e.rut || e.nombres || e.email).length;
 
   const handleFile = async (file: File) => {
     if (!file.name.match(/\.(xlsx|xls|csv)$/i)) {
@@ -99,12 +111,35 @@ const DNCStepParticipantes: React.FC<Props> = ({
       const rows: any[] = XLSX.utils.sheet_to_json(ws);
       const parsed = rows.map(parseRow).filter(Boolean) as ParticipanteSimple[];
       if (!parsed.length) { toast.error('No se encontraron registros válidos.'); return; }
-      onParticipantsChange(parsed);
+      setDraftRows(parsed);
       setFileName(file.name);
-      toast.success(`${parsed.length} participantes cargados`);
+      setReviewMode('review');
+      setShowPreview(true);
     } catch {
       toast.error('Error al leer el archivo');
     }
+  };
+
+  const updateDraft = (i: number, patch: Partial<ParticipanteSimple>) => {
+    setDraftRows(rows => rows.map((r, idx) => idx === i ? { ...r, ...patch } : r));
+  };
+
+  const removeDraft = (i: number) => setDraftRows(rows => rows.filter((_, idx) => idx !== i));
+
+  const confirmUpload = () => {
+    if (errorCount > 0) {
+      toast.error(`Aún hay ${errorCount} registro(s) con errores. Corrige antes de continuar.`);
+      return;
+    }
+    onParticipantsChange(draftRows);
+    setShowPreview(false);
+    toast.success(`${draftRows.length} participantes confirmados`);
+  };
+
+  const openExisting = () => {
+    setDraftRows(participants);
+    setReviewMode('view');
+    setShowPreview(true);
   };
 
   const onDrop = (e: React.DragEvent) => {
