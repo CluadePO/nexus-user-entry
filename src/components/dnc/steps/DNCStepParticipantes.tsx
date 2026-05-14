@@ -290,31 +290,95 @@ const DNCStepParticipantes: React.FC<Props> = ({
       </div>
 
       <Dialog open={showPreview} onOpenChange={setShowPreview}>
-        <DialogContent className="max-w-3xl">
-          <DialogHeader><DialogTitle>Participantes ({participants.length})</DialogTitle></DialogHeader>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>Revisión de carga ({draftRows.length} registros)</DialogTitle>
+            <DialogDescription>
+              Verifica los datos procesados desde {fileName ?? 'el archivo'} antes de confirmar la carga definitiva.
+            </DialogDescription>
+          </DialogHeader>
+
+          {errorCount > 0 ? (
+            <Alert className="border-destructive/40 bg-destructive/5">
+              <AlertCircle className="w-4 h-4 text-destructive" />
+              <AlertDescription className="text-sm text-destructive">
+                Hay <strong>{errorCount}</strong> registro(s) con datos incompletos o inválidos. Corrige los campos resaltados.
+              </AlertDescription>
+            </Alert>
+          ) : (
+            <Alert className="border-emerald-200 bg-emerald-50 text-emerald-800">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              <AlertDescription className="text-sm">
+                Todos los registros son válidos. Puedes confirmar la carga.
+              </AlertDescription>
+            </Alert>
+          )}
+
           <ScrollArea className="h-[50vh]">
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-10">#</TableHead>
                   <TableHead>Rut</TableHead>
                   <TableHead>Nombres</TableHead>
                   <TableHead>Email</TableHead>
-                  <TableHead>Tipo</TableHead>
+                  <TableHead className="w-36">Tipo</TableHead>
+                  <TableHead className="w-12"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {participants.map((p, i) => (
-                  <TableRow key={i}>
-                    <TableCell className="font-mono text-xs">{p.rut}</TableCell>
-                    <TableCell className="text-sm">{p.nombres}</TableCell>
-                    <TableCell className="text-sm">{p.email}</TableCell>
-                    <TableCell className="text-sm">{p.tipo}</TableCell>
-                  </TableRow>
-                ))}
+                {draftRows.map((p, i) => {
+                  const err = errors[i];
+                  return (
+                    <TableRow key={i} className={cn(err && (err.rut || err.nombres || err.email) && 'bg-destructive/5')}>
+                      <TableCell className="text-xs text-muted-foreground">{i + 1}</TableCell>
+                      <TableCell>
+                        <Input
+                          value={p.rut}
+                          onChange={(e) => updateDraft(i, { rut: e.target.value })}
+                          className={cn('h-8 text-xs font-mono', err?.rut && 'border-destructive')}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Input
+                          value={p.nombres}
+                          onChange={(e) => updateDraft(i, { nombres: e.target.value })}
+                          className={cn('h-8 text-xs', err?.nombres && 'border-destructive')}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Input
+                          value={p.email}
+                          onChange={(e) => updateDraft(i, { email: e.target.value })}
+                          className={cn('h-8 text-xs', err?.email && 'border-destructive')}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Select value={p.tipo} onValueChange={(v) => updateDraft(i, { tipo: v as 'Colaborador' | 'Jefatura' })}>
+                          <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Colaborador">Colaborador</SelectItem>
+                            <SelectItem value="Jefatura">Jefatura</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </TableCell>
+                      <TableCell>
+                        <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive" onClick={() => removeDraft(i)}>
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </ScrollArea>
-          <DialogFooter><Button variant="outline" onClick={() => setShowPreview(false)}>Cerrar</Button></DialogFooter>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setShowPreview(false)}>Cancelar</Button>
+            <Button onClick={confirmUpload} disabled={errorCount > 0 || draftRows.length === 0}>
+              {reviewMode === 'view' ? 'Guardar cambios' : `Confirmar carga (${draftRows.length})`}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
