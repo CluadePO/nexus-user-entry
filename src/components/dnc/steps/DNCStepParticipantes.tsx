@@ -22,7 +22,13 @@ export type ModeloAsignacion = 1 | 2 | 3 | 4;
 export interface ParticipanteSimple {
   rut: string;
   nombres: string;
+  apellidoPaterno: string;
+  apellidoMaterno: string;
   email: string;
+  cargo: string;
+  gerencia: string;
+  departamento: string;
+  rutJefatura: string;
   tipo: 'Colaborador' | 'Jefatura';
 }
 
