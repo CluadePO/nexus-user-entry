@@ -243,7 +243,7 @@ const DNCStepParticipantes: React.FC<Props> = ({
           </Button>
           <Alert className="mt-2">
             <AlertDescription className="text-xs">
-              Columnas obligatorias: <strong>Rut, Nombres, Email, Tipo Participante</strong>. Tipo debe ser 'Colaborador' o 'Jefatura'.
+              Columnas: <strong>Rut, Nombres, Apellido Paterno, Apellido Materno, Email, Cargo, Gerencia, Departamento, Rut de Jefatura (Si aplica), Tipo de participante</strong>. El tipo debe ser 'Colaborador' o 'Jefatura'. El Rut de Jefatura es obligatorio para Colaboradores.
             </AlertDescription>
           </Alert>
         </div>
