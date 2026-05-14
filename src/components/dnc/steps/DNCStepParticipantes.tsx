@@ -22,7 +22,13 @@ export type ModeloAsignacion = 1 | 2 | 3 | 4;
 export interface ParticipanteSimple {
   rut: string;
   nombres: string;
+  apellidoPaterno: string;
+  apellidoMaterno: string;
   email: string;
+  cargo: string;
+  gerencia: string;
+  departamento: string;
+  rutJefatura: string;
   tipo: 'Colaborador' | 'Jefatura';
 }
 
@@ -51,14 +57,17 @@ const MODELOS: { id: ModeloAsignacion; title: string; desc: string; nodes: numbe
   { id: 4, title: 'Modelo 4', desc: 'Evaluación completa: jefatura, colaboradores y autoevaluaciones.', nodes: 4, tags: ['Jefatura', 'Colaborador'] },
 ];
 
-const TEMPLATE_COLUMNS = ['Rut', 'Nombres', 'Email', 'Tipo Participante'];
+const TEMPLATE_COLUMNS = [
+  'Rut', 'Nombres', 'Apellido Paterno', 'Apellido Materno', 'Email',
+  'Cargo', 'Gerencia', 'Departamento', 'Rut de Jefatura (Si aplica)', 'Tipo de participante',
+];
 
 function downloadTemplate() {
   const wb = XLSX.utils.book_new();
   const ws = XLSX.utils.aoa_to_sheet([
     TEMPLATE_COLUMNS,
-    ['12.345.678-9', 'Juan Pérez', 'juan@empresa.cl', 'Colaborador'],
-    ['11.222.333-4', 'María López', 'maria@empresa.cl', 'Jefatura'],
+    ['12.345.678-9', 'Juan', 'Pérez', 'González', 'juan@empresa.cl', 'Analista', 'Finanzas', 'Contabilidad', '11.222.333-4', 'Colaborador'],
+    ['11.222.333-4', 'María', 'López', 'Soto', 'maria@empresa.cl', 'Gerente', 'Finanzas', 'Contabilidad', '', 'Jefatura'],
   ]);
   ws['!cols'] = TEMPLATE_COLUMNS.map(() => ({ wch: 22 }));
   XLSX.utils.book_append_sheet(wb, ws, 'Participantes');
@@ -68,12 +77,18 @@ function downloadTemplate() {
 function parseRow(row: any): ParticipanteSimple | null {
   const rut = String(row['Rut'] ?? row['rut'] ?? '').trim();
   if (!rut) return null;
-  const tipoRaw = String(row['Tipo Participante'] ?? row['Tipo participante'] ?? row['tipo'] ?? '').trim();
+  const tipoRaw = String(row['Tipo de participante'] ?? row['Tipo Participante'] ?? row['Tipo participante'] ?? row['tipo'] ?? '').trim();
   const tipo: 'Colaborador' | 'Jefatura' = tipoRaw.toLowerCase().startsWith('jef') ? 'Jefatura' : 'Colaborador';
   return {
     rut,
     nombres: String(row['Nombres'] ?? row['nombres'] ?? row['Nombre'] ?? '').trim(),
+    apellidoPaterno: String(row['Apellido Paterno'] ?? row['apellido paterno'] ?? '').trim(),
+    apellidoMaterno: String(row['Apellido Materno'] ?? row['apellido materno'] ?? '').trim(),
     email: String(row['Email'] ?? row['email'] ?? row['E-mail'] ?? '').trim(),
+    cargo: String(row['Cargo'] ?? row['cargo'] ?? '').trim(),
+    gerencia: String(row['Gerencia'] ?? row['gerencia'] ?? '').trim(),
+    departamento: String(row['Departamento'] ?? row['departamento'] ?? '').trim(),
+    rutJefatura: String(row['Rut de Jefatura (Si aplica)'] ?? row['Rut Jefatura'] ?? row['rut jefatura'] ?? '').trim(),
     tipo,
   };
 }
@@ -82,7 +97,9 @@ const isValidEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
 const validateRow = (p: ParticipanteSimple) => ({
   rut: !p.rut.trim(),
   nombres: !p.nombres.trim(),
+  apellidoPaterno: !p.apellidoPaterno.trim(),
   email: !p.email.trim() || !isValidEmail(p.email),
+  rutJefatura: p.tipo === 'Colaborador' && !p.rutJefatura.trim(),
 });
 
 const DNCStepParticipantes: React.FC<Props> = ({
@@ -97,7 +114,7 @@ const DNCStepParticipantes: React.FC<Props> = ({
   const [reviewMode, setReviewMode] = useState<'review' | 'view'>('review');
 
   const errors = useMemo(() => draftRows.map(validateRow), [draftRows]);
-  const errorCount = errors.filter(e => e.rut || e.nombres || e.email).length;
+  const errorCount = errors.filter(e => e.rut || e.nombres || e.apellidoPaterno || e.email || e.rutJefatura).length;
 
   const handleFile = async (file: File) => {
     if (!file.name.match(/\.(xlsx|xls|csv)$/i)) {
@@ -226,7 +243,7 @@ const DNCStepParticipantes: React.FC<Props> = ({
           </Button>
           <Alert className="mt-2">
             <AlertDescription className="text-xs">
-              Columnas obligatorias: <strong>Rut, Nombres, Email, Tipo Participante</strong>. Tipo debe ser 'Colaborador' o 'Jefatura'.
+              Columnas: <strong>Rut, Nombres, Apellido Paterno, Apellido Materno, Email, Cargo, Gerencia, Departamento, Rut de Jefatura (Si aplica), Tipo de participante</strong>. El tipo debe ser 'Colaborador' o 'Jefatura'. El Rut de Jefatura es obligatorio para Colaboradores.
             </AlertDescription>
           </Alert>
         </div>
@@ -290,7 +307,7 @@ const DNCStepParticipantes: React.FC<Props> = ({
       </div>
 
       <Dialog open={showPreview} onOpenChange={setShowPreview}>
-        <DialogContent className="max-w-4xl">
+        <DialogContent className="max-w-[95vw] xl:max-w-7xl">
           <DialogHeader>
             <DialogTitle>Revisión de carga ({draftRows.length} registros)</DialogTitle>
             <DialogDescription>
@@ -321,37 +338,60 @@ const DNCStepParticipantes: React.FC<Props> = ({
                   <TableHead className="w-10">#</TableHead>
                   <TableHead>Rut</TableHead>
                   <TableHead>Nombres</TableHead>
+                  <TableHead>Ap. Paterno</TableHead>
+                  <TableHead>Ap. Materno</TableHead>
                   <TableHead>Email</TableHead>
-                  <TableHead className="w-36">Tipo</TableHead>
+                  <TableHead>Cargo</TableHead>
+                  <TableHead>Gerencia</TableHead>
+                  <TableHead>Departamento</TableHead>
+                  <TableHead>Rut Jefatura</TableHead>
+                  <TableHead className="w-32">Tipo</TableHead>
                   <TableHead className="w-12"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {draftRows.map((p, i) => {
                   const err = errors[i];
+                  const hasErr = err && (err.rut || err.nombres || err.apellidoPaterno || err.email || err.rutJefatura);
                   return (
-                    <TableRow key={i} className={cn(err && (err.rut || err.nombres || err.email) && 'bg-destructive/5')}>
+                    <TableRow key={i} className={cn(hasErr && 'bg-destructive/5')}>
                       <TableCell className="text-xs text-muted-foreground">{i + 1}</TableCell>
                       <TableCell>
-                        <Input
-                          value={p.rut}
-                          onChange={(e) => updateDraft(i, { rut: e.target.value })}
-                          className={cn('h-8 text-xs font-mono', err?.rut && 'border-destructive')}
-                        />
+                        <Input value={p.rut} onChange={(e) => updateDraft(i, { rut: e.target.value })}
+                          className={cn('h-8 text-xs font-mono min-w-[110px]', err?.rut && 'border-destructive')} />
                       </TableCell>
                       <TableCell>
-                        <Input
-                          value={p.nombres}
-                          onChange={(e) => updateDraft(i, { nombres: e.target.value })}
-                          className={cn('h-8 text-xs', err?.nombres && 'border-destructive')}
-                        />
+                        <Input value={p.nombres} onChange={(e) => updateDraft(i, { nombres: e.target.value })}
+                          className={cn('h-8 text-xs min-w-[120px]', err?.nombres && 'border-destructive')} />
                       </TableCell>
                       <TableCell>
-                        <Input
-                          value={p.email}
-                          onChange={(e) => updateDraft(i, { email: e.target.value })}
-                          className={cn('h-8 text-xs', err?.email && 'border-destructive')}
-                        />
+                        <Input value={p.apellidoPaterno} onChange={(e) => updateDraft(i, { apellidoPaterno: e.target.value })}
+                          className={cn('h-8 text-xs min-w-[110px]', err?.apellidoPaterno && 'border-destructive')} />
+                      </TableCell>
+                      <TableCell>
+                        <Input value={p.apellidoMaterno} onChange={(e) => updateDraft(i, { apellidoMaterno: e.target.value })}
+                          className="h-8 text-xs min-w-[110px]" />
+                      </TableCell>
+                      <TableCell>
+                        <Input value={p.email} onChange={(e) => updateDraft(i, { email: e.target.value })}
+                          className={cn('h-8 text-xs min-w-[160px]', err?.email && 'border-destructive')} />
+                      </TableCell>
+                      <TableCell>
+                        <Input value={p.cargo} onChange={(e) => updateDraft(i, { cargo: e.target.value })}
+                          className="h-8 text-xs min-w-[120px]" />
+                      </TableCell>
+                      <TableCell>
+                        <Input value={p.gerencia} onChange={(e) => updateDraft(i, { gerencia: e.target.value })}
+                          className="h-8 text-xs min-w-[120px]" />
+                      </TableCell>
+                      <TableCell>
+                        <Input value={p.departamento} onChange={(e) => updateDraft(i, { departamento: e.target.value })}
+                          className="h-8 text-xs min-w-[120px]" />
+                      </TableCell>
+                      <TableCell>
+                        <Input value={p.rutJefatura} onChange={(e) => updateDraft(i, { rutJefatura: e.target.value })}
+                          placeholder={p.tipo === 'Jefatura' ? 'Opcional' : ''}
+                          className={cn('h-8 text-xs font-mono min-w-[110px]', err?.rutJefatura && 'border-destructive')} />
                       </TableCell>
                       <TableCell>
                         <Select value={p.tipo} onValueChange={(v) => updateDraft(i, { tipo: v as 'Colaborador' | 'Jefatura' })}>
