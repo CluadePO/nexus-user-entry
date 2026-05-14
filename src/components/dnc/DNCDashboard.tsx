@@ -51,11 +51,14 @@ interface Props {
   onOpenTracking?: (id: string) => void;
 }
 
+const PAGE_SIZE = 5;
+
 const DNCDashboard: React.FC<Props> = ({ onNew, onOpenOnboarding, onOpenTracking }) => {
   const [search, setSearch] = useState('');
   const [estadoFilter, setEstadoFilter] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'inicio' | 'cierre' | null>(null);
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
+  const [page, setPage] = useState(1);
 
   const rows = useMemo(() => {
     let r = MOCK_ROWS.filter(x =>
@@ -72,12 +75,21 @@ const DNCDashboard: React.FC<Props> = ({ onNew, onOpenOnboarding, onOpenTracking
     return r;
   }, [search, estadoFilter, sortBy, sortDir]);
 
+  const totalPages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const pagedRows = rows.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
   const stats = useMemo(() => ({
     total: MOCK_ROWS.length,
     activas: MOCK_ROWS.filter(r => r.estado === 'Iniciada').length,
     borradores: MOCK_ROWS.filter(r => r.estado === 'Borrador').length,
     finalizadas: MOCK_ROWS.filter(r => r.estado === 'Terminada').length,
   }), []);
+
+  const handleDownloadReport = (nombre: string) => {
+    toast.loading('Generando reporte...', { id: 'rep' });
+    setTimeout(() => toast.success(`Reporte de "${nombre}" generado`, { id: 'rep' }), 900);
+  };
 
   const toggleSort = (key: 'inicio' | 'cierre') => {
     if (sortBy === key) setSortDir(d => d === 'asc' ? 'desc' : 'asc');
