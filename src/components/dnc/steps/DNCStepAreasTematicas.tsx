@@ -90,6 +90,13 @@ const DNCStepAreasTematicas: React.FC<Props> = ({ state, onChange, onNext, onBac
     update(id, { tematicas: next, selected: next.length > 0 ? true : current[id].selected });
   };
 
+  const toggleAllTematicas = (id: string, all: string[]) => {
+    const list = current[id].tematicas;
+    const allSelected = all.every(t => list.includes(t));
+    const next = allSelected ? [] : [...all];
+    update(id, { tematicas: next, selected: next.length > 0 });
+  };
+
   const selectedAreas = AREAS.filter(a => current[a.id]?.selected);
   const activeCount = selectedAreas.length;
   const faltan = Math.max(0, MIN_AREAS - activeCount);
