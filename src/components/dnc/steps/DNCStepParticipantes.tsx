@@ -338,37 +338,60 @@ const DNCStepParticipantes: React.FC<Props> = ({
                   <TableHead className="w-10">#</TableHead>
                   <TableHead>Rut</TableHead>
                   <TableHead>Nombres</TableHead>
+                  <TableHead>Ap. Paterno</TableHead>
+                  <TableHead>Ap. Materno</TableHead>
                   <TableHead>Email</TableHead>
-                  <TableHead className="w-36">Tipo</TableHead>
+                  <TableHead>Cargo</TableHead>
+                  <TableHead>Gerencia</TableHead>
+                  <TableHead>Departamento</TableHead>
+                  <TableHead>Rut Jefatura</TableHead>
+                  <TableHead className="w-32">Tipo</TableHead>
                   <TableHead className="w-12"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {draftRows.map((p, i) => {
                   const err = errors[i];
+                  const hasErr = err && (err.rut || err.nombres || err.apellidoPaterno || err.email || err.rutJefatura);
                   return (
-                    <TableRow key={i} className={cn(err && (err.rut || err.nombres || err.email) && 'bg-destructive/5')}>
+                    <TableRow key={i} className={cn(hasErr && 'bg-destructive/5')}>
                       <TableCell className="text-xs text-muted-foreground">{i + 1}</TableCell>
                       <TableCell>
-                        <Input
-                          value={p.rut}
-                          onChange={(e) => updateDraft(i, { rut: e.target.value })}
-                          className={cn('h-8 text-xs font-mono', err?.rut && 'border-destructive')}
-                        />
+                        <Input value={p.rut} onChange={(e) => updateDraft(i, { rut: e.target.value })}
+                          className={cn('h-8 text-xs font-mono min-w-[110px]', err?.rut && 'border-destructive')} />
                       </TableCell>
                       <TableCell>
-                        <Input
-                          value={p.nombres}
-                          onChange={(e) => updateDraft(i, { nombres: e.target.value })}
-                          className={cn('h-8 text-xs', err?.nombres && 'border-destructive')}
-                        />
+                        <Input value={p.nombres} onChange={(e) => updateDraft(i, { nombres: e.target.value })}
+                          className={cn('h-8 text-xs min-w-[120px]', err?.nombres && 'border-destructive')} />
                       </TableCell>
                       <TableCell>
-                        <Input
-                          value={p.email}
-                          onChange={(e) => updateDraft(i, { email: e.target.value })}
-                          className={cn('h-8 text-xs', err?.email && 'border-destructive')}
-                        />
+                        <Input value={p.apellidoPaterno} onChange={(e) => updateDraft(i, { apellidoPaterno: e.target.value })}
+                          className={cn('h-8 text-xs min-w-[110px]', err?.apellidoPaterno && 'border-destructive')} />
+                      </TableCell>
+                      <TableCell>
+                        <Input value={p.apellidoMaterno} onChange={(e) => updateDraft(i, { apellidoMaterno: e.target.value })}
+                          className="h-8 text-xs min-w-[110px]" />
+                      </TableCell>
+                      <TableCell>
+                        <Input value={p.email} onChange={(e) => updateDraft(i, { email: e.target.value })}
+                          className={cn('h-8 text-xs min-w-[160px]', err?.email && 'border-destructive')} />
+                      </TableCell>
+                      <TableCell>
+                        <Input value={p.cargo} onChange={(e) => updateDraft(i, { cargo: e.target.value })}
+                          className="h-8 text-xs min-w-[120px]" />
+                      </TableCell>
+                      <TableCell>
+                        <Input value={p.gerencia} onChange={(e) => updateDraft(i, { gerencia: e.target.value })}
+                          className="h-8 text-xs min-w-[120px]" />
+                      </TableCell>
+                      <TableCell>
+                        <Input value={p.departamento} onChange={(e) => updateDraft(i, { departamento: e.target.value })}
+                          className="h-8 text-xs min-w-[120px]" />
+                      </TableCell>
+                      <TableCell>
+                        <Input value={p.rutJefatura} onChange={(e) => updateDraft(i, { rutJefatura: e.target.value })}
+                          placeholder={p.tipo === 'Jefatura' ? 'Opcional' : ''}
+                          className={cn('h-8 text-xs font-mono min-w-[110px]', err?.rutJefatura && 'border-destructive')} />
                       </TableCell>
                       <TableCell>
                         <Select value={p.tipo} onValueChange={(v) => updateDraft(i, { tipo: v as 'Colaborador' | 'Jefatura' })}>
