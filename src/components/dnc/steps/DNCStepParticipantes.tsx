@@ -57,14 +57,17 @@ const MODELOS: { id: ModeloAsignacion; title: string; desc: string; nodes: numbe
   { id: 4, title: 'Modelo 4', desc: 'Evaluación completa: jefatura, colaboradores y autoevaluaciones.', nodes: 4, tags: ['Jefatura', 'Colaborador'] },
 ];
 
-const TEMPLATE_COLUMNS = ['Rut', 'Nombres', 'Email', 'Tipo Participante'];
+const TEMPLATE_COLUMNS = [
+  'Rut', 'Nombres', 'Apellido Paterno', 'Apellido Materno', 'Email',
+  'Cargo', 'Gerencia', 'Departamento', 'Rut de Jefatura (Si aplica)', 'Tipo de participante',
+];
 
 function downloadTemplate() {
   const wb = XLSX.utils.book_new();
   const ws = XLSX.utils.aoa_to_sheet([
     TEMPLATE_COLUMNS,
-    ['12.345.678-9', 'Juan Pérez', 'juan@empresa.cl', 'Colaborador'],
-    ['11.222.333-4', 'María López', 'maria@empresa.cl', 'Jefatura'],
+    ['12.345.678-9', 'Juan', 'Pérez', 'González', 'juan@empresa.cl', 'Analista', 'Finanzas', 'Contabilidad', '11.222.333-4', 'Colaborador'],
+    ['11.222.333-4', 'María', 'López', 'Soto', 'maria@empresa.cl', 'Gerente', 'Finanzas', 'Contabilidad', '', 'Jefatura'],
   ]);
   ws['!cols'] = TEMPLATE_COLUMNS.map(() => ({ wch: 22 }));
   XLSX.utils.book_append_sheet(wb, ws, 'Participantes');
@@ -74,12 +77,18 @@ function downloadTemplate() {
 function parseRow(row: any): ParticipanteSimple | null {
   const rut = String(row['Rut'] ?? row['rut'] ?? '').trim();
   if (!rut) return null;
-  const tipoRaw = String(row['Tipo Participante'] ?? row['Tipo participante'] ?? row['tipo'] ?? '').trim();
+  const tipoRaw = String(row['Tipo de participante'] ?? row['Tipo Participante'] ?? row['Tipo participante'] ?? row['tipo'] ?? '').trim();
   const tipo: 'Colaborador' | 'Jefatura' = tipoRaw.toLowerCase().startsWith('jef') ? 'Jefatura' : 'Colaborador';
   return {
     rut,
     nombres: String(row['Nombres'] ?? row['nombres'] ?? row['Nombre'] ?? '').trim(),
+    apellidoPaterno: String(row['Apellido Paterno'] ?? row['apellido paterno'] ?? '').trim(),
+    apellidoMaterno: String(row['Apellido Materno'] ?? row['apellido materno'] ?? '').trim(),
     email: String(row['Email'] ?? row['email'] ?? row['E-mail'] ?? '').trim(),
+    cargo: String(row['Cargo'] ?? row['cargo'] ?? '').trim(),
+    gerencia: String(row['Gerencia'] ?? row['gerencia'] ?? '').trim(),
+    departamento: String(row['Departamento'] ?? row['departamento'] ?? '').trim(),
+    rutJefatura: String(row['Rut de Jefatura (Si aplica)'] ?? row['Rut Jefatura'] ?? row['rut jefatura'] ?? '').trim(),
     tipo,
   };
 }
@@ -88,7 +97,9 @@ const isValidEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
 const validateRow = (p: ParticipanteSimple) => ({
   rut: !p.rut.trim(),
   nombres: !p.nombres.trim(),
+  apellidoPaterno: !p.apellidoPaterno.trim(),
   email: !p.email.trim() || !isValidEmail(p.email),
+  rutJefatura: p.tipo === 'Colaborador' && !p.rutJefatura.trim(),
 });
 
 const DNCStepParticipantes: React.FC<Props> = ({
