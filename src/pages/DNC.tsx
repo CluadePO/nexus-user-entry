@@ -8,6 +8,8 @@ import DNCStepDatos, { type EmpresaDataStep1 } from '@/components/dnc/steps/DNCS
 import DNCStepParticipantes, {
   type Alcance, type ModeloAsignacion, type ParticipanteSimple,
 } from '@/components/dnc/steps/DNCStepParticipantes';
+import DNCStepAreasTematicas, { type AreasState } from '@/components/dnc/steps/DNCStepAreasTematicas';
+import DNCStepDisenoEncuesta, { defaultSurveyDesign, type SurveyDesignState } from '@/components/dnc/steps/DNCStepDisenoEncuesta';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 type Phase = 'dashboard' | 'onboarding' | 'wizard';
@@ -24,6 +26,8 @@ const DNC: React.FC = () => {
   const [alcance, setAlcance] = useState<Alcance | null>(null);
   const [modelo, setModelo] = useState<ModeloAsignacion | null>(null);
   const [participants, setParticipants] = useState<ParticipanteSimple[]>([]);
+  const [areasState, setAreasState] = useState<AreasState>({});
+  const [surveyDesign, setSurveyDesign] = useState<SurveyDesignState>(defaultSurveyDesign());
 
   const startNew = () => { setStep(1); setPhase('wizard'); };
 
@@ -55,7 +59,23 @@ const DNC: React.FC = () => {
           onBack={() => setStep(1)}
         />
       )}
-      {step >= 3 && (
+      {step === 3 && (
+        <DNCStepAreasTematicas
+          state={areasState}
+          onChange={setAreasState}
+          onNext={() => setStep(4)}
+          onBack={() => setStep(2)}
+        />
+      )}
+      {step === 4 && (
+        <DNCStepDisenoEncuesta
+          state={surveyDesign}
+          onChange={setSurveyDesign}
+          onNext={() => setStep(5)}
+          onBack={() => setStep(3)}
+        />
+      )}
+      {step >= 5 && (
         <Card className="p-10 text-center space-y-4">
           <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center text-3xl">🚧</div>
           <h2 className="text-xl font-bold text-foreground">Paso {step} en construcción</h2>
