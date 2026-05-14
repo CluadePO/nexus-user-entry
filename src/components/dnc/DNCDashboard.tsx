@@ -47,9 +47,10 @@ const fmt = (d: string | null) => d ? new Date(d).toLocaleDateString('es-CL') : 
 interface Props {
   onNew: () => void;
   onOpenOnboarding: () => void;
+  onOpenTracking?: (id: string) => void;
 }
 
-const DNCDashboard: React.FC<Props> = ({ onNew, onOpenOnboarding }) => {
+const DNCDashboard: React.FC<Props> = ({ onNew, onOpenOnboarding, onOpenTracking }) => {
   const [search, setSearch] = useState('');
   const [estadoFilter, setEstadoFilter] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'inicio' | 'cierre' | null>(null);
