@@ -57,7 +57,7 @@ const DNCStepDisenoEncuesta: React.FC<Props> = ({ state, onChange, onNext, onBac
   const removeMes = (m: string) => update({ meses: state.meses.filter(x => x !== m) });
 
   return (
-    <div className="grid grid-cols-[1fr_360px] gap-6">
+    <div className="grid grid-cols-[1fr_480px] gap-6">
       {/* LEFT: form */}
       <div className="space-y-6">
         <div>
