@@ -331,7 +331,7 @@ const DNCStepParticipantes: React.FC<Props> = ({
             </Alert>
           )}
 
-          <ScrollArea className="h-[50vh]">
+          <div className="h-[50vh] overflow-auto border rounded-md">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -412,7 +412,7 @@ const DNCStepParticipantes: React.FC<Props> = ({
                 })}
               </TableBody>
             </Table>
-          </ScrollArea>
+          </div>
           <DialogFooter className="gap-2">
             <Button variant="outline" onClick={() => setShowPreview(false)}>Cancelar</Button>
             <Button onClick={confirmUpload} disabled={errorCount > 0 || draftRows.length === 0}>
