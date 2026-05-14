@@ -9,7 +9,7 @@ import * as XLSX from 'xlsx';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription,
 } from '@/components/ui/dialog';
-import { ScrollArea } from '@/components/ui/scroll-area';
+
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
@@ -331,7 +331,7 @@ const DNCStepParticipantes: React.FC<Props> = ({
             </Alert>
           )}
 
-          <ScrollArea className="h-[50vh]">
+          <div className="h-[50vh] overflow-auto border rounded-md">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -412,7 +412,7 @@ const DNCStepParticipantes: React.FC<Props> = ({
                 })}
               </TableBody>
             </Table>
-          </ScrollArea>
+          </div>
           <DialogFooter className="gap-2">
             <Button variant="outline" onClick={() => setShowPreview(false)}>Cancelar</Button>
             <Button onClick={confirmUpload} disabled={errorCount > 0 || draftRows.length === 0}>
