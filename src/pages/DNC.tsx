@@ -1,136 +1,81 @@
 import React, { useState } from 'react';
-import { Badge } from '@/components/ui/badge';
+import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { History } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import DNCStep1Onboarding from '@/components/dnc/steps/DNCStep1Onboarding';
-import DNCStep2Legal from '@/components/dnc/steps/DNCStep2Legal';
-import DNCStep3BusinessCore from '@/components/dnc/steps/DNCStep3BusinessCore';
-import DNCStep4Survey from '@/components/dnc/steps/DNCStep4Survey';
-import DNCStep5Summary from '@/components/dnc/steps/DNCStep5Summary';
-import DNCHistorial from '@/components/dnc/DNCHistorial';
-import { type DNCProceso } from '@/components/dnc/dncStorage';
-import { type Participante } from '@/components/dnc/DNCParticipantUpload';
+import DNCDashboard from '@/components/dnc/DNCDashboard';
+import DNCOnboarding from '@/components/dnc/DNCOnboarding';
+import DNCWizardLayout from '@/components/dnc/DNCWizardLayout';
+import DNCStepDatos, { type EmpresaDataStep1 } from '@/components/dnc/steps/DNCStepDatos';
+import DNCStepParticipantes, {
+  type Alcance, type ModeloAsignacion, type ParticipanteSimple,
+} from '@/components/dnc/steps/DNCStepParticipantes';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 
-const STEP_LABELS = ['Onboarding', 'Identificación', 'Núcleo de Negocio', 'Levantamiento', 'Pre-vuelo'];
+type Phase = 'dashboard' | 'onboarding' | 'wizard';
+
+const emptyEmpresa: EmpresaDataStep1 = {
+  razonSocial: '', rut: '', nombreProceso: '', rubro: '', region: '',
+  ciudad: '', responsable: '', email: '', telefono: '',
+};
 
 const DNC: React.FC = () => {
-  const [phase, setPhase] = useState<'wizard' | 'historial'>('wizard');
+  const [phase, setPhase] = useState<Phase>('dashboard');
   const [step, setStep] = useState(1);
+  const [empresa, setEmpresa] = useState<EmpresaDataStep1>(emptyEmpresa);
+  const [alcance, setAlcance] = useState<Alcance | null>(null);
+  const [modelo, setModelo] = useState<ModeloAsignacion | null>(null);
+  const [participants, setParticipants] = useState<ParticipanteSimple[]>([]);
 
-  // Step 2 state
-  const [empresaData, setEmpresaData] = useState({
-    razonSocial: '', rut: '', giro: '', direccion: '', comuna: '', region: '',
-    contactoNombre: '', contactoEmail: '', contactoCargo: '',
-  });
+  const startNew = () => { setStep(1); setPhase('wizard'); };
 
-  // Step 3 state
-  const [modalidadEstudio, setModalidadEstudio] = useState<'cargo' | 'persona' | 'area' | null>(null);
-  const [selectedRules, setSelectedRules] = useState<string[]>([]);
-  const [participants, setParticipants] = useState<Participante[]>([]);
-
-  // Step 4 state
-  const [surveyConfig, setSurveyConfig] = useState({
-    numAreas: '6' as '6' | '10' | '12',
-    maxTemas: 3,
-    fechaInicio: '',
-    fechaCierre: '',
-    modalidades: [] as string[],
-    mesPreferencia: '',
-    necesitaMasEspacios: null as boolean | null,
-  });
-
-  if (phase === 'historial') {
-    return (
-      <DNCHistorial
-        onBack={() => setPhase('wizard')}
-        onResumeDraft={() => {}}
-      />
-    );
+  if (phase === 'dashboard') {
+    return <DNCDashboard onNew={startNew} onOpenOnboarding={() => setPhase('onboarding')} />;
+  }
+  if (phase === 'onboarding') {
+    return <DNCOnboarding onBack={() => setPhase('dashboard')} onNew={startNew} />;
   }
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto">
-      {/* Stepper header - only for steps 2-5 */}
-      {step > 1 && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              {STEP_LABELS.map((label, i) => {
-                const s = i + 1;
-                const isActive = s === step;
-                const isDone = s < step;
-                return (
-                  <React.Fragment key={s}>
-                    {i > 0 && <div className={cn("w-8 h-0.5", isDone ? "bg-primary" : "bg-border")} />}
-                    <div className="flex items-center gap-1.5">
-                      <div className={cn(
-                        "w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold",
-                        isActive ? "bg-primary text-primary-foreground" :
-                        isDone ? "bg-primary/20 text-primary" :
-                        "bg-muted text-muted-foreground"
-                      )}>
-                        {s}
-                      </div>
-                      <span className={cn("text-xs hidden md:inline", isActive ? "font-semibold text-foreground" : "text-muted-foreground")}>
-                        {label}
-                      </span>
-                    </div>
-                  </React.Fragment>
-                );
-              })}
-            </div>
-            <Button variant="outline" size="sm" className="gap-2" onClick={() => setPhase('historial')}>
-              <History className="w-4 h-4" /> Historial
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {/* Steps */}
+    <DNCWizardLayout
+      step={step}
+      onStepChange={(s) => setStep(s)}
+      onBackToList={() => setPhase('dashboard')}
+    >
       {step === 1 && (
-        <DNCStep1Onboarding onNext={() => setStep(2)} />
+        <DNCStepDatos data={empresa} onChange={setEmpresa} onNext={() => setStep(2)} />
       )}
       {step === 2 && (
-        <DNCStep2Legal
-          onNext={() => setStep(3)}
-          onBack={() => setStep(1)}
-          empresaData={empresaData}
-          onEmpresaDataChange={setEmpresaData}
-        />
-      )}
-      {step === 3 && (
-        <DNCStep3BusinessCore
-          onNext={() => setStep(4)}
-          onBack={() => setStep(2)}
-          modalidadEstudio={modalidadEstudio}
-          onModalidadEstudioChange={setModalidadEstudio}
-          selectedRules={selectedRules}
-          onSelectedRulesChange={setSelectedRules}
+        <DNCStepParticipantes
+          alcance={alcance}
+          onAlcanceChange={setAlcance}
+          modelo={modelo}
+          onModeloChange={setModelo}
           participants={participants}
           onParticipantsChange={setParticipants}
+          onNext={() => setStep(3)}
+          onBack={() => setStep(1)}
         />
       )}
-      {step === 4 && (
-        <DNCStep4Survey
-          onNext={() => setStep(5)}
-          onBack={() => setStep(3)}
-          config={surveyConfig}
-          onConfigChange={setSurveyConfig}
-        />
+      {step >= 3 && (
+        <Card className="p-10 text-center space-y-4">
+          <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center text-3xl">🚧</div>
+          <h2 className="text-xl font-bold text-foreground">Paso {step} en construcción</h2>
+          <p className="text-sm text-muted-foreground">Esta sección será implementada próximamente.</p>
+          <div className="flex justify-center gap-3">
+            <Button variant="outline" className="gap-2" onClick={() => setStep(step - 1)}>
+              <ArrowLeft className="w-4 h-4" /> Volver
+            </Button>
+            {step < 6 && (
+              <Button className="gap-2" onClick={() => setStep(step + 1)}>
+                Siguiente <ArrowRight className="w-4 h-4" />
+              </Button>
+            )}
+            {step === 6 && (
+              <Button onClick={() => setPhase('dashboard')}>Finalizar</Button>
+            )}
+          </div>
+        </Card>
       )}
-      {step === 5 && (
-        <DNCStep5Summary
-          onBack={() => setStep(4)}
-          onEdit={(s) => setStep(s)}
-          empresaData={empresaData}
-          participantsCount={participants.length}
-          modalidadEstudio={modalidadEstudio}
-          selectedRules={selectedRules}
-          surveyConfig={surveyConfig}
-        />
-      )}
-    </div>
+    </DNCWizardLayout>
   );
 };
 
