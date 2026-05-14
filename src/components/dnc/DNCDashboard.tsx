@@ -9,9 +9,10 @@ import {
 } from '@/components/ui/table';
 import {
   Plus, Info, Zap, BarChart3, Target, Search, Eye, Download, FileText, Pencil,
-  ArrowUpDown,
+  ArrowUpDown, ChevronLeft, ChevronRight,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 export type DNCEstado = 'Iniciada' | 'Terminada' | 'Borrador' | 'Creada';
 
