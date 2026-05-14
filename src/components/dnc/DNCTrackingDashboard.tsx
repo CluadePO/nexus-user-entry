@@ -99,9 +99,17 @@ const DNCTrackingDashboard: React.FC<Props> = ({ dncName, onBack }) => {
           <h1 className="text-2xl font-bold text-foreground">{dncName}</h1>
           <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">Iniciada</Badge>
         </div>
-        <Button variant="outline" className="gap-2" onClick={() => toast.success('Fechas actualizadas')}>
-          Editar fechas
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" className="gap-2" onClick={() => {
+            toast.loading('Generando reporte...', { id: 'dl' });
+            setTimeout(() => toast.success('Reporte actualizado descargado', { id: 'dl' }), 900);
+          }}>
+            <Download className="w-4 h-4" /> Descargar reporte actualizado
+          </Button>
+          <Button variant="outline" className="gap-2" onClick={() => toast.success('Fechas actualizadas')}>
+            Editar fechas
+          </Button>
+        </div>
       </div>
 
       {/* KPIs */}
