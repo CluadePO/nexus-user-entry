@@ -192,7 +192,7 @@ const DNCDashboard: React.FC<Props> = ({ onNew, onOpenOnboarding, onOpenTracking
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="inline-flex items-center gap-1">
-                    <Button size="icon" variant="ghost" className="h-8 w-8"><Eye className="w-4 h-4" /></Button>
+                    <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => onOpenTracking?.(r.id)}><Eye className="w-4 h-4" /></Button>
                     {r.estado === 'Terminada' && (
                       <>
                         <Button size="icon" variant="ghost" className="h-8 w-8"><Download className="w-4 h-4" /></Button>
