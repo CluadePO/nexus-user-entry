@@ -298,9 +298,10 @@ const DNCStepAreasTematicas: React.FC<Props> = ({ state, onChange, onNext, onBac
                   <div className="flex items-start gap-4">
                     <div className="flex-1 min-w-0 space-y-3">
                       <div>
-                        <p className={cn('font-semibold text-sm', a.color)}>{a.name}</p>
+                        <p className="font-semibold text-sm text-foreground">{a.name}</p>
                         <p className="text-xs text-muted-foreground">Temáticas incluidas: {totalT}</p>
                       </div>
+
                       {!onlyOne && (
                         <Slider
                           value={[max]}
