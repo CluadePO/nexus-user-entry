@@ -3,10 +3,12 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
+} from '@/components/ui/dialog';
 import { ArrowLeft, ArrowRight, Info, Eye, Mail, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -50,6 +52,43 @@ const fmt = (d: string) => {
   return `${day}/${m}`;
 };
 
+const EMAIL_TEMPLATES = {
+  invitacion: {
+    title: 'Email de Invitación (predeterminado)',
+    subject: 'Te invitamos a participar en el proceso de DNC',
+    body: `Estimado(a) colaborador(a),
+
+Te invitamos a participar en el proceso de Detección de Necesidades de Capacitación (DNC) de nuestra organización. Tu opinión es fundamental para diseñar el plan de capacitación del próximo período.
+
+La encuesta tomará aproximadamente 10 minutos. Puedes acceder a ella desde el siguiente enlace:
+
+[ENLACE_ENCUESTA]
+
+Plazo de respuesta: hasta [FECHA_CIERRE].
+
+Agradecemos tu compromiso y participación.
+
+Saludos cordiales,
+Equipo de Capacitación`,
+  },
+  recordatorio: {
+    title: 'Email de Recordatorio (predeterminado)',
+    subject: 'Recordatorio: tu encuesta DNC está pendiente',
+    body: `Estimado(a) colaborador(a),
+
+Te recordamos que aún tienes pendiente responder la encuesta de Detección de Necesidades de Capacitación (DNC). Tu participación es muy importante para nosotros.
+
+Accede a la encuesta aquí:
+
+[ENLACE_ENCUESTA]
+
+Quedan pocos días antes del cierre ([FECHA_CIERRE]). Te invitamos a completarla a la brevedad.
+
+Saludos cordiales,
+Equipo de Capacitación`,
+  },
+} as const;
+
 const DNCStepComunicacion: React.FC<Props> = ({ state, onChange, responsableEmail, onNext, onBack }) => {
   const update = (patch: Partial<ComunicacionState>) => onChange({ ...state, ...patch });
   const today = new Date();
@@ -63,6 +102,7 @@ const DNCStepComunicacion: React.FC<Props> = ({ state, onChange, responsableEmai
   })();
 
   const [extraInput, setExtraInput] = React.useState('');
+  const [previewKey, setPreviewKey] = React.useState<keyof typeof EMAIL_TEMPLATES | null>(null);
   const addExtra = () => {
     const v = extraInput.trim();
     if (!v || state.correosExtra.includes(v)) return;
@@ -138,23 +178,22 @@ const DNCStepComunicacion: React.FC<Props> = ({ state, onChange, responsableEmai
       {/* Correos automáticos */}
       <Card className="p-6 space-y-4">
         <h2 className="text-lg font-bold text-foreground">Correos automáticos</h2>
+        <p className="text-xs text-muted-foreground">
+          Se utilizará el correo predeterminado en ambos envíos. Haz clic en "Ver predeterminado" para previsualizarlo.
+        </p>
 
         {[
-          { key: 'emailInvitacionDefault' as const, label: 'Email de Invitación' },
-          { key: 'emailRecordatorioDefault' as const, label: 'Email de Recordatorio' },
+          { key: 'invitacion' as const, label: 'Email de Invitación' },
+          { key: 'recordatorio' as const, label: 'Email de Recordatorio' },
         ].map((row) => (
           <div key={row.key} className="border rounded-lg p-4 flex items-center justify-between">
-            <p className="font-semibold text-sm text-primary">{row.label}</p>
-            <div className="flex items-center gap-3">
-              <span className="text-xs text-muted-foreground">Usar correo predeterminado</span>
-              <Switch
-                checked={state[row.key]}
-                onCheckedChange={(v) => update({ [row.key]: v } as Partial<ComunicacionState>)}
-              />
-              <Button variant="outline" size="sm" className="gap-2">
-                <Eye className="w-3.5 h-3.5" /> Ver predeterminado
-              </Button>
+            <div>
+              <p className="font-semibold text-sm text-primary">{row.label}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">Correo predeterminado</p>
             </div>
+            <Button variant="outline" size="sm" className="gap-2" onClick={() => setPreviewKey(row.key)}>
+              <Eye className="w-3.5 h-3.5" /> Ver predeterminado
+            </Button>
           </div>
         ))}
 
@@ -200,13 +239,6 @@ const DNCStepComunicacion: React.FC<Props> = ({ state, onChange, responsableEmai
           </label>
           <label className="flex items-center gap-2 text-sm cursor-pointer">
             <Checkbox
-              checked={state.alertaJefaturas}
-              onCheckedChange={(v) => update({ alertaJefaturas: !!v })}
-            />
-            <span>Jefaturas incluidas en la nómina</span>
-          </label>
-          <label className="flex items-center gap-2 text-sm cursor-pointer">
-            <Checkbox
               checked={state.alertaCorreosExtra}
               onCheckedChange={(v) => update({ alertaCorreosExtra: !!v })}
             />
@@ -244,13 +276,10 @@ const DNCStepComunicacion: React.FC<Props> = ({ state, onChange, responsableEmai
             {state.alertaResponsable && responsableEmail && (
               <Badge variant="outline" className="gap-1"><Mail className="w-3 h-3" />{responsableEmail}</Badge>
             )}
-            {state.alertaJefaturas && (
-              <Badge variant="outline">Jefaturas de la nómina</Badge>
-            )}
             {state.alertaCorreosExtra && state.correosExtra.map((c) => (
               <Badge key={c} variant="outline" className="gap-1"><Mail className="w-3 h-3" />{c}</Badge>
             ))}
-            {!state.alertaResponsable && !state.alertaJefaturas && (!state.alertaCorreosExtra || state.correosExtra.length === 0) && (
+            {!state.alertaResponsable && (!state.alertaCorreosExtra || state.correosExtra.length === 0) && (
               <span className="text-xs text-muted-foreground">Sin destinatarios configurados</span>
             )}
           </div>
@@ -266,6 +295,30 @@ const DNCStepComunicacion: React.FC<Props> = ({ state, onChange, responsableEmai
           Siguiente <ArrowRight className="w-4 h-4" />
         </Button>
       </div>
+
+      {/* Preview modal */}
+      <Dialog open={previewKey !== null} onOpenChange={(o) => !o && setPreviewKey(null)}>
+        <DialogContent className="max-w-2xl">
+          {previewKey && (
+            <>
+              <DialogHeader>
+                <DialogTitle>{EMAIL_TEMPLATES[previewKey].title}</DialogTitle>
+                <DialogDescription>
+                  Asunto: <span className="font-medium text-foreground">{EMAIL_TEMPLATES[previewKey].subject}</span>
+                </DialogDescription>
+              </DialogHeader>
+              <div className="rounded-md border bg-muted/30 p-4 max-h-[60vh] overflow-auto">
+                <pre className="whitespace-pre-wrap text-sm text-foreground font-sans">
+                  {EMAIL_TEMPLATES[previewKey].body}
+                </pre>
+              </div>
+              <div className="flex justify-end">
+                <Button variant="outline" onClick={() => setPreviewKey(null)}>Cerrar</Button>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
