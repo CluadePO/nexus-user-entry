@@ -365,9 +365,10 @@ const DNCStepAreasTematicas: React.FC<Props> = ({ state, onChange, onNext, onBac
                       const incluidas = sel.tematicas.length;
                       return (
                         <TableRow key={a.id}>
-                          <TableCell className={cn('font-medium', a.color)}>{a.name}</TableCell>
-                          <TableCell className="text-primary font-medium">{incluidas}</TableCell>
-                          <TableCell>{incluidas <= 1 ? 1 : sel.maxPriorizar}</TableCell>
+                          <TableCell className="font-medium text-foreground">{a.name}</TableCell>
+                          <TableCell className="font-medium text-foreground">{incluidas}</TableCell>
+                          <TableCell className="text-foreground">{incluidas <= 1 ? 1 : sel.maxPriorizar}</TableCell>
+
                         </TableRow>
                       );
                     })}
