@@ -384,9 +384,19 @@ const DNCStepAreasTematicas: React.FC<Props> = ({ state, onChange, onNext, onBac
         <Button variant="outline" className="gap-2" onClick={onBack}>
           <ArrowLeft className="w-4 h-4" /> Revisar paso anterior
         </Button>
-        <Button className="gap-2" disabled={!canProceed} onClick={onNext}>
+        <Button
+          className="gap-2"
+          onClick={() => {
+            if (activeCount < MIN_AREAS) { toast.error(`Debes seleccionar al menos ${MIN_AREAS} áreas`); return; }
+            if (activeCount > MAX_AREAS) { toast.error(`Máximo ${MAX_AREAS} áreas permitidas`); return; }
+            const sinTematicas = selectedAreas.find(a => current[a.id].tematicas.length === 0);
+            if (sinTematicas) { toast.error(`El área "${sinTematicas.name}" no tiene temáticas seleccionadas`); return; }
+            onNext();
+          }}
+        >
           Siguiente <ArrowRight className="w-4 h-4" />
         </Button>
+
       </div>
     </div>
   );
