@@ -182,7 +182,7 @@ const DNCStepAreasTematicas: React.FC<Props> = ({ state, onChange, onNext, onBac
               <div className="flex items-center gap-4">
                 <Checkbox checked={sel} onCheckedChange={() => toggleArea(a.id)} />
                 <div className="flex items-center gap-2 min-w-[260px]">
-                  <Icon className={cn('w-5 h-5', a.color)} />
+                  <Icon className="w-5 h-5 text-black" />
                   <span className="text-sm font-semibold text-foreground">{a.name}</span>
                 </div>
                 <div className="flex-1">
