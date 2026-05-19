@@ -47,7 +47,7 @@ const ALCANCES: { id: Alcance; title: string; desc: string }[] = [
   { id: 'cargo', title: 'Por cargo', desc: 'Asigna según el cargo de los participantes' },
   { id: 'persona', title: 'Por persona', desc: 'Asigna de forma individual a cada persona' },
   { id: 'cargo_persona', title: 'Por cargo y persona', desc: 'Combina ambos criterios' },
-  { id: 'area', title: 'Por área / departamento / gerencia', desc: 'Agrupa por unidad organizacional' },
+  { id: 'area', title: 'Gerencia', desc: 'Agrupa por unidad organizacional' },
 ];
 
 const MODELOS: { id: ModeloAsignacion; title: string; desc: string; nodes: number; tags: string[] }[] = [
