@@ -319,18 +319,15 @@ const DNCStepAreasTematicas: React.FC<Props> = ({ state, onChange, onNext, onBac
                     </div>
                     {!onlyOne && (
                       <div className="flex flex-col items-end gap-2 shrink-0">
-                        <Badge
-                          variant="outline"
-                          className={cn(
-                            'text-xs gap-1',
-                            inRange
-                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                              : 'bg-amber-50 text-amber-700 border-amber-200'
-                          )}
-                        >
-                          <CheckCircle2 className="w-3 h-3" />
-                          {inRange ? 'Rango recomendado' : 'Fuera de rango'}
-                        </Badge>
+                        {!inRange && (
+                          <Badge
+                            variant="outline"
+                            className="text-xs gap-1 bg-amber-50 text-amber-700 border-amber-200"
+                          >
+                            <AlertCircle className="w-3 h-3" />
+                            Fuera de rango
+                          </Badge>
+                        )}
                         <Input
                           type="number"
                           min={2}
@@ -341,6 +338,7 @@ const DNCStepAreasTematicas: React.FC<Props> = ({ state, onChange, onNext, onBac
                         />
                       </div>
                     )}
+
                   </div>
                 </Card>
               );
