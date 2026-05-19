@@ -164,7 +164,7 @@ const DNCStepParticipantes: React.FC<Props> = ({
     const f = e.dataTransfer.files?.[0]; if (f) handleFile(f);
   };
 
-  const canProceed = alcance && modelo && participants.length > 0;
+  
 
   return (
     <div className="space-y-6">
