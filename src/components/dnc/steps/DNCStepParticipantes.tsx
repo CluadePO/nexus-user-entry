@@ -47,7 +47,7 @@ const ALCANCES: { id: Alcance; title: string; desc: string }[] = [
   { id: 'cargo', title: 'Por cargo', desc: 'Asigna según el cargo de los participantes' },
   { id: 'persona', title: 'Por persona', desc: 'Asigna de forma individual a cada persona' },
   { id: 'cargo_persona', title: 'Por cargo y persona', desc: 'Combina ambos criterios' },
-  { id: 'area', title: 'Por área / departamento / gerencia', desc: 'Agrupa por unidad organizacional' },
+  { id: 'area', title: 'Gerencia', desc: 'Agrupa por unidad organizacional' },
 ];
 
 const MODELOS: { id: ModeloAsignacion; title: string; desc: string; nodes: number; tags: string[] }[] = [
@@ -164,7 +164,7 @@ const DNCStepParticipantes: React.FC<Props> = ({
     const f = e.dataTransfer.files?.[0]; if (f) handleFile(f);
   };
 
-  const canProceed = alcance && modelo && participants.length > 0;
+  
 
   return (
     <div className="space-y-6">
@@ -301,10 +301,19 @@ const DNCStepParticipantes: React.FC<Props> = ({
         <Button variant="outline" className="gap-2" onClick={onBack}>
           <ArrowLeft className="w-4 h-4" /> Revisar paso anterior
         </Button>
-        <Button className="gap-2" disabled={!canProceed} onClick={onNext}>
+        <Button
+          className="gap-2"
+          onClick={() => {
+            if (!alcance) { toast.error('Selecciona el alcance del estudio'); return; }
+            if (!modelo) { toast.error('Selecciona el modelo de asignación'); return; }
+            if (participants.length === 0) { toast.error('Debes cargar la nómina de participantes'); return; }
+            onNext();
+          }}
+        >
           Siguiente <ArrowRight className="w-4 h-4" />
         </Button>
       </div>
+
 
       <Dialog open={showPreview} onOpenChange={setShowPreview}>
         <DialogContent className="max-w-[95vw] xl:max-w-7xl">

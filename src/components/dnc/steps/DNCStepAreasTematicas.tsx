@@ -19,6 +19,7 @@ import {
   ArrowLeft, ArrowRight, Info, AlertCircle, CheckCircle2, ChevronDown, X,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 interface Area {
   id: string;
@@ -298,9 +299,10 @@ const DNCStepAreasTematicas: React.FC<Props> = ({ state, onChange, onNext, onBac
                   <div className="flex items-start gap-4">
                     <div className="flex-1 min-w-0 space-y-3">
                       <div>
-                        <p className={cn('font-semibold text-sm', a.color)}>{a.name}</p>
+                        <p className="font-semibold text-sm text-foreground">{a.name}</p>
                         <p className="text-xs text-muted-foreground">Temáticas incluidas: {totalT}</p>
                       </div>
+
                       {!onlyOne && (
                         <Slider
                           value={[max]}
@@ -319,18 +321,15 @@ const DNCStepAreasTematicas: React.FC<Props> = ({ state, onChange, onNext, onBac
                     </div>
                     {!onlyOne && (
                       <div className="flex flex-col items-end gap-2 shrink-0">
-                        <Badge
-                          variant="outline"
-                          className={cn(
-                            'text-xs gap-1',
-                            inRange
-                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                              : 'bg-amber-50 text-amber-700 border-amber-200'
-                          )}
-                        >
-                          <CheckCircle2 className="w-3 h-3" />
-                          {inRange ? 'Rango recomendado' : 'Fuera de rango'}
-                        </Badge>
+                        {!inRange && (
+                          <Badge
+                            variant="outline"
+                            className="text-xs gap-1 bg-amber-50 text-amber-700 border-amber-200"
+                          >
+                            <AlertCircle className="w-3 h-3" />
+                            Fuera de rango
+                          </Badge>
+                        )}
                         <Input
                           type="number"
                           min={2}
@@ -341,6 +340,7 @@ const DNCStepAreasTematicas: React.FC<Props> = ({ state, onChange, onNext, onBac
                         />
                       </div>
                     )}
+
                   </div>
                 </Card>
               );
@@ -366,9 +366,10 @@ const DNCStepAreasTematicas: React.FC<Props> = ({ state, onChange, onNext, onBac
                       const incluidas = sel.tematicas.length;
                       return (
                         <TableRow key={a.id}>
-                          <TableCell className={cn('font-medium', a.color)}>{a.name}</TableCell>
-                          <TableCell className="text-primary font-medium">{incluidas}</TableCell>
-                          <TableCell>{incluidas <= 1 ? 1 : sel.maxPriorizar}</TableCell>
+                          <TableCell className="font-medium text-foreground">{a.name}</TableCell>
+                          <TableCell className="font-medium text-foreground">{incluidas}</TableCell>
+                          <TableCell className="text-foreground">{incluidas <= 1 ? 1 : sel.maxPriorizar}</TableCell>
+
                         </TableRow>
                       );
                     })}
@@ -384,9 +385,19 @@ const DNCStepAreasTematicas: React.FC<Props> = ({ state, onChange, onNext, onBac
         <Button variant="outline" className="gap-2" onClick={onBack}>
           <ArrowLeft className="w-4 h-4" /> Revisar paso anterior
         </Button>
-        <Button className="gap-2" disabled={!canProceed} onClick={onNext}>
+        <Button
+          className="gap-2"
+          onClick={() => {
+            if (activeCount < MIN_AREAS) { toast.error(`Debes seleccionar al menos ${MIN_AREAS} áreas`); return; }
+            if (activeCount > MAX_AREAS) { toast.error(`Máximo ${MAX_AREAS} áreas permitidas`); return; }
+            const sinTematicas = selectedAreas.find(a => current[a.id].tematicas.length === 0);
+            if (sinTematicas) { toast.error(`El área "${sinTematicas.name}" no tiene temáticas seleccionadas`); return; }
+            onNext();
+          }}
+        >
           Siguiente <ArrowRight className="w-4 h-4" />
         </Button>
+
       </div>
     </div>
   );
