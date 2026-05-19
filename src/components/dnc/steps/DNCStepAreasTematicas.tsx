@@ -19,6 +19,7 @@ import {
   ArrowLeft, ArrowRight, Info, AlertCircle, CheckCircle2, ChevronDown, X,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 interface Area {
   id: string;
