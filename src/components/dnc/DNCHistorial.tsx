@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -18,8 +18,19 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { ArrowLeft, Eye, Play, FileText, Calendar } from 'lucide-react';
-import { getProcesos, type DNCProceso, type ProcesoStatus } from './dncStorage';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { ArrowLeft, Eye, Play, FileText, Calendar, Trash2 } from 'lucide-react';
+import { getProcesos, deleteDraft, type DNCProceso, type ProcesoStatus } from './dncStorage';
+import { toast } from 'sonner';
 
 interface DNCHistorialProps {
   onBack: () => void;
@@ -40,7 +51,20 @@ const modalidadLabels: Record<string, string> = {
 };
 
 const DNCHistorial: React.FC<DNCHistorialProps> = ({ onBack, onResumeDraft }) => {
-  const procesos = getProcesos();
+  const [procesos, setProcesos] = useState<DNCProceso[]>(getProcesos());
+  const [procesoToDelete, setProcesoToDelete] = useState<DNCProceso | null>(null);
+
+  const handleDelete = (proceso: DNCProceso) => {
+    setProcesoToDelete(proceso);
+  };
+
+  const confirmDelete = () => {
+    if (!procesoToDelete) return;
+    deleteDraft(procesoToDelete.id);
+    setProcesos(getProcesos());
+    setProcesoToDelete(null);
+    toast.success(`El proceso ${procesoToDelete.id} ha sido eliminado`);
+  };
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
@@ -119,22 +143,32 @@ const DNCHistorial: React.FC<DNCHistorialProps> = ({ onBack, onResumeDraft }) =>
                       <Badge variant="outline" className={status.className}>{status.label}</Badge>
                     </TableCell>
                     <TableCell className="text-right">
-                      {proceso.estado === 'borrador' ? (
-                        <Button size="sm" variant="outline" className="gap-1.5" onClick={() => onResumeDraft(proceso)}>
-                          <Play className="w-3.5 h-3.5" />
-                          Retomar
+                      <div className="flex items-center justify-end gap-2">
+                        {proceso.estado === 'borrador' ? (
+                          <Button size="sm" variant="outline" className="gap-1.5" onClick={() => onResumeDraft(proceso)}>
+                            <Play className="w-3.5 h-3.5" />
+                            Retomar
+                          </Button>
+                        ) : proceso.estado === 'completado' ? (
+                          <Button size="sm" variant="ghost" className="gap-1.5">
+                            <FileText className="w-3.5 h-3.5" />
+                            Ver resultados
+                          </Button>
+                        ) : (
+                          <Button size="sm" variant="ghost" className="gap-1.5">
+                            <Eye className="w-3.5 h-3.5" />
+                            Ver detalle
+                          </Button>
+                        )}
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="gap-1.5 text-destructive hover:text-destructive hover:bg-destructive/10"
+                          onClick={() => handleDelete(proceso)}
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
                         </Button>
-                      ) : proceso.estado === 'completado' ? (
-                        <Button size="sm" variant="ghost" className="gap-1.5">
-                          <FileText className="w-3.5 h-3.5" />
-                          Ver resultados
-                        </Button>
-                      ) : (
-                        <Button size="sm" variant="ghost" className="gap-1.5">
-                          <Eye className="w-3.5 h-3.5" />
-                          Ver detalle
-                        </Button>
-                      )}
+                      </div>
                     </TableCell>
                   </TableRow>
                 );
@@ -143,6 +177,24 @@ const DNCHistorial: React.FC<DNCHistorialProps> = ({ onBack, onResumeDraft }) =>
           </TableBody>
         </Table>
       </Card>
+
+      <AlertDialog open={!!procesoToDelete} onOpenChange={(open) => !open && setProcesoToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Eliminar proceso DNC?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Estás a punto de eliminar el proceso <strong>{procesoToDelete?.nombre}</strong> ({procesoToDelete?.id}).
+              Esta acción no se puede deshacer.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setProcesoToDelete(null)}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Eliminar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
