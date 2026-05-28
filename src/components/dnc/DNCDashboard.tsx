@@ -67,7 +67,7 @@ const DNCDashboard: React.FC<Props> = ({ onNew, onOpenOnboarding, onOpenTracking
   const [toDelete, setToDelete] = useState<DNCRow | null>(null);
 
   const rows = useMemo(() => {
-  const rows = useMemo(() => {
+
     let r = rowsState.filter(x =>
       (estadoFilter === 'all' || x.estado === estadoFilter) &&
       (search === '' || x.nombre.toLowerCase().includes(search.toLowerCase()) || x.empresa.toLowerCase().includes(search.toLowerCase()))
