@@ -9,8 +9,12 @@ import {
 } from '@/components/ui/table';
 import {
   Plus, Info, Zap, BarChart3, Target, Search, Eye, Download, FileText, Pencil,
-  ArrowUpDown, ChevronLeft, ChevronRight,
+  ArrowUpDown, ChevronLeft, ChevronRight, Trash2,
 } from 'lucide-react';
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
