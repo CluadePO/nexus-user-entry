@@ -63,6 +63,8 @@ const DNCDashboard: React.FC<Props> = ({ onNew, onOpenOnboarding, onOpenTracking
   const [sortBy, setSortBy] = useState<'inicio' | 'cierre' | null>(null);
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
   const [page, setPage] = useState(1);
+  const [rowsState, setRowsState] = useState<DNCRow[]>(MOCK_ROWS);
+  const [toDelete, setToDelete] = useState<DNCRow | null>(null);
 
   const rows = useMemo(() => {
     let r = MOCK_ROWS.filter(x =>
