@@ -67,7 +67,8 @@ const DNCDashboard: React.FC<Props> = ({ onNew, onOpenOnboarding, onOpenTracking
   const [toDelete, setToDelete] = useState<DNCRow | null>(null);
 
   const rows = useMemo(() => {
-    let r = MOCK_ROWS.filter(x =>
+  const rows = useMemo(() => {
+    let r = rowsState.filter(x =>
       (estadoFilter === 'all' || x.estado === estadoFilter) &&
       (search === '' || x.nombre.toLowerCase().includes(search.toLowerCase()) || x.empresa.toLowerCase().includes(search.toLowerCase()))
     );
@@ -79,7 +80,7 @@ const DNCDashboard: React.FC<Props> = ({ onNew, onOpenOnboarding, onOpenTracking
       });
     }
     return r;
-  }, [search, estadoFilter, sortBy, sortDir]);
+  }, [search, estadoFilter, sortBy, sortDir, rowsState]);
 
   const totalPages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
