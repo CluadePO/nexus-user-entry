@@ -9,8 +9,12 @@ import {
 } from '@/components/ui/table';
 import {
   Plus, Info, Zap, BarChart3, Target, Search, Eye, Download, FileText, Pencil,
-  ArrowUpDown, ChevronLeft, ChevronRight,
+  ArrowUpDown, ChevronLeft, ChevronRight, Trash2,
 } from 'lucide-react';
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
@@ -59,9 +63,12 @@ const DNCDashboard: React.FC<Props> = ({ onNew, onOpenOnboarding, onOpenTracking
   const [sortBy, setSortBy] = useState<'inicio' | 'cierre' | null>(null);
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
   const [page, setPage] = useState(1);
+  const [rowsState, setRowsState] = useState<DNCRow[]>(MOCK_ROWS);
+  const [toDelete, setToDelete] = useState<DNCRow | null>(null);
 
   const rows = useMemo(() => {
-    let r = MOCK_ROWS.filter(x =>
+  const rows = useMemo(() => {
+    let r = rowsState.filter(x =>
       (estadoFilter === 'all' || x.estado === estadoFilter) &&
       (search === '' || x.nombre.toLowerCase().includes(search.toLowerCase()) || x.empresa.toLowerCase().includes(search.toLowerCase()))
     );
@@ -73,7 +80,7 @@ const DNCDashboard: React.FC<Props> = ({ onNew, onOpenOnboarding, onOpenTracking
       });
     }
     return r;
-  }, [search, estadoFilter, sortBy, sortDir]);
+  }, [search, estadoFilter, sortBy, sortDir, rowsState]);
 
   const totalPages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
@@ -94,6 +101,13 @@ const DNCDashboard: React.FC<Props> = ({ onNew, onOpenOnboarding, onOpenTracking
   const toggleSort = (key: 'inicio' | 'cierre') => {
     if (sortBy === key) setSortDir(d => d === 'asc' ? 'desc' : 'asc');
     else { setSortBy(key); setSortDir('asc'); }
+  };
+
+  const confirmDelete = () => {
+    if (!toDelete) return;
+    setRowsState(prev => prev.filter(x => x.id !== toDelete.id));
+    toast.success(`Proceso "${toDelete.nombre}" eliminado`);
+    setToDelete(null);
   };
 
   return (
@@ -215,6 +229,15 @@ const DNCDashboard: React.FC<Props> = ({ onNew, onOpenOnboarding, onOpenTracking
                     {r.estado === 'Borrador' && (
                       <Button size="icon" variant="ghost" className="h-8 w-8" title="Editar borrador"><Pencil className="w-4 h-4" /></Button>
                     )}
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                      title="Eliminar"
+                      onClick={() => setToDelete(r)}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
                   </div>
                 </TableCell>
               </TableRow>
@@ -248,6 +271,23 @@ const DNCDashboard: React.FC<Props> = ({ onNew, onOpenOnboarding, onOpenTracking
           </div>
         </div>
       </Card>
+
+      <AlertDialog open={!!toDelete} onOpenChange={(open) => !open && setToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Eliminar este proceso DNC?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Estás a punto de eliminar <strong>{toDelete?.nombre}</strong>. Esta acción no se puede deshacer.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Eliminar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
