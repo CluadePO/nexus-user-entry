@@ -726,10 +726,26 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
                     <td className="p-2 text-muted-foreground truncate">{p.ultimoRecordatorio}</td>
                     <td className="p-2 text-center">
                       <div className="flex items-center gap-1 justify-center">
-                        <button className="text-muted-foreground hover:text-foreground"><Mail className="h-3 w-3" /></button>
-                        <button className="text-muted-foreground hover:text-foreground"><FileDown className="h-3 w-3" /></button>
+                        <button className="text-muted-foreground hover:text-foreground" title="Enviar recordatorio"><Mail className="h-3 w-3" /></button>
+                        <button
+                          className="text-muted-foreground hover:text-foreground"
+                          title="Descargar precontrato"
+                          onClick={() => {
+                            const safe = (s: string) => s.replace(/[^\w.-]+/g, '_').replace(/_+/g, '_').replace(/^_|_$/g, '');
+                            const filename = `${safe(precontrato.sencenet)}_${safe(p.nombre)}_${safe(p.rut)}.pdf`;
+                            const content = `Precontrato simulado\n\nSencenet: ${precontrato.sencenet}\nCurso: ${precontrato.curso}\nParticipante: ${p.nombre}\nRUT: ${p.rut}\n`;
+                            const blob = new Blob([content], { type: 'application/pdf' });
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url; a.download = filename;
+                            document.body.appendChild(a); a.click(); a.remove();
+                            URL.revokeObjectURL(url);
+                            toast.success(`Descargando ${filename}`);
+                          }}
+                        ><FileDown className="h-3 w-3" /></button>
                       </div>
                     </td>
+
                   </tr>
                 );
               })}
