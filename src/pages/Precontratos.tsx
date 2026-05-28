@@ -727,9 +727,28 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
                     <td className="p-2 text-center">
                       <div className="flex items-center gap-1 justify-center">
                         <button className="text-muted-foreground hover:text-foreground"><Mail className="h-3 w-3" /></button>
-                        <button className="text-muted-foreground hover:text-foreground"><FileDown className="h-3 w-3" /></button>
+                        <button
+                          className="text-muted-foreground hover:text-foreground"
+                          title="Descargar precontrato"
+                          onClick={() => {
+                            const safeNombre = p.nombre.replace(/\s+/g, '_');
+                            const safeRut = p.rut.replace(/\./g, '').replace(/\s+/g, '');
+                            const fileName = `${precontrato.sencenet}_${safeNombre}_${safeRut}.pdf`;
+                            const blob = new Blob(['Precontrato participante'], { type: 'application/pdf' });
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = fileName;
+                            a.click();
+                            URL.revokeObjectURL(url);
+                            toast.success(`Documento descargado: ${fileName}`);
+                          }}
+                        >
+                          <FileDown className="h-3 w-3" />
+                        </button>
                       </div>
                     </td>
+
                   </tr>
                 );
               })}
