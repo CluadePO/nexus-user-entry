@@ -103,6 +103,13 @@ const DNCDashboard: React.FC<Props> = ({ onNew, onOpenOnboarding, onOpenTracking
     else { setSortBy(key); setSortDir('asc'); }
   };
 
+  const confirmDelete = () => {
+    if (!toDelete) return;
+    setRowsState(prev => prev.filter(x => x.id !== toDelete.id));
+    toast.success(`Proceso "${toDelete.nombre}" eliminado`);
+    setToDelete(null);
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
