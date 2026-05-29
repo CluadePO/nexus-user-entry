@@ -160,16 +160,18 @@ const DNCHistorial: React.FC<DNCHistorialProps> = ({ onBack, onResumeDraft }) =>
                             Ver detalle
                           </Button>
                         )}
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="gap-1.5 text-destructive hover:text-destructive hover:bg-destructive/10"
-                          onClick={() => handleDelete(proceso)}
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </Button>
-                      </div>
-                    </TableCell>
+                    {proceso.estado === 'borrador' && (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="gap-1.5 text-destructive hover:text-destructive hover:bg-destructive/10"
+                        onClick={() => handleDelete(proceso)}
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </Button>
+                    )}
+                  </div>
+                </TableCell>
                   </TableRow>
                 );
               })
