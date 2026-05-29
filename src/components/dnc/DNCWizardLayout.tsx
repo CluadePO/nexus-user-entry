@@ -33,7 +33,7 @@ interface Props {
   children: React.ReactNode;
 }
 
-const DNCWizardLayout: React.FC<Props> = ({ step, onStepChange, onBackToList, children, savedAt }) => {
+const DNCWizardLayout: React.FC<Props> = ({ step, onStepChange, onBackToList, children }) => {
   const current = DNC_STEPS.find(s => s.id === step);
 
   return (
