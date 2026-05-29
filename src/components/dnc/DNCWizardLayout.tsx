@@ -31,7 +31,6 @@ interface Props {
   onStepChange?: (s: number) => void;
   onBackToList: () => void;
   children: React.ReactNode;
-  savedAt?: string;
 }
 
 const DNCWizardLayout: React.FC<Props> = ({ step, onStepChange, onBackToList, children, savedAt }) => {
