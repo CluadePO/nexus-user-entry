@@ -31,10 +31,9 @@ interface Props {
   onStepChange?: (s: number) => void;
   onBackToList: () => void;
   children: React.ReactNode;
-  savedAt?: string;
 }
 
-const DNCWizardLayout: React.FC<Props> = ({ step, onStepChange, onBackToList, children, savedAt }) => {
+const DNCWizardLayout: React.FC<Props> = ({ step, onStepChange, onBackToList, children }) => {
   const current = DNC_STEPS.find(s => s.id === step);
 
   return (
@@ -55,10 +54,6 @@ const DNCWizardLayout: React.FC<Props> = ({ step, onStepChange, onBackToList, ch
           </BreadcrumbList>
         </Breadcrumb>
         <div className="flex items-center gap-3">
-          <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-            {savedAt ? `Guardado automáticamente a las ${savedAt}` : 'Los cambios se guardan automáticamente'}
-          </span>
           <Button variant="outline" size="sm" className="gap-2">
             <Save className="w-4 h-4" /> Guardar borrador
           </Button>
