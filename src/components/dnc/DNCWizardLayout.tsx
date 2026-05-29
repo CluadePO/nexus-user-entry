@@ -43,11 +43,13 @@ const DNCWizardLayout: React.FC<Props> = ({ step, onStepChange, onBackToList, ch
       <div className="flex items-center justify-between">
         <Breadcrumb>
           <BreadcrumbList>
+            <BreadcrumbItem><BreadcrumbLink href="#" className="text-primary">Inicio</BreadcrumbLink></BreadcrumbItem>
+            <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbLink href="#" onClick={(e) => { e.preventDefault(); onBackToList(); }} className="text-primary">DNC</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
-            <BreadcrumbItem><BreadcrumbLink href="#" className="text-primary">Nueva configuración</BreadcrumbLink></BreadcrumbItem>
+            <BreadcrumbItem><BreadcrumbLink href="#" className="text-primary">Nueva DNC</BreadcrumbLink></BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem><BreadcrumbPage>Paso {step}</BreadcrumbPage></BreadcrumbItem>
           </BreadcrumbList>
