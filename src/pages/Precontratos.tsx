@@ -573,13 +573,86 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
           onClick={() => setDetalleOpen(!detalleOpen)}
           className="w-full flex items-center justify-between p-3 text-left"
         >
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
             <h2 className="text-base font-semibold text-foreground">Detalle del curso</h2>
             <Button variant="outline" size="sm" className="text-xs" onClick={(e) => { e.stopPropagation(); }}>
               <Mail className="h-3.5 w-3.5 mr-1" />
               RECORDATORIO MASIVO
             </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-xs"
+              onClick={(e) => {
+                e.stopPropagation();
+                document.getElementById('upload-carta-conductora')?.click();
+              }}
+            >
+              <Upload className="h-3.5 w-3.5 mr-1" />
+              CARTA CONDUCTORA
+            </Button>
+            <input
+              id="upload-carta-conductora"
+              type="file"
+              className="hidden"
+              accept=".pdf,.doc,.docx"
+              onClick={(e) => e.stopPropagation()}
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) alert(`Carta Conductora cargada: ${f.name}`);
+                e.target.value = '';
+              }}
+            />
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-xs"
+              onClick={(e) => {
+                e.stopPropagation();
+                document.getElementById('upload-dotacion')?.click();
+              }}
+            >
+              <Upload className="h-3.5 w-3.5 mr-1" />
+              DOTACIÓN
+            </Button>
+            <input
+              id="upload-dotacion"
+              type="file"
+              className="hidden"
+              accept=".pdf,.xls,.xlsx,.csv"
+              onClick={(e) => e.stopPropagation()}
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) alert(`Dotación cargada: ${f.name}`);
+                e.target.value = '';
+              }}
+            />
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-xs"
+              onClick={(e) => {
+                e.stopPropagation();
+                document.getElementById('upload-ci-rep-legal')?.click();
+              }}
+            >
+              <Upload className="h-3.5 w-3.5 mr-1" />
+              CI REP. LEGAL
+            </Button>
+            <input
+              id="upload-ci-rep-legal"
+              type="file"
+              className="hidden"
+              accept=".pdf,.jpg,.jpeg,.png"
+              onClick={(e) => e.stopPropagation()}
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) alert(`C.I. Rep. Legal cargada: ${f.name}`);
+                e.target.value = '';
+              }}
+            />
           </div>
+
           {detalleOpen ? <ChevronUp className="h-4 w-4 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 text-muted-foreground" />}
         </button>
 
