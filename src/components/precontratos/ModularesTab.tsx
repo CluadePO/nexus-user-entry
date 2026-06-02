@@ -290,8 +290,9 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true, sea
     if (!downloadCtx || !isRepFormValid()) return;
     setGenerating(true);
     try {
-      const { modId, cursos } = downloadCtx;
+      const { modId, cursos, participante, curso: cursoSel } = downloadCtx;
       const empresa = cursos[0]?.cliente ?? 'Sin cliente';
+      const esIndividual = !!participante;
       const rutFormateado = `${repForm.rutNum.trim()}-${repForm.rutDv.trim().toUpperCase()}`;
       const fecha = new Date().toLocaleDateString('es-CL', { day: '2-digit', month: 'long', year: 'numeric' });
 
