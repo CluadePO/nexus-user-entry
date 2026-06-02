@@ -270,174 +270,167 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true, sea
     setCursosModulares(prev => [...prev, newCurso]);
   };
 
-  const handleDownloadPrecontrato = async (modId: string, cursos: CursoModular[], e: React.MouseEvent) => {
+  const handleDownloadPrecontrato = (modId: string, cursos: CursoModular[], e: React.MouseEvent) => {
     e.stopPropagation();
-    const { jsPDF } = await import('jspdf');
-    const doc = new jsPDF('p', 'mm', 'letter');
-    const pageW = doc.internal.pageSize.getWidth();
-    const marginL = 20;
-    const marginR = 20;
-    const contentW = pageW - marginL - marginR;
-    let y = 25;
-
-    const addLine = (text: string, fontSize: number, bold: boolean, align: 'left' | 'center' | 'justify' = 'left') => {
-      doc.setFontSize(fontSize);
-      doc.setFont('helvetica', bold ? 'bold' : 'normal');
-      const lines = doc.splitTextToSize(text, contentW);
-      if (y + lines.length * (fontSize * 0.4) > 260) {
-        doc.addPage();
-        y = 25;
-      }
-      if (align === 'center') {
-        lines.forEach((line: string) => {
-          doc.text(line, pageW / 2, y, { align: 'center' });
-          y += fontSize * 0.45;
-        });
-      } else {
-        doc.text(lines, marginL, y);
-        y += lines.length * (fontSize * 0.45);
-      }
-      return y;
-    };
-
-    // Title
-    addLine('CONTRATO DE CAPACITACIÓN', 14, true, 'center');
-    y += 5;
-    addLine(`Módulo: ${modId}`, 11, true, 'center');
-    y += 8;
-
-    // Intro paragraph
-    const empresa = cursos[0].cliente;
-    const fecha = new Date().toLocaleDateString('es-CL', { day: '2-digit', month: 'long', year: 'numeric' });
-    addLine(
-      `En Santiago, a ${fecha}, entre la Empresa ${empresa.toUpperCase()}, en adelante la empresa, y los participantes individualizados más abajo, se ha convenido el siguiente Contrato de Capacitación Modular.`,
-      10, false
-    );
-    y += 5;
-
-    // Clause 1 - courses table
-    addLine('1. El Capacitado se obliga a asistir a los siguientes cursos:', 10, false);
-    y += 3;
-
-    // Table header
-    const colWidths = [25, 55, 25, 25, 35];
-    const headers = ['Código SENCE', 'Nombre Curso', 'Modalidad', 'Horas', 'Fecha Inicio'];
-    doc.setFillColor(240, 240, 240);
-    doc.rect(marginL, y - 3, contentW, 7, 'F');
-    doc.setFontSize(8);
-    doc.setFont('helvetica', 'bold');
-    let xPos = marginL;
-    headers.forEach((h, i) => {
-      doc.text(h, xPos + 1, y + 1);
-      xPos += colWidths[i];
-    });
-    y += 7;
-
-    // Table rows
-    doc.setFont('helvetica', 'normal');
-    cursos.forEach(curso => {
-      if (y > 250) { doc.addPage(); y = 25; }
-      xPos = marginL;
-      const rowData = [curso.codigoSence || '-', curso.curso, curso.modalidad || '-', String(curso.nroPart), curso.inicioCurso || '-'];
-      rowData.forEach((val, i) => {
-        const cellText = doc.splitTextToSize(val, colWidths[i] - 2);
-        doc.text(cellText[0] || '-', xPos + 1, y);
-        xPos += colWidths[i];
-      });
-      doc.line(marginL, y + 2, marginL + contentW, y + 2);
-      y += 6;
-    });
-    y += 5;
-
-    // Additional clauses
-    const clauses = [
-      '2. El Programa de Capacitación al que asistirá el capacitado tiene como objetivo desarrollar sus competencias laborales y potenciar su empleabilidad.',
-      '3. El capacitado se obliga a asistir en términos regulares al proceso de capacitación y, a cumplir con el porcentaje mínimo de asistencia exigido para su aprobación.',
-      `4. La duración del proceso de capacitación será de ${cursos.reduce((sum, c) => sum + c.nroPart, 0)} horas cronológicas.`,
-      '5. El Programa de Capacitación contempla la realización de un módulo de práctica, el que se realizará en las instalaciones de la empresa.',
-      '6. El módulo de práctica debe contener una descripción de las funciones y/o tareas en las que se instruirá al capacitado.',
-      `7. El presente contrato de capacitación tendrá una duración de 32 Día(s).`,
-      '8. Las partes dejan constancia que el curso al cual asiste el capacitado es financiado por el Estado mediante la utilización de la franquicia tributaria contemplada en la Ley Nº 19.518.',
-      '9. El presente contrato de capacitación no generará vínculo laboral entre las partes firmantes.',
-    ];
-    clauses.forEach(clause => {
-      addLine(clause, 9, false);
-      y += 3;
-    });
-
-    y += 8;
-    addLine('Para constancia, firman:', 10, false);
-    y += 15;
-
-    // Signature lines
-    doc.line(marginL, y, marginL + 60, y);
-    doc.line(pageW - marginR - 60, y, pageW - marginR, y);
-    y += 5;
-    doc.setFontSize(8);
-    doc.text('Capacitado', marginL + 20, y);
-    doc.text('Empresa', pageW - marginR - 35, y);
-
-    // Page 2: Participant IDs
-    doc.addPage();
-    y = 25;
-    addLine('CÉDULAS DE IDENTIDAD - PARTICIPANTES', 13, true, 'center');
-    y += 5;
-    addLine(`Módulo: ${modId} — ${empresa}`, 10, false, 'center');
-    y += 8;
-
-    // Mock participants
-    const mockParticipants = [
-      { nombre: 'Víctor Manuel Madrid Madrid', rut: '21.826.390-9', nacimiento: '28/04/2005', nacionalidad: 'Chilena' },
-      { nombre: 'Carlos Andrés Pérez Soto', rut: '19.543.221-7', nacimiento: '15/03/2000', nacionalidad: 'Chilena' },
-      { nombre: 'María José González Fuentes', rut: '20.112.445-3', nacimiento: '22/11/2001', nacionalidad: 'Chilena' },
-      { nombre: 'Juan Pablo Rodríguez Muñoz', rut: '18.765.890-K', nacimiento: '03/07/1998', nacionalidad: 'Chilena' },
-    ];
-
-    mockParticipants.forEach((p, idx) => {
-      if (y > 230) { doc.addPage(); y = 25; }
-
-      // Card border
-      doc.setDrawColor(180, 180, 180);
-      doc.roundedRect(marginL, y, contentW, 35, 2, 2);
-      doc.setFillColor(245, 247, 250);
-      doc.roundedRect(marginL, y, contentW, 8, 2, 2, 'F');
-
-      doc.setFontSize(8);
-      doc.setFont('helvetica', 'bold');
-      doc.text(`CÉDULA DE IDENTIDAD — REPÚBLICA DE CHILE`, marginL + 4, y + 5);
-      doc.text(`Participante ${idx + 1}`, marginL + contentW - 25, y + 5);
-
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(9);
-      y += 12;
-      doc.text(`Nombre: ${p.nombre}`, marginL + 4, y);
-      y += 5;
-      doc.text(`RUT: ${p.rut}`, marginL + 4, y);
-      doc.text(`Fecha Nacimiento: ${p.nacimiento}`, marginL + contentW / 2, y);
-      y += 5;
-      doc.text(`Nacionalidad: ${p.nacionalidad}`, marginL + 4, y);
-      y += 18;
-    });
-
-    // Observations page
-    doc.addPage();
-    y = 25;
-    addLine('OBSERVACIONES:', 12, true);
-    y += 5;
-    const observations = [
-      'A. En la cláusula primera debe indicarse en forma precisa el lugar de ejecución del curso.',
-      'B. La cláusula quinta es optativa, debe utilizarse cuando el módulo práctico a desarrollarse al interior de la empresa individualizada en el presente contrato de capacitación, es necesario para la habilitación laboral del capacitado.',
-      'C. Si el contrato de capacitación es celebrado por un menor de 18 años de edad, debe comparecer en dicho acto su representante legal de conformidad a las normas del derecho común.',
-      'D. Respecto de la cláusula séptima cabe señalar que de acuerdo a lo dispuesto en el inciso penúltimo del artículo 33 de la Ley Nº 19.518, el contrato de capacitación no podrá exceder en total de dos meses, incluidas las prórrogas que pudieren acordarse por las partes.',
-    ];
-    observations.forEach(obs => {
-      addLine(obs, 9, false);
-      y += 3;
-    });
-
-    doc.save(`Precontrato_Modular_${modId}_${empresa.replace(/\s/g, '_')}.pdf`);
-    toast.success(`Documento descargado: Precontrato Modular ${modId}`);
+    setRepForm({ nombre: '', rutNum: '', rutDv: '', email: '' });
+    setDownloadCtx({ modId, cursos });
   };
+
+  const isRepFormValid = () => {
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(repForm.email.trim());
+    return (
+      repForm.nombre.trim().length >= 3 &&
+      /^\d{7,9}$/.test(repForm.rutNum.trim()) &&
+      /^[0-9kK]$/.test(repForm.rutDv.trim()) &&
+      emailOk
+    );
+  };
+
+  const handleGenerateWord = async () => {
+    if (!downloadCtx || !isRepFormValid()) return;
+    setGenerating(true);
+    try {
+      const { modId, cursos } = downloadCtx;
+      const empresa = cursos[0]?.cliente ?? 'Sin cliente';
+      const rutFormateado = `${repForm.rutNum.trim()}-${repForm.rutDv.trim().toUpperCase()}`;
+      const fecha = new Date().toLocaleDateString('es-CL', { day: '2-digit', month: 'long', year: 'numeric' });
+
+      const {
+        Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType,
+        Table, TableRow, TableCell, WidthType, BorderStyle,
+      } = await import('docx');
+      const { saveAs } = await import('file-saver');
+
+      const border = { style: BorderStyle.SINGLE, size: 4, color: '999999' };
+      const cellBorders = { top: border, bottom: border, left: border, right: border };
+
+      const labelValue = (label: string, value: string) =>
+        new Paragraph({
+          spacing: { after: 80 },
+          children: [
+            new TextRun({ text: `${label}: `, bold: true }),
+            new TextRun({ text: value }),
+          ],
+        });
+
+      const cursosHeader = new TableRow({
+        tableHeader: true,
+        children: ['Código SENCE', 'Curso', 'Modalidad', 'Participantes', 'Inicio'].map(
+          (h) =>
+            new TableCell({
+              borders: cellBorders,
+              shading: { fill: 'E8F4F1' } as any,
+              children: [new Paragraph({ children: [new TextRun({ text: h, bold: true, size: 18 })] })],
+            }),
+        ),
+      });
+
+      const cursosRows = cursos.map(
+        (c) =>
+          new TableRow({
+            children: [
+              c.codigoSence || '-',
+              c.curso,
+              c.modalidad || '-',
+              String(c.nroPart),
+              c.inicioCurso || '-',
+            ].map(
+              (v) =>
+                new TableCell({
+                  borders: cellBorders,
+                  children: [new Paragraph({ children: [new TextRun({ text: v, size: 18 })] })],
+                }),
+            ),
+          }),
+      );
+
+      const doc = new Document({
+        creator: 'Sucursal Virtual',
+        title: `Precontrato Modular ${modId}`,
+        sections: [
+          {
+            properties: {},
+            children: [
+              new Paragraph({
+                alignment: AlignmentType.CENTER,
+                heading: HeadingLevel.HEADING_1,
+                children: [new TextRun({ text: 'CONTRATO DE CAPACITACIÓN MODULAR', bold: true })],
+              }),
+              new Paragraph({
+                alignment: AlignmentType.CENTER,
+                spacing: { after: 200 },
+                children: [new TextRun({ text: `Módulo: ${modId}`, bold: true })],
+              }),
+              new Paragraph({
+                alignment: AlignmentType.JUSTIFIED,
+                spacing: { after: 200 },
+                children: [
+                  new TextRun(
+                    `En Santiago, a ${fecha}, entre la Empresa ${empresa.toUpperCase()}, representada por las personas individualizadas a continuación, y los participantes inscritos en los cursos detallados más abajo, se ha convenido el siguiente Contrato de Capacitación Modular.`,
+                  ),
+                ],
+              }),
+
+              new Paragraph({
+                spacing: { before: 200, after: 120 },
+                children: [new TextRun({ text: 'Datos del Representante de la Empresa', bold: true, size: 24 })],
+              }),
+              labelValue('Nombre Representante de la Empresa', repForm.nombre.trim()),
+              labelValue('Rut Representante de la Empresa', rutFormateado),
+              labelValue('Email Representante de la Empresa', repForm.email.trim()),
+
+              new Paragraph({
+                spacing: { before: 300, after: 120 },
+                children: [new TextRun({ text: 'Cursos asociados al módulo', bold: true, size: 24 })],
+              }),
+              new Table({
+                width: { size: 100, type: WidthType.PERCENTAGE },
+                rows: [cursosHeader, ...cursosRows],
+              }),
+
+              new Paragraph({
+                spacing: { before: 300, after: 120 },
+                children: [new TextRun({ text: 'Cláusulas', bold: true, size: 24 })],
+              }),
+              ...[
+                '1. El capacitado se obliga a asistir a los cursos indicados en la tabla anterior.',
+                '2. El programa de capacitación tiene como objetivo desarrollar competencias laborales y potenciar la empleabilidad del capacitado.',
+                '3. El capacitado se obliga a asistir regularmente y cumplir el porcentaje mínimo de asistencia exigido para su aprobación.',
+                `4. La duración total del proceso de capacitación será de ${cursos.reduce((s, c) => s + c.nroPart, 0)} horas cronológicas.`,
+                '5. El curso es financiado mediante la franquicia tributaria contemplada en la Ley Nº 19.518.',
+                '6. El presente contrato no genera vínculo laboral entre las partes firmantes.',
+              ].map(
+                (txt) =>
+                  new Paragraph({
+                    alignment: AlignmentType.JUSTIFIED,
+                    spacing: { after: 120 },
+                    children: [new TextRun(txt)],
+                  }),
+              ),
+
+              new Paragraph({ spacing: { before: 500 }, children: [new TextRun('Para constancia, firman:')] }),
+              new Paragraph({ spacing: { before: 600 }, children: [new TextRun('______________________________')] }),
+              new Paragraph({ children: [new TextRun({ text: repForm.nombre.trim(), bold: true })] }),
+              new Paragraph({ children: [new TextRun(`RUT: ${rutFormateado}`)] }),
+              new Paragraph({ children: [new TextRun(`Email: ${repForm.email.trim()}`)] }),
+              new Paragraph({ children: [new TextRun(`Representante de ${empresa}`)] }),
+            ],
+          },
+        ],
+      });
+
+      const blob = await Packer.toBlob(doc);
+      saveAs(blob, `Precontrato_Modular_${modId}_${empresa.replace(/\s/g, '_')}.docx`);
+      toast.success(`Documento Word descargado: Precontrato Modular ${modId}`);
+      setDownloadCtx(null);
+    } catch (err) {
+      console.error(err);
+      toast.error('Error al generar el documento Word.');
+    } finally {
+      setGenerating(false);
+    }
+  };
+
 
   return (
     <>
