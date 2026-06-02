@@ -506,9 +506,17 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true, sea
                       <th className="p-2 text-left font-medium text-muted-foreground whitespace-nowrap">EDC a Cargo</th>
                       <th className="p-2 text-left font-medium text-muted-foreground whitespace-nowrap">Jefe Comercial</th>
                       <th className="p-2 text-left font-medium text-muted-foreground whitespace-nowrap">Fecha Creación</th>
+                      <th className="p-2 text-right font-medium text-muted-foreground whitespace-nowrap">Acciones</th>
                     </tr>
                   </thead>
                   <tbody>
+                    {cursos.length === 0 && (
+                      <tr>
+                        <td colSpan={12} className="p-4 text-center text-xs text-muted-foreground italic">
+                          Este módulo aún no tiene cursos asociados. Usa "Agregar curso" para asociar un curso precontrato.
+                        </td>
+                      </tr>
+                    )}
                     {cursos.map((curso, idx) => {
                       const isExpanded = expandedCourses[curso.sc];
                       const participantes = getParticipantes(curso.sc, curso.nroPart);
