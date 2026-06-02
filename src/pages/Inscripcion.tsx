@@ -125,6 +125,8 @@ const Inscripcion: React.FC = () => {
   const [selectedModularId, setSelectedModularId] = useState<string | null>(null);
   const [generatedModularId, setGeneratedModularId] = useState<string | null>(null);
   const [associatedModuleId, setAssociatedModuleId] = useState<string | null>(null);
+  const [pendingNewModuleId, setPendingNewModuleId] = useState<string | null>(null);
+  const [createdModules, setCreatedModules] = useState<{ id: string; sc: string; courseName: string }[]>([]);
 
   // Step 2
   const [senceCode, setSenceCode] = useState('');
@@ -840,12 +842,32 @@ const Inscripcion: React.FC = () => {
             </div>
 
             {contractType === 'Precontrato' && selectedClient && (() => {
-              const clientModulares = mockModularPrecontratos[selectedClient.id] || [];
-              const uniqueModules = [...new Set(clientModulares.map(c => c.id))];
+              const baseModulares = mockModularPrecontratos[selectedClient.id] || [];
+              const allModulares = [...baseModulares, ...createdModules];
+              const uniqueModules = [...new Set(allModulares.map(c => c.id))];
+              const hasAny = uniqueModules.length > 0;
+
+              const handleCreateNew = () => {
+                if (pendingNewModuleId || associatedModuleId) return;
+                setPendingNewModuleId(generateModularId());
+              };
+
+              const handleConfirmNew = () => {
+                if (!pendingNewModuleId) return;
+                setCreatedModules(prev => [...prev, {
+                  id: pendingNewModuleId,
+                  sc: inscripcionId,
+                  courseName: mockSenceData.courseName,
+                }]);
+                setAssociatedModuleId(pendingNewModuleId);
+                toast.success(`Curso inscrito (SC ${inscripcionId}) asociado al nuevo módulo ${pendingNewModuleId}`);
+                setPendingNewModuleId(null);
+              };
+
               return (
                 <div className="mb-8">
                   <h2 className="text-lg font-semibold text-muted-foreground mb-4">Precontratos modulares del cliente</h2>
-                  {uniqueModules.length > 0 ? (
+                  {hasAny ? (
                     <div className="border rounded-lg overflow-hidden">
                       <table className="w-full text-sm">
                         <thead>
@@ -858,7 +880,7 @@ const Inscripcion: React.FC = () => {
                         </thead>
                         <tbody>
                           {uniqueModules.map(modId => {
-                            const cursos = clientModulares.filter(c => c.id === modId);
+                            const cursos = allModulares.filter(c => c.id === modId);
                             const isAssociated = associatedModuleId === modId;
                             return (
                               <React.Fragment key={modId}>
@@ -871,7 +893,7 @@ const Inscripcion: React.FC = () => {
                                       size="sm"
                                       variant="outline"
                                       className="gap-1 border-primary text-primary"
-                                      disabled={associatedModuleId !== null}
+                                      disabled={associatedModuleId !== null || pendingNewModuleId !== null}
                                       onClick={() => {
                                         setAssociatedModuleId(modId);
                                         toast.success(`Curso inscrito (SC ${inscripcionId}) asociado al módulo ${modId}`);
@@ -882,7 +904,7 @@ const Inscripcion: React.FC = () => {
                                   </td>
                                 </tr>
                                 {cursos.map(curso => (
-                                  <tr key={curso.sc} className="border-b hover:bg-muted/10">
+                                  <tr key={curso.sc + curso.id} className="border-b hover:bg-muted/10">
                                     <td className="p-2 text-muted-foreground"></td>
                                     <td className="p-2">{curso.sc}</td>
                                     <td className="p-2 text-muted-foreground text-xs" colSpan={2}>{curso.courseName}</td>
@@ -891,18 +913,30 @@ const Inscripcion: React.FC = () => {
                               </React.Fragment>
                             );
                           })}
+                          {pendingNewModuleId && (
+                            <tr className="bg-primary/5 border-b">
+                              <td className="p-3 font-semibold text-primary text-xs">{pendingNewModuleId}</td>
+                              <td className="p-3 text-muted-foreground text-xs">{inscripcionId}</td>
+                              <td className="p-3 text-muted-foreground text-xs">{mockSenceData.courseName}</td>
+                              <td className="p-2 text-right">
+                                <Button
+                                  size="sm"
+                                  className="gap-1 bg-primary hover:bg-primary/90"
+                                  onClick={handleConfirmNew}
+                                >
+                                  <Plus className="h-3 w-3" /> Asociar a {pendingNewModuleId}
+                                </Button>
+                              </td>
+                            </tr>
+                          )}
                           <tr className="bg-muted/10">
                             <td colSpan={4} className="p-3 text-right">
                               <Button
                                 size="sm"
                                 variant="outline"
                                 className="gap-1 border-dashed border-primary text-primary"
-                                disabled={associatedModuleId !== null}
-                                onClick={() => {
-                                  const newId = generateModularId();
-                                  setAssociatedModuleId(newId);
-                                  toast.success(`Curso inscrito (SC ${inscripcionId}) asociado al nuevo módulo ${newId}`);
-                                }}
+                                disabled={associatedModuleId !== null || pendingNewModuleId !== null}
+                                onClick={handleCreateNew}
                               >
                                 <Plus className="h-3 w-3" /> Crear nuevo módulo
                               </Button>
@@ -916,22 +950,35 @@ const Inscripcion: React.FC = () => {
                       <p className="text-sm text-muted-foreground">
                         Este cliente no tiene precontratos modulares creados.
                       </p>
-                      <Button
-                        className="gap-2 bg-primary hover:bg-primary/90"
-                        disabled={associatedModuleId !== null}
-                        onClick={() => {
-                          const newId = generateModularId();
-                          setAssociatedModuleId(newId);
-                          toast.success(`Curso inscrito (SC ${inscripcionId}) asociado al nuevo módulo ${newId}`);
-                        }}
-                      >
-                        {associatedModuleId ? (<><Check className="h-4 w-4" /> Asociado a {associatedModuleId}</>) : (<><Plus className="h-4 w-4" /> Asociar a nuevo módulo</>)}
-                      </Button>
+                      {pendingNewModuleId ? (
+                        <div className="w-full max-w-md border rounded-md p-3 bg-primary/5 flex items-center justify-between gap-3">
+                          <div className="text-left">
+                            <p className="text-xs text-muted-foreground">Nuevo módulo</p>
+                            <p className="text-sm font-semibold text-primary">{pendingNewModuleId}</p>
+                          </div>
+                          <Button
+                            size="sm"
+                            className="gap-1 bg-primary hover:bg-primary/90"
+                            onClick={handleConfirmNew}
+                          >
+                            <Plus className="h-3 w-3" /> Asociar curso
+                          </Button>
+                        </div>
+                      ) : (
+                        <Button
+                          className="gap-2 bg-primary hover:bg-primary/90"
+                          disabled={associatedModuleId !== null}
+                          onClick={handleCreateNew}
+                        >
+                          <Plus className="h-4 w-4" /> Crear nuevo módulo
+                        </Button>
+                      )}
                     </div>
                   )}
                 </div>
               );
             })()}
+
 
 
             <div className="flex justify-center gap-3">
