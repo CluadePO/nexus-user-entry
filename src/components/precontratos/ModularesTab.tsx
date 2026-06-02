@@ -434,8 +434,16 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true, sea
       });
 
       const blob = await Packer.toBlob(doc);
-      saveAs(blob, `Precontrato_Modular_${modId}_${empresa.replace(/\s/g, '_')}.docx`);
-      toast.success(`Documento Word descargado: Precontrato Modular ${modId}`);
+      const safe = (s: string) => s.replace(/\s+/g, '_').replace(/[^\w\-]/g, '');
+      const fileName = esIndividual
+        ? `Precontrato_Individual_${modId}_${safe(participante!.nombre)}.docx`
+        : `Precontrato_Modular_${modId}_${safe(empresa)}.docx`;
+      saveAs(blob, fileName);
+      toast.success(
+        esIndividual
+          ? `Documento Word descargado: Precontrato individual de ${participante!.nombre}`
+          : `Documento Word descargado: Precontrato Modular ${modId}`,
+      );
       setDownloadCtx(null);
     } catch (err) {
       console.error(err);
