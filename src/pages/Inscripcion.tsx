@@ -1514,7 +1514,7 @@ const Inscripcion: React.FC = () => {
               disabled={!mandanteRut.trim()}
               onClick={() => {
                 setMandanteValidated(true);
-                toast({ title: 'Cliente validado', description: `RUT ${mandanteRut} validado correctamente.` });
+                toast.success(`Cliente validado: RUT ${mandanteRut}`);
               }}
               className="rounded-full h-11 px-8 bg-primary hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground"
             >
