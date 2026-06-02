@@ -163,7 +163,7 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true, sea
   const [addModalCliente, setAddModalCliente] = useState('');
   const [extraModules, setExtraModules] = useState<string[]>([]);
   const [confirmDesasociar, setConfirmDesasociar] = useState<{ modId: string; sc: string; curso: string } | null>(null);
-  const [downloadCtx, setDownloadCtx] = useState<{ modId: string; cursos: CursoModular[] } | null>(null);
+  const [downloadCtx, setDownloadCtx] = useState<{ modId: string; cursos: CursoModular[]; participante?: Participante; curso?: CursoModular } | null>(null);
   const [repForm, setRepForm] = useState({ nombre: '', rutNum: '', rutDv: '', email: '' });
   const [generating, setGenerating] = useState(false);
 
