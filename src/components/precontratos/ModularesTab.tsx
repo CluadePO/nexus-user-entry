@@ -471,6 +471,7 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true, sea
                       variant="outline"
                       size="sm"
                       className="gap-1 text-xs h-7 px-2 text-primary border-primary/30 hover:bg-primary/10"
+                      disabled={cursos.length === 0}
                       onClick={(e) => handleDownloadPrecontrato(modId, cursos, e)}
                     >
                       <Download className="w-3.5 h-3.5" />
@@ -480,7 +481,7 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true, sea
                       variant="outline"
                       size="sm"
                       className="gap-1 text-xs h-7 px-2 text-primary border-primary/30 hover:bg-primary/10"
-                      onClick={(e) => handleOpenAddModal(modId, cursos[0].cliente, e)}
+                      onClick={(e) => handleOpenAddModal(modId, cursos[0]?.cliente ?? '', e)}
                     >
                       <PlusCircle className="w-3.5 h-3.5" />
                       Agregar curso
