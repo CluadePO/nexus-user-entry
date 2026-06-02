@@ -355,7 +355,7 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true, sea
               new Paragraph({
                 alignment: AlignmentType.CENTER,
                 heading: HeadingLevel.HEADING_1,
-                children: [new TextRun({ text: 'CONTRATO DE CAPACITACIÓN MODULAR', bold: true })],
+                children: [new TextRun({ text: esIndividual ? 'CONTRATO INDIVIDUAL DE CAPACITACIÓN' : 'CONTRATO DE CAPACITACIÓN MODULAR', bold: true })],
               }),
               new Paragraph({
                 alignment: AlignmentType.CENTER,
@@ -367,7 +367,9 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true, sea
                 spacing: { after: 200 },
                 children: [
                   new TextRun(
-                    `En Santiago, a ${fecha}, entre la Empresa ${empresa.toUpperCase()}, representada por las personas individualizadas a continuación, y los participantes inscritos en los cursos detallados más abajo, se ha convenido el siguiente Contrato de Capacitación Modular.`,
+                    esIndividual
+                      ? `En Santiago, a ${fecha}, entre la Empresa ${empresa.toUpperCase()}, representada por la persona individualizada a continuación, y el participante ${participante!.nombre.toUpperCase()} (RUT ${participante!.rut}), se ha convenido el siguiente Contrato Individual de Capacitación para el curso "${cursoSel?.curso ?? ''}".`
+                      : `En Santiago, a ${fecha}, entre la Empresa ${empresa.toUpperCase()}, representada por las personas individualizadas a continuación, y los participantes inscritos en los cursos detallados más abajo, se ha convenido el siguiente Contrato de Capacitación Modular.`,
                   ),
                 ],
               }),
