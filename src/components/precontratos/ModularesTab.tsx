@@ -12,7 +12,7 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { AlertCircle, Ban, EyeOff, PlusCircle, Download, ChevronDown, ChevronRight, Users, FolderPlus, Unlink } from 'lucide-react';
+import { AlertCircle, Ban, EyeOff, PlusCircle, Download, ChevronDown, ChevronRight, Users, FolderPlus, Unlink, FileText } from 'lucide-react';
 import AddCourseToModuleModal from './AddCourseToModuleModal';
 import { toast } from 'sonner';
 import {
@@ -25,6 +25,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 interface Participante {
   nombre: string;
