@@ -158,6 +158,8 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true, sea
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [addModalModuleId, setAddModalModuleId] = useState('');
   const [addModalCliente, setAddModalCliente] = useState('');
+  const [extraModules, setExtraModules] = useState<string[]>([]);
+  const [confirmDesasociar, setConfirmDesasociar] = useState<{ modId: string; sc: string; curso: string } | null>(null);
 
   const toggleNoComunicar = (sc: string) => {
     setNoComunicar(prev =>
@@ -178,10 +180,40 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true, sea
     return acc;
   }, {});
 
-  const allGroups = Object.entries(grouped);
+  // Include empty extra modules created by the user
+  extraModules.forEach(modId => {
+    if (!grouped[modId]) grouped[modId] = [];
+  });
+
+  const allGroups = Object.entries(grouped).sort(([a], [b]) => a.localeCompare(b));
   const totalPagesModulares = Math.max(1, Math.ceil(allGroups.length / MOD_PAGE_SIZE));
   const safePageMod = Math.min(pageModulares, totalPagesModulares);
   const paginatedGroups = allGroups.slice((safePageMod - 1) * MOD_PAGE_SIZE, safePageMod * MOD_PAGE_SIZE);
+
+  const handleCreateNewModule = () => {
+    const allIds = [...new Set([...cursosModulares.map(c => c.idModular), ...extraModules])];
+    const nums = allIds
+      .map(id => parseInt(id.replace(/^MOD-/, ''), 10))
+      .filter(n => !isNaN(n));
+    const next = (nums.length ? Math.max(...nums) : 0) + 1;
+    const newId = `MOD-${String(next).padStart(3, '0')}`;
+    setExtraModules(prev => [...prev, newId]);
+    setPageModulares(Math.ceil((allGroups.length + 1) / MOD_PAGE_SIZE));
+    toast.success(`Módulo ${newId} creado correctamente. Ahora puedes asociar cursos precontratos.`);
+  };
+
+  const handleConfirmDesasociar = () => {
+    if (!confirmDesasociar) return;
+    const { modId, sc, curso } = confirmDesasociar;
+    setCursosModulares(prev => prev.filter(c => !(c.idModular === modId && c.sc === sc)));
+    // Keep empty module visible if it was the last course
+    const remaining = cursosModulares.filter(c => c.idModular === modId && c.sc !== sc);
+    if (remaining.length === 0 && !extraModules.includes(modId)) {
+      setExtraModules(prev => [...prev, modId]);
+    }
+    toast.success(`Curso "${curso}" desasociado del módulo ${modId}.`);
+    setConfirmDesasociar(null);
+  };
 
   const handleSelectRow = (sc: string, checked: boolean) => {
     if (checked) {
