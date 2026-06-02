@@ -12,9 +12,19 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { AlertCircle, Ban, EyeOff, PlusCircle, Download, ChevronDown, ChevronRight, Users } from 'lucide-react';
+import { AlertCircle, Ban, EyeOff, PlusCircle, Download, ChevronDown, ChevronRight, Users, FolderPlus, Unlink } from 'lucide-react';
 import AddCourseToModuleModal from './AddCourseToModuleModal';
 import { toast } from 'sonner';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 interface Participante {
   nombre: string;
@@ -148,6 +158,8 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true, sea
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [addModalModuleId, setAddModalModuleId] = useState('');
   const [addModalCliente, setAddModalCliente] = useState('');
+  const [extraModules, setExtraModules] = useState<string[]>([]);
+  const [confirmDesasociar, setConfirmDesasociar] = useState<{ modId: string; sc: string; curso: string } | null>(null);
 
   const toggleNoComunicar = (sc: string) => {
     setNoComunicar(prev =>
@@ -168,10 +180,40 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true, sea
     return acc;
   }, {});
 
-  const allGroups = Object.entries(grouped);
+  // Include empty extra modules created by the user
+  extraModules.forEach(modId => {
+    if (!grouped[modId]) grouped[modId] = [];
+  });
+
+  const allGroups = Object.entries(grouped).sort(([a], [b]) => a.localeCompare(b));
   const totalPagesModulares = Math.max(1, Math.ceil(allGroups.length / MOD_PAGE_SIZE));
   const safePageMod = Math.min(pageModulares, totalPagesModulares);
   const paginatedGroups = allGroups.slice((safePageMod - 1) * MOD_PAGE_SIZE, safePageMod * MOD_PAGE_SIZE);
+
+  const handleCreateNewModule = () => {
+    const allIds = [...new Set([...cursosModulares.map(c => c.idModular), ...extraModules])];
+    const nums = allIds
+      .map(id => parseInt(id.replace(/^MOD-/, ''), 10))
+      .filter(n => !isNaN(n));
+    const next = (nums.length ? Math.max(...nums) : 0) + 1;
+    const newId = `MOD-${String(next).padStart(3, '0')}`;
+    setExtraModules(prev => [...prev, newId]);
+    setPageModulares(Math.ceil((allGroups.length + 1) / MOD_PAGE_SIZE));
+    toast.success(`Módulo ${newId} creado correctamente. Ahora puedes asociar cursos precontratos.`);
+  };
+
+  const handleConfirmDesasociar = () => {
+    if (!confirmDesasociar) return;
+    const { modId, sc, curso } = confirmDesasociar;
+    setCursosModulares(prev => prev.filter(c => !(c.idModular === modId && c.sc === sc)));
+    // Keep empty module visible if it was the last course
+    const remaining = cursosModulares.filter(c => c.idModular === modId && c.sc !== sc);
+    if (remaining.length === 0 && !extraModules.includes(modId)) {
+      setExtraModules(prev => [...prev, modId]);
+    }
+    toast.success(`Curso "${curso}" desasociado del módulo ${modId}.`);
+    setConfirmDesasociar(null);
+  };
 
   const handleSelectRow = (sc: string, checked: boolean) => {
     if (checked) {
@@ -403,6 +445,15 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true, sea
         <p className="text-xs text-muted-foreground">
           Mostrando {(safePageMod - 1) * MOD_PAGE_SIZE + 1}–{Math.min(safePageMod * MOD_PAGE_SIZE, allGroups.length)} de {allGroups.length} módulos
         </p>
+        <Button
+          variant="outline"
+          size="sm"
+          className="gap-1.5 text-xs h-8 text-primary border-primary/30 hover:bg-primary/10"
+          onClick={handleCreateNewModule}
+        >
+          <FolderPlus className="w-3.5 h-3.5" />
+          Crear nuevo módulo
+        </Button>
       </div>
       <Accordion type="multiple" className="space-y-3">
         {paginatedGroups.map(([modId, cursos]) => (
@@ -412,7 +463,7 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true, sea
                 <span className="inline-block border rounded-full px-3 py-0.5 text-xs font-bold text-primary bg-primary/10 border-primary/20">
                   {modId}
                 </span>
-                <span className="text-sm font-medium text-foreground">{cursos[0].cliente}</span>
+                <span className="text-sm font-medium text-foreground">{cursos[0]?.cliente ?? <span className="italic text-muted-foreground">Sin cliente asignado</span>}</span>
                 <Badge variant="secondary" className="text-xs">{cursos.length} {cursos.length === 1 ? 'curso' : 'cursos'}</Badge>
                 {showAddCourse && (
                   <div className="ml-auto mr-2 flex items-center gap-2">
@@ -420,6 +471,7 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true, sea
                       variant="outline"
                       size="sm"
                       className="gap-1 text-xs h-7 px-2 text-primary border-primary/30 hover:bg-primary/10"
+                      disabled={cursos.length === 0}
                       onClick={(e) => handleDownloadPrecontrato(modId, cursos, e)}
                     >
                       <Download className="w-3.5 h-3.5" />
@@ -429,7 +481,7 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true, sea
                       variant="outline"
                       size="sm"
                       className="gap-1 text-xs h-7 px-2 text-primary border-primary/30 hover:bg-primary/10"
-                      onClick={(e) => handleOpenAddModal(modId, cursos[0].cliente, e)}
+                      onClick={(e) => handleOpenAddModal(modId, cursos[0]?.cliente ?? '', e)}
                     >
                       <PlusCircle className="w-3.5 h-3.5" />
                       Agregar curso
@@ -454,9 +506,17 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true, sea
                       <th className="p-2 text-left font-medium text-muted-foreground whitespace-nowrap">EDC a Cargo</th>
                       <th className="p-2 text-left font-medium text-muted-foreground whitespace-nowrap">Jefe Comercial</th>
                       <th className="p-2 text-left font-medium text-muted-foreground whitespace-nowrap">Fecha Creación</th>
+                      <th className="p-2 text-right font-medium text-muted-foreground whitespace-nowrap">Acciones</th>
                     </tr>
                   </thead>
                   <tbody>
+                    {cursos.length === 0 && (
+                      <tr>
+                        <td colSpan={12} className="p-4 text-center text-xs text-muted-foreground italic">
+                          Este módulo aún no tiene cursos asociados. Usa "Agregar curso" para asociar un curso precontrato.
+                        </td>
+                      </tr>
+                    )}
                     {cursos.map((curso, idx) => {
                       const isExpanded = expandedCourses[curso.sc];
                       const participantes = getParticipantes(curso.sc, curso.nroPart);
@@ -493,10 +553,21 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true, sea
                             <td className="p-2 whitespace-nowrap">{curso.edcACargo}</td>
                             <td className="p-2 whitespace-nowrap">{curso.jefeComercial}</td>
                             <td className="p-2 whitespace-nowrap">{curso.fechaCreacion}</td>
+                            <td className="p-2 whitespace-nowrap text-right">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="gap-1 text-xs h-7 px-2 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                                onClick={() => setConfirmDesasociar({ modId, sc: curso.sc, curso: curso.curso })}
+                              >
+                                <Unlink className="w-3.5 h-3.5" />
+                                Desasociar
+                              </Button>
+                            </td>
                           </tr>
                           {isExpanded && (
                             <tr>
-                              <td colSpan={11} className="p-0">
+                              <td colSpan={12} className="p-0">
                                 <div className="bg-muted/20 border-t border-b mx-4 my-1 rounded-md">
                                   <div className="flex items-center gap-2 px-3 py-2 border-b bg-muted/30 rounded-t-md">
                                     <Users className="w-3.5 h-3.5 text-primary" />
@@ -609,6 +680,28 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true, sea
         clienteName={addModalCliente}
         onAdd={handleAddCourse}
       />
+
+      <AlertDialog open={confirmDesasociar !== null} onOpenChange={(open) => !open && setConfirmDesasociar(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Desasociar curso del módulo?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Estás por desasociar el curso <strong>{confirmDesasociar?.curso}</strong> del módulo{' '}
+              <strong>{confirmDesasociar?.modId}</strong>. El curso quedará disponible para asociarse a otro módulo.
+              Esta acción no elimina el curso del sistema.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmDesasociar}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Sí, desasociar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 };
