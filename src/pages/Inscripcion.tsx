@@ -1446,125 +1446,88 @@ const Inscripcion: React.FC = () => {
         </CollapsibleContent>
       </Collapsible>
 
-      <div>
-        <p className="text-sm text-muted-foreground mb-3">Cuenta Capacitacion</p>
-        <div className="flex gap-4">
-          <button
-            onClick={() => setSelectedAccount('anual')}
-            className={`flex-1 py-4 px-4 rounded-2xl text-center text-sm font-medium transition-colors ${
-              selectedAccount === 'anual'
-                ? 'bg-amber-300 text-amber-900 border-2 border-amber-500'
-                : 'bg-amber-100 text-amber-800 border border-amber-200 hover:bg-amber-200'
-            }`}
-          >
-            <p className="font-semibold">Capacitación al año</p>
-            <p className="text-xs mt-1">{formatCLP(916000)}</p>
-            <div className="flex justify-around mt-2 pt-2 border-t border-amber-400/40 text-[11px]">
-              <div>
-                <p className="opacity-75">Saldo Real</p>
-                <p className="font-bold">{formatCLP(896000)}</p>
-              </div>
-              <div>
-                <p className="opacity-75">Saldo Nominal</p>
-                <p className="font-bold">{formatCLP(916000)}</p>
-              </div>
-            </div>
-          </button>
-          <button
-            onClick={() => setSelectedAccount('excedente')}
-            className={`flex-1 py-4 px-4 rounded-2xl text-center text-sm font-medium transition-colors ${
-              selectedAccount === 'excedente'
-                ? 'bg-primary text-primary-foreground border-2 border-primary'
-                : 'bg-primary/80 text-primary-foreground border border-primary hover:bg-primary'
-            }`}
-          >
-            <p className="font-semibold">Excedente capacitación</p>
-            <p className="text-xs mt-1">{formatCLP(10800000)}</p>
-            <div className="flex justify-around mt-2 pt-2 border-t border-primary-foreground/30 text-[11px]">
-              <div>
-                <p className="opacity-75">Saldo Real</p>
-                <p className="font-bold">{formatCLP(10780000)}</p>
-              </div>
-              <div>
-                <p className="opacity-75">Saldo Nominal</p>
-                <p className="font-bold">{formatCLP(10800000)}</p>
-              </div>
-            </div>
-          </button>
-
-        </div>
-
-        {/* Búsqueda cliente mandante para Cuenta Reparto */}
-        <div className="mt-6">
-          <p className="text-sm text-muted-foreground mb-2">
-            Indica al cliente de financiamiento para la Cuenta Reparto
-          </p>
-          <div className="flex gap-3 items-center">
-            <Input
-              placeholder="Ingresa aquí el RUT del cliente"
-              value={mandanteRut}
-              onChange={(e) => {
-                setMandanteRut(e.target.value);
-                if (mandanteValidated) setMandanteValidated(false);
-              }}
-              className="flex-1 rounded-full h-11 px-5"
-            />
-            <Button
-              type="button"
-              disabled={!mandanteRut.trim()}
-              onClick={() => {
-                setMandanteValidated(true);
-                toast.success(`Cliente validado: RUT ${mandanteRut}`);
-              }}
-              className="rounded-full h-11 px-8 bg-primary hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground"
+      {(() => {
+        const renderAccountButton = (acc: { key: string; label: string; nominal: number; real: number; tone: 'amber' | 'primary' }) => {
+          const isSelected = selectedAccount === acc.key;
+          const isAmber = acc.tone === 'amber';
+          return (
+            <button
+              key={acc.key}
+              onClick={() => setSelectedAccount(acc.key)}
+              className={`flex-1 py-4 px-4 rounded-2xl text-center text-sm font-medium transition-colors ${
+                isAmber
+                  ? isSelected
+                    ? 'bg-amber-300 text-amber-900 border-2 border-amber-500'
+                    : 'bg-amber-100 text-amber-800 border border-amber-200 hover:bg-amber-200'
+                  : isSelected
+                    ? 'bg-primary text-primary-foreground border-2 border-primary'
+                    : 'bg-primary/80 text-primary-foreground border border-primary hover:bg-primary'
+              }`}
             >
-              Validar
-            </Button>
-          </div>
+              <p className="font-semibold">{acc.label}</p>
+              <p className="text-xs mt-1">{formatCLP(acc.nominal)}</p>
+              <div className={`flex justify-around mt-2 pt-2 border-t text-[11px] ${isAmber ? 'border-amber-400/40' : 'border-primary-foreground/30'}`}>
+                <div>
+                  <p className="opacity-75">Saldo Real</p>
+                  <p className="font-bold">{formatCLP(acc.real)}</p>
+                </div>
+                <div>
+                  <p className="opacity-75">Saldo Nominal</p>
+                  <p className="font-bold">{formatCLP(acc.nominal)}</p>
+                </div>
+              </div>
+            </button>
+          );
+        };
 
-          {mandanteValidated && (
-            <div className="mt-4 grid grid-cols-2 gap-4">
-              {[
-                { key: 'reparto', label: 'Reparto', nominal: 2500000, real: 2450000, tone: 'amber' },
-                { key: 'reparto_excedente', label: 'Reparto Excedente', nominal: 5400000, real: 5380000, tone: 'primary' },
-                { key: 'viaticos', label: 'Viáticos', nominal: 350000, real: 320000, tone: 'amber' },
-                { key: 'traslado', label: 'Traslado', nominal: 280000, real: 260000, tone: 'primary' },
-              ].map((acc) => {
-                const isSelected = selectedAccount === acc.key;
-                const isAmber = acc.tone === 'amber';
-                return (
-                  <button
-                    key={acc.key}
-                    onClick={() => setSelectedAccount(acc.key)}
-                    className={`py-4 px-4 rounded-2xl text-center text-sm font-medium transition-colors ${
-                      isAmber
-                        ? isSelected
-                          ? 'bg-amber-300 text-amber-900 border-2 border-amber-500'
-                          : 'bg-amber-100 text-amber-800 border border-amber-200 hover:bg-amber-200'
-                        : isSelected
-                          ? 'bg-primary text-primary-foreground border-2 border-primary'
-                          : 'bg-primary/80 text-primary-foreground border border-primary hover:bg-primary'
-                    }`}
-                  >
-                    <p className="font-semibold">{acc.label}</p>
-                    <p className="text-xs mt-1">{formatCLP(acc.nominal)}</p>
-                    <div className={`flex justify-around mt-2 pt-2 border-t text-[11px] ${isAmber ? 'border-amber-400/40' : 'border-primary-foreground/30'}`}>
-                      <div>
-                        <p className="opacity-75">Saldo Real</p>
-                        <p className="font-bold">{formatCLP(acc.real)}</p>
-                      </div>
-                      <div>
-                        <p className="opacity-75">Saldo Nominal</p>
-                        <p className="font-bold">{formatCLP(acc.nominal)}</p>
-                      </div>
-                    </div>
-                  </button>
-                );
-              })}
+        return (
+          <div>
+            <p className="text-sm text-muted-foreground mb-3">Cuenta Capacitacion</p>
+            <div className="grid grid-cols-2 gap-4">
+              {renderAccountButton({ key: 'anual', label: 'Capacitación al año', nominal: 916000, real: 896000, tone: 'amber' })}
+              {renderAccountButton({ key: 'excedente', label: 'Excedente capacitación', nominal: 10800000, real: 10780000, tone: 'primary' })}
+              {renderAccountButton({ key: 'viaticos', label: 'Viáticos', nominal: 350000, real: 320000, tone: 'amber' })}
+              {renderAccountButton({ key: 'traslado', label: 'Traslado', nominal: 280000, real: 260000, tone: 'primary' })}
             </div>
-          )}
-        </div>
-      </div>
+
+            {/* Búsqueda cliente mandante para Cuenta Reparto */}
+            <div className="mt-6">
+              <p className="text-sm text-muted-foreground mb-2">
+                Indica al cliente de financiamiento para la Cuenta Reparto
+              </p>
+              <div className="flex gap-3 items-center">
+                <Input
+                  placeholder="Ingresa aquí el RUT del cliente"
+                  value={mandanteRut}
+                  onChange={(e) => {
+                    setMandanteRut(e.target.value);
+                    if (mandanteValidated) setMandanteValidated(false);
+                  }}
+                  className="flex-1 rounded-full h-11 px-5"
+                />
+                <Button
+                  type="button"
+                  disabled={!mandanteRut.trim()}
+                  onClick={() => {
+                    setMandanteValidated(true);
+                    toast.success(`Cliente validado: RUT ${mandanteRut}`);
+                  }}
+                  className="rounded-full h-11 px-8 bg-primary hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground"
+                >
+                  Validar
+                </Button>
+              </div>
+
+              {mandanteValidated && (
+                <div className="mt-4 grid grid-cols-2 gap-4">
+                  {renderAccountButton({ key: 'reparto', label: 'Reparto', nominal: 2500000, real: 2450000, tone: 'amber' })}
+                  {renderAccountButton({ key: 'reparto_excedente', label: 'Reparto Excedente', nominal: 5400000, real: 5380000, tone: 'primary' })}
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      })()}
 
       <div>
         <h3 className="text-lg font-semibold text-muted-foreground mb-3">Relación del Servicio</h3>
