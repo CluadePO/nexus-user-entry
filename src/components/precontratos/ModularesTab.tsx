@@ -163,7 +163,7 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true, sea
   const [addModalCliente, setAddModalCliente] = useState('');
   const [extraModules, setExtraModules] = useState<string[]>([]);
   const [confirmDesasociar, setConfirmDesasociar] = useState<{ modId: string; sc: string; curso: string } | null>(null);
-  const [downloadCtx, setDownloadCtx] = useState<{ modId: string; cursos: CursoModular[] } | null>(null);
+  const [downloadCtx, setDownloadCtx] = useState<{ modId: string; cursos: CursoModular[]; participante?: Participante; curso?: CursoModular } | null>(null);
   const [repForm, setRepForm] = useState({ nombre: '', rutNum: '', rutDv: '', email: '' });
   const [generating, setGenerating] = useState(false);
 
@@ -290,8 +290,9 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true, sea
     if (!downloadCtx || !isRepFormValid()) return;
     setGenerating(true);
     try {
-      const { modId, cursos } = downloadCtx;
+      const { modId, cursos, participante, curso: cursoSel } = downloadCtx;
       const empresa = cursos[0]?.cliente ?? 'Sin cliente';
+      const esIndividual = !!participante;
       const rutFormateado = `${repForm.rutNum.trim()}-${repForm.rutDv.trim().toUpperCase()}`;
       const fecha = new Date().toLocaleDateString('es-CL', { day: '2-digit', month: 'long', year: 'numeric' });
 
@@ -354,7 +355,7 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true, sea
               new Paragraph({
                 alignment: AlignmentType.CENTER,
                 heading: HeadingLevel.HEADING_1,
-                children: [new TextRun({ text: 'CONTRATO DE CAPACITACIÓN MODULAR', bold: true })],
+                children: [new TextRun({ text: esIndividual ? 'CONTRATO INDIVIDUAL DE CAPACITACIÓN' : 'CONTRATO DE CAPACITACIÓN MODULAR', bold: true })],
               }),
               new Paragraph({
                 alignment: AlignmentType.CENTER,
@@ -366,7 +367,9 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true, sea
                 spacing: { after: 200 },
                 children: [
                   new TextRun(
-                    `En Santiago, a ${fecha}, entre la Empresa ${empresa.toUpperCase()}, representada por las personas individualizadas a continuación, y los participantes inscritos en los cursos detallados más abajo, se ha convenido el siguiente Contrato de Capacitación Modular.`,
+                    esIndividual
+                      ? `En Santiago, a ${fecha}, entre la Empresa ${empresa.toUpperCase()}, representada por la persona individualizada a continuación, y el participante ${participante!.nombre.toUpperCase()} (RUT ${participante!.rut}), se ha convenido el siguiente Contrato Individual de Capacitación para el curso "${cursoSel?.curso ?? ''}".`
+                      : `En Santiago, a ${fecha}, entre la Empresa ${empresa.toUpperCase()}, representada por las personas individualizadas a continuación, y los participantes inscritos en los cursos detallados más abajo, se ha convenido el siguiente Contrato de Capacitación Modular.`,
                   ),
                 ],
               }),
@@ -379,9 +382,20 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true, sea
               labelValue('Rut Representante de la Empresa', rutFormateado),
               labelValue('Email Representante de la Empresa', repForm.email.trim()),
 
+              ...(esIndividual
+                ? [
+                    new Paragraph({
+                      spacing: { before: 300, after: 120 },
+                      children: [new TextRun({ text: 'Datos del Participante', bold: true, size: 24 })],
+                    }),
+                    labelValue('Nombre', participante!.nombre),
+                    labelValue('RUT', participante!.rut),
+                  ]
+                : []),
+
               new Paragraph({
                 spacing: { before: 300, after: 120 },
-                children: [new TextRun({ text: 'Cursos asociados al módulo', bold: true, size: 24 })],
+                children: [new TextRun({ text: esIndividual ? 'Curso a cursar' : 'Cursos asociados al módulo', bold: true, size: 24 })],
               }),
               new Table({
                 width: { size: 100, type: WidthType.PERCENTAGE },
@@ -420,8 +434,16 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true, sea
       });
 
       const blob = await Packer.toBlob(doc);
-      saveAs(blob, `Precontrato_Modular_${modId}_${empresa.replace(/\s/g, '_')}.docx`);
-      toast.success(`Documento Word descargado: Precontrato Modular ${modId}`);
+      const safe = (s: string) => s.replace(/\s+/g, '_').replace(/[^\w\-]/g, '');
+      const fileName = esIndividual
+        ? `Precontrato_Individual_${modId}_${safe(participante!.nombre)}.docx`
+        : `Precontrato_Modular_${modId}_${safe(empresa)}.docx`;
+      saveAs(blob, fileName);
+      toast.success(
+        esIndividual
+          ? `Documento Word descargado: Precontrato individual de ${participante!.nombre}`
+          : `Documento Word descargado: Precontrato Modular ${modId}`,
+      );
       setDownloadCtx(null);
     } catch (err) {
       console.error(err);
@@ -588,7 +610,8 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true, sea
                                               <button 
                                                 className="text-primary hover:underline text-xs font-medium"
                                                 onClick={() => {
-                                                  toast.success(`Descargando precontrato de ${part.nombre}...`);
+                                                  setRepForm({ nombre: '', rutNum: '', rutDv: '', email: '' });
+                                                  setDownloadCtx({ modId, cursos: [curso], participante: part, curso });
                                                 }}
                                               >Descargar</button>
                                             </td>
@@ -710,9 +733,19 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true, sea
               Datos del Representante de la Empresa
             </DialogTitle>
             <DialogDescription>
-              Completa los siguientes datos obligatorios para generar el precontrato modular{' '}
-              <strong>{downloadCtx?.modId}</strong> de{' '}
-              <strong>{downloadCtx?.cursos[0]?.cliente ?? ''}</strong> en formato Word.
+              {downloadCtx?.participante ? (
+                <>
+                  Completa los datos obligatorios para generar el precontrato individual de{' '}
+                  <strong>{downloadCtx.participante.nombre}</strong> ({downloadCtx.participante.rut}) del módulo{' '}
+                  <strong>{downloadCtx.modId}</strong> en formato Word.
+                </>
+              ) : (
+                <>
+                  Completa los siguientes datos obligatorios para generar el precontrato modular{' '}
+                  <strong>{downloadCtx?.modId}</strong> de{' '}
+                  <strong>{downloadCtx?.cursos[0]?.cliente ?? ''}</strong> en formato Word.
+                </>
+              )}
             </DialogDescription>
           </DialogHeader>
 
