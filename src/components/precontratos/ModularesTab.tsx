@@ -588,7 +588,8 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true, sea
                                               <button 
                                                 className="text-primary hover:underline text-xs font-medium"
                                                 onClick={() => {
-                                                  toast.success(`Descargando precontrato de ${part.nombre}...`);
+                                                  setRepForm({ nombre: '', rutNum: '', rutDv: '', email: '' });
+                                                  setDownloadCtx({ modId, cursos: [curso], participante: part, curso });
                                                 }}
                                               >Descargar</button>
                                             </td>
