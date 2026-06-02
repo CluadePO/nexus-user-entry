@@ -153,6 +153,8 @@ const Inscripcion: React.FC = () => {
 
   // Step 5
   const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
+  const [mandanteRut, setMandanteRut] = useState('');
+  const [mandanteValidated, setMandanteValidated] = useState(false);
   const [serviceRelationType, setServiceRelationType] = useState('Solicitud de Compra');
   const [serviceRelationSearch, setServiceRelationSearch] = useState('');
   const [planYear, setPlanYear] = useState('');
