@@ -680,6 +680,28 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true, sea
         clienteName={addModalCliente}
         onAdd={handleAddCourse}
       />
+
+      <AlertDialog open={confirmDesasociar !== null} onOpenChange={(open) => !open && setConfirmDesasociar(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Desasociar curso del módulo?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Estás por desasociar el curso <strong>{confirmDesasociar?.curso}</strong> del módulo{' '}
+              <strong>{confirmDesasociar?.modId}</strong>. El curso quedará disponible para asociarse a otro módulo.
+              Esta acción no elimina el curso del sistema.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmDesasociar}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Sí, desasociar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 };
