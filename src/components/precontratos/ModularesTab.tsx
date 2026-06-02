@@ -733,9 +733,19 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true, sea
               Datos del Representante de la Empresa
             </DialogTitle>
             <DialogDescription>
-              Completa los siguientes datos obligatorios para generar el precontrato modular{' '}
-              <strong>{downloadCtx?.modId}</strong> de{' '}
-              <strong>{downloadCtx?.cursos[0]?.cliente ?? ''}</strong> en formato Word.
+              {downloadCtx?.participante ? (
+                <>
+                  Completa los datos obligatorios para generar el precontrato individual de{' '}
+                  <strong>{downloadCtx.participante.nombre}</strong> ({downloadCtx.participante.rut}) del módulo{' '}
+                  <strong>{downloadCtx.modId}</strong> en formato Word.
+                </>
+              ) : (
+                <>
+                  Completa los siguientes datos obligatorios para generar el precontrato modular{' '}
+                  <strong>{downloadCtx?.modId}</strong> de{' '}
+                  <strong>{downloadCtx?.cursos[0]?.cliente ?? ''}</strong> en formato Word.
+                </>
+              )}
             </DialogDescription>
           </DialogHeader>
 
