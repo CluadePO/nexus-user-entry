@@ -701,6 +701,90 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true, sea
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Dialog open={downloadCtx !== null} onOpenChange={(open) => { if (!open) setDownloadCtx(null); }}>
+        <DialogContent className="sm:max-w-[560px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FileText className="w-4 h-4 text-primary" />
+              Datos del Representante de la Empresa
+            </DialogTitle>
+            <DialogDescription>
+              Completa los siguientes datos obligatorios para generar el precontrato modular{' '}
+              <strong>{downloadCtx?.modId}</strong> de{' '}
+              <strong>{downloadCtx?.cursos[0]?.cliente ?? ''}</strong> en formato Word.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-2">
+            <div className="space-y-1.5">
+              <Label htmlFor="rep-nombre" className="text-xs">
+                Nombre Representante de la Empresa <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="rep-nombre"
+                value={repForm.nombre}
+                placeholder="Ej: Andrea Jara Ortega"
+                onChange={(e) => setRepForm((f) => ({ ...f, nombre: e.target.value }))}
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="text-xs">
+                Rut Representante de la Empresa <span className="text-destructive">*</span>
+              </Label>
+              <div className="flex gap-2">
+                <Input
+                  className="flex-1"
+                  value={repForm.rutNum}
+                  placeholder="16639860"
+                  inputMode="numeric"
+                  maxLength={9}
+                  onChange={(e) => setRepForm((f) => ({ ...f, rutNum: e.target.value.replace(/\D/g, '') }))}
+                />
+                <Input
+                  className="w-16 text-center"
+                  value={repForm.rutDv}
+                  placeholder="DV"
+                  maxLength={1}
+                  onChange={(e) => setRepForm((f) => ({ ...f, rutDv: e.target.value.replace(/[^0-9kK]/g, '').toUpperCase() }))}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="rep-email" className="text-xs">
+                Email Representante de la Empresa <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="rep-email"
+                type="email"
+                value={repForm.email}
+                placeholder="representante@empresa.cl"
+                onChange={(e) => setRepForm((f) => ({ ...f, email: e.target.value }))}
+              />
+            </div>
+
+            <p className="text-[11px] text-muted-foreground">
+              Todos los campos son obligatorios. El botón de descarga se habilitará al completar la información correctamente.
+            </p>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDownloadCtx(null)} disabled={generating}>
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleGenerateWord}
+              disabled={!isRepFormValid() || generating}
+              className="gap-1.5"
+            >
+              <Download className="w-4 h-4" />
+              {generating ? 'Generando...' : 'Descargar Word'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };
