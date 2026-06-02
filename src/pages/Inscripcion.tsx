@@ -859,6 +859,7 @@ const Inscripcion: React.FC = () => {
                         <tbody>
                           {uniqueModules.map(modId => {
                             const cursos = clientModulares.filter(c => c.id === modId);
+                            const isAssociated = associatedModuleId === modId;
                             return (
                               <React.Fragment key={modId}>
                                 <tr className="bg-muted/20 border-b">
@@ -870,9 +871,13 @@ const Inscripcion: React.FC = () => {
                                       size="sm"
                                       variant="outline"
                                       className="gap-1 border-primary text-primary"
-                                      onClick={() => toast.success(`Curso inscrito (SC ${inscripcionId}) asociado al módulo ${modId}`)}
+                                      disabled={associatedModuleId !== null}
+                                      onClick={() => {
+                                        setAssociatedModuleId(modId);
+                                        toast.success(`Curso inscrito (SC ${inscripcionId}) asociado al módulo ${modId}`);
+                                      }}
                                     >
-                                      <Plus className="h-3 w-3" /> Asociar
+                                      {isAssociated ? (<><Check className="h-3 w-3" /> Asociado</>) : (<><Plus className="h-3 w-3" /> Asociar</>)}
                                     </Button>
                                   </td>
                                 </tr>
@@ -886,6 +891,23 @@ const Inscripcion: React.FC = () => {
                               </React.Fragment>
                             );
                           })}
+                          <tr className="bg-muted/10">
+                            <td colSpan={4} className="p-3 text-right">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="gap-1 border-dashed border-primary text-primary"
+                                disabled={associatedModuleId !== null}
+                                onClick={() => {
+                                  const newId = generateModularId();
+                                  setAssociatedModuleId(newId);
+                                  toast.success(`Curso inscrito (SC ${inscripcionId}) asociado al nuevo módulo ${newId}`);
+                                }}
+                              >
+                                <Plus className="h-3 w-3" /> Crear nuevo módulo
+                              </Button>
+                            </td>
+                          </tr>
                         </tbody>
                       </table>
                     </div>
@@ -896,12 +918,14 @@ const Inscripcion: React.FC = () => {
                       </p>
                       <Button
                         className="gap-2 bg-primary hover:bg-primary/90"
+                        disabled={associatedModuleId !== null}
                         onClick={() => {
                           const newId = generateModularId();
+                          setAssociatedModuleId(newId);
                           toast.success(`Curso inscrito (SC ${inscripcionId}) asociado al nuevo módulo ${newId}`);
                         }}
                       >
-                        <Plus className="h-4 w-4" /> Asociar a nuevo módulo
+                        {associatedModuleId ? (<><Check className="h-4 w-4" /> Asociado a {associatedModuleId}</>) : (<><Plus className="h-4 w-4" /> Asociar a nuevo módulo</>)}
                       </Button>
                     </div>
                   )}
