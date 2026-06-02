@@ -1449,7 +1449,7 @@ const Inscripcion: React.FC = () => {
         <div className="flex gap-4">
           <button
             onClick={() => setSelectedAccount('anual')}
-            className={`flex-1 py-4 rounded-full text-center text-sm font-medium transition-colors ${
+            className={`flex-1 py-4 px-4 rounded-2xl text-center text-sm font-medium transition-colors ${
               selectedAccount === 'anual'
                 ? 'bg-amber-300 text-amber-900 border-2 border-amber-500'
                 : 'bg-amber-100 text-amber-800 border border-amber-200 hover:bg-amber-200'
@@ -1457,10 +1457,20 @@ const Inscripcion: React.FC = () => {
           >
             <p className="font-semibold">Capacitación al año</p>
             <p className="text-xs mt-1">{formatCLP(916000)}</p>
+            <div className="flex justify-around mt-2 pt-2 border-t border-amber-400/40 text-[11px]">
+              <div>
+                <p className="opacity-75">Saldo Real</p>
+                <p className="font-bold">{formatCLP(896000)}</p>
+              </div>
+              <div>
+                <p className="opacity-75">Saldo Nominal</p>
+                <p className="font-bold">{formatCLP(916000)}</p>
+              </div>
+            </div>
           </button>
           <button
             onClick={() => setSelectedAccount('excedente')}
-            className={`flex-1 py-4 rounded-full text-center text-sm font-medium transition-colors ${
+            className={`flex-1 py-4 px-4 rounded-2xl text-center text-sm font-medium transition-colors ${
               selectedAccount === 'excedente'
                 ? 'bg-primary text-primary-foreground border-2 border-primary'
                 : 'bg-primary/80 text-primary-foreground border border-primary hover:bg-primary'
@@ -1468,7 +1478,18 @@ const Inscripcion: React.FC = () => {
           >
             <p className="font-semibold">Excedente capacitación</p>
             <p className="text-xs mt-1">{formatCLP(10800000)}</p>
+            <div className="flex justify-around mt-2 pt-2 border-t border-primary-foreground/30 text-[11px]">
+              <div>
+                <p className="opacity-75">Saldo Real</p>
+                <p className="font-bold">{formatCLP(10780000)}</p>
+              </div>
+              <div>
+                <p className="opacity-75">Saldo Nominal</p>
+                <p className="font-bold">{formatCLP(10800000)}</p>
+              </div>
+            </div>
           </button>
+
         </div>
       </div>
 
