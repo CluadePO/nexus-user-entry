@@ -382,9 +382,20 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true, sea
               labelValue('Rut Representante de la Empresa', rutFormateado),
               labelValue('Email Representante de la Empresa', repForm.email.trim()),
 
+              ...(esIndividual
+                ? [
+                    new Paragraph({
+                      spacing: { before: 300, after: 120 },
+                      children: [new TextRun({ text: 'Datos del Participante', bold: true, size: 24 })],
+                    }),
+                    labelValue('Nombre', participante!.nombre),
+                    labelValue('RUT', participante!.rut),
+                  ]
+                : []),
+
               new Paragraph({
                 spacing: { before: 300, after: 120 },
-                children: [new TextRun({ text: 'Cursos asociados al módulo', bold: true, size: 24 })],
+                children: [new TextRun({ text: esIndividual ? 'Curso a cursar' : 'Cursos asociados al módulo', bold: true, size: 24 })],
               }),
               new Table({
                 width: { size: 100, type: WidthType.PERCENTAGE },
