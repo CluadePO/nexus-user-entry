@@ -553,10 +553,21 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true, sea
                             <td className="p-2 whitespace-nowrap">{curso.edcACargo}</td>
                             <td className="p-2 whitespace-nowrap">{curso.jefeComercial}</td>
                             <td className="p-2 whitespace-nowrap">{curso.fechaCreacion}</td>
+                            <td className="p-2 whitespace-nowrap text-right">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="gap-1 text-xs h-7 px-2 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                                onClick={() => setConfirmDesasociar({ modId, sc: curso.sc, curso: curso.curso })}
+                              >
+                                <Unlink className="w-3.5 h-3.5" />
+                                Desasociar
+                              </Button>
+                            </td>
                           </tr>
                           {isExpanded && (
                             <tr>
-                              <td colSpan={11} className="p-0">
+                              <td colSpan={12} className="p-0">
                                 <div className="bg-muted/20 border-t border-b mx-4 my-1 rounded-md">
                                   <div className="flex items-center gap-2 px-3 py-2 border-b bg-muted/30 rounded-t-md">
                                     <Users className="w-3.5 h-3.5 text-primary" />
