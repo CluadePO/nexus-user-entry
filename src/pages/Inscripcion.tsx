@@ -125,6 +125,8 @@ const Inscripcion: React.FC = () => {
   const [selectedModularId, setSelectedModularId] = useState<string | null>(null);
   const [generatedModularId, setGeneratedModularId] = useState<string | null>(null);
   const [associatedModuleId, setAssociatedModuleId] = useState<string | null>(null);
+  const [pendingNewModuleId, setPendingNewModuleId] = useState<string | null>(null);
+  const [createdModules, setCreatedModules] = useState<{ id: string; sc: string; courseName: string }[]>([]);
 
   // Step 2
   const [senceCode, setSenceCode] = useState('');
