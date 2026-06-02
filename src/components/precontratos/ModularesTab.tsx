@@ -445,6 +445,15 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true, sea
         <p className="text-xs text-muted-foreground">
           Mostrando {(safePageMod - 1) * MOD_PAGE_SIZE + 1}–{Math.min(safePageMod * MOD_PAGE_SIZE, allGroups.length)} de {allGroups.length} módulos
         </p>
+        <Button
+          variant="outline"
+          size="sm"
+          className="gap-1.5 text-xs h-8 text-primary border-primary/30 hover:bg-primary/10"
+          onClick={handleCreateNewModule}
+        >
+          <FolderPlus className="w-3.5 h-3.5" />
+          Crear nuevo módulo
+        </Button>
       </div>
       <Accordion type="multiple" className="space-y-3">
         {paginatedGroups.map(([modId, cursos]) => (
