@@ -463,7 +463,7 @@ const ModularesTab: React.FC<Props> = ({ onVerDetalle, showAddCourse = true, sea
                 <span className="inline-block border rounded-full px-3 py-0.5 text-xs font-bold text-primary bg-primary/10 border-primary/20">
                   {modId}
                 </span>
-                <span className="text-sm font-medium text-foreground">{cursos[0].cliente}</span>
+                <span className="text-sm font-medium text-foreground">{cursos[0]?.cliente ?? <span className="italic text-muted-foreground">Sin cliente asignado</span>}</span>
                 <Badge variant="secondary" className="text-xs">{cursos.length} {cursos.length === 1 ? 'curso' : 'cursos'}</Badge>
                 {showAddCourse && (
                   <div className="ml-auto mr-2 flex items-center gap-2">
