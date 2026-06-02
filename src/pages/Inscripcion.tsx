@@ -188,13 +188,7 @@ const Inscripcion: React.FC = () => {
         if (lineaTrabajo === null) return false;
         if (lineaTrabajo === 'no_franquicia') return true;
         if (!contractType) return false;
-        if (contractType !== 'Precontrato') return true;
-        if (!precontratoSubtype) return false;
-        if (precontratoSubtype === 'Normal') return true;
-        // Modular
-        if (modularAssociate === null) return false;
-        if (modularAssociate === false) return generatedModularId !== null;
-        return selectedModularId !== null;
+        return true;
       }
       case 1: return senceValidated && agreedValue !== '';
       case 2: return fechaInicio !== '' && fechaTermino !== '';
