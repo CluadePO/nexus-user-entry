@@ -838,6 +838,77 @@ const Inscripcion: React.FC = () => {
               </Button>
             </div>
 
+            {contractType === 'Precontrato' && selectedClient && (() => {
+              const clientModulares = mockModularPrecontratos[selectedClient.id] || [];
+              const uniqueModules = [...new Set(clientModulares.map(c => c.id))];
+              return (
+                <div className="mb-8">
+                  <h2 className="text-lg font-semibold text-muted-foreground mb-4">Precontratos modulares del cliente</h2>
+                  {uniqueModules.length > 0 ? (
+                    <div className="border rounded-lg overflow-hidden">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="border-b bg-muted/30">
+                            <th className="p-3 text-left font-medium text-muted-foreground">ID Módulo</th>
+                            <th className="p-3 text-left font-medium text-muted-foreground">S.C.</th>
+                            <th className="p-3 text-left font-medium text-muted-foreground">Curso</th>
+                            <th className="p-3 text-right font-medium text-muted-foreground">Acción</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {uniqueModules.map(modId => {
+                            const cursos = clientModulares.filter(c => c.id === modId);
+                            return (
+                              <React.Fragment key={modId}>
+                                <tr className="bg-muted/20 border-b">
+                                  <td colSpan={3} className="p-2 font-semibold text-primary text-xs">
+                                    {modId} ({cursos.length} curso{cursos.length > 1 ? 's' : ''})
+                                  </td>
+                                  <td className="p-2 text-right">
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      className="gap-1 border-primary text-primary"
+                                      onClick={() => toast.success(`Curso inscrito (SC ${inscripcionId}) asociado al módulo ${modId}`)}
+                                    >
+                                      <Plus className="h-3 w-3" /> Asociar
+                                    </Button>
+                                  </td>
+                                </tr>
+                                {cursos.map(curso => (
+                                  <tr key={curso.sc} className="border-b hover:bg-muted/10">
+                                    <td className="p-2 text-muted-foreground"></td>
+                                    <td className="p-2">{curso.sc}</td>
+                                    <td className="p-2 text-muted-foreground text-xs" colSpan={2}>{curso.courseName}</td>
+                                  </tr>
+                                ))}
+                              </React.Fragment>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <div className="border border-dashed rounded-lg p-6 flex flex-col items-center text-center gap-3">
+                      <p className="text-sm text-muted-foreground">
+                        Este cliente no tiene precontratos modulares creados.
+                      </p>
+                      <Button
+                        className="gap-2 bg-primary hover:bg-primary/90"
+                        onClick={() => {
+                          const newId = generateModularId();
+                          toast.success(`Curso inscrito (SC ${inscripcionId}) asociado al nuevo módulo ${newId}`);
+                        }}
+                      >
+                        <Plus className="h-4 w-4" /> Asociar a nuevo módulo
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
+
+
             <div className="flex justify-center gap-3">
               <Button variant="outline" className="gap-2 border-primary text-primary" onClick={() => {
                 setIsComplete(false);
