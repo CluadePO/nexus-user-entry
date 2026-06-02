@@ -124,6 +124,7 @@ const Inscripcion: React.FC = () => {
   const [modularAssociate, setModularAssociate] = useState<boolean | null>(null);
   const [selectedModularId, setSelectedModularId] = useState<string | null>(null);
   const [generatedModularId, setGeneratedModularId] = useState<string | null>(null);
+  const [associatedModuleId, setAssociatedModuleId] = useState<string | null>(null);
 
   // Step 2
   const [senceCode, setSenceCode] = useState('');
