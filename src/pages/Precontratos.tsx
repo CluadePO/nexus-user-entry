@@ -665,8 +665,8 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
       <div className="bg-card border rounded-2xl p-4 space-y-3">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div>
-            <h3 className="text-sm font-semibold text-foreground">Documentos OTEC</h3>
-            <p className="text-xs text-muted-foreground">Carta Conductora, Dotación y C.I. Representante Legal</p>
+            <h3 className="text-sm font-semibold text-foreground">Documentos Sence</h3>
+            <p className="text-xs text-muted-foreground">Carta Conductora, Dotación, C.I. Representante Legal y Legajo de Precontrato</p>
           </div>
           <Button size="sm" onClick={() => setDocsModalOpen(true)} className="text-xs">
             <Upload className="h-3.5 w-3.5 mr-1" />
