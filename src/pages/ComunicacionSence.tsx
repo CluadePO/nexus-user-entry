@@ -176,8 +176,13 @@ const ComunicacionSence: React.FC = () => {
         </TabsList>
 
         <TabsContent value="comunicacion" className="mt-4">
-          <div className="space-y-6">
-            {/* Table */}
+          <div className="space-y-4">
+            {noComunicar.length > 0 && (
+              <div className="flex items-center gap-2 rounded-lg border border-amber-300 bg-amber-50 px-4 py-2 text-sm text-amber-800">
+                <AlertCircle className="w-4 h-4" />
+                Actualmente existen cursos restringidos para la comunicación
+              </div>
+            )}
             <div className="border rounded-lg overflow-hidden">
               <table className="w-full text-xs table-fixed">
                 <thead>
