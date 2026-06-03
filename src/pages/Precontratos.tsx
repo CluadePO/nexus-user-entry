@@ -221,6 +221,31 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
   const [viewDocModalOpen, setViewDocModalOpen] = useState(false);
   const [viewDocTarget, setViewDocTarget] = useState<number | null>(null);
 
+  // Documentos OTEC (Carta Conductora, Dotación, CI Rep. Legal)
+  type DocKey = 'carta' | 'dotacion' | 'ci';
+  const docDefs: { key: DocKey; label: string; accept: string }[] = [
+    { key: 'carta', label: 'Carta Conductora', accept: '.pdf,.doc,.docx' },
+    { key: 'dotacion', label: 'Dotación', accept: '.pdf,.xls,.xlsx,.csv' },
+    { key: 'ci', label: 'C.I. Rep. Legal', accept: '.pdf,.jpg,.jpeg,.png' },
+  ];
+  const [docsOtec, setDocsOtec] = useState<Record<DocKey, { name: string; url: string } | null>>({
+    carta: null, dotacion: null, ci: null,
+  });
+  const [docsModalOpen, setDocsModalOpen] = useState(false);
+  const handleDocUpload = (key: DocKey, file: File) => {
+    const url = URL.createObjectURL(file);
+    setDocsOtec(prev => ({ ...prev, [key]: { name: file.name, url } }));
+    toast.success(`${docDefs.find(d => d.key === key)?.label} cargado: ${file.name}`);
+  };
+  const handleDocDownload = (key: DocKey) => {
+    const doc = docsOtec[key];
+    if (!doc) return;
+    const a = document.createElement('a');
+    a.href = doc.url;
+    a.download = doc.name;
+    a.click();
+  };
+
   const filteredParticipantes = participantesState.filter(p =>
     p.nombre.toLowerCase().includes(searchParticipante.toLowerCase()) ||
     p.rut.includes(searchParticipante)
@@ -638,73 +663,88 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
               </div>
             </div>
 
-            {/* Document upload action buttons (moved from header) */}
-            <div className="flex items-center gap-2 flex-wrap pl-11">
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-xs"
-                onClick={() => document.getElementById('upload-carta-conductora')?.click()}
-              >
-                <Upload className="h-3.5 w-3.5 mr-1" />
-                CARTA CONDUCTORA
-              </Button>
-              <input
-                id="upload-carta-conductora"
-                type="file"
-                className="hidden"
-                accept=".pdf,.doc,.docx"
-                onChange={(e) => {
-                  const f = e.target.files?.[0];
-                  if (f) alert(`Carta Conductora cargada: ${f.name}`);
-                  e.target.value = '';
-                }}
-              />
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-xs"
-                onClick={() => document.getElementById('upload-dotacion')?.click()}
-              >
-                <Upload className="h-3.5 w-3.5 mr-1" />
-                DOTACIÓN
-              </Button>
-              <input
-                id="upload-dotacion"
-                type="file"
-                className="hidden"
-                accept=".pdf,.xls,.xlsx,.csv"
-                onChange={(e) => {
-                  const f = e.target.files?.[0];
-                  if (f) alert(`Dotación cargada: ${f.name}`);
-                  e.target.value = '';
-                }}
-              />
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-xs"
-                onClick={() => document.getElementById('upload-ci-rep-legal')?.click()}
-              >
-                <Upload className="h-3.5 w-3.5 mr-1" />
-                CI REP. LEGAL
-              </Button>
-              <input
-                id="upload-ci-rep-legal"
-                type="file"
-                className="hidden"
-                accept=".pdf,.jpg,.jpeg,.png"
-                onChange={(e) => {
-                  const f = e.target.files?.[0];
-                  if (f) alert(`C.I. Rep. Legal cargada: ${f.name}`);
-                  e.target.value = '';
-                }}
-              />
-            </div>
-
           </div>
         )}
       </div>
+
+      {/* Documentos OTEC - sección separada debajo */}
+      <div className="bg-card border rounded-2xl p-4 space-y-3">
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <div>
+            <h3 className="text-sm font-semibold text-foreground">Documentos OTEC</h3>
+            <p className="text-xs text-muted-foreground">Carta Conductora, Dotación y C.I. Representante Legal</p>
+          </div>
+          <Button size="sm" onClick={() => setDocsModalOpen(true)} className="text-xs">
+            <Upload className="h-3.5 w-3.5 mr-1" />
+            CARGAR DOCUMENTOS
+          </Button>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+          {docDefs.map(d => {
+            const doc = docsOtec[d.key];
+            return (
+              <div key={d.key} className="flex items-center justify-between border rounded-lg px-3 py-2 text-xs">
+                <div className="min-w-0 flex-1">
+                  <p className="text-primary font-medium">{d.label}</p>
+                  <p className="text-foreground truncate">{doc ? doc.name : 'Sin cargar'}</p>
+                </div>
+                {doc ? (
+                  <Button variant="ghost" size="sm" className="h-7 px-2" onClick={() => handleDocDownload(d.key)}>
+                    <Download className="h-3.5 w-3.5" />
+                  </Button>
+                ) : (
+                  <span className="text-muted-foreground">—</span>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <Dialog open={docsModalOpen} onOpenChange={setDocsModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Cargar documentos OTEC</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            {docDefs.map(d => {
+              const doc = docsOtec[d.key];
+              const inputId = `upload-doc-otec-${d.key}`;
+              return (
+                <div key={d.key} className="flex items-center gap-2 border rounded-lg p-3">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-foreground">{d.label}</p>
+                    <p className="text-xs text-muted-foreground truncate">{doc ? doc.name : 'Ningún archivo cargado'}</p>
+                  </div>
+                  <Button variant="outline" size="sm" onClick={() => document.getElementById(inputId)?.click()}>
+                    <Upload className="h-3.5 w-3.5 mr-1" />
+                    {doc ? 'Reemplazar' : 'Cargar'}
+                  </Button>
+                  {doc && (
+                    <Button variant="ghost" size="sm" onClick={() => handleDocDownload(d.key)}>
+                      <Download className="h-3.5 w-3.5" />
+                    </Button>
+                  )}
+                  <input
+                    id={inputId}
+                    type="file"
+                    className="hidden"
+                    accept={d.accept}
+                    onChange={(e) => {
+                      const f = e.target.files?.[0];
+                      if (f) handleDocUpload(d.key, f);
+                      e.target.value = '';
+                    }}
+                  />
+                </div>
+              );
+            })}
+          </div>
+          <div className="flex justify-end">
+            <Button onClick={() => setDocsModalOpen(false)}>Listo</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Precontrato - Participantes */}
       <div className="space-y-3">
