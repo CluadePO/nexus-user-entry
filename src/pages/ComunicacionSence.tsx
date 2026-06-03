@@ -227,12 +227,14 @@ const ComunicacionSence: React.FC = () => {
                     const excluido = noComunicar.includes(curso.sc);
                     return (
                       <tr key={curso.sc} className={`border-b ${excluido ? 'bg-red-50/50 opacity-60' : idx % 2 === 0 ? 'hover:bg-muted/20' : 'bg-muted/10 hover:bg-muted/20'}`}>
-                        <td className="p-2">
-                          <Checkbox
-                            checked={selectedRows.includes(curso.sc)}
-                            onCheckedChange={(checked) => handleSelectRow(curso.sc, !!checked)}
-                            disabled={excluido}
-                          />
+                        <td className="p-2 text-center">
+                          <div className="flex justify-center">
+                            <Checkbox
+                              checked={selectedRows.includes(curso.sc)}
+                              onCheckedChange={(checked) => handleSelectRow(curso.sc, !!checked)}
+                              disabled={excluido}
+                            />
+                          </div>
                         </td>
                         <td className="p-2 font-medium">{curso.sc}</td>
                         <td className="p-2 text-muted-foreground truncate">{curso.cliente}</td>
