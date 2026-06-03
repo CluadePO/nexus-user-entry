@@ -177,15 +177,9 @@ const ComunicacionSence: React.FC = () => {
       </div>
 
       {/* Results badge */}
-      {(() => {
-        const filteredCursos = searchTags.length > 0
-          ? mockCursos.filter(c => searchTags.some(t => c.sc.toLowerCase().includes(t.toLowerCase())))
-          : mockCursos;
-        return (
-      <>
       <div className="flex items-center gap-2 flex-wrap">
         <Badge className="bg-primary text-primary-foreground rounded-full px-4 py-1 text-sm font-medium">
-          {searchTags.length > 0 ? `${filteredCursos.length} de ${mockCursos.length}` : mockCursos.length} cursos cargados
+          {searchTags.length > 0 ? `${cursosFiltrados.length} de ${mockCursos.length}` : mockCursos.length} cursos cargados
         </Badge>
       </div>
 
@@ -227,9 +221,7 @@ const ComunicacionSence: React.FC = () => {
           </Button>
         )}
       </div>
-      </>
-        );
-      })()}
+
 
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
