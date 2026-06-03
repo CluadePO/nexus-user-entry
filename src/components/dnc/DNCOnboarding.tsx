@@ -64,9 +64,9 @@ const DNCOnboarding: React.FC<Props> = ({ onBack, onNew }) => {
         <h2 className="text-lg font-bold text-foreground">Beneficios principales</h2>
         <div className="grid grid-cols-3 gap-4">
           {[
-            { icon: Zap, title: 'Ahorra tiempo', desc: 'Configura tu diagnóstico de forma autónoma.' },
-            { icon: BarChart3, title: 'Datos precisos', desc: 'Obtén resultados basados en las respuestas reales de tus equipos.' },
-            { icon: Target, title: 'Foco estratégico', desc: 'Identifica y prioriza las capacitaciones que generan mayor impacto en tu organización.' },
+            { icon: Zap, title: 'Configurar', desc: 'Define las áreas, temáticas y participantes que quieres evaluar.' },
+            { icon: BarChart3, title: 'Asignar', desc: 'Carga tu nómina y elige cómo se distribuirá la encuesta.' },
+            { icon: Target, title: 'Foco estratégico', desc: 'Identifica y prioriza las capacitaciones que generan mayor impacto.' },
           ].map(b => (
             <Card key={b.title} className="p-5">
               <b.icon className="w-6 h-6 text-primary mb-3" />
