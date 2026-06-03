@@ -3,76 +3,48 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
-import { Calendar, PlusCircle, ArrowRight, AlertCircle, Ban, EyeOff } from 'lucide-react';
+import { Calendar, PlusCircle, ArrowRight, Info } from 'lucide-react';
 
 interface CursoLiquidacion {
-  sc: string;
-  cliente: string;
-  nroPart: number;
-  mtFranquicia: string;
-  inicioCurso: string;
-  modalidad: string;
-  tipoContrato: string;
-  codigoSence: string;
-  vencimientoSence: string;
-  pagoSAP: string;
-  estadoPagoSAP: 'pagado' | 'pendiente' | 'parcial';
+  idSence: string;
+  oc: string;
+  curso: string;
+  empresa: string;
+  dias: number;
+  mtf: string;
+  fechaMax: string;
 }
 
 const mockCursos: CursoLiquidacion[] = [
-  { sc: '2074555', cliente: 'SALMONES BLUMAR MAGALLANES SPA', nroPart: 1, mtFranquicia: '$250.250', inicioCurso: '26/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238015432', vencimientoSence: '2026-04-20', pagoSAP: '$250.250', estadoPagoSAP: 'pagado' },
-  { sc: '2078017', cliente: 'DOMINION SPA', nroPart: 1, mtFranquicia: '$250.250', inicioCurso: '26/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238017891', vencimientoSence: '2026-06-15', pagoSAP: '$0', estadoPagoSAP: 'pendiente' },
-  { sc: '2078959', cliente: 'SECURITAS S.A', nroPart: 19, mtFranquicia: '$2.376.000', inicioCurso: '21/04/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238019200', vencimientoSence: '2026-04-18', pagoSAP: '$1.200.000', estadoPagoSAP: 'parcial' },
-  { sc: '2078960', cliente: 'SERVICIOS SECURITAS AUSTRAL LIMITADA', nroPart: 1, mtFranquicia: '$158.400', inicioCurso: '21/04/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238019201', vencimientoSence: '2026-07-30', pagoSAP: '$158.400', estadoPagoSAP: 'pagado' },
-  { sc: '2079922', cliente: 'ELECNOR CHILE S A', nroPart: 1, mtFranquicia: '$500.500', inicioCurso: '26/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238020155', vencimientoSence: '2026-04-22', pagoSAP: '$500.500', estadoPagoSAP: 'pagado' },
-  { sc: '2085199', cliente: 'COOPERATIVA AGRICOLA PISQUERA ELQUI LTDA.', nroPart: 1, mtFranquicia: '$44.156', inicioCurso: '19/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238025400', vencimientoSence: '2026-08-10', pagoSAP: '$0', estadoPagoSAP: 'pendiente' },
-  { sc: '2086977', cliente: 'INSTITUTO NACIONAL DE CAPACITACION PROFESIONAL', nroPart: 2, mtFranquicia: '$664.500', inicioCurso: '19/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238026800', vencimientoSence: '2026-04-19', pagoSAP: '$664.500', estadoPagoSAP: 'pagado' },
-  { sc: '2091162', cliente: 'SERVEO FACILITY MANAGEMENT S.A. AGENCIA EN CHILE', nroPart: 1, mtFranquicia: '$210.000', inicioCurso: '26/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238031000', vencimientoSence: '2026-09-01', pagoSAP: '$105.000', estadoPagoSAP: 'parcial' },
-  { sc: '2092667', cliente: 'SACYR CHILE S.A.', nroPart: 1, mtFranquicia: '$500.500', inicioCurso: '26/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238032500', vencimientoSence: '2026-05-20', pagoSAP: '$0', estadoPagoSAP: 'pendiente' },
-  { sc: '2097498', cliente: 'AGRICOLA LOS QUILLAYES LIMITADA', nroPart: 1, mtFranquicia: '$275.000', inicioCurso: '12/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238037000', vencimientoSence: '2026-04-21', pagoSAP: '$275.000', estadoPagoSAP: 'pagado' },
-  { sc: '2101685', cliente: 'SERVICIO TECNICO TECNOSUR LTDA.', nroPart: 1, mtFranquicia: '$274.750', inicioCurso: '19/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238041200', vencimientoSence: '2026-10-15', pagoSAP: '$274.750', estadoPagoSAP: 'pagado' },
-  { sc: '2106283', cliente: 'INMOBILIARIA E INVERSIONES MALPO SPA', nroPart: 1, mtFranquicia: '$301.000', inicioCurso: '11/05/2026', modalidad: 'E-learning', tipoContrato: 'Normal', codigoSence: '1238045800', vencimientoSence: '2026-04-17', pagoSAP: '$150.500', estadoPagoSAP: 'parcial' },
-  { sc: '2107893', cliente: 'CORPORACION EDUCACIONAL KINGSTON COLLEGE', nroPart: 2, mtFranquicia: '$20.000', inicioCurso: '20/04/2026', modalidad: 'Presencial', tipoContrato: 'Precontrato', codigoSence: '1238047300', vencimientoSence: '2026-12-01', pagoSAP: '$20.000', estadoPagoSAP: 'pagado' },
+  {
+    idSence: '6807337',
+    oc: '2099116',
+    curso: 'Normal',
+    empresa: 'SOCIEDAD DE MEDICINA Y REHABILITACION LAS LILAS ...',
+    dias: 40,
+    mtf: '$61.600',
+    fechaMax: '13/07/2026',
+  },
 ];
 
 const LiquidacionSence: React.FC = () => {
-  const [fechaInicio, setFechaInicio] = useState('2026-04-12');
-  const [fechaFin, setFechaFin] = useState('2026-04-13');
+  const [fechaInicio, setFechaInicio] = useState('2026-06-02');
+  const [fechaFin, setFechaFin] = useState('2026-06-03');
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [selectAll, setSelectAll] = useState(false);
-  const [noComunicar, setNoComunicar] = useState<string[]>([]);
-
-  const toggleNoComunicar = (sc: string) => {
-    setNoComunicar(prev =>
-      prev.includes(sc) ? prev.filter(s => s !== sc) : [...prev, sc]
-    );
-  };
 
   const handleSelectAll = (checked: boolean) => {
     setSelectAll(checked);
-    setSelectedRows(checked ? mockCursos.map(c => c.sc) : []);
+    setSelectedRows(checked ? mockCursos.map(c => c.idSence) : []);
   };
 
-  const handleSelectRow = (sc: string, checked: boolean) => {
+  const handleSelectRow = (id: string, checked: boolean) => {
     if (checked) {
-      setSelectedRows(prev => [...prev, sc]);
+      setSelectedRows(prev => [...prev, id]);
     } else {
-      setSelectedRows(prev => prev.filter(s => s !== sc));
+      setSelectedRows(prev => prev.filter(s => s !== id));
       setSelectAll(false);
     }
-  };
-
-  const formatDateDisplay = (dateStr: string) => {
-    const [year, month, day] = dateStr.split('-');
-    return `${day}/${month}/${year}`;
-  };
-
-  const isProximoAVencer = (vencimiento: string) => {
-    const hoy = new Date();
-    const fechaVenc = new Date(vencimiento);
-    const diffMs = fechaVenc.getTime() - hoy.getTime();
-    const diffDias = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-    return diffDias >= 0 && diffDias <= 10;
   };
 
   return (
@@ -82,7 +54,6 @@ const LiquidacionSence: React.FC = () => {
       </h1>
 
       <div className="space-y-6">
-
         {/* Section 1: Upload */}
         <div className="space-y-3">
           <h2 className="text-base font-semibold text-muted-foreground">
@@ -137,113 +108,64 @@ const LiquidacionSence: React.FC = () => {
           </Badge>
         </div>
 
+        {/* Info alert */}
+        <div className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+          <Info className="w-4 h-4 text-amber-600 shrink-0" />
+          La fecha límite de liquidación aplica únicamente hasta el día hábil anterior a un feriado o festivo
+        </div>
+
         {/* Table */}
-        <div className="border rounded-lg overflow-hidden">
-          <table className="w-full text-xs table-fixed">
+        <div className="overflow-hidden">
+          <table className="w-full text-sm">
             <thead>
-              <tr className="border-b bg-muted/30">
-                <th className="p-2 w-8">
+              <tr>
+                <th className="p-3 w-10">
                   <Checkbox
                     checked={selectAll}
                     onCheckedChange={(checked) => handleSelectAll(!!checked)}
                   />
                 </th>
-                <th className="p-2 text-left font-medium text-muted-foreground w-[7%]">
-                  S.C <span className="text-xs">▾</span>
+                <th className="p-3 text-left font-medium text-muted-foreground">
+                  ID Sence <span className="text-xs">▾</span>
                 </th>
-                <th className="p-2 text-left font-medium text-muted-foreground w-[18%]">
-                  Cliente <span className="text-xs">▾</span>
+                <th className="p-3 text-left font-medium text-muted-foreground">
+                  O.C <span className="text-xs">▾</span>
                 </th>
-                <th className="p-2 text-center font-medium text-muted-foreground w-[5%]">
-                  Nro. Part. <span className="text-xs">▾</span>
+                <th className="p-3 text-left font-medium text-muted-foreground">
+                  Curso <span className="text-xs">▾</span>
                 </th>
-                <th className="p-2 text-left font-medium text-muted-foreground w-[10%]">
-                  M.T. Franquicia <span className="text-xs">▾</span>
+                <th className="p-3 text-left font-medium text-muted-foreground">
+                  Empresa <span className="text-xs">▾</span>
                 </th>
-                <th className="p-2 text-left font-medium text-muted-foreground w-[9%]">
-                  Inicio Curso <span className="text-xs">▾</span>
+                <th className="p-3 text-left font-medium text-muted-foreground">
+                  Días <span className="text-xs">▾</span>
                 </th>
-                <th className="p-2 text-left font-medium text-muted-foreground w-[10%]">
-                  Modalidad <span className="text-xs">▾</span>
+                <th className="p-3 text-left font-medium text-muted-foreground">
+                  M.T.F <span className="text-xs">▾</span>
                 </th>
-                <th className="p-2 text-left font-medium text-muted-foreground w-[10%]">
-                  Tipo Contrato <span className="text-xs">▾</span>
-                </th>
-                <th className="p-2 text-left font-medium text-muted-foreground w-[10%]">
-                  <span className="inline-flex items-center gap-1">
-                    <span>Pago SAP <span className="text-xs">▾</span></span>
-                  </span>
-                </th>
-                <th className="p-2 text-left font-medium text-muted-foreground w-[10%]">
-                  <span className="inline-flex items-center gap-1">
-                    <span>Vigencia <span className="text-xs">▾</span></span>
-                    <span className="inline-flex items-center rounded-full bg-primary px-1 py-0.5 text-[8px] font-bold leading-none text-primary-foreground shadow-sm">C1CCOM4</span>
-                  </span>
-                </th>
-                <th className="p-2 text-center font-medium text-muted-foreground w-[12%]">
-                  <span className="inline-flex items-center gap-1">
-                    <span>No comunicar</span>
-                    <span className="inline-flex items-center rounded-full bg-primary px-1 py-0.5 text-[8px] font-bold leading-none text-primary-foreground shadow-sm">C1CCOM5</span>
-                  </span>
+                <th className="p-3 text-left font-medium text-muted-foreground">
+                  Fecha máx. <span className="text-xs">▾</span>
                 </th>
               </tr>
             </thead>
             <tbody>
-              {mockCursos.map((curso, idx) => {
-                const excluido = noComunicar.includes(curso.sc);
-                return (
-                  <tr key={curso.sc} className={`border-b ${excluido ? 'bg-red-50/50 opacity-60' : idx % 2 === 0 ? 'hover:bg-muted/20' : 'bg-muted/10 hover:bg-muted/20'}`}>
-                    <td className="p-2">
-                      <Checkbox
-                        checked={selectedRows.includes(curso.sc)}
-                        onCheckedChange={(checked) => handleSelectRow(curso.sc, !!checked)}
-                        disabled={excluido}
-                      />
-                    </td>
-                    <td className="p-2 font-medium">{curso.sc}</td>
-                    <td className="p-2 text-muted-foreground truncate">{curso.cliente}</td>
-                    <td className="p-2 text-center">{curso.nroPart}</td>
-                    <td className="p-2">{curso.mtFranquicia}</td>
-                    <td className="p-2">{curso.inicioCurso}</td>
-                    <td className="p-2">{curso.modalidad}</td>
-                    <td className="p-2">{curso.tipoContrato}</td>
-                    <td className="p-2">
-                      <span className={`text-xs font-medium ${curso.estadoPagoSAP === 'pagado' ? 'text-emerald-600' : curso.estadoPagoSAP === 'parcial' ? 'text-amber-600' : 'text-destructive'}`}>
-                        {curso.pagoSAP}
-                      </span>
-                      {curso.estadoPagoSAP !== 'pagado' && (
-                        <Badge variant={curso.estadoPagoSAP === 'parcial' ? 'secondary' : 'destructive'} className="ml-1 text-[9px] px-1 py-0">
-                          {curso.estadoPagoSAP === 'parcial' ? 'Parcial' : 'Pendiente'}
-                        </Badge>
-                      )}
-                    </td>
-                    <td className="p-2">
-                      {isProximoAVencer(curso.vencimientoSence) ? (
-                        <Badge variant="destructive" className="gap-1 text-[10px] whitespace-nowrap px-2 py-0.5">
-                          <AlertCircle className="w-3 h-3" />
-                          Por vencer
-                        </Badge>
-                      ) : (
-                        <span className="text-muted-foreground text-xs">Vigente</span>
-                      )}
-                    </td>
-                    <td className="p-2 text-center">
-                      <Button
-                        variant={excluido ? 'destructive' : 'outline'}
-                        size="sm"
-                        className="gap-1 text-xs h-7 px-2"
-                        onClick={() => toggleNoComunicar(curso.sc)}
-                      >
-                        {excluido ? (
-                          <><EyeOff className="w-3 h-3" /> Excluido</>
-                        ) : (
-                          <><Ban className="w-3 h-3" /> Excluir</>
-                        )}
-                      </Button>
-                    </td>
-                  </tr>
-                );
-              })}
+              {mockCursos.map((curso) => (
+                <tr key={curso.idSence} className="bg-white rounded-lg shadow-sm">
+                  <td className="p-3">
+                    <Checkbox
+                      checked={selectedRows.includes(curso.idSence)}
+                      onCheckedChange={(checked) => handleSelectRow(curso.idSence, !!checked)}
+                    />
+                  </td>
+                  <td className="p-3 font-semibold">{curso.idSence}</td>
+                  <td className="p-3 font-semibold">{curso.oc}</td>
+                  <td className="p-3 font-semibold">{curso.curso}</td>
+                  <td className="p-3 font-semibold truncate max-w-[280px]">{curso.empresa}</td>
+                  <td className="p-3 font-semibold">{curso.dias}</td>
+                  <td className="p-3 font-semibold">{curso.mtf}</td>
+                  <td className="p-3 font-semibold">{curso.fechaMax}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
