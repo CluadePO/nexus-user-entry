@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
-import { Search } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Calendar, PlusCircle, ArrowRight, AlertCircle, Ban, Eye, EyeOff } from 'lucide-react';
 import ModularesTab from '@/components/precontratos/ModularesTab';
@@ -47,6 +47,31 @@ const ComunicacionSence: React.FC = () => {
   const [cursoDetalleSC, setCursoDetalleSC] = useState<string | null>(null);
   const [cursoDetalleIdModular, setCursoDetalleIdModular] = useState<string | undefined>();
   const [searchTerm, setSearchTerm] = useState('');
+  const [searchTags, setSearchTags] = useState<string[]>([]);
+  const MAX_TAGS = 10;
+
+  const addSearchTag = (raw: string) => {
+    const parts = raw.split(/[\s,;]+/).map(p => p.trim()).filter(Boolean);
+    if (parts.length === 0) return;
+    setSearchTags(prev => {
+      const next = [...prev];
+      for (const p of parts) {
+        if (next.length >= MAX_TAGS) break;
+        if (!next.includes(p)) next.push(p);
+      }
+      return next;
+    });
+    setSearchTerm('');
+  };
+
+  const removeSearchTag = (tag: string) => {
+    setSearchTags(prev => prev.filter(t => t !== tag));
+  };
+
+  const clearSearch = () => {
+    setSearchTags([]);
+    setSearchTerm('');
+  };
 
   const toggleNoComunicar = (sc: string) => {
     setNoComunicar(prev =>
