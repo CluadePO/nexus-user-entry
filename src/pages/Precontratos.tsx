@@ -684,9 +684,8 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
                 </div>
                 {doc ? (
                   <div className="flex items-center gap-1 flex-shrink-0">
-                    <Button variant="outline" size="sm" className="h-7 px-2 text-xs gap-1" onClick={() => setDocsModalOpen(true)}>
-                      <Upload className="h-3.5 w-3.5" />
-                      Reemplazar
+                    <Button variant="outline" size="sm" className="h-7 px-2 text-xs gap-1" title="Reemplazar" onClick={() => setDocsModalOpen(true)}>
+                      <RefreshCw className="h-3.5 w-3.5" />
                     </Button>
                     <Button variant="ghost" size="sm" className="h-7 px-2" onClick={() => handleDocDownload(d.key)}>
                       <Download className="h-3.5 w-3.5" />
