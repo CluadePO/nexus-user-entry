@@ -98,10 +98,6 @@ const DNCStepAreasTematicas: React.FC<Props> = ({ state, onChange, onNext, onBac
   const toggleTematica = (id: string, t: string) => {
     const list = current[id].tematicas;
     const isAdding = !list.includes(t);
-    if (isAdding && list.length >= MAX_TEMATICAS) {
-      toast.error(MSG_MAX_TEMATICAS);
-      return;
-    }
     const next = isAdding ? [...list, t] : list.filter(x => x !== t);
     update(id, { tematicas: next, selected: next.length > 0 ? true : current[id].selected });
   };
@@ -109,10 +105,6 @@ const DNCStepAreasTematicas: React.FC<Props> = ({ state, onChange, onNext, onBac
   const toggleAllTematicas = (id: string, all: string[]) => {
     const list = current[id].tematicas;
     const allSelected = all.every(t => list.includes(t));
-    if (!allSelected && all.length > MAX_TEMATICAS) {
-      toast.error(MSG_MAX_TEMATICAS);
-      return;
-    }
     const next = allSelected ? [] : [...all];
     update(id, { tematicas: next, selected: next.length > 0 });
   };
