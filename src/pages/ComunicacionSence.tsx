@@ -239,16 +239,6 @@ const ComunicacionSence: React.FC = () => {
                         <td className="p-2">{curso.inicioCurso}</td>
                         <td className="p-2">{curso.modalidad}</td>
                         <td className="p-2">{curso.tipoContrato}</td>
-                        <td className="p-2">
-                          {isProximoAVencer(curso.vencimientoSence) ? (
-                            <Badge variant="destructive" className="gap-1 text-[10px] whitespace-nowrap px-2 py-0.5">
-                              <AlertCircle className="w-3 h-3" />
-                              Por vencer
-                            </Badge>
-                          ) : (
-                            <span className="text-muted-foreground text-xs">Vigente</span>
-                          )}
-                        </td>
                         <td className="p-2 text-center">
                           <Button
                             variant={excluido ? 'destructive' : 'outline'}
