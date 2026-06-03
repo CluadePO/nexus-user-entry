@@ -194,7 +194,7 @@ const ComunicacionSence: React.FC = () => {
                     <th className="p-2 text-left font-medium text-muted-foreground w-[18%]">
                       Cliente <span className="text-xs">▾</span>
                     </th>
-                    <th className="p-2 text-center font-medium text-muted-foreground w-[5%]">
+                    <th className="p-2 text-left font-medium text-muted-foreground w-[5%]">
                       Nro. Part. <span className="text-xs">▾</span>
                     </th>
                     <th className="p-2 text-left font-medium text-muted-foreground w-[10%]">
@@ -209,7 +209,7 @@ const ComunicacionSence: React.FC = () => {
                     <th className="p-2 text-left font-medium text-muted-foreground w-[10%]">
                       Tipo Contrato <span className="text-xs">▾</span>
                     </th>
-                    <th className="p-2 text-center font-medium text-muted-foreground w-[12%]">
+                    <th className="p-2 text-left font-medium text-muted-foreground w-[12%]">
                       <span className="inline-flex items-center gap-1">
                         <span>No comunicar</span>
                         <span className="inline-flex items-center rounded-full bg-blue-600 px-1 py-0.5 text-[8px] font-bold leading-none text-white shadow-sm">C1CCOM5</span>
@@ -234,12 +234,12 @@ const ComunicacionSence: React.FC = () => {
                         </td>
                         <td className="p-2 font-medium">{curso.sc}</td>
                         <td className="p-2 text-muted-foreground truncate">{curso.cliente}</td>
-                        <td className="p-2 text-center">{curso.nroPart}</td>
+                        <td className="p-2 text-left">{curso.nroPart}</td>
                         <td className="p-2">{curso.mtFranquicia}</td>
                         <td className="p-2">{curso.inicioCurso}</td>
                         <td className="p-2">{curso.modalidad}</td>
                         <td className="p-2">{curso.tipoContrato}</td>
-                        <td className="p-2 text-center">
+                        <td className="p-2 text-left">
                           <Button
                             variant={excluido ? 'destructive' : 'outline'}
                             size="sm"
