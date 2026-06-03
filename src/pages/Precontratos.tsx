@@ -668,17 +668,83 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
       </div>
 
       {/* Documentos OTEC - sección separada debajo */}
-      <DocumentosOtecSection />
-
-      {/* (closing wrappers re-opened below for original structure) */}
-      <div className="hidden">
-        {false && (
+      <div className="bg-card border rounded-2xl p-4 space-y-3">
+        <div className="flex items-center justify-between flex-wrap gap-2">
           <div>
-            {/* placeholder to preserve original closing tags */}
-
+            <h3 className="text-sm font-semibold text-foreground">Documentos OTEC</h3>
+            <p className="text-xs text-muted-foreground">Carta Conductora, Dotación y C.I. Representante Legal</p>
           </div>
-        )}
+          <Button size="sm" onClick={() => setDocsModalOpen(true)} className="text-xs">
+            <Upload className="h-3.5 w-3.5 mr-1" />
+            CARGAR DOCUMENTOS
+          </Button>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+          {docDefs.map(d => {
+            const doc = docsOtec[d.key];
+            return (
+              <div key={d.key} className="flex items-center justify-between border rounded-lg px-3 py-2 text-xs">
+                <div className="min-w-0 flex-1">
+                  <p className="text-primary font-medium">{d.label}</p>
+                  <p className="text-foreground truncate">{doc ? doc.name : 'Sin cargar'}</p>
+                </div>
+                {doc ? (
+                  <Button variant="ghost" size="sm" className="h-7 px-2" onClick={() => handleDocDownload(d.key)}>
+                    <Download className="h-3.5 w-3.5" />
+                  </Button>
+                ) : (
+                  <span className="text-muted-foreground">—</span>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
+
+      <Dialog open={docsModalOpen} onOpenChange={setDocsModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Cargar documentos OTEC</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            {docDefs.map(d => {
+              const doc = docsOtec[d.key];
+              const inputId = `upload-doc-otec-${d.key}`;
+              return (
+                <div key={d.key} className="flex items-center gap-2 border rounded-lg p-3">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-foreground">{d.label}</p>
+                    <p className="text-xs text-muted-foreground truncate">{doc ? doc.name : 'Ningún archivo cargado'}</p>
+                  </div>
+                  <Button variant="outline" size="sm" onClick={() => document.getElementById(inputId)?.click()}>
+                    <Upload className="h-3.5 w-3.5 mr-1" />
+                    {doc ? 'Reemplazar' : 'Cargar'}
+                  </Button>
+                  {doc && (
+                    <Button variant="ghost" size="sm" onClick={() => handleDocDownload(d.key)}>
+                      <Download className="h-3.5 w-3.5" />
+                    </Button>
+                  )}
+                  <input
+                    id={inputId}
+                    type="file"
+                    className="hidden"
+                    accept={d.accept}
+                    onChange={(e) => {
+                      const f = e.target.files?.[0];
+                      if (f) handleDocUpload(d.key, f);
+                      e.target.value = '';
+                    }}
+                  />
+                </div>
+              );
+            })}
+          </div>
+          <div className="flex justify-end">
+            <Button onClick={() => setDocsModalOpen(false)}>Listo</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Precontrato - Participantes */}
       <div className="space-y-3">
