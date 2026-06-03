@@ -220,21 +220,34 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
   const [viewDocModalOpen, setViewDocModalOpen] = useState(false);
   const [viewDocTarget, setViewDocTarget] = useState<number | null>(null);
 
-  // Documentos OTEC (Carta Conductora, Dotación, CI Rep. Legal)
-  type DocKey = 'carta' | 'dotacion' | 'ci';
+  // Documentos OTEC (Carta Conductora, Dotación, CI Rep. Legal, Legajo de Precontrato)
+  type DocKey = 'carta' | 'dotacion' | 'ci' | 'legajo';
   const docDefs: { key: DocKey; label: string; accept: string }[] = [
     { key: 'carta', label: 'Carta Conductora', accept: '.pdf,.doc,.docx' },
     { key: 'dotacion', label: 'Dotación', accept: '.pdf,.xls,.xlsx,.csv' },
     { key: 'ci', label: 'C.I. Rep. Legal', accept: '.pdf,.jpg,.jpeg,.png' },
+    { key: 'legajo', label: 'Legajo de Precontrato', accept: '.pdf,.zip' },
   ];
   const [docsOtec, setDocsOtec] = useState<Record<DocKey, { name: string; url: string } | null>>({
-    carta: null, dotacion: null, ci: null,
+    carta: null, dotacion: null, ci: null, legajo: null,
   });
   const [docsModalOpen, setDocsModalOpen] = useState(false);
   const handleDocUpload = (key: DocKey, file: File) => {
     const url = URL.createObjectURL(file);
     setDocsOtec(prev => ({ ...prev, [key]: { name: file.name, url } }));
     toast.success(`${docDefs.find(d => d.key === key)?.label} cargado: ${file.name}`);
+    // Si se sube el legajo, marcar todos los participantes como validados
+    if (key === 'legajo') {
+      setParticipantesState(prev =>
+        prev.map(p => ({
+          ...p,
+          firmaEmpresa: 'FIRMADO' as const,
+          firmaParticipante: 'VALIDADO' as const,
+          vulnerabilidad: p.vulnerabilidad === 'FALTANTE' ? 'SIN VULNERABILIDAD' as const : p.vulnerabilidad,
+        }))
+      );
+      toast.success('Todos los participantes han sido validados.');
+    }
   };
   const handleDocDownload = (key: DocKey) => {
     const doc = docsOtec[key];
@@ -280,22 +293,6 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
     }
   };
 
-  const handleSubirLegajo = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    // Mark all participants as VALIDADO
-    setParticipantesState(prev =>
-      prev.map(p => ({
-        ...p,
-        firmaEmpresa: 'FIRMADO' as const,
-        firmaParticipante: 'VALIDADO' as const,
-        vulnerabilidad: p.vulnerabilidad === 'FALTANTE' ? 'SIN VULNERABILIDAD' as const : p.vulnerabilidad,
-      }))
-    );
-    toast.success(`Legajo "${file.name}" subido correctamente. Todos los participantes han sido validados.`);
-    // Reset input
-    if (legajoInputRef.current) legajoInputRef.current.value = '';
-  };
 
   const handleDescargarLegajo = () => {
     const doc = new jsPDF('p', 'mm', 'a4');
@@ -766,23 +763,6 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
               DESCARGA LEGAJO DE PRECONTRATO
               <span className="bg-blue-500 text-white text-[8px] font-bold px-1 py-0.5 rounded-full ml-1">C1PPPC3</span>
             </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="text-xs border-amber-600 text-amber-700 hover:bg-amber-50"
-              onClick={() => legajoInputRef.current?.click()}
-            >
-              <Upload className="h-3.5 w-3.5 mr-1" />
-              SUBIR LEGAJO DE PRECONTRATO
-              <span className="bg-blue-500 text-white text-[8px] font-bold px-1 py-0.5 rounded-full ml-1">C1PPPC15</span>
-            </Button>
-            <input
-              ref={legajoInputRef}
-              type="file"
-              accept=".pdf,.zip"
-              className="hidden"
-              onChange={handleSubirLegajo}
-            />
             <div className="relative">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
               <Input
