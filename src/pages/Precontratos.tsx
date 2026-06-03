@@ -683,9 +683,15 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
                   <p className="text-foreground truncate">{doc ? doc.name : 'Sin cargar'}</p>
                 </div>
                 {doc ? (
-                  <Button variant="ghost" size="sm" className="h-7 px-2" onClick={() => handleDocDownload(d.key)}>
-                    <Download className="h-3.5 w-3.5" />
-                  </Button>
+                  <div className="flex items-center gap-1 flex-shrink-0">
+                    <Button variant="outline" size="sm" className="h-7 px-2 text-xs gap-1" onClick={() => setDocsModalOpen(true)}>
+                      <Upload className="h-3.5 w-3.5" />
+                      Reemplazar
+                    </Button>
+                    <Button variant="ghost" size="sm" className="h-7 px-2" onClick={() => handleDocDownload(d.key)}>
+                      <Download className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
                 ) : (
                   <span className="text-muted-foreground">—</span>
                 )}
