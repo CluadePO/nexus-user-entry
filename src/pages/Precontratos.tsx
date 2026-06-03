@@ -677,22 +677,22 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
           {docDefs.map(d => {
             const doc = docsOtec[d.key];
             return (
-              <div key={d.key} className="flex items-center justify-between border rounded-lg px-3 py-2 text-xs">
+              <div key={d.key} className="flex items-center justify-between gap-2 border rounded-lg px-3 py-2 text-xs">
                 <div className="min-w-0 flex-1">
                   <p className="text-primary font-medium">{d.label}</p>
-                  <p className="text-foreground truncate">{doc ? doc.name : 'Sin cargar'}</p>
+                  <p className="text-foreground truncate" title={doc ? doc.name : undefined}>{doc ? doc.name : 'Sin cargar'}</p>
                 </div>
                 {doc ? (
-                  <div className="flex items-center gap-1 flex-shrink-0">
-                    <Button variant="outline" size="sm" className="h-7 px-2 text-xs gap-1" title="Reemplazar" onClick={() => setDocsModalOpen(true)}>
+                  <div className="flex items-center gap-1 flex-shrink-0 ml-2">
+                    <Button variant="outline" size="icon" className="h-7 w-7" title="Reemplazar" onClick={() => setDocsModalOpen(true)}>
                       <RefreshCw className="h-3.5 w-3.5" />
                     </Button>
-                    <Button variant="ghost" size="sm" className="h-7 px-2" onClick={() => handleDocDownload(d.key)}>
+                    <Button variant="ghost" size="icon" className="h-7 w-7" title="Descargar" onClick={() => handleDocDownload(d.key)}>
                       <Download className="h-3.5 w-3.5" />
                     </Button>
                   </div>
                 ) : (
-                  <span className="text-muted-foreground">—</span>
+                  <span className="text-muted-foreground flex-shrink-0 ml-2">—</span>
                 )}
               </div>
             );
