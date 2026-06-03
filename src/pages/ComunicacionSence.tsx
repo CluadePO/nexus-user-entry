@@ -209,12 +209,6 @@ const ComunicacionSence: React.FC = () => {
                     <th className="p-2 text-left font-medium text-muted-foreground w-[10%]">
                       Tipo Contrato <span className="text-xs">▾</span>
                     </th>
-                    <th className="p-2 text-left font-medium text-muted-foreground w-[12%]">
-                      <span className="inline-flex items-center gap-1">
-                        <span>Vigencia <span className="text-xs">▾</span></span>
-                        <span className="inline-flex items-center rounded-full bg-blue-600 px-1 py-0.5 text-[8px] font-bold leading-none text-white shadow-sm">C1CCOM4</span>
-                      </span>
-                    </th>
                     <th className="p-2 text-center font-medium text-muted-foreground w-[12%]">
                       <span className="inline-flex items-center gap-1">
                         <span>No comunicar</span>
