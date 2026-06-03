@@ -234,12 +234,12 @@ const ComunicacionSence: React.FC = () => {
                         </td>
                         <td className="p-2 font-medium">{curso.sc}</td>
                         <td className="p-2 text-muted-foreground truncate">{curso.cliente}</td>
-                        <td className="p-2 text-center">{curso.nroPart}</td>
+                        <td className="p-2 text-left">{curso.nroPart}</td>
                         <td className="p-2">{curso.mtFranquicia}</td>
                         <td className="p-2">{curso.inicioCurso}</td>
                         <td className="p-2">{curso.modalidad}</td>
                         <td className="p-2">{curso.tipoContrato}</td>
-                        <td className="p-2 text-center">
+                        <td className="p-2 text-left">
                           <Button
                             variant={excluido ? 'destructive' : 'outline'}
                             size="sm"
