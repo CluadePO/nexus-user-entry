@@ -67,6 +67,7 @@ const ComunicacionSence: React.FC = () => {
 
   const removeSearchTag = (tag: string) => {
     setSearchTags(prev => prev.filter(t => t !== tag));
+    setAppliedTags(prev => prev.filter(t => t !== tag));
   };
 
   const ejecutarBusqueda = () => {
