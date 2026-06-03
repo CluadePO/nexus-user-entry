@@ -182,34 +182,36 @@ const ComunicacionSence: React.FC = () => {
               <table className="w-full text-xs table-fixed">
                 <thead>
                   <tr className="border-b bg-muted/30">
-                    <th className="p-2 w-8">
-                      <Checkbox
-                        checked={selectAll}
-                        onCheckedChange={(checked) => handleSelectAll(!!checked)}
-                      />
+                    <th className="p-2 w-[40px] text-center">
+                      <div className="flex justify-center">
+                        <Checkbox
+                          checked={selectAll}
+                          onCheckedChange={(checked) => handleSelectAll(!!checked)}
+                        />
+                      </div>
                     </th>
-                    <th className="p-2 text-left font-medium text-muted-foreground w-[7%]">
+                    <th className="p-2 text-left font-medium text-muted-foreground w-[8%]">
                       S.C <span className="text-xs">▾</span>
                     </th>
-                    <th className="p-2 text-left font-medium text-muted-foreground w-[18%]">
+                    <th className="p-2 text-left font-medium text-muted-foreground w-[20%]">
                       Cliente <span className="text-xs">▾</span>
                     </th>
-                    <th className="p-2 text-left font-medium text-muted-foreground w-[5%]">
+                    <th className="p-2 text-left font-medium text-muted-foreground w-[7%]">
                       Nro. Part. <span className="text-xs">▾</span>
                     </th>
-                    <th className="p-2 text-left font-medium text-muted-foreground w-[10%]">
+                    <th className="p-2 text-left font-medium text-muted-foreground w-[11%]">
                       M.T. Franquicia <span className="text-xs">▾</span>
                     </th>
-                    <th className="p-2 text-left font-medium text-muted-foreground w-[9%]">
+                    <th className="p-2 text-left font-medium text-muted-foreground w-[10%]">
                       Inicio Curso <span className="text-xs">▾</span>
                     </th>
-                    <th className="p-2 text-left font-medium text-muted-foreground w-[10%]">
+                    <th className="p-2 text-left font-medium text-muted-foreground w-[11%]">
                       Modalidad <span className="text-xs">▾</span>
                     </th>
-                    <th className="p-2 text-left font-medium text-muted-foreground w-[10%]">
+                    <th className="p-2 text-left font-medium text-muted-foreground w-[11%]">
                       Tipo Contrato <span className="text-xs">▾</span>
                     </th>
-                    <th className="p-2 text-left font-medium text-muted-foreground w-[12%]">
+                    <th className="p-2 text-left font-medium text-muted-foreground w-[18%]">
                       <span className="inline-flex items-center gap-1">
                         <span>No comunicar</span>
                         <span className="inline-flex items-center rounded-full bg-blue-600 px-1 py-0.5 text-[8px] font-bold leading-none text-white shadow-sm">C1CCOM5</span>
@@ -225,12 +227,14 @@ const ComunicacionSence: React.FC = () => {
                     const excluido = noComunicar.includes(curso.sc);
                     return (
                       <tr key={curso.sc} className={`border-b ${excluido ? 'bg-red-50/50 opacity-60' : idx % 2 === 0 ? 'hover:bg-muted/20' : 'bg-muted/10 hover:bg-muted/20'}`}>
-                        <td className="p-2">
-                          <Checkbox
-                            checked={selectedRows.includes(curso.sc)}
-                            onCheckedChange={(checked) => handleSelectRow(curso.sc, !!checked)}
-                            disabled={excluido}
-                          />
+                        <td className="p-2 text-center">
+                          <div className="flex justify-center">
+                            <Checkbox
+                              checked={selectedRows.includes(curso.sc)}
+                              onCheckedChange={(checked) => handleSelectRow(curso.sc, !!checked)}
+                              disabled={excluido}
+                            />
+                          </div>
                         </td>
                         <td className="p-2 font-medium">{curso.sc}</td>
                         <td className="p-2 text-muted-foreground truncate">{curso.cliente}</td>
