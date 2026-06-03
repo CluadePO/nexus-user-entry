@@ -73,6 +73,11 @@ const ComunicacionSence: React.FC = () => {
     setSearchTerm('');
   };
 
+  const cursosFiltrados = searchTags.length > 0
+    ? mockCursos.filter(c => searchTags.some(t => c.sc.toLowerCase().includes(t.toLowerCase())))
+    : mockCursos;
+
+
   const toggleNoComunicar = (sc: string) => {
     setNoComunicar(prev =>
       prev.includes(sc) ? prev.filter(s => s !== sc) : [...prev, sc]
