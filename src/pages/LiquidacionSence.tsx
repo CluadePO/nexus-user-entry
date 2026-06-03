@@ -115,60 +115,65 @@ const LiquidacionSence: React.FC = () => {
         </div>
 
         {/* Table */}
-        <div className="overflow-hidden">
-          <table className="w-full text-sm">
+        <div className="border rounded-lg overflow-hidden">
+          <table className="w-full text-xs table-fixed">
             <thead>
-              <tr>
-                <th className="p-3 w-10">
-                  <Checkbox
-                    checked={selectAll}
-                    onCheckedChange={(checked) => handleSelectAll(!!checked)}
-                  />
+              <tr className="border-b bg-muted/30">
+                <th className="p-2 w-[40px] text-center">
+                  <div className="flex justify-center">
+                    <Checkbox
+                      checked={selectAll}
+                      onCheckedChange={(checked) => handleSelectAll(!!checked)}
+                    />
+                  </div>
                 </th>
-                <th className="p-3 text-left font-medium text-muted-foreground">
+                <th className="p-2 text-left font-medium text-muted-foreground w-[10%]">
                   ID Sence <span className="text-xs">▾</span>
                 </th>
-                <th className="p-3 text-left font-medium text-muted-foreground">
+                <th className="p-2 text-left font-medium text-muted-foreground w-[10%]">
                   O.C <span className="text-xs">▾</span>
                 </th>
-                <th className="p-3 text-left font-medium text-muted-foreground">
+                <th className="p-2 text-left font-medium text-muted-foreground w-[10%]">
                   Curso <span className="text-xs">▾</span>
                 </th>
-                <th className="p-3 text-left font-medium text-muted-foreground">
+                <th className="p-2 text-left font-medium text-muted-foreground w-[30%]">
                   Empresa <span className="text-xs">▾</span>
                 </th>
-                <th className="p-3 text-left font-medium text-muted-foreground">
+                <th className="p-2 text-left font-medium text-muted-foreground w-[8%]">
                   Días <span className="text-xs">▾</span>
                 </th>
-                <th className="p-3 text-left font-medium text-muted-foreground">
+                <th className="p-2 text-left font-medium text-muted-foreground w-[12%]">
                   M.T.F <span className="text-xs">▾</span>
                 </th>
-                <th className="p-3 text-left font-medium text-muted-foreground">
+                <th className="p-2 text-left font-medium text-muted-foreground w-[12%]">
                   Fecha máx. <span className="text-xs">▾</span>
                 </th>
               </tr>
             </thead>
             <tbody>
-              {mockCursos.map((curso) => (
-                <tr key={curso.idSence} className="bg-white rounded-lg shadow-sm">
-                  <td className="p-3">
-                    <Checkbox
-                      checked={selectedRows.includes(curso.idSence)}
-                      onCheckedChange={(checked) => handleSelectRow(curso.idSence, !!checked)}
-                    />
+              {mockCursos.map((curso, idx) => (
+                <tr key={curso.idSence} className={`border-b ${idx % 2 === 0 ? 'hover:bg-muted/20' : 'bg-muted/10 hover:bg-muted/20'}`}>
+                  <td className="p-2 text-center">
+                    <div className="flex justify-center">
+                      <Checkbox
+                        checked={selectedRows.includes(curso.idSence)}
+                        onCheckedChange={(checked) => handleSelectRow(curso.idSence, !!checked)}
+                      />
+                    </div>
                   </td>
-                  <td className="p-3 font-semibold">{curso.idSence}</td>
-                  <td className="p-3 font-semibold">{curso.oc}</td>
-                  <td className="p-3 font-semibold">{curso.curso}</td>
-                  <td className="p-3 font-semibold truncate max-w-[280px]">{curso.empresa}</td>
-                  <td className="p-3 font-semibold">{curso.dias}</td>
-                  <td className="p-3 font-semibold">{curso.mtf}</td>
-                  <td className="p-3 font-semibold">{curso.fechaMax}</td>
+                  <td className="p-2 font-medium">{curso.idSence}</td>
+                  <td className="p-2">{curso.oc}</td>
+                  <td className="p-2">{curso.curso}</td>
+                  <td className="p-2 text-muted-foreground truncate">{curso.empresa}</td>
+                  <td className="p-2">{curso.dias}</td>
+                  <td className="p-2">{curso.mtf}</td>
+                  <td className="p-2">{curso.fechaMax}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
+
       </div>
     </div>
   );
