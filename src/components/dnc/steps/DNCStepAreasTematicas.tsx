@@ -70,6 +70,9 @@ interface Props {
 
 const MIN_AREAS = 6;
 const MAX_AREAS = 12;
+const MAX_TEMATICAS = 5;
+const MSG_MAX_AREAS = `Se alcanzó el máximo de ${MAX_AREAS} áreas permitidas para seleccionar.`;
+const MSG_MAX_TEMATICAS = `Se alcanzó el máximo de ${MAX_TEMATICAS} temáticas permitidas para seleccionar.`;
 
 const DNCStepAreasTematicas: React.FC<Props> = ({ state, onChange, onNext, onBack }) => {
   const current = state && Object.keys(state).length ? state : defaultState();
@@ -80,20 +83,36 @@ const DNCStepAreasTematicas: React.FC<Props> = ({ state, onChange, onNext, onBac
     onChange({ ...current, [id]: { ...current[id], ...partial } });
   };
 
+  const activeAreasCount = AREAS.filter(a => current[a.id]?.selected).length;
+  const areasLimitReached = activeAreasCount >= MAX_AREAS;
+
   const toggleArea = (id: string) => {
     const sel = current[id].selected;
+    if (!sel && activeAreasCount >= MAX_AREAS) {
+      toast.error(MSG_MAX_AREAS);
+      return;
+    }
     update(id, { selected: !sel, tematicas: !sel ? current[id].tematicas : [] });
   };
 
   const toggleTematica = (id: string, t: string) => {
     const list = current[id].tematicas;
-    const next = list.includes(t) ? list.filter(x => x !== t) : [...list, t];
+    const isAdding = !list.includes(t);
+    if (isAdding && list.length >= MAX_TEMATICAS) {
+      toast.error(MSG_MAX_TEMATICAS);
+      return;
+    }
+    const next = isAdding ? [...list, t] : list.filter(x => x !== t);
     update(id, { tematicas: next, selected: next.length > 0 ? true : current[id].selected });
   };
 
   const toggleAllTematicas = (id: string, all: string[]) => {
     const list = current[id].tematicas;
     const allSelected = all.every(t => list.includes(t));
+    if (!allSelected && all.length > MAX_TEMATICAS) {
+      toast.error(MSG_MAX_TEMATICAS);
+      return;
+    }
     const next = allSelected ? [] : [...all];
     update(id, { tematicas: next, selected: next.length > 0 });
   };
@@ -180,7 +199,7 @@ const DNCStepAreasTematicas: React.FC<Props> = ({ state, onChange, onNext, onBac
           return (
             <Card key={a.id} className={cn('p-3 transition-colors', sel && 'border-primary/40 bg-primary/[0.03]')}>
               <div className="flex items-center gap-4">
-                <Checkbox checked={sel} onCheckedChange={() => toggleArea(a.id)} />
+                <Checkbox checked={sel} disabled={!sel && areasLimitReached} onCheckedChange={() => toggleArea(a.id)} />
                 <div className="flex items-center gap-2 min-w-[260px]">
                   <Icon className="w-5 h-5 text-black" />
                   <span className="text-sm font-semibold text-foreground">{a.name}</span>
@@ -211,30 +230,42 @@ const DNCStepAreasTematicas: React.FC<Props> = ({ state, onChange, onNext, onBac
                       </button>
                     </PopoverTrigger>
                     <PopoverContent className="p-2 w-[--radix-popover-trigger-width]" align="start">
-                      <button
-                        type="button"
-                        onClick={() => toggleAllTematicas(a.id, a.tematicas)}
-                        className="w-full flex items-center gap-2 px-2 py-1.5 rounded hover:bg-muted text-left text-sm font-medium border-b mb-1"
-                      >
-                        <Checkbox checked={a.tematicas.every(t => tematicasSel.includes(t))} />
-                        <span className="text-primary">Seleccionar todas las temáticas</span>
-                      </button>
-                      <div className="space-y-1 max-h-64 overflow-auto">
-                        {a.tematicas.map(t => {
-                          const checked = tematicasSel.includes(t);
-                          return (
+                      {(() => {
+                        const tematicasLimitReached = tematicasSel.length >= MAX_TEMATICAS;
+                        const allChecked = a.tematicas.every(t => tematicasSel.includes(t));
+                        const disableSelectAll = !allChecked && a.tematicas.length > MAX_TEMATICAS;
+                        return (
+                          <>
                             <button
-                              key={t}
                               type="button"
-                              onClick={() => toggleTematica(a.id, t)}
-                              className="w-full flex items-center gap-2 px-2 py-1.5 rounded hover:bg-muted text-left text-sm"
+                              disabled={disableSelectAll}
+                              onClick={() => toggleAllTematicas(a.id, a.tematicas)}
+                              className="w-full flex items-center gap-2 px-2 py-1.5 rounded hover:bg-muted text-left text-sm font-medium border-b mb-1 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                              <Checkbox checked={checked} />
-                              <span>{t}</span>
+                              <Checkbox checked={allChecked} disabled={disableSelectAll} />
+                              <span className="text-primary">Seleccionar todas las temáticas</span>
                             </button>
-                          );
-                        })}
-                      </div>
+                            <div className="space-y-1 max-h-64 overflow-auto">
+                              {a.tematicas.map(t => {
+                                const checked = tematicasSel.includes(t);
+                                const disabled = !checked && tematicasLimitReached;
+                                return (
+                                  <button
+                                    key={t}
+                                    type="button"
+                                    disabled={disabled}
+                                    onClick={() => toggleTematica(a.id, t)}
+                                    className="w-full flex items-center gap-2 px-2 py-1.5 rounded hover:bg-muted text-left text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                                  >
+                                    <Checkbox checked={checked} disabled={disabled} />
+                                    <span>{t}</span>
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </>
+                        );
+                      })()}
                     </PopoverContent>
                   </Popover>
                 </div>
@@ -389,9 +420,11 @@ const DNCStepAreasTematicas: React.FC<Props> = ({ state, onChange, onNext, onBac
           className="gap-2"
           onClick={() => {
             if (activeCount < MIN_AREAS) { toast.error(`Debes seleccionar al menos ${MIN_AREAS} áreas`); return; }
-            if (activeCount > MAX_AREAS) { toast.error(`Máximo ${MAX_AREAS} áreas permitidas`); return; }
+            if (activeCount > MAX_AREAS) { toast.error(MSG_MAX_AREAS); return; }
             const sinTematicas = selectedAreas.find(a => current[a.id].tematicas.length === 0);
             if (sinTematicas) { toast.error(`El área "${sinTematicas.name}" no tiene temáticas seleccionadas`); return; }
+            const excedeTematicas = selectedAreas.find(a => current[a.id].tematicas.length > MAX_TEMATICAS);
+            if (excedeTematicas) { toast.error(MSG_MAX_TEMATICAS); return; }
             onNext();
           }}
         >
