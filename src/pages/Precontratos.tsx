@@ -907,8 +907,8 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
 
             {/* Drop zone */}
             <div
-              className="border-2 border-dashed border-muted-foreground/30 rounded-lg p-12 text-center cursor-pointer hover:border-primary/50 transition-colors"
-              onClick={() => fileInputRef.current?.click()}
+              className={`border-2 border-dashed border-muted-foreground/30 rounded-lg p-12 text-center transition-colors ${uploadedFile ? '' : 'cursor-pointer hover:border-primary/50'}`}
+              onClick={() => { if (!uploadedFile) fileInputRef.current?.click(); }}
               onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
               onDrop={(e) => {
                 e.preventDefault();
@@ -918,10 +918,18 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
               }}
             >
               {uploadedFile ? (
-                <div className="flex flex-col items-center gap-2">
+                <div className="flex flex-col items-center gap-3">
                   <CheckCircle className="h-8 w-8 text-green-600" />
-                  <p className="text-sm font-medium text-foreground">{uploadedFile.name}</p>
+                  <p className="text-sm font-medium text-foreground break-all">{uploadedFile.name}</p>
                   <p className="text-xs text-muted-foreground">{(uploadedFile.size / 1024).toFixed(1)} KB</p>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="gap-2 mt-1"
+                    onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click(); }}
+                  >
+                    <RefreshCw className="h-3.5 w-3.5" /> Reemplazar documento
+                  </Button>
                 </div>
               ) : (
                 <p className="text-sm text-muted-foreground">Arrastra el archivo aquí o presiona para seleccionarlo</p>
