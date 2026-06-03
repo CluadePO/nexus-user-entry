@@ -177,22 +177,60 @@ const ComunicacionSence: React.FC = () => {
       </div>
 
       {/* Results badge */}
-      <div>
+      {(() => {
+        const filteredCursos = searchTags.length > 0
+          ? mockCursos.filter(c => searchTags.some(t => c.sc.toLowerCase().includes(t.toLowerCase())))
+          : mockCursos;
+        return (
+      <>
+      <div className="flex items-center gap-2 flex-wrap">
         <Badge className="bg-primary text-primary-foreground rounded-full px-4 py-1 text-sm font-medium">
-          {mockCursos.length} cursos cargados
+          {searchTags.length > 0 ? `${filteredCursos.length} de ${mockCursos.length}` : mockCursos.length} cursos cargados
         </Badge>
       </div>
 
       {/* Search */}
-      <div className="relative max-w-sm">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-        <Input
-          placeholder="Buscar por S.C o Cliente..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="pl-10 rounded-full border-border"
-        />
+      <div className="flex items-start gap-2 flex-wrap">
+        <div className="relative flex-1 min-w-[280px] max-w-xl">
+          <div className="flex items-center flex-wrap gap-1 min-h-10 w-full rounded-full border border-border bg-background pl-10 pr-3 py-1.5 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            {searchTags.map(tag => (
+              <span key={tag} className="inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary text-xs px-2 py-0.5">
+                {tag}
+                <button type="button" onClick={() => removeSearchTag(tag)} className="hover:text-primary/70">
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            ))}
+            <input
+              type="text"
+              placeholder={searchTags.length >= MAX_TAGS ? `Máximo ${MAX_TAGS} S.C` : (searchTags.length === 0 ? 'Buscar por S.C (Enter para agregar)...' : '')}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={(e) => {
+                if ((e.key === 'Enter' || e.key === ',' || e.key === ' ') && searchTerm.trim()) {
+                  e.preventDefault();
+                  addSearchTag(searchTerm);
+                } else if (e.key === 'Backspace' && !searchTerm && searchTags.length > 0) {
+                  removeSearchTag(searchTags[searchTags.length - 1]);
+                }
+              }}
+              onBlur={() => searchTerm.trim() && addSearchTag(searchTerm)}
+              disabled={searchTags.length >= MAX_TAGS}
+              className="flex-1 min-w-[120px] bg-transparent outline-none text-sm py-1"
+            />
+          </div>
+        </div>
+        {(searchTags.length > 0 || searchTerm) && (
+          <Button variant="outline" size="sm" className="rounded-full gap-1 h-10" onClick={clearSearch}>
+            <X className="w-3 h-3" /> Limpiar
+          </Button>
+        )}
       </div>
+      </>
+        );
+      })()}
+
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList>
