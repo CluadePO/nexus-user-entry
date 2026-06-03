@@ -713,11 +713,6 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
                         <Upload className="h-3.5 w-3.5 mr-1" />
                         {doc ? 'Reemplazar' : 'Cargar'}
                       </Button>
-                      {doc && (
-                        <Button variant="ghost" size="sm" onClick={() => handleDocDownload(d.key)}>
-                          <Download className="h-3.5 w-3.5" />
-                        </Button>
-                      )}
                     </div>
                   </div>
                   <p className="text-xs text-muted-foreground break-all">
