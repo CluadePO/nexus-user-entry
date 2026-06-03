@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { jsPDF } from 'jspdf';
+import * as XLSX from 'xlsx';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -596,11 +597,8 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
         >
           <div className="flex items-center gap-3 flex-wrap">
             <h2 className="text-base font-semibold text-foreground">Detalle del curso</h2>
-            <Button variant="outline" size="sm" className="text-xs" onClick={(e) => { e.stopPropagation(); }}>
-              <Mail className="h-3.5 w-3.5 mr-1" />
-              RECORDATORIO MASIVO
-            </Button>
           </div>
+
 
           {detalleOpen ? <ChevronUp className="h-4 w-4 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 text-muted-foreground" />}
         </button>
@@ -763,16 +761,51 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
               DESCARGA LEGAJO DE PRECONTRATO
               <span className="bg-blue-500 text-white text-[8px] font-bold px-1 py-0.5 rounded-full ml-1">C1PPPC3</span>
             </Button>
-            <div className="relative">
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-xs"
+              onClick={() => toast.success('Recordatorio masivo enviado a todos los participantes')}
+            >
+              <Mail className="h-3.5 w-3.5 mr-1" />
+              RECORDATORIO MASIVO
+            </Button>
+            <Button
+              size="sm"
+              className="text-xs"
+              onClick={() => {
+                const rows = participantesState.map(p => ({
+                  Nombre: p.nombre,
+                  RUT: p.rut,
+                  Correo: p.correo,
+                  Teléfono: p.telefono,
+                  'Firma empresa': p.firmaEmpresa,
+                  'Firma participante': p.firmaParticipante,
+                  'Autoriz. menor': p.autorizMenor,
+                  Vulnerabilidad: p.vulnerabilidad,
+                  'Último recordatorio': p.ultimoRecordatorio,
+                }));
+                const ws = XLSX.utils.json_to_sheet(rows);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Participantes');
+                XLSX.writeFile(wb, `${precontrato.sencenet}_Participantes.xlsx`);
+                toast.success('Excel de participantes descargado');
+              }}
+            >
+              <Download className="h-3.5 w-3.5 mr-1" />
+              DESCARGAR
+            </Button>
+            <div className="relative w-full sm:w-[280px]">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
               <Input
-                placeholder="Buscar por nombre o rut"
+                placeholder="Buscar por nombre o rut del participante"
                 value={searchParticipante}
                 onChange={(e) => setSearchParticipante(e.target.value)}
-                className="pl-8 h-8 text-xs w-[200px]"
+                className="pl-8 h-8 text-xs w-full"
               />
             </div>
           </div>
+
         </div>
         <div className="border rounded-lg overflow-hidden">
           <table className="w-full text-xs table-fixed">
