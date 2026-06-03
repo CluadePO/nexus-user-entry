@@ -7,7 +7,8 @@ import {
 import {
   Accordion, AccordionContent, AccordionItem, AccordionTrigger,
 } from '@/components/ui/accordion';
-import { ArrowLeft, Zap, BarChart3, Target, Settings, Users, PenLine, LineChart, Plus } from 'lucide-react';
+import { ArrowLeft, Zap, BarChart3, Target, Settings, Users, PenLine, LineChart, Plus, Mail } from 'lucide-react';
+import dncTeamMeeting from '@/assets/dnc-team-meeting.jpg';
 
 interface Props {
   onBack: () => void;
