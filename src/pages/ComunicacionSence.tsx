@@ -48,6 +48,7 @@ const ComunicacionSence: React.FC = () => {
   const [cursoDetalleIdModular, setCursoDetalleIdModular] = useState<string | undefined>();
   const [searchTerm, setSearchTerm] = useState('');
   const [searchTags, setSearchTags] = useState<string[]>([]);
+  const [appliedTags, setAppliedTags] = useState<string[]>([]);
   const MAX_TAGS = 10;
 
   const addSearchTag = (raw: string) => {
@@ -68,14 +69,32 @@ const ComunicacionSence: React.FC = () => {
     setSearchTags(prev => prev.filter(t => t !== tag));
   };
 
+  const ejecutarBusqueda = () => {
+    let tags = searchTags;
+    if (searchTerm.trim()) {
+      const parts = searchTerm.split(/[\s,;]+/).map(p => p.trim()).filter(Boolean);
+      const merged = [...tags];
+      for (const p of parts) {
+        if (merged.length >= MAX_TAGS) break;
+        if (!merged.includes(p)) merged.push(p);
+      }
+      tags = merged;
+      setSearchTags(merged);
+      setSearchTerm('');
+    }
+    setAppliedTags(tags);
+  };
+
   const clearSearch = () => {
     setSearchTags([]);
+    setAppliedTags([]);
     setSearchTerm('');
   };
 
-  const cursosFiltrados = searchTags.length > 0
-    ? mockCursos.filter(c => searchTags.some(t => c.sc.toLowerCase().includes(t.toLowerCase())))
+  const cursosFiltrados = appliedTags.length > 0
+    ? mockCursos.filter(c => appliedTags.some(t => c.sc.toLowerCase().includes(t.toLowerCase())))
     : mockCursos;
+
 
 
   const toggleNoComunicar = (sc: string) => {
