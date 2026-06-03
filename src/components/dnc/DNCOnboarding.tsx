@@ -83,10 +83,10 @@ const DNCOnboarding: React.FC<Props> = ({ onBack, onNew }) => {
         <Card className="p-6">
           <div className="grid grid-cols-4 gap-2 relative">
             {[
-              { icon: Settings, title: 'Configurar', desc: 'Define empresa, áreas y temáticas a evaluar.' },
-              { icon: Users, title: 'Asignar', desc: 'Carga la nómina y elige el modelo de asignación.' },
-              { icon: PenLine, title: 'Responder', desc: 'Los participantes contestan la encuesta en línea.' },
-              { icon: LineChart, title: 'Analizar', desc: 'Revisa resultados y descarga reportes detallados.' },
+              { icon: Settings, title: '01 Configurar', desc: 'Define las áreas, temáticas y participantes que quieres evaluar.' },
+              { icon: Users, title: '02 Asignar', desc: 'Carga tu nómina y elige cómo se distribuirá la encuesta.' },
+              { icon: PenLine, title: '03 Responder', desc: 'Los colaboradores y jefaturas completan la encuesta en línea.' },
+              { icon: LineChart, title: '04 Analizar', desc: 'Revisa los resultados y descarga reportes listos para tomar decisiones.' },
             ].map((s, i, arr) => (
               <div key={s.title} className="relative space-y-2">
                 {i < arr.length - 1 && (
@@ -113,31 +113,31 @@ const DNCOnboarding: React.FC<Props> = ({ onBack, onNew }) => {
             <AccordionItem value="q1">
               <AccordionTrigger className="px-4 text-sm">¿Quién debe responder la DNC?</AccordionTrigger>
               <AccordionContent className="px-4 text-sm text-muted-foreground">
-                Todas las personas incluidas en la nómina cargada: colaboradores y jefaturas. Cada uno responde según el modelo de asignación definido durante la configuración.
+                Todos los participantes incluidos en la nómina que cargaste: colaboradores y jefaturas. Cada uno responde desde su rol, según el modelo de asignación que definiste en la configuración.
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="q2">
               <AccordionTrigger className="px-4 text-sm">¿Puedo modificar una DNC después de iniciada?</AccordionTrigger>
               <AccordionContent className="px-4 text-sm text-muted-foreground">
-                Una vez iniciada, sólo se pueden modificar las fechas de inicio y cierre. La configuración de áreas y participantes queda fija.
+                Depende del avance. Puedes editar ciertos parámetros antes de que los participantes comiencen a responder. Una vez que el proceso está en curso, los cambios son limitados para proteger la integridad de los datos. Te recomendamos revisar bien la configuración antes de iniciarla.
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="q3">
               <AccordionTrigger className="px-4 text-sm">¿Qué pasa si ya respondieron encuestas?</AccordionTrigger>
               <AccordionContent className="px-4 text-sm text-muted-foreground">
-                Las respuestas quedan registradas. Si reabres el proceso, se conservan los avances anteriores.
+                Las respuestas enviadas quedan registradas y no se pueden modificar. Si necesitas hacer ajustes en la nómina o en las temáticas, puedes crear una nueva DNC sin perder los datos anteriores.
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="q4">
               <AccordionTrigger className="px-4 text-sm">¿Cómo se usan los resultados?</AccordionTrigger>
               <AccordionContent className="px-4 text-sm text-muted-foreground">
-                Los resultados alimentan el plan anual de capacitación, permitiendo priorizar cursos según las brechas detectadas.
+                Una vez finalizado el proceso, accederás a un reporte detallado con las brechas identificadas por área, cargo y temática. Usa esa información para definir tu plan de capacitación.
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="q5">
               <AccordionTrigger className="px-4 text-sm">¿Cuánto dura el proceso típico?</AccordionTrigger>
               <AccordionContent className="px-4 text-sm text-muted-foreground">
-                Entre 2 y 4 semanas, dependiendo del tamaño de la organización y el modelo de asignación elegido.
+                Depende del tamaño de tu organización y del tiempo de respuesta de los participantes. En promedio, una DNC se completa en 5 a 20 días hábiles desde su configuración hasta el cierre de encuestas.
               </AccordionContent>
             </AccordionItem>
           </Accordion>
