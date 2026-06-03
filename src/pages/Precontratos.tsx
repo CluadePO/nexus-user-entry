@@ -638,69 +638,18 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
               </div>
             </div>
 
-            {/* Document upload action buttons (moved from header) */}
-            <div className="flex items-center gap-2 flex-wrap pl-11">
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-xs"
-                onClick={() => document.getElementById('upload-carta-conductora')?.click()}
-              >
-                <Upload className="h-3.5 w-3.5 mr-1" />
-                CARTA CONDUCTORA
-              </Button>
-              <input
-                id="upload-carta-conductora"
-                type="file"
-                className="hidden"
-                accept=".pdf,.doc,.docx"
-                onChange={(e) => {
-                  const f = e.target.files?.[0];
-                  if (f) alert(`Carta Conductora cargada: ${f.name}`);
-                  e.target.value = '';
-                }}
-              />
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-xs"
-                onClick={() => document.getElementById('upload-dotacion')?.click()}
-              >
-                <Upload className="h-3.5 w-3.5 mr-1" />
-                DOTACIÓN
-              </Button>
-              <input
-                id="upload-dotacion"
-                type="file"
-                className="hidden"
-                accept=".pdf,.xls,.xlsx,.csv"
-                onChange={(e) => {
-                  const f = e.target.files?.[0];
-                  if (f) alert(`Dotación cargada: ${f.name}`);
-                  e.target.value = '';
-                }}
-              />
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-xs"
-                onClick={() => document.getElementById('upload-ci-rep-legal')?.click()}
-              >
-                <Upload className="h-3.5 w-3.5 mr-1" />
-                CI REP. LEGAL
-              </Button>
-              <input
-                id="upload-ci-rep-legal"
-                type="file"
-                className="hidden"
-                accept=".pdf,.jpg,.jpeg,.png"
-                onChange={(e) => {
-                  const f = e.target.files?.[0];
-                  if (f) alert(`C.I. Rep. Legal cargada: ${f.name}`);
-                  e.target.value = '';
-                }}
-              />
-            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Documentos OTEC - sección separada debajo */}
+      <DocumentosOtecSection />
+
+      {/* (closing wrappers re-opened below for original structure) */}
+      <div className="hidden">
+        {false && (
+          <div>
+            {/* placeholder to preserve original closing tags */}
 
           </div>
         )}
