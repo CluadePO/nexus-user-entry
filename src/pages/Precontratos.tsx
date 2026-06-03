@@ -204,7 +204,6 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
   const [uploadTarget, setUploadTarget] = useState<number | null>(null);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const legajoInputRef = useRef<HTMLInputElement>(null);
 
   // Validation actions modal (POR VALIDAR clicked)
   const [validationModalOpen, setValidationModalOpen] = useState(false);
