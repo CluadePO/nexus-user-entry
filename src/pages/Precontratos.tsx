@@ -221,6 +221,31 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
   const [viewDocModalOpen, setViewDocModalOpen] = useState(false);
   const [viewDocTarget, setViewDocTarget] = useState<number | null>(null);
 
+  // Documentos OTEC (Carta Conductora, Dotación, CI Rep. Legal)
+  type DocKey = 'carta' | 'dotacion' | 'ci';
+  const docDefs: { key: DocKey; label: string; accept: string }[] = [
+    { key: 'carta', label: 'Carta Conductora', accept: '.pdf,.doc,.docx' },
+    { key: 'dotacion', label: 'Dotación', accept: '.pdf,.xls,.xlsx,.csv' },
+    { key: 'ci', label: 'C.I. Rep. Legal', accept: '.pdf,.jpg,.jpeg,.png' },
+  ];
+  const [docsOtec, setDocsOtec] = useState<Record<DocKey, { name: string; url: string } | null>>({
+    carta: null, dotacion: null, ci: null,
+  });
+  const [docsModalOpen, setDocsModalOpen] = useState(false);
+  const handleDocUpload = (key: DocKey, file: File) => {
+    const url = URL.createObjectURL(file);
+    setDocsOtec(prev => ({ ...prev, [key]: { name: file.name, url } }));
+    toast.success(`${docDefs.find(d => d.key === key)?.label} cargado: ${file.name}`);
+  };
+  const handleDocDownload = (key: DocKey) => {
+    const doc = docsOtec[key];
+    if (!doc) return;
+    const a = document.createElement('a');
+    a.href = doc.url;
+    a.download = doc.name;
+    a.click();
+  };
+
   const filteredParticipantes = participantesState.filter(p =>
     p.nombre.toLowerCase().includes(searchParticipante.toLowerCase()) ||
     p.rut.includes(searchParticipante)
