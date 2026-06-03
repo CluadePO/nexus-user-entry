@@ -203,7 +203,7 @@ const ComunicacionSence: React.FC = () => {
       {/* Results badge */}
       <div className="flex items-center gap-2 flex-wrap">
         <Badge className="bg-primary text-primary-foreground rounded-full px-4 py-1 text-sm font-medium">
-          {searchTags.length > 0 ? `${cursosFiltrados.length} de ${mockCursos.length}` : mockCursos.length} cursos cargados
+          {appliedTags.length > 0 ? `${cursosFiltrados.length} de ${mockCursos.length}` : mockCursos.length} cursos cargados
         </Badge>
       </div>
 
@@ -222,29 +222,44 @@ const ComunicacionSence: React.FC = () => {
             ))}
             <input
               type="text"
-              placeholder={searchTags.length >= MAX_TAGS ? `Máximo ${MAX_TAGS} S.C` : (searchTags.length === 0 ? 'Buscar por S.C (Enter para agregar)...' : '')}
+              placeholder={searchTags.length >= MAX_TAGS ? `Máximo ${MAX_TAGS} S.C` : (searchTags.length === 0 ? 'Ingresa S.C y presiona espacio para agregar...' : '')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onKeyDown={(e) => {
-                if ((e.key === 'Enter' || e.key === ',' || e.key === ' ') && searchTerm.trim()) {
+                if ((e.key === ' ' || e.key === ',' || e.key === ';') && searchTerm.trim()) {
                   e.preventDefault();
                   addSearchTag(searchTerm);
+                } else if (e.key === 'Enter') {
+                  e.preventDefault();
+                  ejecutarBusqueda();
                 } else if (e.key === 'Backspace' && !searchTerm && searchTags.length > 0) {
                   removeSearchTag(searchTags[searchTags.length - 1]);
                 }
               }}
-              onBlur={() => searchTerm.trim() && addSearchTag(searchTerm)}
               disabled={searchTags.length >= MAX_TAGS}
               className="flex-1 min-w-[120px] bg-transparent outline-none text-sm py-1"
             />
           </div>
         </div>
-        {(searchTags.length > 0 || searchTerm) && (
-          <Button variant="outline" size="sm" className="rounded-full gap-1 h-10" onClick={clearSearch}>
-            <X className="w-3 h-3" /> Limpiar
-          </Button>
-        )}
+        <Button
+          size="sm"
+          className="rounded-full gap-1 h-10 px-4"
+          onClick={ejecutarBusqueda}
+          disabled={searchTags.length === 0 && !searchTerm.trim()}
+        >
+          <Search className="w-3 h-3" /> Buscar
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          className="rounded-full gap-1 h-10"
+          onClick={clearSearch}
+          disabled={searchTags.length === 0 && appliedTags.length === 0 && !searchTerm}
+        >
+          <X className="w-3 h-3" /> Limpiar
+        </Button>
       </div>
+
 
 
 
