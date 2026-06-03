@@ -70,6 +70,9 @@ interface Props {
 
 const MIN_AREAS = 6;
 const MAX_AREAS = 12;
+const MAX_TEMATICAS = 5;
+const MSG_MAX_AREAS = `Se alcanzó el máximo de ${MAX_AREAS} áreas permitidas para seleccionar.`;
+const MSG_MAX_TEMATICAS = `Se alcanzó el máximo de ${MAX_TEMATICAS} temáticas permitidas para seleccionar.`;
 
 const DNCStepAreasTematicas: React.FC<Props> = ({ state, onChange, onNext, onBack }) => {
   const current = state && Object.keys(state).length ? state : defaultState();
@@ -80,20 +83,36 @@ const DNCStepAreasTematicas: React.FC<Props> = ({ state, onChange, onNext, onBac
     onChange({ ...current, [id]: { ...current[id], ...partial } });
   };
 
+  const activeAreasCount = AREAS.filter(a => current[a.id]?.selected).length;
+  const areasLimitReached = activeAreasCount >= MAX_AREAS;
+
   const toggleArea = (id: string) => {
     const sel = current[id].selected;
+    if (!sel && activeAreasCount >= MAX_AREAS) {
+      toast.error(MSG_MAX_AREAS);
+      return;
+    }
     update(id, { selected: !sel, tematicas: !sel ? current[id].tematicas : [] });
   };
 
   const toggleTematica = (id: string, t: string) => {
     const list = current[id].tematicas;
-    const next = list.includes(t) ? list.filter(x => x !== t) : [...list, t];
+    const isAdding = !list.includes(t);
+    if (isAdding && list.length >= MAX_TEMATICAS) {
+      toast.error(MSG_MAX_TEMATICAS);
+      return;
+    }
+    const next = isAdding ? [...list, t] : list.filter(x => x !== t);
     update(id, { tematicas: next, selected: next.length > 0 ? true : current[id].selected });
   };
 
   const toggleAllTematicas = (id: string, all: string[]) => {
     const list = current[id].tematicas;
     const allSelected = all.every(t => list.includes(t));
+    if (!allSelected && all.length > MAX_TEMATICAS) {
+      toast.error(MSG_MAX_TEMATICAS);
+      return;
+    }
     const next = allSelected ? [] : [...all];
     update(id, { tematicas: next, selected: next.length > 0 });
   };
