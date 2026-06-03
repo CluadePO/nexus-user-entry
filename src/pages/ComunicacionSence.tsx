@@ -209,12 +209,6 @@ const ComunicacionSence: React.FC = () => {
                     <th className="p-2 text-left font-medium text-muted-foreground w-[10%]">
                       Tipo Contrato <span className="text-xs">▾</span>
                     </th>
-                    <th className="p-2 text-left font-medium text-muted-foreground w-[12%]">
-                      <span className="inline-flex items-center gap-1">
-                        <span>Vigencia <span className="text-xs">▾</span></span>
-                        <span className="inline-flex items-center rounded-full bg-blue-600 px-1 py-0.5 text-[8px] font-bold leading-none text-white shadow-sm">C1CCOM4</span>
-                      </span>
-                    </th>
                     <th className="p-2 text-center font-medium text-muted-foreground w-[12%]">
                       <span className="inline-flex items-center gap-1">
                         <span>No comunicar</span>
@@ -245,16 +239,6 @@ const ComunicacionSence: React.FC = () => {
                         <td className="p-2">{curso.inicioCurso}</td>
                         <td className="p-2">{curso.modalidad}</td>
                         <td className="p-2">{curso.tipoContrato}</td>
-                        <td className="p-2">
-                          {isProximoAVencer(curso.vencimientoSence) ? (
-                            <Badge variant="destructive" className="gap-1 text-[10px] whitespace-nowrap px-2 py-0.5">
-                              <AlertCircle className="w-3 h-3" />
-                              Por vencer
-                            </Badge>
-                          ) : (
-                            <span className="text-muted-foreground text-xs">Vigente</span>
-                          )}
-                        </td>
                         <td className="p-2 text-center">
                           <Button
                             variant={excluido ? 'destructive' : 'outline'}
