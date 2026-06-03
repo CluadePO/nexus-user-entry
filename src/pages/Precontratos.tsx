@@ -597,11 +597,8 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
         >
           <div className="flex items-center gap-3 flex-wrap">
             <h2 className="text-base font-semibold text-foreground">Detalle del curso</h2>
-            <Button variant="outline" size="sm" className="text-xs" onClick={(e) => { e.stopPropagation(); }}>
-              <Mail className="h-3.5 w-3.5 mr-1" />
-              RECORDATORIO MASIVO
-            </Button>
           </div>
+
 
           {detalleOpen ? <ChevronUp className="h-4 w-4 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 text-muted-foreground" />}
         </button>
