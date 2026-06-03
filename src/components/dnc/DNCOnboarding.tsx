@@ -7,7 +7,8 @@ import {
 import {
   Accordion, AccordionContent, AccordionItem, AccordionTrigger,
 } from '@/components/ui/accordion';
-import { ArrowLeft, Zap, BarChart3, Target, Settings, Users, PenLine, LineChart, Plus } from 'lucide-react';
+import { ArrowLeft, Zap, BarChart3, Target, Settings, Users, PenLine, LineChart, Plus, Mail } from 'lucide-react';
+import dncTeamMeeting from '@/assets/dnc-team-meeting.jpg';
 
 interface Props {
   onBack: () => void;
@@ -144,11 +145,36 @@ const DNCOnboarding: React.FC<Props> = ({ onBack, onNew }) => {
         </Card>
       </div>
 
-      {/* CTA */}
-      <Card className="p-6 bg-foreground text-background flex flex-col items-center text-center gap-3">
-        <h3 className="text-lg font-bold">¿Listo para comenzar?</h3>
-        <p className="text-sm opacity-80">Configura tu primer diagnóstico en pocos minutos.</p>
-        <Button className="gap-2" onClick={onNew}><Plus className="w-4 h-4" /> Crear nueva DNC</Button>
+      {/* CTA Footer */}
+      <Card className="p-6">
+        <div className="flex items-center gap-6">
+          <div className="flex-1 space-y-3">
+            <div>
+              <h3 className="text-lg font-bold text-foreground">Continúa con tu proceso de evaluación</h3>
+              <div className="flex gap-1 mt-2">
+                <div className="h-1 w-12 rounded-full bg-primary" />
+                <div className="h-1 w-12 rounded-full bg-[hsl(355,80%,65%)]" />
+                <div className="h-1 w-12 rounded-full bg-[hsl(35,90%,60%)]" />
+                <div className="h-1 w-12 rounded-full bg-[hsl(45,95%,60%)]" />
+              </div>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Si necesitas apoyo durante el proceso, contacta a nuestro equipo. Si ya estás listo para continuar, inicia la creación de una nueva DNC.
+            </p>
+            <div className="flex gap-2 pt-1">
+              <Button className="gap-2" onClick={onNew}><Plus className="w-4 h-4" /> Crear nueva DNC</Button>
+              <Button variant="outline" className="gap-2"><Mail className="w-4 h-4" /> Contactar al equipo</Button>
+            </div>
+          </div>
+          <img
+            src={dncTeamMeeting}
+            alt="Equipo en reunión de trabajo"
+            loading="lazy"
+            width={512}
+            height={512}
+            className="hidden md:block w-40 h-40 rounded-full object-cover flex-shrink-0"
+          />
+        </div>
       </Card>
     </div>
   );
