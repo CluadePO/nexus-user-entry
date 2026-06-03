@@ -868,7 +868,12 @@ const Inscripcion: React.FC = () => {
 
               return (
                 <div className="mb-8">
-                  <h2 className="text-lg font-semibold text-muted-foreground mb-4">Precontratos modulares del cliente</h2>
+                  <h2 className="text-lg font-semibold text-muted-foreground mb-1">Precontratos modulares del cliente</h2>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    {hasAny
+                      ? 'Este cliente posee cursos modulares activos. Puedes asociar este curso a un módulo existente o crear uno nuevo.'
+                      : 'Este cliente aún no posee cursos modulares. Puedes crear un nuevo módulo para asociar este curso precontrato modular.'}
+                  </p>
                   {hasAny ? (
                     <div className="border rounded-lg overflow-hidden">
                       <table className="w-full text-sm">
