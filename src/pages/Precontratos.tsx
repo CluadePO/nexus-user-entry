@@ -696,7 +696,7 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
       </div>
 
       <Dialog open={docsModalOpen} onOpenChange={setDocsModalOpen}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-2xl">
           <DialogHeader>
             <DialogTitle>Cargar documentos OTEC</DialogTitle>
           </DialogHeader>
@@ -705,20 +705,24 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
               const doc = docsOtec[d.key];
               const inputId = `upload-doc-otec-${d.key}`;
               return (
-                <div key={d.key} className="flex items-center gap-2 border rounded-lg p-3">
-                  <div className="flex-1 min-w-0">
+                <div key={d.key} className="border rounded-lg p-3 space-y-2">
+                  <div className="flex items-center justify-between gap-2">
                     <p className="text-sm font-medium text-foreground">{d.label}</p>
-                    <p className="text-xs text-muted-foreground truncate">{doc ? doc.name : 'Ningún archivo cargado'}</p>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <Button variant="outline" size="sm" onClick={() => document.getElementById(inputId)?.click()}>
+                        <Upload className="h-3.5 w-3.5 mr-1" />
+                        {doc ? 'Reemplazar' : 'Cargar'}
+                      </Button>
+                      {doc && (
+                        <Button variant="ghost" size="sm" onClick={() => handleDocDownload(d.key)}>
+                          <Download className="h-3.5 w-3.5" />
+                        </Button>
+                      )}
+                    </div>
                   </div>
-                  <Button variant="outline" size="sm" onClick={() => document.getElementById(inputId)?.click()}>
-                    <Upload className="h-3.5 w-3.5 mr-1" />
-                    {doc ? 'Reemplazar' : 'Cargar'}
-                  </Button>
-                  {doc && (
-                    <Button variant="ghost" size="sm" onClick={() => handleDocDownload(d.key)}>
-                      <Download className="h-3.5 w-3.5" />
-                    </Button>
-                  )}
+                  <p className="text-xs text-muted-foreground break-all">
+                    {doc ? doc.name : 'Ningún archivo cargado'}
+                  </p>
                   <input
                     id={inputId}
                     type="file"
@@ -739,6 +743,7 @@ const PrecontratoDetailView: React.FC<{ precontrato: PrecontratoNormal; onBack: 
           </div>
         </DialogContent>
       </Dialog>
+
 
       {/* Precontrato - Participantes */}
       <div className="space-y-3">
