@@ -35,7 +35,7 @@ const DNCOnboarding: React.FC<Props> = ({ onBack, onNew }) => {
       <Card className="p-6 bg-primary/5 border-primary/20">
         <h1 className="text-2xl font-bold text-foreground">¿Qué es una Detección de Necesidades de Capacitación?</h1>
         <p className="text-sm text-muted-foreground mt-2 max-w-3xl">
-          Una herramienta clave para identificar brechas de conocimiento y diseñar planes de formación con foco real en lo que tu organización necesita.
+          Es la herramienta que permite identificar brechas de conocimiento y diseñar un plan de formación enfocado en lo que tu organización realmente necesita.
         </p>
       </Card>
 
@@ -44,17 +44,17 @@ const DNCOnboarding: React.FC<Props> = ({ onBack, onNew }) => {
         <Card className="p-5">
           <h3 className="font-semibold text-foreground mb-2">¿Qué es una DNC?</h3>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            La <strong className="text-foreground">Detección de Necesidades de Capacitación (DNC)</strong> es un proceso sistemático que permite identificar las brechas entre las competencias actuales del equipo y las que se requieren para cumplir los objetivos del negocio. Se realiza mediante encuestas dirigidas a colaboradores y jefaturas, asegurando una mirada integral de las necesidades formativas.
+            La <strong className="text-foreground">Detección de Necesidades de Capacitación (DNC)</strong> es un proceso sistemático que ayuda a identificar la brecha entre las competencias actuales de tu equipo y las que tu negocio necesita para crecer. Se ejecuta mediante encuestas dirigidas a colaboradores y jefaturas, entregando una visión completa y confiable de las necesidades formativas.
           </p>
         </Card>
         <Card className="p-5">
           <h3 className="font-semibold text-foreground mb-2">¿Para qué sirve?</h3>
           <ul className="text-sm text-muted-foreground space-y-1.5 list-disc pl-5">
-            <li>Priorizar inversiones en capacitación según impacto real.</li>
-            <li>Alinear el plan formativo con la estrategia de la empresa.</li>
-            <li>Detectar áreas críticas que requieren intervención inmediata.</li>
-            <li>Justificar presupuestos de formación con datos concretos.</li>
-            <li>Mejorar el desempeño y la satisfacción del equipo.</li>
+            <li>Prioriza las inversiones en capacitación según el impacto real en el negocio.</li>
+            <li>Alinea el plan formativo con la estrategia de tu empresa.</li>
+            <li>Detecta áreas críticas que requieren atención inmediata.</li>
+            <li>Justifica tu presupuesto de formación con datos concretos.</li>
+            <li>Mejora el desempeño y la satisfacción de tu equipo.</li>
           </ul>
         </Card>
       </div>
