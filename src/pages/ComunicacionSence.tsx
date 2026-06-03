@@ -204,7 +204,7 @@ const ComunicacionSence: React.FC = () => {
       {/* Results badge */}
       <div className="flex items-center gap-2 flex-wrap">
         <Badge className="bg-primary text-primary-foreground rounded-full px-4 py-1 text-sm font-medium">
-          {appliedTags.length > 0 ? `${cursosFiltrados.length} de ${mockCursos.length}` : mockCursos.length} cursos cargados
+          {mockCursos.length} cursos cargados
         </Badge>
       </div>
 
