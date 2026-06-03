@@ -213,7 +213,7 @@ const ComunicacionSence: React.FC = () => {
                     </th>
                     <th className="p-2 text-left font-medium text-muted-foreground w-[18%]">
                       <span className="inline-flex items-center gap-1">
-                        <span>No comunicar</span>
+                        <span>Acciónes</span>
                         <span className="inline-flex items-center rounded-full bg-blue-600 px-1 py-0.5 text-[8px] font-bold leading-none text-white shadow-sm">C1CCOM5</span>
                       </span>
                     </th>
@@ -251,9 +251,9 @@ const ComunicacionSence: React.FC = () => {
                             onClick={() => toggleNoComunicar(curso.sc)}
                           >
                             {excluido ? (
-                              <><EyeOff className="w-3 h-3" /> Excluido</>
+                              <><EyeOff className="w-3 h-3" /> Liberar</>
                             ) : (
-                              <><Ban className="w-3 h-3" /> Excluir</>
+                              <><Ban className="w-3 h-3" /> Restringir</>
                             )}
                           </Button>
                         </td>
