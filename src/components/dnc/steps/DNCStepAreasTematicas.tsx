@@ -223,33 +223,28 @@ const DNCStepAreasTematicas: React.FC<Props> = ({ state, onChange, onNext, onBac
                     </PopoverTrigger>
                     <PopoverContent className="p-2 w-[--radix-popover-trigger-width]" align="start">
                       {(() => {
-                        const tematicasLimitReached = tematicasSel.length >= MAX_TEMATICAS;
                         const allChecked = a.tematicas.every(t => tematicasSel.includes(t));
-                        const disableSelectAll = !allChecked && a.tematicas.length > MAX_TEMATICAS;
                         return (
                           <>
                             <button
                               type="button"
-                              disabled={disableSelectAll}
                               onClick={() => toggleAllTematicas(a.id, a.tematicas)}
-                              className="w-full flex items-center gap-2 px-2 py-1.5 rounded hover:bg-muted text-left text-sm font-medium border-b mb-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="w-full flex items-center gap-2 px-2 py-1.5 rounded hover:bg-muted text-left text-sm font-medium border-b mb-1"
                             >
-                              <Checkbox checked={allChecked} disabled={disableSelectAll} />
+                              <Checkbox checked={allChecked} />
                               <span className="text-primary">Seleccionar todas las temáticas</span>
                             </button>
                             <div className="space-y-1 max-h-64 overflow-auto">
                               {a.tematicas.map(t => {
                                 const checked = tematicasSel.includes(t);
-                                const disabled = !checked && tematicasLimitReached;
                                 return (
                                   <button
                                     key={t}
                                     type="button"
-                                    disabled={disabled}
                                     onClick={() => toggleTematica(a.id, t)}
-                                    className="w-full flex items-center gap-2 px-2 py-1.5 rounded hover:bg-muted text-left text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="w-full flex items-center gap-2 px-2 py-1.5 rounded hover:bg-muted text-left text-sm"
                                   >
-                                    <Checkbox checked={checked} disabled={disabled} />
+                                    <Checkbox checked={checked} />
                                     <span>{t}</span>
                                   </button>
                                 );
