@@ -242,8 +242,12 @@ const LiquidacionSence: React.FC = () => {
                   </div>
                 </th>
                 <th className="p-2 text-left font-medium text-muted-foreground w-[9%]">
+                  S.C <span className="text-xs">▾</span>
+                </th>
+                <th className="p-2 text-left font-medium text-muted-foreground w-[9%]">
                   ID Sence <span className="text-xs">▾</span>
                 </th>
+
                 <th className="p-2 text-left font-medium text-muted-foreground w-[9%]">
                   O.C <span className="text-xs">▾</span>
                 </th>
