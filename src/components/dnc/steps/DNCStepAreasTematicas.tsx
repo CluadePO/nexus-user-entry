@@ -83,7 +83,7 @@ const DNCStepAreasTematicas: React.FC<Props> = ({ state, onChange, onNext, onBac
     onChange({ ...current, [id]: { ...current[id], ...partial } });
   };
 
-  const activeAreasCount = AREAS.filter(a => current[a.id]?.selected).length;
+  const activeAreasCount = AREAS.filter(a => current[a.id]?.selected && (current[a.id]?.tematicas?.length ?? 0) >= 1).length;
   const areasLimitReached = activeAreasCount >= MAX_AREAS;
 
   const toggleArea = (id: string) => {
