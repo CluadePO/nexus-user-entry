@@ -183,7 +183,7 @@ const LiquidacionSence: React.FC = () => {
               ))}
               <input
                 type="text"
-                placeholder={searchTags.length >= MAX_TAGS ? `Máximo ${MAX_TAGS} ID Sence` : (searchTags.length === 0 ? 'Ingresa ID Sence y presiona espacio para agregar...' : '')}
+                placeholder={searchTags.length >= MAX_TAGS ? `Máximo ${MAX_TAGS} S.C` : (searchTags.length === 0 ? 'Ingresa S.C y presiona espacio para agregar...' : '')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyDown={(e) => {
