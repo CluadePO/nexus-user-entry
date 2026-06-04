@@ -77,8 +77,9 @@ const LiquidacionSence: React.FC = () => {
   };
 
   const cursosFiltrados = appliedTags.length > 0
-    ? mockCursos.filter(c => appliedTags.some(t => c.idSence.toLowerCase().includes(t.toLowerCase())))
+    ? mockCursos.filter(c => appliedTags.some(t => c.sc.toLowerCase().includes(t.toLowerCase())))
     : mockCursos;
+
 
   const toggleNoComunicar = (id: string) => {
     setNoComunicar(prev =>
