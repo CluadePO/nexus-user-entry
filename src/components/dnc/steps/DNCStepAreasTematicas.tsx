@@ -110,7 +110,7 @@ const DNCStepAreasTematicas: React.FC<Props> = ({ state, onChange, onNext, onBac
   };
 
   const selectedAreas = AREAS.filter(a => current[a.id]?.selected);
-  const activeCount = selectedAreas.length;
+  const activeCount = activeAreasCount;
   const faltan = Math.max(0, MIN_AREAS - activeCount);
   const exceso = Math.max(0, activeCount - MAX_AREAS);
 
