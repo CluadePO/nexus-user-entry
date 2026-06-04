@@ -50,11 +50,48 @@ const ALCANCES: { id: Alcance; title: string; desc: string }[] = [
   { id: 'area', title: 'Gerencia', desc: 'Agrupa por unidad organizacional' },
 ];
 
-const MODELOS: { id: ModeloAsignacion; title: string; desc: string; nodes: number; tags: string[] }[] = [
-  { id: 1, title: 'Modelo 1', desc: 'Jefatura evalúa a sus colaboradores.', nodes: 2, tags: ['Jefatura', 'Colaborador'] },
-  { id: 2, title: 'Modelo 2', desc: 'Jefatura evalúa a colaboradores + autoevaluación de colaboradores.', nodes: 3, tags: ['Jefatura', 'Colaborador'] },
-  { id: 3, title: 'Modelo 3', desc: 'Jefatura evalúa a colaboradores + autoevaluación de jefatura.', nodes: 3, tags: ['Jefatura', 'Colaborador'] },
-  { id: 4, title: 'Modelo 4', desc: 'Evaluación completa: jefatura, colaboradores y autoevaluaciones.', nodes: 4, tags: ['Jefatura', 'Colaborador'] },
+type Tag = { label: string; tone: 'blue' | 'green' | 'pink' };
+const TAG_CLASSES: Record<Tag['tone'], string> = {
+  blue: 'border-sky-300 bg-sky-50 text-sky-700',
+  green: 'border-emerald-300 bg-emerald-50 text-emerald-700',
+  pink: 'border-rose-300 bg-rose-50 text-rose-700',
+};
+
+const MODELOS: { id: ModeloAsignacion; title: string; desc: string; tags: Tag[] }[] = [
+  {
+    id: 1,
+    title: 'Solo jefatura evalúa',
+    desc: 'Jefatura define las necesidades de capacitación de su equipo.',
+    tags: [{ label: 'Jefatura asigna a colaboradores', tone: 'blue' }],
+  },
+  {
+    id: 2,
+    title: 'Participación colaborativa',
+    desc: 'Combina asignación por jefatura con participación activa de colaboradores.',
+    tags: [
+      { label: 'Jefatura asigna a colaboradores', tone: 'blue' },
+      { label: 'Colaborador se autogestiona', tone: 'green' },
+    ],
+  },
+  {
+    id: 3,
+    title: 'Jefatura con autoevaluación',
+    desc: 'La jefatura evalúa necesidades de su equipo y también propias.',
+    tags: [
+      { label: 'Jefatura asigna a colaboradores', tone: 'blue' },
+      { label: 'Jefatura se autoevalúa', tone: 'pink' },
+    ],
+  },
+  {
+    id: 4,
+    title: 'Participación completa',
+    desc: 'Modelo más completo y participativo para levantamiento de necesidades.',
+    tags: [
+      { label: 'Jefatura asigna a colaboradores', tone: 'blue' },
+      { label: 'Colaborador se autogestiona', tone: 'green' },
+      { label: 'Jefatura se autoevalúa', tone: 'pink' },
+    ],
+  },
 ];
 
 const TEMPLATE_COLUMNS = [
@@ -112,9 +149,14 @@ const DNCStepParticipantes: React.FC<Props> = ({
   const [fileName, setFileName] = useState<string | null>(null);
   const [draftRows, setDraftRows] = useState<ParticipanteSimple[]>([]);
   const [reviewMode, setReviewMode] = useState<'review' | 'view'>('review');
+  const [submitted, setSubmitted] = useState(false);
 
   const errors = useMemo(() => draftRows.map(validateRow), [draftRows]);
   const errorCount = errors.filter(e => e.rut || e.nombres || e.apellidoPaterno || e.email || e.rutJefatura).length;
+
+  const showAlcanceErr = submitted && !alcance;
+  const showModeloErr = submitted && !modelo;
+  const showFileErr = submitted && participants.length === 0;
 
   const handleFile = async (file: File) => {
     if (!file.name.match(/\.(xlsx|xls|csv)$/i)) {
@@ -164,7 +206,11 @@ const DNCStepParticipantes: React.FC<Props> = ({
     const f = e.dataTransfer.files?.[0]; if (f) handleFile(f);
   };
 
-  
+  const handleNext = () => {
+    setSubmitted(true);
+    if (!alcance || !modelo || participants.length === 0) return;
+    onNext();
+  };
 
   return (
     <div className="space-y-6">
@@ -182,7 +228,11 @@ const DNCStepParticipantes: React.FC<Props> = ({
               onClick={() => onAlcanceChange(a.id)}
               className={cn(
                 'text-left p-4 rounded-lg border-2 transition-all bg-background',
-                alcance === a.id ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/40'
+                alcance === a.id
+                  ? 'border-primary bg-primary/5'
+                  : showAlcanceErr
+                    ? 'border-destructive'
+                    : 'border-border hover:border-primary/40'
               )}
             >
               <p className="font-semibold text-sm text-foreground">{a.title}</p>
@@ -190,13 +240,18 @@ const DNCStepParticipantes: React.FC<Props> = ({
             </button>
           ))}
         </div>
+        {showAlcanceErr && (
+          <p className="text-xs text-destructive flex items-center gap-1.5">
+            <AlertCircle className="w-3.5 h-3.5" /> Selecciona una opción para continuar
+          </p>
+        )}
       </Card>
 
       {/* Modelo de asignación */}
       <Card className="p-6 space-y-4">
         <div>
           <h2 className="text-lg font-bold text-foreground">Modelo de asignación de cursos</h2>
-          <p className="text-sm text-muted-foreground">Define quién puede asignar cursos a quién.</p>
+          <p className="text-sm text-muted-foreground">Define quién puede proponer o asignar necesidades de capacitación:</p>
         </div>
         <div className="grid grid-cols-4 gap-3">
           {MODELOS.map(m => (
@@ -205,66 +260,80 @@ const DNCStepParticipantes: React.FC<Props> = ({
               type="button"
               onClick={() => onModeloChange(m.id)}
               className={cn(
-                'text-left p-4 rounded-lg border-2 transition-all bg-background space-y-3',
-                modelo === m.id ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/40'
+                'text-left p-4 rounded-lg border-2 transition-all bg-background flex flex-col gap-3 h-full',
+                modelo === m.id
+                  ? 'border-primary bg-primary/5'
+                  : showModeloErr
+                    ? 'border-destructive'
+                    : 'border-border hover:border-primary/40'
               )}
             >
               <div>
                 <p className="font-semibold text-sm text-foreground">{m.title}</p>
-                <p className="text-xs text-muted-foreground mt-1 leading-snug min-h-[40px]">{m.desc}</p>
+                <p className="text-xs text-muted-foreground mt-1 leading-snug">{m.desc}</p>
               </div>
-              {/* Diagrama */}
-              <div className="flex items-center gap-1 py-3">
-                {Array.from({ length: m.nodes }).map((_, i) => (
-                  <React.Fragment key={i}>
-                    {i > 0 && <span className="h-px w-2 bg-primary/40 flex-shrink-0" />}
-                    <span className="h-2 flex-1 rounded-full bg-primary/70" />
-                  </React.Fragment>
-                ))}
-              </div>
-              <div className="flex flex-wrap gap-1">
+              <div className="flex flex-col gap-2 mt-auto">
                 {m.tags.map(t => (
-                  <span key={t} className="text-[10px] px-2 py-0.5 rounded bg-primary/10 text-primary">{t}</span>
+                  <span
+                    key={t.label}
+                    className={cn(
+                      'text-[11px] text-center px-2 py-1.5 rounded border font-medium leading-tight',
+                      TAG_CLASSES[t.tone]
+                    )}
+                  >
+                    {t.label}
+                  </span>
                 ))}
               </div>
             </button>
           ))}
         </div>
+        {showModeloErr && (
+          <p className="text-xs text-destructive flex items-center gap-1.5">
+            <AlertCircle className="w-3.5 h-3.5" /> Selecciona una opción para continuar
+          </p>
+        )}
       </Card>
 
       {/* Carga de nómina */}
       <Card className="p-6 space-y-4">
-        <h2 className="text-lg font-bold text-foreground">Carga la nómina de participantes</h2>
+        <h2 className="text-lg font-bold text-foreground">Carga la lista de participantes</h2>
 
         <div className="space-y-2">
-          <p className="text-sm font-medium text-foreground">Paso 1 · Descarga la plantilla</p>
+          <p className="text-sm font-medium text-foreground">Paso 1 · Descarga y completa la plantilla</p>
           <Button variant="outline" size="sm" className="gap-2" onClick={downloadTemplate}>
             <Download className="w-4 h-4" /> Descargar plantilla Excel
           </Button>
-          <Alert className="mt-2">
-            <AlertDescription className="text-xs">
-              Columnas: <strong>Rut, Nombres, Apellido Paterno, Apellido Materno, Email, Cargo, Gerencia, Departamento, Rut de Jefatura (Si aplica), Tipo de participante</strong>. El tipo debe ser 'Colaborador' o 'Jefatura'. El Rut de Jefatura es obligatorio para Colaboradores.
-            </AlertDescription>
-          </Alert>
         </div>
 
         <div className="space-y-2">
-          <p className="text-sm font-medium text-foreground">Paso 2 · Sube tu archivo</p>
+          <p className="text-sm font-medium text-foreground">Paso 2 · Sube la plantilla completada</p>
           {participants.length === 0 ? (
-            <div
-              onClick={() => fileRef.current?.click()}
-              onDragOver={(e) => { e.preventDefault(); setDrag(true); }}
-              onDragLeave={() => setDrag(false)}
-              onDrop={onDrop}
-              className={cn(
-                'border-2 border-dashed rounded-lg p-10 text-center cursor-pointer transition-colors',
-                drag ? 'border-primary bg-primary/10' : 'border-border hover:border-primary/50 hover:bg-muted/40'
+            <>
+              <div
+                onClick={() => fileRef.current?.click()}
+                onDragOver={(e) => { e.preventDefault(); setDrag(true); }}
+                onDragLeave={() => setDrag(false)}
+                onDrop={onDrop}
+                className={cn(
+                  'border-2 border-dashed rounded-lg p-10 text-center cursor-pointer transition-colors',
+                  drag
+                    ? 'border-primary bg-primary/10'
+                    : showFileErr
+                      ? 'border-destructive bg-destructive/5'
+                      : 'border-border hover:border-primary/50 hover:bg-muted/40'
+                )}
+              >
+                <Inbox className="w-10 h-10 mx-auto text-muted-foreground mb-3" />
+                <p className="font-medium text-sm text-foreground">Haz clic o arrastra el archivo aquí para subirlo</p>
+                <p className="text-xs text-muted-foreground mt-1">Formatos aceptados: .xlsx, .xls, .csv</p>
+              </div>
+              {showFileErr && (
+                <p className="text-xs text-destructive flex items-center gap-1.5">
+                  <AlertCircle className="w-3.5 h-3.5" /> Carga un archivo válido para continuar
+                </p>
               )}
-            >
-              <Inbox className="w-10 h-10 mx-auto text-muted-foreground mb-3" />
-              <p className="font-medium text-sm text-foreground">Haz clic o arrastra el archivo aquí para subirlo</p>
-              <p className="text-xs text-muted-foreground mt-1">Formatos aceptados: .xlsx, .xls, .csv</p>
-            </div>
+            </>
           ) : (
             <div className="flex items-center justify-between p-4 rounded-lg border border-emerald-200 bg-emerald-50/60">
               <div className="flex items-center gap-3">
@@ -299,17 +368,9 @@ const DNCStepParticipantes: React.FC<Props> = ({
 
       <div className="flex justify-between">
         <Button variant="outline" className="gap-2" onClick={onBack}>
-          <ArrowLeft className="w-4 h-4" /> Revisar paso anterior
+          <ArrowLeft className="w-4 h-4" /> Volver
         </Button>
-        <Button
-          className="gap-2"
-          onClick={() => {
-            if (!alcance) { toast.error('Selecciona el alcance del estudio'); return; }
-            if (!modelo) { toast.error('Selecciona el modelo de asignación'); return; }
-            if (participants.length === 0) { toast.error('Debes cargar la nómina de participantes'); return; }
-            onNext();
-          }}
-        >
+        <Button className="gap-2" onClick={handleNext}>
           Siguiente <ArrowRight className="w-4 h-4" />
         </Button>
       </div>
