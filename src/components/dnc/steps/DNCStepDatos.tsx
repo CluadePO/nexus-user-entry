@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { ArrowRight, ArrowLeft, Building2, HardHat, FileText, Download, AlertCircle, XCircle } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Building2, HardHat, FileText, Download, AlertCircle, XCircle, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 export interface EmpresaDataStep1 {
@@ -102,7 +102,11 @@ const DocBlock: React.FC<DocBlockProps> = ({ title, acceptLabel, scrolled, check
           <span>{title}</span>
           <Download className="w-3.5 h-3.5 cursor-pointer hover:opacity-70" />
         </div>
-        {!scrolled && (
+        {scrolled ? (
+          <span className="text-xs px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/30 flex items-center gap-1">
+            <CheckCircle2 className="w-3 h-3" /> Leído
+          </span>
+        ) : (
           <span className="text-xs px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-1">
             <AlertCircle className="w-3 h-3" /> Desplázate hasta el final
           </span>
