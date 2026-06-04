@@ -288,7 +288,9 @@ const LiquidacionSence: React.FC = () => {
                         />
                       </div>
                     </td>
-                    <td className="p-2 font-medium">{curso.idSence}</td>
+                    <td className="p-2 font-medium">{curso.sc}</td>
+                    <td className="p-2">{curso.idSence}</td>
+
                     <td className="p-2">{curso.oc}</td>
                     <td className="p-2">{curso.curso}</td>
                     <td className="p-2 text-muted-foreground truncate">{curso.empresa}</td>
