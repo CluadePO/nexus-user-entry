@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Calendar, PlusCircle, ArrowRight, Info, Search, X, Ban, EyeOff, AlertCircle } from 'lucide-react';
 
 interface CursoLiquidacion {
+  sc: string;
   idSence: string;
   oc: string;
   curso: string;
@@ -16,11 +17,12 @@ interface CursoLiquidacion {
 }
 
 const mockCursos: CursoLiquidacion[] = [
-  { idSence: '6807337', oc: '2099116', curso: 'Normal', empresa: 'SOCIEDAD DE MEDICINA Y REHABILITACION LAS LILAS ...', dias: 40, mtf: '$61.600', fechaMax: '13/07/2026' },
-  { idSence: '6807412', oc: '2099228', curso: 'Normal', empresa: 'CONSTRUCTORA ANDINA SPA', dias: 22, mtf: '$185.300', fechaMax: '18/07/2026' },
-  { idSence: '6807589', oc: '2099415', curso: 'Precontrato', empresa: 'TRANSPORTES DEL SUR LIMITADA', dias: 15, mtf: '$92.450', fechaMax: '20/07/2026' },
-  { idSence: '6807701', oc: '2099517', curso: 'Normal', empresa: 'AGRICOLA VALLE HERMOSO S.A.', dias: 30, mtf: '$310.000', fechaMax: '25/07/2026' },
+  { sc: '2074555', idSence: '6807337', oc: '2099116', curso: 'Normal', empresa: 'SOCIEDAD DE MEDICINA Y REHABILITACION LAS LILAS ...', dias: 40, mtf: '$61.600', fechaMax: '13/07/2026' },
+  { sc: '2078017', idSence: '6807412', oc: '2099228', curso: 'Normal', empresa: 'CONSTRUCTORA ANDINA SPA', dias: 22, mtf: '$185.300', fechaMax: '18/07/2026' },
+  { sc: '2078959', idSence: '6807589', oc: '2099415', curso: 'Precontrato', empresa: 'TRANSPORTES DEL SUR LIMITADA', dias: 15, mtf: '$92.450', fechaMax: '20/07/2026' },
+  { sc: '2078960', idSence: '6807701', oc: '2099517', curso: 'Normal', empresa: 'AGRICOLA VALLE HERMOSO S.A.', dias: 30, mtf: '$310.000', fechaMax: '25/07/2026' },
 ];
+
 
 const LiquidacionSence: React.FC = () => {
   const [fechaInicio, setFechaInicio] = useState('2026-06-02');
