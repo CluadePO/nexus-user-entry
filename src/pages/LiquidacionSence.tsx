@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Calendar, PlusCircle, ArrowRight, Info, Search, X, Ban, EyeOff, AlertCircle } from 'lucide-react';
 
 interface CursoLiquidacion {
+  sc: string;
   idSence: string;
   oc: string;
   curso: string;
@@ -16,11 +17,12 @@ interface CursoLiquidacion {
 }
 
 const mockCursos: CursoLiquidacion[] = [
-  { idSence: '6807337', oc: '2099116', curso: 'Normal', empresa: 'SOCIEDAD DE MEDICINA Y REHABILITACION LAS LILAS ...', dias: 40, mtf: '$61.600', fechaMax: '13/07/2026' },
-  { idSence: '6807412', oc: '2099228', curso: 'Normal', empresa: 'CONSTRUCTORA ANDINA SPA', dias: 22, mtf: '$185.300', fechaMax: '18/07/2026' },
-  { idSence: '6807589', oc: '2099415', curso: 'Precontrato', empresa: 'TRANSPORTES DEL SUR LIMITADA', dias: 15, mtf: '$92.450', fechaMax: '20/07/2026' },
-  { idSence: '6807701', oc: '2099517', curso: 'Normal', empresa: 'AGRICOLA VALLE HERMOSO S.A.', dias: 30, mtf: '$310.000', fechaMax: '25/07/2026' },
+  { sc: '2074555', idSence: '6807337', oc: '2099116', curso: 'Normal', empresa: 'SOCIEDAD DE MEDICINA Y REHABILITACION LAS LILAS ...', dias: 40, mtf: '$61.600', fechaMax: '13/07/2026' },
+  { sc: '2078017', idSence: '6807412', oc: '2099228', curso: 'Normal', empresa: 'CONSTRUCTORA ANDINA SPA', dias: 22, mtf: '$185.300', fechaMax: '18/07/2026' },
+  { sc: '2078959', idSence: '6807589', oc: '2099415', curso: 'Precontrato', empresa: 'TRANSPORTES DEL SUR LIMITADA', dias: 15, mtf: '$92.450', fechaMax: '20/07/2026' },
+  { sc: '2078960', idSence: '6807701', oc: '2099517', curso: 'Normal', empresa: 'AGRICOLA VALLE HERMOSO S.A.', dias: 30, mtf: '$310.000', fechaMax: '25/07/2026' },
 ];
+
 
 const LiquidacionSence: React.FC = () => {
   const [fechaInicio, setFechaInicio] = useState('2026-06-02');
@@ -75,8 +77,9 @@ const LiquidacionSence: React.FC = () => {
   };
 
   const cursosFiltrados = appliedTags.length > 0
-    ? mockCursos.filter(c => appliedTags.some(t => c.idSence.toLowerCase().includes(t.toLowerCase())))
+    ? mockCursos.filter(c => appliedTags.some(t => c.sc.toLowerCase().includes(t.toLowerCase())))
     : mockCursos;
+
 
   const toggleNoComunicar = (id: string) => {
     setNoComunicar(prev =>
@@ -180,7 +183,7 @@ const LiquidacionSence: React.FC = () => {
               ))}
               <input
                 type="text"
-                placeholder={searchTags.length >= MAX_TAGS ? `Máximo ${MAX_TAGS} ID Sence` : (searchTags.length === 0 ? 'Ingresa ID Sence y presiona espacio para agregar...' : '')}
+                placeholder={searchTags.length >= MAX_TAGS ? `Máximo ${MAX_TAGS} S.C` : (searchTags.length === 0 ? 'Ingresa S.C y presiona espacio para agregar...' : '')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyDown={(e) => {
@@ -239,8 +242,12 @@ const LiquidacionSence: React.FC = () => {
                   </div>
                 </th>
                 <th className="p-2 text-left font-medium text-muted-foreground w-[9%]">
+                  S.C <span className="text-xs">▾</span>
+                </th>
+                <th className="p-2 text-left font-medium text-muted-foreground w-[9%]">
                   ID Sence <span className="text-xs">▾</span>
                 </th>
+
                 <th className="p-2 text-left font-medium text-muted-foreground w-[9%]">
                   O.C <span className="text-xs">▾</span>
                 </th>
@@ -281,7 +288,9 @@ const LiquidacionSence: React.FC = () => {
                         />
                       </div>
                     </td>
-                    <td className="p-2 font-medium">{curso.idSence}</td>
+                    <td className="p-2 font-medium">{curso.sc}</td>
+                    <td className="p-2">{curso.idSence}</td>
+
                     <td className="p-2">{curso.oc}</td>
                     <td className="p-2">{curso.curso}</td>
                     <td className="p-2 text-muted-foreground truncate">{curso.empresa}</td>
