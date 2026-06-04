@@ -29,7 +29,7 @@ const DNCOnboarding: React.FC<Props> = ({ onBack, onNew }) => {
       </Breadcrumb>
 
       <Button variant="ghost" size="sm" className="gap-2 -ml-2" onClick={onBack}>
-        <ArrowLeft className="w-4 h-4" /> Volver al listado
+        <ArrowLeft className="w-4 h-4" /> Volver
       </Button>
 
       {/* Hero */}
