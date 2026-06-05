@@ -2672,15 +2672,6 @@ const Encuestas: React.FC = () => {
       },
     },
     {
-      title: nowrapTitle('Tasa Respuesta'),
-      dataIndex: 'pct',
-      width: 120,
-      align: 'center' as const,
-      render: (_: any, row: EvalRow) => (
-        <ProgressCell contestadas={row.contestadas} participantes={row.participantes} />
-      ),
-    },
-    {
       title: nowrapTitle('Acciones'),
       width: 70,
       align: 'center' as const,
