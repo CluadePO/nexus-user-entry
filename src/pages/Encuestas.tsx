@@ -2812,12 +2812,6 @@ const Encuestas: React.FC = () => {
 
     return (
       <div>
-        {/* Pills de tipología */}
-        <div className="flex items-center gap-2 mb-4 flex-wrap">
-          {renderPill('all', 'Todas', counts.all)}
-          {renderPill('Satisfacción', 'Satisfacción', counts.Satisfacción)}
-          {renderPill('Transferencia', 'Transferencia', counts.Transferencia)}
-        </div>
 
         {/* Toolbar */}
         <div className="flex items-center justify-between mb-3 flex-wrap gap-3">
