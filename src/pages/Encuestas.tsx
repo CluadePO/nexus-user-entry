@@ -830,7 +830,7 @@ const AsignarModal: React.FC<{
         <div style={{ background: '#F0FDF9', border: '1px solid #99F6E4', borderRadius: 8, padding: '12px 16px', marginBottom: 20, display: 'flex', gap: 12 }}>
           <BookOpen size={20} color={TEAL} weight="regular" style={{ flexShrink: 0, marginTop: 2 }} />
           <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-            <span style={{ fontSize: 13, fontWeight: 600, color: '#111827' }}>N° Inscripción: {row.inscripcion}</span>
+            <span style={{ fontSize: 13, fontWeight: 600, color: '#111827' }}>Id Inscripción: {row.inscripcion}</span>
             <span style={{ fontSize: 13, color: '#374151', wordBreak: 'break-word' }}>Curso: {row.curso}</span>
           </div>
         </div>
@@ -1778,7 +1778,7 @@ const AsignarEncuestasTab: React.FC = () => {
   const allColumns: any[] = [
     {
       key: 'inscripcion',
-      title: headerLabel('N° Inscripción'),
+      title: headerLabel('Id Inscripción'),
       dataIndex: 'inscripcion', width: 90,
       render: (v: number) => <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 500, color: '#111827' }}>{v}</span>,
     },
@@ -1790,7 +1790,7 @@ const AsignarEncuestasTab: React.FC = () => {
     },
     {
       key: 'sencenet',
-      title: headerLabel('Código Sencenet'),
+      title: headerLabel('Id Sence'),
       dataIndex: 'sencenet', width: 110,
       render: (v: number | null) => <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>{v ?? '—'}</span>,
     },
@@ -1840,7 +1840,7 @@ const AsignarEncuestasTab: React.FC = () => {
     },
     {
       key: 'modalidad',
-      title: headerLabel('Modalidad'),
+      title: headerLabel('Tipo Carga'),
       dataIndex: 'modalidad', width: 90, align: 'center' as const,
       render: (v: 'E-Learning' | 'Presencial') => {
         const elearn = v === 'E-Learning';
@@ -2492,7 +2492,7 @@ const Encuestas: React.FC = () => {
   };
 
   const exportRows = filteredRows.map((r) => ({
-    'N° Inscripción': r.inscripcion,
+    'Id Inscripción': r.inscripcion,
     'SC': r.sc ?? '',
     'Sencenet': r.sencenet ?? '',
     'Nombre Curso': r.curso,
@@ -2577,7 +2577,7 @@ const Encuestas: React.FC = () => {
   const nowrapTitle = (text: string) => <span style={{ whiteSpace: 'nowrap' }}>{text}</span>;
   const columns = [
     {
-      title: nowrapTitle('N° Inscripción'),
+      title: nowrapTitle('Id Inscripción'),
       dataIndex: 'inscripcion',
       width: 120,
       render: (v: number) => <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 500, color: '#111827' }}>{v}</span>,
@@ -2589,7 +2589,7 @@ const Encuestas: React.FC = () => {
       render: (v: number | null) => <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>{v ?? '—'}</span>,
     },
     {
-      title: nowrapTitle('Código Sencenet'),
+      title: nowrapTitle('Id Sence'),
       dataIndex: 'sencenet',
       width: 120,
       render: (v: number | null) => <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>{v ?? '—'}</span>,
@@ -2632,7 +2632,7 @@ const Encuestas: React.FC = () => {
       },
     },
     {
-      title: nowrapTitle('Modalidad'),
+      title: nowrapTitle('Tipo Carga'),
       dataIndex: 'tipoCarga',
       width: 90,
       render: (v: string) => (
