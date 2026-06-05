@@ -2828,23 +2828,8 @@ const Encuestas: React.FC = () => {
               allowClear
             />
             <div className="flex items-center gap-2">
-              <ExportButton icon={<FileCsv size={16} weight="regular" />} label="CSV" onClick={handleExportCSV} />
-              <ExportButton icon={<FileXls size={16} weight="regular" />} label="Excel" onClick={handleExportExcel} />
-              <ExportButton icon={<FilePdf size={16} weight="regular" />} label="PDF" onClick={handleExportPDF} />
             </div>
-            <div className="flex items-center gap-2">
-              <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>Mostrar</span>
-              <Select
-                value={pageSize}
-                onChange={(v) => { setPageSize(v); setPage(1); }}
-                style={{ width: 80 }}
-                options={[
-                  { value: 10, label: '10' },
-                  { value: 25, label: '25' },
-                  { value: 50, label: '50' },
-                ]}
-              />
-            </div>
+
           </div>
         </div>
 
