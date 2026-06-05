@@ -2937,7 +2937,7 @@ const Encuestas: React.FC = () => {
             Encuestas
           </h1>
           <p style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280', marginTop: 4, marginBottom: 0 }}>
-            Gestiona evaluaciones, encuestas y cursos finalizados
+            Recoge la opinión de tus colaboradores sobre sus cursos de capacitación
           </p>
         </div>
       </div>
