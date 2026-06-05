@@ -2583,7 +2583,15 @@ const Encuestas: React.FC = () => {
       render: (v: number) => <span style={{ fontFamily: 'Poppins', fontSize: 13, fontWeight: 500, color: '#111827' }}>{v}</span>,
     },
     {
-      title: nowrapTitle('Código SC'),
+      title: (
+        <Tooltip
+          title="Solicitud de Compra"
+          color="#000000"
+          overlayInnerStyle={{ color: '#FFFFFF', borderRadius: 8, fontFamily: 'Poppins', fontSize: 12 }}
+        >
+          <span style={{ whiteSpace: 'nowrap', cursor: 'help' }}>Código SC</span>
+        </Tooltip>
+      ),
       dataIndex: 'sc',
       width: 100,
       render: (v: number | null) => <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>{v ?? '—'}</span>,
@@ -2662,15 +2670,6 @@ const Encuestas: React.FC = () => {
           </Tooltip>
         );
       },
-    },
-    {
-      title: nowrapTitle('Tasa Respuesta'),
-      dataIndex: 'pct',
-      width: 120,
-      align: 'center' as const,
-      render: (_: any, row: EvalRow) => (
-        <ProgressCell contestadas={row.contestadas} participantes={row.participantes} />
-      ),
     },
     {
       title: nowrapTitle('Acciones'),
@@ -2813,12 +2812,6 @@ const Encuestas: React.FC = () => {
 
     return (
       <div>
-        {/* Pills de tipología */}
-        <div className="flex items-center gap-2 mb-4 flex-wrap">
-          {renderPill('all', 'Todas', counts.all)}
-          {renderPill('Satisfacción', 'Satisfacción', counts.Satisfacción)}
-          {renderPill('Transferencia', 'Transferencia', counts.Transferencia)}
-        </div>
 
         {/* Toolbar */}
         <div className="flex items-center justify-between mb-3 flex-wrap gap-3">
@@ -2835,23 +2828,8 @@ const Encuestas: React.FC = () => {
               allowClear
             />
             <div className="flex items-center gap-2">
-              <ExportButton icon={<FileCsv size={16} weight="regular" />} label="CSV" onClick={handleExportCSV} />
-              <ExportButton icon={<FileXls size={16} weight="regular" />} label="Excel" onClick={handleExportExcel} />
-              <ExportButton icon={<FilePdf size={16} weight="regular" />} label="PDF" onClick={handleExportPDF} />
             </div>
-            <div className="flex items-center gap-2">
-              <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>Mostrar</span>
-              <Select
-                value={pageSize}
-                onChange={(v) => { setPageSize(v); setPage(1); }}
-                style={{ width: 80 }}
-                options={[
-                  { value: 10, label: '10' },
-                  { value: 25, label: '25' },
-                  { value: 50, label: '50' },
-                ]}
-              />
-            </div>
+
           </div>
         </div>
 
@@ -2879,16 +2857,20 @@ const Encuestas: React.FC = () => {
         </div>
 
         {filteredRows.length > 0 && (
-          <div className="flex items-center justify-between mt-4 flex-wrap gap-3">
-            <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>
-              Mostrando {(page - 1) * pageSize + 1} a {Math.min(page * pageSize, filteredRows.length)} de {filteredRows.length} evaluaciones
-            </span>
+          <div className="flex items-center justify-end mt-4 flex-wrap gap-3">
             <Pagination
               current={page}
               pageSize={pageSize}
               total={filteredRows.length}
-              onChange={setPage}
-              showSizeChanger={false}
+              onChange={(p, ps) => { setPage(p); setPageSize(ps); }}
+              onShowSizeChange={(_, ps) => { setPageSize(ps); setPage(1); }}
+              showSizeChanger
+              pageSizeOptions={['10', '20', '50']}
+              showTotal={(total) => (
+                <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>
+                  Total {total} resultados
+                </span>
+              )}
             />
           </div>
         )}
@@ -2911,7 +2893,7 @@ const Encuestas: React.FC = () => {
       key: 'encuestas',
       label: (
         <span className="flex items-center gap-2" style={{ fontFamily: 'Poppins', fontSize: 14, fontWeight: 500 }}>
-          <Note size={16} weight="regular" />
+          <CheckSquare size={16} weight="regular" />
           Administrar Encuestas
         </span>
       ),
