@@ -2893,7 +2893,7 @@ const Encuestas: React.FC = () => {
       key: 'encuestas',
       label: (
         <span className="flex items-center gap-2" style={{ fontFamily: 'Poppins', fontSize: 14, fontWeight: 500 }}>
-          <Note size={16} weight="regular" />
+          <CheckSquare size={16} weight="regular" />
           Administrar Encuestas
         </span>
       ),
