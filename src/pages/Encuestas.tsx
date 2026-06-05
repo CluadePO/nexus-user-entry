@@ -2857,16 +2857,20 @@ const Encuestas: React.FC = () => {
         </div>
 
         {filteredRows.length > 0 && (
-          <div className="flex items-center justify-between mt-4 flex-wrap gap-3">
-            <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>
-              Mostrando {(page - 1) * pageSize + 1} a {Math.min(page * pageSize, filteredRows.length)} de {filteredRows.length} evaluaciones
-            </span>
+          <div className="flex items-center justify-end mt-4 flex-wrap gap-3">
             <Pagination
               current={page}
               pageSize={pageSize}
               total={filteredRows.length}
-              onChange={setPage}
-              showSizeChanger={false}
+              onChange={(p, ps) => { setPage(p); setPageSize(ps); }}
+              onShowSizeChange={(_, ps) => { setPageSize(ps); setPage(1); }}
+              showSizeChanger
+              pageSizeOptions={['10', '20', '50']}
+              showTotal={(total) => (
+                <span style={{ fontFamily: 'Poppins', fontSize: 13, color: '#6B7280' }}>
+                  Total {total} resultados
+                </span>
+              )}
             />
           </div>
         )}
