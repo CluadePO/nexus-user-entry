@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button, Tabs, Select, Input, Table, Tooltip, Popconfirm, Pagination, Modal, message, DatePicker, Segmented } from 'antd';
 import {
   Plus,
@@ -1617,6 +1618,7 @@ const TransferenciaParticipantesModal: React.FC<{
 };
 
 const AsignarEncuestasTab: React.FC = () => {
+  const navigate = useNavigate();
   const { selectedHoldingId, selectedCompanyId } = useOTICFilter();
   const currentMonthRange = (): [any, any] => [dayjs().startOf('month'), dayjs().endOf('month')];
   const [dates, setDates] = useState<any>(currentMonthRange());
@@ -2395,6 +2397,7 @@ const AsignarEncuestasTab: React.FC = () => {
                         okButtonProps={{ style: { background: TEAL, borderColor: TEAL } }}
                         onConfirm={() => {
                           const n = resendSelected.length;
+                          const encuestaId = resendModal?.row.inscripcion;
                           setResendModal(null);
                           setResendConfirmOpen(false);
                           toast.success(
@@ -2402,6 +2405,9 @@ const AsignarEncuestasTab: React.FC = () => {
                               ? `Encuesta reenviada exitosamente a ${n} participantes. ${editedCount} correos actualizados.`
                               : `Encuesta reenviada exitosamente a ${n} participantes.`
                           );
+                          if (encuestaId != null) {
+                            navigate(`/encuestas/responder/${encuestaId}`);
+                          }
                         }}
                       >
                         <Button
