@@ -1618,6 +1618,7 @@ const TransferenciaParticipantesModal: React.FC<{
 };
 
 const AsignarEncuestasTab: React.FC = () => {
+  const navigate = useNavigate();
   const { selectedHoldingId, selectedCompanyId } = useOTICFilter();
   const currentMonthRange = (): [any, any] => [dayjs().startOf('month'), dayjs().endOf('month')];
   const [dates, setDates] = useState<any>(currentMonthRange());
