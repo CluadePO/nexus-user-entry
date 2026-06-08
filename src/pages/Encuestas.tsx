@@ -2397,6 +2397,7 @@ const AsignarEncuestasTab: React.FC = () => {
                         okButtonProps={{ style: { background: TEAL, borderColor: TEAL } }}
                         onConfirm={() => {
                           const n = resendSelected.length;
+                          const encuestaId = resendModal?.row.inscripcion;
                           setResendModal(null);
                           setResendConfirmOpen(false);
                           toast.success(
@@ -2404,6 +2405,9 @@ const AsignarEncuestasTab: React.FC = () => {
                               ? `Encuesta reenviada exitosamente a ${n} participantes. ${editedCount} correos actualizados.`
                               : `Encuesta reenviada exitosamente a ${n} participantes.`
                           );
+                          if (encuestaId != null) {
+                            navigate(`/encuestas/responder/${encuestaId}`);
+                          }
                         }}
                       >
                         <Button
