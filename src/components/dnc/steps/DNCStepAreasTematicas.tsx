@@ -13,12 +13,14 @@ import {
   Popover, PopoverContent, PopoverTrigger,
 } from '@/components/ui/popover';
 import {
-  Briefcase, Wheat, Tractor, UtensilsCrossed, Palette, FlaskConical, Banknote,
-  Laptop, HardHat, Leaf, GraduationCap, Zap, Atom, Fish, Trees,
-  Languages, Car, Cog, Pickaxe, BookOpen, Factory, HeartPulse, HandHeart,
-  Truck, Layers, ArrowLeft, ArrowRight, Info, AlertCircle, CheckCircle2,
-  ChevronDown, X, Search, Check,
+  ArrowLeft, ArrowRight, Info, AlertCircle, ChevronDown, X, Search, Check,
 } from 'lucide-react';
+import {
+  Briefcase, Plant, Tractor, ForkKnife, PaintBrush, Flask, Bank,
+  Laptop, HardHat, Leaf, GraduationCap, Lightning, Atom, Fish, Tree,
+  Translate, Car, Gear, PaintBucket, BookOpen, Factory, Heartbeat, HandHeart,
+  Truck, Stack,
+} from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
@@ -32,30 +34,30 @@ interface Area {
 
 const AREAS: Area[] = [
   { id: 'administracion', name: 'Administración', icon: Briefcase, color: 'text-violet-600', tematicas: ['Gestión administrativa', 'Planificación estratégica', 'Liderazgo y gestión', 'Procesos y procedimientos', 'Gestión documental'] },
-  { id: 'agricultura', name: 'Agricultura', icon: Wheat, color: 'text-amber-600', tematicas: ['Cultivos y siembra', 'Riego tecnificado', 'Manejo de plagas', 'Suelos y fertilización', 'Cosecha y postcosecha'] },
+  { id: 'agricultura', name: 'Agricultura', icon: Plant, color: 'text-amber-600', tematicas: ['Cultivos y siembra', 'Riego tecnificado', 'Manejo de plagas', 'Suelos y fertilización', 'Cosecha y postcosecha'] },
   { id: 'agropecuario', name: 'Agropecuario', icon: Tractor, color: 'text-amber-700', tematicas: ['Producción ganadera', 'Sanidad animal', 'Manejo de praderas', 'Reproducción animal', 'Buenas prácticas agropecuarias'] },
-  { id: 'alimentacion', name: 'Alimentación gastronomía y turismo', icon: UtensilsCrossed, color: 'text-orange-600', tematicas: ['Manipulación de alimentos', 'Técnicas culinarias', 'Servicio y atención turística', 'Gestión hotelera', 'Coctelería y barismo'] },
-  { id: 'artes', name: 'Artes artesanía y gráfica', icon: Palette, color: 'text-pink-600', tematicas: ['Diseño gráfico', 'Ilustración digital', 'Artesanía tradicional', 'Fotografía', 'Edición audiovisual'] },
-  { id: 'ciencias', name: 'Ciencias y técnicas aplicadas', icon: FlaskConical, color: 'text-sky-600', tematicas: ['Investigación aplicada', 'Laboratorio y análisis', 'Metrología', 'Métodos estadísticos', 'Calidad y normativas'] },
-  { id: 'comercio', name: 'Comercio y servicios financieros', icon: Banknote, color: 'text-emerald-600', tematicas: ['Técnicas de venta', 'Atención al cliente', 'Productos financieros', 'Análisis crediticio', 'CRM y prospección'] },
+  { id: 'alimentacion', name: 'Alimentación gastronomía y turismo', icon: ForkKnife, color: 'text-orange-600', tematicas: ['Manipulación de alimentos', 'Técnicas culinarias', 'Servicio y atención turística', 'Gestión hotelera', 'Coctelería y barismo'] },
+  { id: 'artes', name: 'Artes artesanía y gráfica', icon: PaintBrush, color: 'text-pink-600', tematicas: ['Diseño gráfico', 'Ilustración digital', 'Artesanía tradicional', 'Fotografía', 'Edición audiovisual'] },
+  { id: 'ciencias', name: 'Ciencias y técnicas aplicadas', icon: Flask, color: 'text-sky-600', tematicas: ['Investigación aplicada', 'Laboratorio y análisis', 'Metrología', 'Métodos estadísticos', 'Calidad y normativas'] },
+  { id: 'comercio', name: 'Comercio y servicios financieros', icon: Bank, color: 'text-emerald-600', tematicas: ['Técnicas de venta', 'Atención al cliente', 'Productos financieros', 'Análisis crediticio', 'CRM y prospección'] },
   { id: 'computacion', name: 'Computación e informática', icon: Laptop, color: 'text-blue-600', tematicas: ['Excel avanzado', 'Power BI', 'Ciberseguridad', 'Desarrollo web', 'Cloud computing'] },
   { id: 'construccion', name: 'Construcción', icon: HardHat, color: 'text-yellow-700', tematicas: ['Lectura de planos', 'Obra gruesa', 'Terminaciones', 'Prevención de riesgos en obra', 'Topografía'] },
   { id: 'ecologia', name: 'Ecología', icon: Leaf, color: 'text-green-600', tematicas: ['Gestión ambiental', 'Manejo de residuos', 'Huella de carbono', 'Economía circular', 'Normativa ambiental'] },
   { id: 'educacion', name: 'Educación y capacitación', icon: GraduationCap, color: 'text-indigo-600', tematicas: ['Metodologías de enseñanza', 'Diseño instruccional', 'Evaluación de aprendizajes', 'E-learning', 'Facilitación de grupos'] },
-  { id: 'electricidad', name: 'Electricidad y electrónica', icon: Zap, color: 'text-yellow-600', tematicas: ['Instalaciones eléctricas', 'Electrónica básica', 'Automatización', 'Mantenimiento eléctrico', 'Normativa SEC'] },
+  { id: 'electricidad', name: 'Electricidad y electrónica', icon: Lightning, color: 'text-yellow-600', tematicas: ['Instalaciones eléctricas', 'Electrónica básica', 'Automatización', 'Mantenimiento eléctrico', 'Normativa SEC'] },
   { id: 'nuclear', name: 'Energía nuclear', icon: Atom, color: 'text-purple-600', tematicas: ['Radioprotección', 'Manejo de fuentes radiactivas', 'Normativa CCHEN', 'Seguridad nuclear', 'Aplicaciones industriales'] },
   { id: 'acuaticas', name: 'Especies acuáticas', icon: Fish, color: 'text-cyan-600', tematicas: ['Acuicultura', 'Sanidad acuícola', 'Manejo de cultivos marinos', 'Calidad del agua', 'Procesos en planta'] },
-  { id: 'forestal', name: 'Forestal', icon: Trees, color: 'text-green-700', tematicas: ['Manejo forestal sustentable', 'Prevención de incendios', 'Cosecha forestal', 'Viveros', 'Certificación FSC'] },
-  { id: 'idiomas', name: 'Idiomas y comunicación', icon: Languages, color: 'text-teal-600', tematicas: ['Inglés básico', 'Inglés de negocios', 'Comunicación efectiva', 'Redacción profesional', 'Oratoria'] },
+  { id: 'forestal', name: 'Forestal', icon: Tree, color: 'text-green-700', tematicas: ['Manejo forestal sustentable', 'Prevención de incendios', 'Cosecha forestal', 'Viveros', 'Certificación FSC'] },
+  { id: 'idiomas', name: 'Idiomas y comunicación', icon: Translate, color: 'text-teal-600', tematicas: ['Inglés básico', 'Inglés de negocios', 'Comunicación efectiva', 'Redacción profesional', 'Oratoria'] },
   { id: 'automotriz', name: 'Mecánica automotriz', icon: Car, color: 'text-red-600', tematicas: ['Motores a combustión', 'Sistemas eléctricos vehiculares', 'Diagnóstico computarizado', 'Frenos y suspensión', 'Vehículos eléctricos'] },
-  { id: 'mecanica', name: 'Mecánica industrial', icon: Cog, color: 'text-slate-600', tematicas: ['Mantenimiento industrial', 'Soldadura', 'Mecanizado CNC', 'Hidráulica y neumática', 'Lectura de planos mecánicos'] },
-  { id: 'mineria', name: 'Minería', icon: Pickaxe, color: 'text-stone-700', tematicas: ['Operación de equipos mineros', 'Tronadura', 'Procesamiento de minerales', 'Seguridad minera', 'Geología aplicada'] },
+  { id: 'mecanica', name: 'Mecánica industrial', icon: Gear, color: 'text-slate-600', tematicas: ['Mantenimiento industrial', 'Soldadura', 'Mecanizado CNC', 'Hidráulica y neumática', 'Lectura de planos mecánicos'] },
+  { id: 'mineria', name: 'Minería', icon: PaintBucket, color: 'text-stone-700', tematicas: ['Operación de equipos mineros', 'Tronadura', 'Procesamiento de minerales', 'Seguridad minera', 'Geología aplicada'] },
   { id: 'nivelacion', name: 'Nivelación de estudios', icon: BookOpen, color: 'text-amber-500', tematicas: ['Lectoescritura', 'Matemática básica', 'Educación media', 'Preparación PAES', 'Validación de estudios'] },
   { id: 'procesos', name: 'Procesos industriales', icon: Factory, color: 'text-orange-700', tematicas: ['Lean manufacturing', 'Control de calidad', 'Mejora continua', 'Mantenimiento productivo', 'Gestión de operaciones'] },
-  { id: 'salud', name: 'Salud nutrición y dietética', icon: HeartPulse, color: 'text-rose-600', tematicas: ['Primeros auxilios', 'Nutrición clínica', 'Alimentación saludable', 'Atención al paciente', 'Salud ocupacional'] },
+  { id: 'salud', name: 'Salud nutrición y dietética', icon: Heartbeat, color: 'text-rose-600', tematicas: ['Primeros auxilios', 'Nutrición clínica', 'Alimentación saludable', 'Atención al paciente', 'Salud ocupacional'] },
   { id: 'servicios_personas', name: 'Servicio a las personas', icon: HandHeart, color: 'text-pink-500', tematicas: ['Cuidado de adultos mayores', 'Atención infantil', 'Asistencia domiciliaria', 'Trabajo social', 'Inclusión y diversidad'] },
   { id: 'transporte', name: 'Transporte y telecomunicaciones', icon: Truck, color: 'text-blue-700', tematicas: ['Logística y distribución', 'Conducción profesional', 'Redes y telecomunicaciones', 'Gestión de flotas', 'Normativa de transporte'] },
-  { id: 'otra', name: 'Otra', icon: Layers, color: 'text-gray-600', tematicas: ['Temática personalizada 1', 'Temática personalizada 2', 'Temática personalizada 3', 'Temática personalizada 4', 'Temática personalizada 5'] },
+  { id: 'otra', name: 'Otra', icon: Stack, color: 'text-gray-600', tematicas: ['Temática personalizada 1', 'Temática personalizada 2', 'Temática personalizada 3', 'Temática personalizada 4', 'Temática personalizada 5'] },
 ];
 
 export interface AreaSelection {
@@ -267,7 +269,7 @@ const DNCStepAreasTematicas: React.FC<Props> = ({ state, onChange, onNext, onBac
                     )}
                   </div>
                   <div className="flex items-center gap-2 flex-1 min-w-0">
-                    <Icon className={cn('w-5 h-5 shrink-0', a.color)} />
+                    <Icon className="w-5 h-5 shrink-0 text-black" />
                     <div className="min-w-0">
                       <p className="text-sm font-semibold text-foreground truncate">{a.name}</p>
                       <p className="text-xs text-muted-foreground">{totalT} temáticas disponibles</p>
