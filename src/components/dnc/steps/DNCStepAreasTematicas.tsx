@@ -269,7 +269,7 @@ const DNCStepAreasTematicas: React.FC<Props> = ({ state, onChange, onNext, onBac
                     )}
                   </div>
                   <div className="flex items-center gap-2 flex-1 min-w-0">
-                    <Icon className="w-5 h-5 shrink-0 text-black" weight="regular" />
+                    <Icon className="w-5 h-5 shrink-0 text-black" />
                     <div className="min-w-0">
                       <p className="text-sm font-semibold text-foreground truncate">{a.name}</p>
                       <p className="text-xs text-muted-foreground">{totalT} temáticas disponibles</p>
