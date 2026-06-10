@@ -13,12 +13,14 @@ import {
   Popover, PopoverContent, PopoverTrigger,
 } from '@/components/ui/popover';
 import {
-  Briefcase, Wheat, Tractor, UtensilsCrossed, Palette, FlaskConical, Banknote,
-  Laptop, HardHat, Leaf, GraduationCap, Zap, Atom, Fish, Trees,
-  Languages, Car, Cog, Pickaxe, BookOpen, Factory, HeartPulse, HandHeart,
-  Truck, Layers, ArrowLeft, ArrowRight, Info, AlertCircle, CheckCircle2,
-  ChevronDown, X, Search, Check,
+  ArrowLeft, ArrowRight, Info, AlertCircle, ChevronDown, X, Search, Check,
 } from 'lucide-react';
+import {
+  Briefcase, Plant, Tractor, ForkKnife, PaintBrush, Flask, Bank,
+  Laptop, HardHat, Leaf, GraduationCap, Lightning, Atom, Fish, Tree,
+  Translate, Car, Gear, PaintBucket, BookOpen, Factory, Heartbeat, HandHeart,
+  Truck, Stack,
+} from '@phosphor-icons/react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
