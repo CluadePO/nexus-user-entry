@@ -426,22 +426,14 @@ const DNCStepAreasTematicas: React.FC<Props> = ({ state, onChange, onNext, onBac
                       )}
                     </div>
                     {!onlyOne && (
-                      <div className="flex flex-col items-end gap-2 shrink-0">
-                        {!inRange && (
-                          <Badge variant="outline" className="text-xs gap-1 bg-amber-50 text-amber-700 border-amber-200">
-                            <AlertCircle className="w-3 h-3" />
-                            Fuera de rango
-                          </Badge>
-                        )}
-                        <Input
-                          type="number"
-                          min={2}
-                          max={Math.min(5, totalT)}
-                          value={max}
-                          onChange={(e) => update(a.id, { maxPriorizar: Math.max(2, Math.min(5, Number(e.target.value) || 2)) })}
-                          className="w-20 text-center"
-                        />
-                      </div>
+                      <Input
+                        type="number"
+                        min={2}
+                        max={Math.min(5, totalT)}
+                        value={max}
+                        onChange={(e) => update(a.id, { maxPriorizar: Math.max(2, Math.min(5, Number(e.target.value) || 2)) })}
+                        className="w-20 text-center"
+                      />
                     )}
                   </div>
                 </Card>
